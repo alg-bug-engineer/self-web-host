@@ -1,0 +1,16 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg-05" x1="0" y1="0" x2="800" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1f2937" />
+      <stop offset="1" stop-color="#0d1117" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" rx="32" fill="url(#bg-05)" />
+  <rect x="48" y="48" width="704" height="504" rx="24" fill="#161b22" stroke="#30363d" stroke-width="2" />
+  <circle cx="140" cy="140" r="40" fill="#2f81f7" fill-opacity="0.2" />
+  <circle cx="660" cy="180" r="54" fill="#3fb950" fill-opacity="0.2" />
+  <circle cx="220" cy="420" r="70" fill="#a371f7" fill-opacity="0.2" />
+  <circle cx="620" cy="430" r="42" fill="#d29922" fill-opacity="0.2" />
+  <text x="50%" y="52%" text-anchor="middle" fill="#e6edf3" font-size="40" font-family="Arial, Helvetica, sans-serif" font-weight="600">Mood 05</text>
+  <text x="50%" y="60%" text-anchor="middle" fill="#8b949e" font-size="18" font-family="Arial, Helvetica, sans-serif">Cheese AI Diary</text>
+</svg>

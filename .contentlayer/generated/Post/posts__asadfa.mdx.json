@@ -1,0 +1,25 @@
+{
+  "title": "asdfa",
+  "description": "dafdafad",
+  "date": "2026-02-02T00:00:00.000Z",
+  "author": "芝士AI吃鱼",
+  "tags": [],
+  "published": true,
+  "icon": "robot",
+  "body": {
+    "raw": "\n## 新文章\n\n用人话写清楚一个 AI 概念。adafada\n\n<InfoCard type=\"robot\" title=\"核心观点\">\n  - 这里写要点\n</InfoCard>\n",
+    "code": "var Component=(()=>{var u=Object.create;var a=Object.defineProperty;var h=Object.getOwnPropertyDescriptor;var p=Object.getOwnPropertyNames;var m=Object.getPrototypeOf,x=Object.prototype.hasOwnProperty;var _=(t,e)=>()=>(e||t((e={exports:{}}).exports,e),e.exports),j=(t,e)=>{for(var o in e)a(t,o,{get:e[o],enumerable:!0})},d=(t,e,o,i)=>{if(e&&typeof e==\"object\"||typeof e==\"function\")for(let r of p(e))!x.call(t,r)&&r!==o&&a(t,r,{get:()=>e[r],enumerable:!(i=h(e,r))||i.enumerable});return t};var b=(t,e,o)=>(o=t!=null?u(m(t)):{},d(e||!t||!t.__esModule?a(o,\"default\",{value:t,enumerable:!0}):o,t)),g=t=>d(a({},\"__esModule\",{value:!0}),t);var s=_((w,c)=>{c.exports=_jsx_runtime});var I={};j(I,{default:()=>f,frontmatter:()=>y});var n=b(s()),y={title:\"asdfa\",description:\"dafdafad\",date:\"2026-02-02\",author:\"\\u829D\\u58EBAI\\u5403\\u9C7C\",tags:null,icon:\"robot\",published:!0};function l(t){let e={a:\"a\",h2:\"h2\",li:\"li\",p:\"p\",ul:\"ul\",...t.components},{InfoCard:o}=e;return o||C(\"InfoCard\",!0),(0,n.jsxs)(n.Fragment,{children:[(0,n.jsx)(e.h2,{id:\"\\u65B0\\u6587\\u7AE0\",children:(0,n.jsx)(e.a,{className:\"anchor\",href:\"#\\u65B0\\u6587\\u7AE0\",children:\"\\u65B0\\u6587\\u7AE0\"})}),`\n`,(0,n.jsx)(e.p,{children:\"\\u7528\\u4EBA\\u8BDD\\u5199\\u6E05\\u695A\\u4E00\\u4E2A AI \\u6982\\u5FF5\\u3002adafada\"}),`\n`,(0,n.jsx)(o,{type:\"robot\",title:\"\\u6838\\u5FC3\\u89C2\\u70B9\",children:(0,n.jsxs)(e.ul,{children:[`\n`,(0,n.jsx)(e.li,{children:\"\\u8FD9\\u91CC\\u5199\\u8981\\u70B9\"}),`\n`]})})]})}function f(t={}){let{wrapper:e}=t.components||{};return e?(0,n.jsx)(e,{...t,children:(0,n.jsx)(l,{...t})}):l(t)}function C(t,e){throw new Error(\"Expected \"+(e?\"component\":\"object\")+\" `\"+t+\"` to be defined: you likely forgot to import, pass, or provide it.\")}return g(I);})();\n;return Component;"
+  },
+  "_id": "posts/asadfa.mdx",
+  "_raw": {
+    "sourceFilePath": "posts/asadfa.mdx",
+    "sourceFileName": "asadfa.mdx",
+    "sourceFileDir": "posts",
+    "contentType": "mdx",
+    "flattenedPath": "posts/asadfa"
+  },
+  "type": "Post",
+  "slug": "asadfa",
+  "url": "/blog/asadfa",
+  "readingTime": 1
+}

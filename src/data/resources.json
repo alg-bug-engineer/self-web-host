@@ -1,0 +1,32 @@
+{
+  "resources": [
+    {
+      "title": "DeepSeek R1 论文精读",
+      "url": "https://blog.csdn.net/wwlsm_zql",
+      "tag": "深度",
+      "icon": "robot",
+      "comment": "这篇必须读，不仅是因为它开源..."
+    },
+    {
+      "title": "Transformer 漫画图解",
+      "url": "https://manga.ai-knowledgepoints.cn",
+      "tag": "漫画",
+      "icon": "cat",
+      "comment": "看完你就懂了，不懂来打我"
+    },
+    {
+      "title": "RAG 检索增强生成入门",
+      "url": "https://blog.csdn.net/wwlsm_zql",
+      "tag": "深度",
+      "icon": "robot",
+      "comment": "给大模型装上外挂知识库"
+    },
+    {
+      "title": "Prompt Engineering 最佳实践",
+      "url": "https://blog.csdn.net/wwlsm_zql",
+      "tag": "资源",
+      "icon": "cat",
+      "comment": "学会和 AI 说话的艺术"
+    }
+  ]
+}

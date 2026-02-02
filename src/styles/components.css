@@ -1,0 +1,104 @@
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; /* Adjust size as needed */
+  height: 40px; /* Adjust size as needed */
+  border-radius: 50%; /* Make it circular */
+  background-color: var(--bg-tertiary); /* Use theme variable */
+  color: var(--text-primary); /* Use theme variable */
+  border: 1px solid var(--border-default);
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+  padding: 0;
+}
+
+.theme-toggle:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--accent-primary);
+  transform: scale(1.05);
+}
+
+.theme-toggle svg {
+  transition: transform 0.2s ease-in-out;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  color: var(--text-secondary, #8b949e);
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.nav-item:hover {
+  background-color: var(--bg-tertiary, #161b22);
+  color: var(--text-primary, #e6edf3);
+  transform: translateX(2px);
+}
+
+.nav-item-active {
+  background-color: rgba(56, 139, 253, 0.12);
+  color: var(--accent-primary, #58a6ff);
+}
+
+.nav-icon {
+  width: 20px;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.nav-dot-blue {
+  background-color: #58a6ff;
+}
+
+.nav-dot-green {
+  background-color: #3fb950;
+}
+
+.nav-dot-purple {
+  background-color: #a371f7;
+}
+
+.nav-dot-amber {
+  background-color: #d29922;
+}
+
+.nav-dot-pink {
+  background-color: #db61a2;
+}
+
+.nav-dot-cyan {
+  background-color: #39c5cf;
+}
+
+.nav-dot-red {
+  background-color: #f85149;
+}
+
+.nav-dot-gray {
+  background-color: #8b949e;
+}
+
+.app-footer {
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-default);
+}
+
+.app-footer .footer-link {
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.app-footer .footer-link:hover {
+  color: var(--accent-primary);
+}
