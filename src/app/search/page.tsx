@@ -1,15 +1,15 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react';
+import { Suspense, useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { allPosts, Post } from 'contentlayer/generated';
 import AppCard from '@/components/AppCard';
 import FilterSidebar from '@/components/FilterSidebar';
 
-export default function SearchPage() {
+function SearchContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    
+
     const [posts, setPosts] = useState<Post[]>([]);
     const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
 
@@ -30,7 +30,7 @@ export default function SearchPage() {
         const topics = searchParams.get('topics')?.split(',').filter(Boolean) || [];
         const types = searchParams.get('types')?.split(',').filter(Boolean) || [];
         const sort = searchParams.get('sort') || 'newest';
-        
+
         setSearchQuery(query);
         setFilters({ topics, types });
         setSortBy(sort);
@@ -46,13 +46,13 @@ export default function SearchPage() {
                 post.description.toLowerCase().includes(searchQuery.toLowerCase())
             );
         }
-        
+
         if(filters.types.length > 0) {
             tempPosts = tempPosts.filter(post => filters.types.includes(post.icon || 'robot'));
         }
 
         if(filters.topics.length > 0) {
-            tempPosts = tempPosts.filter(post => 
+            tempPosts = tempPosts.filter(post =>
                 filters.topics.every(topic => post.tags?.includes(topic))
             )
         }
@@ -78,7 +78,7 @@ export default function SearchPage() {
         if (params.sort && params.sort !== 'newest') newParams.set('sort', params.sort);
         router.push(`/search?${newParams.toString()}`);
     }, [router]);
-    
+
     const handleFilterChange = useCallback((newFilters: { topics: string[]; types: string[] }) => {
         setFilters(newFilters);
         updateURLParams({ ...newFilters, q: searchQuery, sort: sortBy });
@@ -217,5 +217,32 @@ export default function SearchPage() {
                 </section>
             </div>
         </div>
+    );
+}
+
+function SearchLoading() {
+    return (
+        <div className="space-y-6">
+            <div>
+                <h1 className="text-2xl font-semibold text-text-primary">浏览文章</h1>
+                <p className="text-sm text-text-secondary">按话题标签与内容类型找到你需要的 AI 知识点。</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[1, 2, 3].map((i) => (
+                    <div key={i} className="bg-bg-secondary border border-border-default rounded-2xl p-4 animate-pulse">
+                        <div className="h-3 w-16 bg-bg-tertiary rounded mb-2" />
+                        <div className="h-8 w-12 bg-bg-tertiary rounded" />
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+export default function SearchPage() {
+    return (
+        <Suspense fallback={<SearchLoading />}>
+            <SearchContent />
+        </Suspense>
     );
 }
