@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import { verifyAdminSession } from '@/lib/admin-auth'
 
 const execAsync = promisify(exec)
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const token = request.cookies.get('admin_session')?.value
   if (!verifyAdminSession(token)) {
     return NextResponse.json({ ok: false, message: '未授权' }, { status: 401 })

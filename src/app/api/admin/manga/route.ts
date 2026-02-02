@@ -1,6 +1,6 @@
 import path from 'path'
 import fs from 'fs/promises'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdminSession } from '@/lib/admin-auth'
 import { mangaDataPath, readJsonFile, writeJsonFile } from '@/lib/admin-storage'
 
@@ -23,7 +23,7 @@ const slugify = (value: string) => {
   return cleaned || `manga-${Date.now()}`
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const token = request.cookies.get('admin_session')?.value
   if (!verifyAdminSession(token)) {
     return NextResponse.json({ ok: false, message: '未授权' }, { status: 401 })
