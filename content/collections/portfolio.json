@@ -1,0 +1,38 @@
+[
+  {
+    "title": "个人网站与博客",
+    "type": "website",
+    "date": "2023-10-01",
+    "description": "基于 Next.js 和 Tailwind CSS 构建的个人网站，用于展示作品、撰写博客和进行技术实验。本项目本身就是一个持续迭代的作品。",
+    "image": "/images/portfolio/self-web-host-cover.png",
+    "link": "https://your-domain.com",
+    "tags": ["Next.js", "React", "Tailwind CSS", "Contentlayer"]
+  },
+  {
+    "title": "Awesome-Cheatsheets 中文翻译",
+    "type": "opensource",
+    "date": "2022-05-20",
+    "description": "参与了知名开源项目 Awesome-Cheatsheets 的中文翻译和校对工作，帮助更多中文开发者快速查阅和学习。",
+    "image": "/images/portfolio/awesome-cheatsheets-cover.png",
+    "link": "https://github.com/LeCoupa/awesome-cheatsheets",
+    "tags": ["Open Source", "Translation", "Community"]
+  },
+  {
+    "title": "《从零到一构建前端工作流》",
+    "type": "book",
+    "date": "2021-11-11",
+    "description": "撰写并出版的电子书，系统性地介绍了如何使用 Webpack、Vite、Rollup 等工具搭建现代化的前端开发工作流。",
+    "image": "/images/portfolio/workflow-book-cover.png",
+    "link": null,
+    "tags": ["Writing", "E-book", "Frontend", "Workflow"]
+  },
+  {
+    "title": "公司年度黑客马拉松冠军",
+    "type": "award",
+    "date": "2020-12-31",
+    "description": "与团队一起，在24小时内开发了一款基于AI的智能会议纪要工具，获得了公司年度Hackathon的第一名。",
+    "image": "/images/portfolio/hackathon-award-cover.png",
+    "link": null,
+    "tags": ["Award", "Hackathon", "AI"]
+  }
+]

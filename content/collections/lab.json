@@ -1,0 +1,20 @@
+[
+  {
+    "title": "CSS 阴影生成器",
+    "description": "一个可以实时调整参数并预览CSS box-shadow效果的在线小工具。",
+    "component": "CssShadowGenerator",
+    "tags": ["CSS", "工具"]
+  },
+  {
+    "title": "Canvas 粒子效果",
+    "description": "一个基于HTML5 Canvas实现的交互式粒子动画。",
+    "component": "ParticleAnimation",
+    "tags": ["Canvas", "动画"]
+  },
+  {
+    "title": "一个Codepen作品",
+    "description": "这是一个托管在Codepen上的纯CSS作品，点击可以跳转查看。",
+    "link": "https://codepen.io/your-username/pen/xxxxxx",
+    "tags": ["Codepen", "CSS", "Demo"]
+  }
+]

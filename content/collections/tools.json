@@ -1,81 +1,43 @@
 [
   {
-    "id": "tool-1770027381608",
-    "name": "哒哒哒哒哒",
-    "description": "哒哒哒哒哒",
-    "url": "哒哒哒哒哒",
+    "id": "tool-1770097007291",
+    "name": "cuTile",
+    "description": "英伟达的新的编程模型：cuTile",
+    "url": "https://github.com/NVIDIA/cutile-python",
     "tags": [
-      "哒哒哒"
+      "cuTile"
     ],
     "status": "Active"
   },
   {
-    "id": "tool-1770027153195",
-    "name": "dddd",
-    "description": "ddddd",
-    "url": "https://github.com/iptag/jimeng-api",
+    "id": "tool-1770096778398",
+    "name": "OpenViking",
+    "description": "OpenViking 是一个开源的、专为 AI Agent 设计的上下文数据库。",
+    "url": "https://github.com/volcengine/OpenViking",
     "tags": [
-      "dddd"
+      "OpenViking",
+      "上下文数据库"
     ],
     "status": "Active"
   },
   {
-    "id": "rag-workbench",
-    "name": "RAG Workbench",
-    "description": "把检索、重写、召回评估串成一个可视化流程。",
-    "url": "https://github.com/alg-bug-engineer/rag-workbench",
+    "id": "tool-1770083369682",
+    "name": "Gtihub 商店",
+    "description": "搜索可下载的仓库",
+    "url": "https://github.com/rainxchzed/Github-Store",
     "tags": [
-      "RAG",
-      "评估",
-      "工作流"
-    ],
-    "status": "Beta"
-  },
-  {
-    "id": "prompt-board",
-    "name": "Prompt Board",
-    "description": "记录可复用的提示词模板，支持版本对比。",
-    "url": "https://github.com/alg-bug-engineer/prompt-board",
-    "tags": [
-      "Prompt",
-      "模板",
-      "知识库"
+      "商店，release"
     ],
     "status": "Active"
   },
   {
-    "id": "agent-blueprint",
-    "name": "Agent Blueprint",
-    "description": "常见智能体流程的结构化模板集合。",
-    "url": "https://github.com/alg-bug-engineer/agent-blueprint",
+    "id": "tool-1770083193656",
+    "name": "Gemini 去水印工具",
+    "description": "Gemini Watermark Tool",
+    "url": "https://github.com/allenk/GeminiWatermarkTool",
     "tags": [
-      "Agent",
-      "流程",
-      "模板"
-    ],
-    "status": "Active"
-  },
-  {
-    "id": "model-notes",
-    "name": "Model Notes",
-    "description": "把论文要点、模型结构变成卡片笔记。",
-    "url": "https://github.com/alg-bug-engineer/model-notes",
-    "tags": [
-      "论文",
-      "笔记",
-      "知识"
-    ],
-    "status": "Draft"
-  },
-  {
-    "id": "ai-toolbox",
-    "name": "AI Toolbox",
-    "description": "收集日常常用的小工具与脚本合集。",
-    "url": "https://github.com/alg-bug-engineer/ai-toolbox",
-    "tags": [
-      "工具箱",
-      "效率",
-      "脚本"
+      "Gemini",
+      "水印"
     ],
     "status": "Active"
   }

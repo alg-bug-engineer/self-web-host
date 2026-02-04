@@ -6,7 +6,9 @@
 .env.production
 # testing
 /coverage
-
+.claude
+.contentlayer
+package-lock.json
 # next.js
 /.next/
 /out/

@@ -5,6 +5,9 @@ import { ThemeToggle } from './ThemeToggle'
 import IconDiscover from './icons/IconDiscover'
 import IconBrowse from './icons/IconBrowse'
 import IconAbout from './icons/IconAbout'
+import IconPortfolio from './icons/IconPortfolio'
+import IconLab from './icons/IconLab'
+import IconChat from './icons/IconChat'
 
 interface MobileMenuProps {
     isOpen: boolean;
@@ -12,8 +15,7 @@ interface MobileMenuProps {
 }
 
 const collections = [
-    { label: '文章', value: 'articles', icon: '📝', href: '/collections/articles' },
-    { label: '漫画', value: 'manga', icon: '🎨', href: '/collections/manga' },
+    { label: '文章', value: 'articles', icon: '📝', href: '/blog' },
     { label: '工具', value: 'tools', icon: '🔧', href: '/collections/tools' },
 ];
 
@@ -50,6 +52,10 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
                                 <span className="nav-icon"><IconBrowse className="w-4 h-4" /></span>
                                 浏览
                             </Link>
+                            <Link href="/chat" className="nav-item" onClick={() => setIsOpen(false)}>
+                                <span className="nav-icon"><IconChat className="w-4 h-4" /></span>
+                                AI助手
+                            </Link>
                         </div>
                     </div>
                     <div>
@@ -66,6 +72,19 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
                                     {collection.label}
                                 </Link>
                             ))}
+                        </div>
+                    </div>
+                    <div>
+                        <p className="text-xs uppercase tracking-widest text-text-tertiary px-2 mb-2">创造</p>
+                        <div className="space-y-1">
+                            <Link href="/portfolio" className="nav-item" onClick={() => setIsOpen(false)}>
+                                <span className="nav-icon"><IconPortfolio className="w-4 h-4" /></span>
+                                作品集
+                            </Link>
+                            <Link href="/lab" className="nav-item" onClick={() => setIsOpen(false)}>
+                                <span className="nav-icon"><IconLab className="w-4 h-4" /></span>
+                                实验室
+                            </Link>
                         </div>
                     </div>
                     <div>
