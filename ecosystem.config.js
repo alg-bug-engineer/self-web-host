@@ -3,8 +3,8 @@ module.exports = {
     {
       name: 'ai-knowledgepoints',
       script: 'node_modules/next/dist/bin/next',
-      args: 'start -p 3000',
-      cwd: '/var/www/ai-knowledgepoints',
+      args: 'start -p 3011',
+      // cwd: '/var/www/ai-knowledgepoints',
       instances: 1,
       autorestart: true,
       watch: false,
