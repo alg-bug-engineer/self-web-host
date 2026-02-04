@@ -56,7 +56,7 @@ export default function LabPage() {
                   <div className="p-6">
                     <h2 className="text-lg font-semibold text-text-primary">{item.title}</h2>
                     <p className="text-sm text-text-secondary">{item.description}</p>
-                     <p className="mt-4 text-sm text-red-500">组件 '{item.component}' 未找到或未实现。</p>
+                     <p className="mt-4 text-sm text-red-500">组件 &apos;{item.component}&apos; 未找到或未实现。</p>
                   </div>
                 )}
               </div>
