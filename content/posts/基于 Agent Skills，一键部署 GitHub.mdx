@@ -1,0 +1,95 @@
+---
+title: 基于 Agent Skills，一键部署 GitHub
+description: 用大模型实现对 GitHub 项目的一键部署与可视化使用，从平台框架到 SKILLS 优化的实践记录。
+date: 2026-02-05
+author: 芝士AI吃鱼
+tags:
+  - Agent
+  - GitHub
+  - 部署
+  - 效率工具
+icon: robot
+published: true
+---
+
+## GitHub：世界上最大的工具站
+
+GitHub 可以说是世界上最大的工具站，没有之一。上面包罗万象，各种网站、工具、软件等，你能想到的需求，几乎在上面都有对应的解决方案。
+
+从安装使用的角度划分，GitHub 的项目大概可以分为三类：
+
+1. **直接支持下载的**：不论是 Linux、Android 还是 Windows，下载即可使用。这一类占比最小，技术门槛最低，开箱即用。
+2. **支持标准化部署的**：需要一定的编程能力，根据提供的安装部署文档或命令自行安装配置。
+3. **无现成文档的**：没有下载包，也没有标准文档，需要根据代码和文档自行摸索。这一类是 GitHub 上最庞大的项目。
+
+<InfoCard type="tip" title="核心想法">
+  GitHub 上的项目能极大解决日常需求，但部署使用门槛太高。大模型的 coding 能力越来越强，能不能用大模型实现对 GitHub 项目的一键部署使用？
+</InfoCard>
+
+## 要解决的两个问题
+
+- **是否有 GUI**：大量项目是命令行的，对非技术用户不友好（虽然命令行的效率和资源都是优势）。
+- **标准化**：项目万千、各有特色，能否用一套相对通用的 SOP 去标准化：检查代码完整性、检查依赖、部署、容器化等一系列操作。
+
+## 2026 年第一个折腾：平台框架
+
+思路是：先构建一个完整的平台框架，给定一个仓库后，通过一键部署到平台上进行可视化使用。
+
+为避免网络问题，可以提前下载仓库放在 `tools` 下，通过 Claude Code 实现一键部署，包括对代码的检查、部署、打标、集成、可视化等工作。
+
+![一键部署流程](https://mmbiz.qpic.cn/mmbiz_png/w3SGv7JDTqMx077HtxCRM5buBIa7mBE2lMQnrXx51ibQef4xUJTjAELEp5NUvbXibZOJq1Rf3lPKj4AXjJSLq41MDIt23VBfVVaPqfTtxibCVI/640?from=appmsg&watermark=1#imgIndex=0)
+
+## 平台能力概览
+
+打造的平台支持：
+
+- 标签筛选、表格和网格样式切换、搜索
+- 基于容器构建，默认容器关闭以节省资源
+- 点击启动后由专门的容器管理服务检查状态：若已关闭则拉起，若超过 1 小时未使用则关闭释放资源
+
+![平台界面](https://mmbiz.qpic.cn/mmbiz_png/w3SGv7JDTqP5IjcANT9QPhb0XTYu8OUpzIPbClicNR5321aQj4UVJv5EvSbKX5Elmy4Oe74h23BXp8Ucg9mcjmb8KLCfSZ4gNT4kCxXBd1Ag/640?from=appmsg&watermark=1#imgIndex=1)
+
+## 启动后的两种形态
+
+- **有界面的项目**：平台直接加载原有界面（如 Gradio、Streamlit）。
+- **命令行项目**：根据使用参数开发一个最简界面，用户通过交互传参到后端执行。
+
+例如 [即梦 API 逆向工程](https://github.com/iptag/jimeng-api/tree/main)，原始仓库是 API 调用实现文生图、文生视频等，通过平台后可直接可视化使用。
+
+![即梦 API 可视化](https://mmbiz.qpic.cn/mmbiz_png/w3SGv7JDTqPI1mxco3yjcLXVeYuWqAQpNYibIBSwwT0gvNdoicSjibcHPMhakPgE9hHYVRxpia7HibibBS1VQyIEG7iatFYRhfDBt9cGc6S6dVtgEk/640?from=appmsg&watermark=1#imgIndex=2)
+
+## 界面提交与自动集成
+
+实现了「界面提交 → 自动触发下载仓库 → 执行 Claude Code → 集成到平台」的流程，目前存在一些 bug（主要是网络问题）。
+
+![自动集成流程](https://mmbiz.qpic.cn/mmbiz_png/w3SGv7JDTqOt35bDY4WLxm9LbGTia43TamOe62OGQt0e9V9jX4uUzUFARPxat3fAfkEQnLZp8NftFSROnOlSAWV0bXCTPbKPBKPwwuql28OU/640?from=appmsg&watermark=1#imgIndex=3)
+
+## 下载中心
+
+为适配日常下载需求（如浏览器插件等），实现了下载中心，通过 SKILLS 挂载到平台，点击下载后直接跳转原站下载（对网络有一定要求）。
+
+![下载中心](https://mmbiz.qpic.cn/sz_mmbiz_png/w3SGv7JDTqMg8R2SvCMu64iaEEUPlPmyhksahEPibxlfQNunSF2wLv19o78YhOxbKfqQdOLXzM71JO9aRchN4M3LfS09bc6T31T8kY99y7wP8/640?from=appmsg&watermark=1#imgIndex=4)
+
+## 日志系统
+
+作为集成多容器的平台，调试和排查报错是刚需。因此开发了日志中心，将主界面 homepage、容器管理、调度服务以及各容器的日志统一打到日志系统中，便于一目了然查看。
+
+![日志中心](https://mmbiz.qpic.cn/mmbiz_png/w3SGv7JDTqOQkhHddNryCfiaZ2gLIxrjqXC5gWGYI19iaeeTYyGV1gP92YMpgSu1SEyHnIRianblfkYEwveekTcVmlReEZFKnibnhdaNzWOzKZE/640?from=appmsg&watermark=1#imgIndex=5)
+
+## 开发体验：多模型对比
+
+整个系统大概耗时 1 周下班时间，主要在平台设计和 SKILLS 优化上。
+
+在海外「御三家」Codex、Claude Code、Gemini 以及国内 Kimi、GLM 的尝试中，编程这块 **Claude Code 表现最佳**，在当前 SKILLS 下成功率约 70%；GLM 和 Kimi 则半斤八两。
+
+![多模型对比](https://mmbiz.qpic.cn/sz_mmbiz_png/w3SGv7JDTqPiaHu7XYvac5icL2fic7iaqqWVrYCPjsDhnLavx4H56WQUvILkSNCPRibNfTia3f34bibBSG3xHB0FnVQHQWtZ05aialcMLddEpEe98A4/640?from=appmsg&watermark=1#imgIndex=6)
+
+## 写在最后
+
+AI 的发展应该带来效率提升，而不是焦虑增多。作为在 AI（以前叫深度学习）领域摸爬滚打快十年的社畜，对新技术、新产品、新应用也有点应接不暇——有一种「断网三天就被时代抛弃」的推背感。希望 AI 能带来更多便利和效率，与君共勉。
+
+![写在最后](https://mmbiz.qpic.cn/sz_mmbiz_jpg/w3SGv7JDTqM8382MFCibeNTvzria8ap6xKJJNUUHfKibCo6e4gjzTrAIfmoHDOJvG2kmCvYCMYg1WB9ZqLFzIQ42ZGezakEUXjHoOBpuwicjN0w/640?from=appmsg&watermark=1#imgIndex=7)
+
+<InfoCard type="cat" title="项目已开源">
+  欢迎 star 和讨论：[https://github.com/alg-bug-engineer/auto-ops](https://github.com/alg-bug-engineer/auto-ops)
+</InfoCard>

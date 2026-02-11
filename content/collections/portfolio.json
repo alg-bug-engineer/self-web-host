@@ -1,11 +1,51 @@
 [
   {
-    "title": "个人网站与博客",
+    "title": "把天书当漫画看-芝士AI吃鱼-漫画网站",
     "type": "website",
-    "date": "2023-10-01",
-    "description": "基于 Next.js 和 Tailwind CSS 构建的个人网站，用于展示作品、撰写博客和进行技术实验。本项目本身就是一个持续迭代的作品。",
+    "date": "2025-11-16",
+    "description": "通过生动有趣的漫画形式，轻松掌握人工智能前沿技术",
     "image": "/images/portfolio/self-web-host-cover.png",
-    "link": "https://your-domain.com",
-    "tags": ["Next.js", "React", "Tailwind CSS", "Contentlayer"]
+    "link": "https://manga.ai-knowledgepoints.cn/",
+    "github": "https://github.com/alg-bug-engineer/manga-reader",
+    "tags": ["AI科普", "芝士AI吃鱼", "漫画", "大模型", "开源"]
+  },
+  {
+    "title": "你只管输入，AI负责整理-芝士AI吃鱼-工作效率笔记工具",
+    "type": "website",
+    "date": "2025-10-11",
+    "description": "AI智能大脑，效率笔记，你负责输入，AI负责整理输出",
+    "image": "images/portfolio/cogniflow.png",
+    "link": "https://ci.ai-knowledgepoints.cn/",
+    "github": "https://github.com/alg-bug-engineer/cogniflow",
+    "tags": ["CogniFlow", "芝士AI吃鱼", "效率", "工作流", "笔记", "大模型", "开源"]
+  },
+  {
+    "title": "基于 Agent Skills 的一键部署 GitHub 项目-芝士AI吃鱼-Agent Skills",
+    "type": "article",
+    "date": "2026-2-5",
+    "description": "妈妈再也不用担心我部署 GitHub 啦",
+    "image": "images/portfolio/auto-ops.png",
+    "link": "https://mp.weixin.qq.com/s/-t1N3dw1-T73R3Xzv9Awug",
+    "github": "https://github.com/alg-bug-engineer/auto-ops",
+    "tags": ["GitHub", "芝士AI吃鱼", "自动化工具", "AgentSkills", "Skills", "大模型", "开源"]
+  },
+  {
+    "title": "公众号文章合集-芝士AI吃鱼-合集",
+    "type": "article",
+    "date": "2024-1-1",
+    "description": "大模型相关的内容，包括 RAG、Agent、大模型、提示工程等，两年的时间，撰写相关的技术文档 300 余篇，总字数 120 万字。",
+    "image": "/images/portfolio/self-web-host-cover.png",
+    "link": "https://github.com/alg-bug-engineer/Cheesy-AI-Fish",
+    "github": "https://github.com/alg-bug-engineer/Cheesy-AI-Fish",
+    "tags": ["合集", "芝士AI吃鱼", "大模型", "RAG", "智能体", "提示工程", "大模型", "开源"]
+  },
+  {
+    "title": "RAG极简入门-芝士AI吃鱼-出版",
+    "type": "book",
+    "date": "2025-5-1",
+    "description": "本书全面解析了RAG 技术，涵盖从理论基础到实战应用的各个方面",
+    "image": "/images/portfolio/RAG.png",
+    "link": "https://www.ptpress.com.cn/publishing/book/e70d55be-30a2-43b2-bb70-f2eb5ab65d25",
+    "tags": ["出版", "芝士AI吃鱼", "大模型", "RAG", "书籍", "大模型"]
   }
 ]
