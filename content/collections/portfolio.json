@@ -44,8 +44,17 @@
     "type": "book",
     "date": "2025-5-1",
     "description": "本书全面解析了RAG 技术，涵盖从理论基础到实战应用的各个方面",
-    "image": "/images/portfolio/RAG.png",
+    "image": "/images/portfolio/rag.png",
     "link": "https://www.ptpress.com.cn/publishing/book/e70d55be-30a2-43b2-bb70-f2eb5ab65d25",
     "tags": ["出版", "芝士AI吃鱼", "大模型", "RAG", "书籍", "大模型"]
+  },
+  {
+    "title": "这就是GEO-芝士AI吃鱼-出版",
+    "type": "book",
+    "date": "2026-2-1",
+    "description": "GEO 技术，涵盖从理论基础到实战应用的各个方面",
+    "image": "/images/portfolio/geo.png",
+    "link": "https://www.ptpress.com.cn/publishing/book/e70d55be-30a2-43b2-bb70-f2eb5ab65d25",
+    "tags": ["出版", "芝士AI吃鱼", "大模型", "GEO", "书籍", "大模型"]
   }
 ]
