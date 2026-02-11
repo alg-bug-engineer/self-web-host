@@ -295,7 +295,7 @@ export default function AdminClient({ isAuthed }: AdminClientProps) {
             </div>
             <input
               type="file"
-              accept="image/*"
+              accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
               onChange={(event) => setMangaFile(event.target.files?.[0] || null)}
               className="w-full text-sm text-text-secondary"
             />

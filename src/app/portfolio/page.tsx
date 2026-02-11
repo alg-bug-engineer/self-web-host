@@ -32,16 +32,19 @@ export default function PortfolioPage() {
           </p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* 多列错落布局：宽度一致，高度随内容，不同行自然错落 */}
+        <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
           {(portfolioData as PortfolioItem[]).map((item, index) => (
-            <div key={index} className="flex flex-col bg-bg-secondary border border-border-default rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div
+              key={index}
+              className="flex flex-col mb-6 bg-bg-secondary border border-border-default rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 break-inside-avoid w-full"
+            >
               {item.image ? (
-                <div className="aspect-video bg-bg-tertiary">
-                  {/* Using a simple img tag. For production, consider Next/Image */}
-                  <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                <div className="w-full min-h-[12rem] bg-bg-tertiary">
+                  <img src={item.image} alt={item.title} className="w-full h-auto min-h-[12rem] object-cover object-center" />
                 </div>
               ) : (
-                <div className="aspect-video bg-bg-tertiary flex items-center justify-center">
+                <div className="min-h-[12rem] bg-bg-tertiary flex items-center justify-center">
                    <span className="text-4xl">{typeIconMap[item.type] || typeIconMap.default}</span>
                 </div>
               )}

@@ -13,6 +13,8 @@ type MangaItem = {
   mood: string
 }
 
+const ALLOWED_IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.webp']
+
 const slugify = (value: string) => {
   const cleaned = value
     .trim()
@@ -40,11 +42,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, message: '标题、描述、图片不能为空' }, { status: 400 })
   }
 
+  const extension = path.extname(file.name).toLowerCase() || '.png'
+  if (!ALLOWED_IMAGE_EXTENSIONS.includes(extension)) {
+    return NextResponse.json(
+      { ok: false, message: `不支持的图片格式，仅支持：${ALLOWED_IMAGE_EXTENSIONS.join('、').replace(/\./g, '')}` },
+      { status: 400 }
+    )
+  }
+
   const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'manga')
   await fs.mkdir(uploadsDir, { recursive: true })
 
   const arrayBuffer = await file.arrayBuffer()
-  const extension = path.extname(file.name) || '.png'
   const filename = `${slugify(title)}-${Date.now()}${extension}`
   const filePath = path.join(uploadsDir, filename)
   await fs.writeFile(filePath, Buffer.from(arrayBuffer))
