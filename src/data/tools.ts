@@ -5,9 +5,40 @@ export type ToolItem = {
   url: string;
   tags: string[];
   status?: string;
+  isPro?: boolean;
+  type?: 'link' | 'plugin';
+  pluginId?: string;
 };
 
 export const tools: ToolItem[] = [
+  {
+    id: 'prompt-generator',
+    name: 'AI 绘画提示词生成器',
+    description: '内置多种艺术风格，一键生成高质量 Midjourney / SD 提示词。',
+    url: '#',
+    tags: ['生图', 'Prompt', '交互'],
+    status: 'Hot',
+    type: 'plugin',
+    pluginId: 'prompt-generator',
+  },
+  {
+    id: 'cogniflow-pro',
+    name: 'CogniFlow Pro (全栈版)',
+    description: '企业级 AI 知识管理平台，包含私有化 RAG 引擎与多智能体协作流源码。',
+    url: '/planet',
+    tags: ['RAG', 'Agent', '企业级'],
+    status: 'Member',
+    isPro: true,
+  },
+  {
+    id: 'sd-xl-plugin',
+    name: 'Stable Diffusion XL 高级插件',
+    description: '支持 ComfyUI 远程调用的 Next.js 交互式生图插件。',
+    url: '/planet',
+    tags: ['生图', '插件', 'ComfyUI'],
+    status: 'Pro',
+    isPro: true,
+  },
   {
     id: 'rag-workbench',
     name: 'RAG Workbench',

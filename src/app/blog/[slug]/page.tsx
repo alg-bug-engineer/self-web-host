@@ -3,6 +3,9 @@ import { notFound } from 'next/navigation'
 import { useMDXComponent } from 'next-contentlayer2/hooks'
 import { mdxComponents } from '@/components/mdx'
 import Link from 'next/link'
+import Image from 'next/image'
+import PlanetBanner from '@/components/PlanetBanner'
+import { getSettings } from '@/lib/admin-storage'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -43,13 +46,41 @@ function MDXContent({ code }: { code: string }) {
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params
   const post = allPosts.find((post) => post.slug === slug)
+  const settings = await getSettings()
 
   if (!post) {
     notFound()
   }
 
+  // JSON-LD structured data for Google
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: post.title,
+    description: post.description,
+    image: post.cover || 'https://www.ai-knowledgepoints.cn/og-image.png',
+    datePublished: post.date,
+    author: {
+      '@type': 'Person',
+      name: post.author,
+    },
+    publisher: {
+        '@type': 'Organization',
+        name: '芝士AI吃鱼',
+        logo: {
+            '@type': 'ImageObject',
+            url: 'https://www.ai-knowledgepoints.cn/favicon.ico'
+        }
+    }
+  }
+
   return (
     <article className="py-8">
+      {/* Inject JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-3xl mx-auto">
         {/* Back link */}
         <Link
@@ -96,18 +127,30 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Cover Image */}
         {post.cover && (
-          <div className="mb-10 rounded-2xl overflow-hidden">
-            <img
+          <div className="mb-10 rounded-2xl overflow-hidden relative aspect-video">
+            <Image
               src={post.cover}
               alt={post.title}
-              className="w-full h-auto object-cover"
+              fill
+              className="object-cover"
+              priority
             />
           </div>
         )}
 
         {/* Content */}
-        <div className="prose prose-lg max-w-none">
+        <div className="prose prose-lg max-w-none mb-16">
           <MDXContent code={post.body.code} />
+        </div>
+
+        {/* Lead Gen Banner */}
+        <div className="mb-16">
+          <PlanetBanner 
+            title="想要深入学习 AI 实战吗？" 
+            description="加入知识星球，你可以获得本文配套的完整源码、进阶架构图，以及专属的技术答疑服务。" 
+            planetUrl={settings.planetUrl}
+            planetQrCode={settings.planetQrCode}
+          />
         </div>
 
         {/* Footer */}

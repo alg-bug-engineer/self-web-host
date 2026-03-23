@@ -1,5 +1,5 @@
 import fs from 'fs/promises'
-import { toolsDataPath } from '@/lib/admin-storage'
+import { toolsDataPath, getSettings } from '@/lib/admin-storage'
 import ToolsCollectionClient from './ToolsCollectionClient'
 import type { ToolItem } from './types'
 
@@ -21,6 +21,7 @@ const loadTools = async (): Promise<ToolItem[]> => {
 
 export default async function ToolsCollectionPage() {
   const tools = await loadTools()
+  const settings = await getSettings()
 
   return (
     <div className="space-y-6">
@@ -29,7 +30,7 @@ export default async function ToolsCollectionPage() {
         <p className="text-sm text-text-secondary">自己开发与收藏的 GitHub 小工具。</p>
       </div>
 
-      <ToolsCollectionClient tools={tools} />
+      <ToolsCollectionClient tools={tools} settings={settings} />
     </div>
   )
 }

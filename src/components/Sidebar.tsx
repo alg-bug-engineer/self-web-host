@@ -6,12 +6,24 @@ import { ThemeToggle } from './ThemeToggle'
 import IconDiscover from './icons/IconDiscover'
 import IconBrowse from './icons/IconBrowse'
 import IconPortfolio from './icons/IconPortfolio'
-import IconLab from './icons/IconLab'
 import IconAbout from './icons/IconAbout'
 import IconChat from './icons/IconChat'
-const collections = [
-    { label: '文章', value: 'articles', icon: '📝', href: '/blog' },
-    { label: '工具', value: 'tools', icon: '🔧', href: '/collections/tools' },
+import IconLab from './icons/IconLab' // Keep for now if needed elsewhere, but remove from nav
+
+const mainNav = [
+    { label: '发现', href: '/', icon: <IconDiscover className="w-4 h-4" /> },
+    { label: '浏览', href: '/search', icon: <IconBrowse className="w-4 h-4" /> },
+    { label: 'AI助手', href: '/chat', icon: <IconChat className="w-4 h-4" /> },
+];
+
+const collectionNav = [
+    { label: '技术专栏', href: '/blog', icon: '📝' },
+    { label: 'AI 工具箱', href: '/collections/tools', icon: '🔧' },
+];
+
+const createNav = [
+    { label: '我的产品', href: '/portfolio', icon: <IconPortfolio className="w-4 h-4" /> },
+    { label: '知识星球', href: '/planet', icon: '🪐' },
 ];
 
 export default function Sidebar() {
@@ -21,10 +33,6 @@ export default function Sidebar() {
         if (path === '/') return pathname === '/'
         if (path === '/blog') return pathname.startsWith('/blog') || pathname.startsWith('/collections/articles')
         return pathname.startsWith(path)
-    }
-
-    const isCollectionActive = (href: string) => {
-        return pathname.startsWith(href);
     }
 
     return (
@@ -44,75 +52,48 @@ export default function Sidebar() {
                     <div>
                         <p className="text-xs uppercase tracking-widest text-text-tertiary px-3 mb-2">内容</p>
                         <div className="space-y-1">
-                            <Link
-                                href="/"
-                                className={`nav-item ${isActive('/') ? 'nav-item-active' : ''}`}
-                            >
-                                <span className="nav-icon">
-                                    <IconDiscover className="w-4 h-4" />
-                                </span>
-                                发现
-                            </Link>
-                            <Link
-                                href="/search"
-                                className={`nav-item ${isActive('/search') ? 'nav-item-active' : ''}`}
-                            >
-                                <span className="nav-icon">
-                                    <IconBrowse className="w-4 h-4" />
-                                </span>
-                                浏览
-                            </Link>
-                            <Link
-                                href="/chat"
-                                className={`nav-item ${isActive('/chat') ? 'nav-item-active' : ''}`}
-                            >
-                                <span className="nav-icon">
-                                    <IconChat className="w-4 h-4" />
-                                </span>
-                                AI助手
-                            </Link>
+                            {mainNav.map((item) => (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={`nav-item ${isActive(item.href) ? 'nav-item-active' : ''}`}
+                                >
+                                    <span className="nav-icon">{item.icon}</span>
+                                    {item.label}
+                                </Link>
+                            ))}
                         </div>
                     </div>
                     
                     <div>
                         <p className="text-xs uppercase tracking-widest text-text-tertiary px-3 mb-2">合集</p>
                         <div className="space-y-1">
-                            {collections.map((collection) => (
+                            {collectionNav.map((item) => (
                                 <Link
-                                    key={collection.value}
-                                    href={collection.href}
-                                    className={`nav-item ${isCollectionActive(collection.href) ? 'nav-item-active' : ''}`}
+                                    key={item.href}
+                                    href={item.href}
+                                    className={`nav-item ${isActive(item.href) ? 'nav-item-active' : ''}`}
                                 >
-                                    <span className="nav-icon">
-                                        {collection.icon}
-                                    </span>
-                                    {collection.label}
+                                    <span className="nav-icon">{item.icon}</span>
+                                    {item.label}
                                 </Link>
                             ))}
                         </div>
                     </div>
 
                     <div>
-                        <p className="text-xs uppercase tracking-widest text-text-tertiary px-3 mb-2">创造</p>
+                        <p className="text-xs uppercase tracking-widest text-text-tertiary px-3 mb-2">创造与变现</p>
                         <div className="space-y-1">
-                            <Link
-                                href="/portfolio"
-                                className={`nav-item ${isActive('/portfolio') ? 'nav-item-active' : ''}`}
-                            >
-                                <span className="nav-icon">
-                                    <IconPortfolio className="w-4 h-4" />
-                                </span>
-                                作品集
-                            </Link>
-                            <Link
-                                href="/lab"
-                                className={`nav-item ${isActive('/lab') ? 'nav-item-active' : ''}`}
-                            >
-                                <span className="nav-icon">
-                                    <IconLab className="w-4 h-4" />
-                                </span>
-                                实验室
-                            </Link>
+                            {createNav.map((item) => (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={`nav-item ${isActive(item.href) ? 'nav-item-active' : ''}`}
+                                >
+                                    <span className="nav-icon">{item.icon}</span>
+                                    {item.label}
+                                </Link>
+                            ))}
                         </div>
                     </div>
 
@@ -135,7 +116,6 @@ export default function Sidebar() {
 
             <div className="border-t border-border-default px-4 py-4 flex items-center justify-between">
                 <ThemeToggle />
-                {/* Auth buttons can be added here later */}
             </div>
         </aside>
     )

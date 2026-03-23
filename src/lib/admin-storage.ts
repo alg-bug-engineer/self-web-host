@@ -4,6 +4,20 @@ import path from 'path'
 export const collectionsDir = path.join(process.cwd(), 'content', 'collections')
 export const mangaDataPath = path.join(collectionsDir, 'manga.json')
 export const toolsDataPath = path.join(collectionsDir, 'tools.json')
+export const settingsDataPath = path.join(collectionsDir, 'settings.json')
+
+export type SystemSettings = {
+  planetQrCode?: string
+  planetUrl?: string
+  siteSlogan?: string
+}
+
+export const getSettings = async (): Promise<SystemSettings> => {
+  return readJsonFile<SystemSettings>(settingsDataPath, {
+    siteSlogan: '芝士AI吃鱼',
+    planetUrl: '/planet',
+  })
+}
 
 export const readJsonFile = async <T>(filePath: string, fallback: T): Promise<T> => {
   try {

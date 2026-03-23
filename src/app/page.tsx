@@ -2,6 +2,7 @@ import { allPosts } from 'contentlayer/generated'
 import { compareDesc } from 'date-fns'
 import Link from 'next/link'
 import AppCard from '@/components/AppCard'
+import { getSettings } from '@/lib/admin-storage'
 
 const projectThoughts = [
     {
@@ -18,7 +19,8 @@ const projectThoughts = [
     },
 ];
 
-export default function Home() {
+export default async function Home() {
+    const settings = await getSettings();
     const posts = allPosts
         .filter((post) => post.published)
         .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
@@ -50,7 +52,7 @@ export default function Home() {
                             <div>
                                 <p className="text-xs uppercase tracking-widest text-text-tertiary">Discovery</p>
                                 <h1 className="text-3xl font-semibold text-text-primary">
-                                    芝士AI吃鱼 · 发现页
+                                    {settings.siteSlogan || '芝士AI吃鱼'} · 发现页
                                 </h1>
                                 <p className="text-sm text-text-secondary">用漫画 + 人话拆解 AI 技术</p>
                             </div>
@@ -80,14 +82,12 @@ export default function Home() {
                             <Link href="/blog" className="btn-primary px-6 py-3 text-sm">
                                 阅读最新文章
                             </Link>
-                            <a
-                                href="https://manga.ai-knowledgepoints.cn"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="btn-secondary px-6 py-3 text-sm"
+                            <Link
+                                href={settings.planetUrl || '/planet'}
+                                className="btn-secondary px-6 py-3 text-sm flex items-center gap-2"
                             >
-                                🐱 漫画知识点
-                            </a>
+                                🪐 知识星球
+                            </Link>
                         </div>
                     </div>
 

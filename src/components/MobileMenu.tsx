@@ -6,7 +6,6 @@ import IconDiscover from './icons/IconDiscover'
 import IconBrowse from './icons/IconBrowse'
 import IconAbout from './icons/IconAbout'
 import IconPortfolio from './icons/IconPortfolio'
-import IconLab from './icons/IconLab'
 import IconChat from './icons/IconChat'
 
 interface MobileMenuProps {
@@ -14,9 +13,20 @@ interface MobileMenuProps {
     setIsOpen: (isOpen: boolean) => void;
 }
 
-const collections = [
-    { label: '文章', value: 'articles', icon: '📝', href: '/blog' },
-    { label: '工具', value: 'tools', icon: '🔧', href: '/collections/tools' },
+const mainNav = [
+    { label: '发现', href: '/', icon: <IconDiscover className="w-4 h-4" /> },
+    { label: '浏览', href: '/search', icon: <IconBrowse className="w-4 h-4" /> },
+    { label: 'AI助手', href: '/chat', icon: <IconChat className="w-4 h-4" /> },
+];
+
+const collectionNav = [
+    { label: '技术专栏', href: '/blog', icon: '📝' },
+    { label: 'AI 工具箱', href: '/collections/tools', icon: '🔧' },
+];
+
+const createNav = [
+    { label: '我的产品', href: '/portfolio', icon: <IconPortfolio className="w-4 h-4" /> },
+    { label: '知识星球', href: '/planet', icon: '🪐' },
 ];
 
 export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
@@ -44,47 +54,39 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
                     <div>
                         <p className="text-xs uppercase tracking-widest text-text-tertiary px-2 mb-2">内容</p>
                         <div className="space-y-1">
-                            <Link href="/" className="nav-item" onClick={() => setIsOpen(false)}>
-                                <span className="nav-icon"><IconDiscover className="w-4 h-4" /></span>
-                                发现
-                            </Link>
-                            <Link href="/search" className="nav-item" onClick={() => setIsOpen(false)}>
-                                <span className="nav-icon"><IconBrowse className="w-4 h-4" /></span>
-                                浏览
-                            </Link>
-                            <Link href="/chat" className="nav-item" onClick={() => setIsOpen(false)}>
-                                <span className="nav-icon"><IconChat className="w-4 h-4" /></span>
-                                AI助手
-                            </Link>
-                        </div>
-                    </div>
-                    <div>
-                        <p className="text-xs uppercase tracking-widest text-text-tertiary px-2 mb-2">合集</p>
-                        <div className="space-y-1">
-                            {collections.map(collection => (
-                                <Link
-                                    key={collection.value}
-                                    href={collection.href}
-                                    className="nav-item"
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    <span className="nav-icon">{collection.icon}</span>
-                                    {collection.label}
+                            {mainNav.map((item) => (
+                                <Link key={item.href} href={item.href} className="nav-item" onClick={() => setIsOpen(false)}>
+                                    <span className="nav-icon">{item.icon}</span>
+                                    {item.label}
                                 </Link>
                             ))}
                         </div>
                     </div>
                     <div>
-                        <p className="text-xs uppercase tracking-widest text-text-tertiary px-2 mb-2">创造</p>
+                        <p className="text-xs uppercase tracking-widest text-text-tertiary px-2 mb-2">合集</p>
                         <div className="space-y-1">
-                            <Link href="/portfolio" className="nav-item" onClick={() => setIsOpen(false)}>
-                                <span className="nav-icon"><IconPortfolio className="w-4 h-4" /></span>
-                                作品集
-                            </Link>
-                            <Link href="/lab" className="nav-item" onClick={() => setIsOpen(false)}>
-                                <span className="nav-icon"><IconLab className="w-4 h-4" /></span>
-                                实验室
-                            </Link>
+                            {collectionNav.map((item) => (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className="nav-item"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    <span className="nav-icon">{item.icon}</span>
+                                    {item.label}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                    <div>
+                        <p className="text-xs uppercase tracking-widest text-text-tertiary px-2 mb-2">创造与变现</p>
+                        <div className="space-y-1">
+                            {createNav.map((item) => (
+                                <Link key={item.href} href={item.href} className="nav-item" onClick={() => setIsOpen(false)}>
+                                    <span className="nav-icon">{item.icon}</span>
+                                    {item.label}
+                                </Link>
+                            ))}
                         </div>
                     </div>
                     <div>
@@ -99,7 +101,6 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
                 </div>
                 <div className="mt-auto pt-4 border-t border-border-default flex items-center justify-between">
                     <ThemeToggle />
-                    {/* Auth buttons can go here */}
                 </div>
             </aside>
         </div>

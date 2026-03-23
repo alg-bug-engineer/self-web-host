@@ -1,7 +1,11 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import type { ToolItem } from './types'
+import PlanetBanner from '@/components/PlanetBanner'
+import ToolPluginRegistry from '@/components/tools/ToolPluginRegistry'
+import { SystemSettings } from '@/lib/admin-storage'
 
 const tagTones = ['label-blue', 'label-green', 'label-purple', 'label-orange', 'label-red']
 
@@ -10,8 +14,10 @@ type TagOption = {
   count: number
 }
 
-export default function ToolsCollectionClient({ tools }: { tools: ToolItem[] }) {
+export default function ToolsCollectionClient({ tools, settings }: { tools: ToolItem[], settings: SystemSettings }) {
+  const router = useRouter()
   const [activeTag, setActiveTag] = useState<string | null>(null)
+  const [activePluginId, setActivePluginId] = useState<string | null>(null)
 
   const tagOptions = useMemo<TagOption[]>(() => {
     const counts = tools.reduce((acc, tool) => {
@@ -38,6 +44,25 @@ export default function ToolsCollectionClient({ tools }: { tools: ToolItem[] }) 
   const topThree = filteredTools.slice(0, 3)
   const rest = filteredTools.slice(3)
   const rankOffset = topThree.length
+
+  const handleToolClick = (tool: ToolItem) => {
+    // 1. 如果是交互插件
+    if (tool.type === 'plugin' && tool.pluginId) {
+        setActivePluginId(activePluginId === tool.pluginId ? null : tool.pluginId)
+        if (activePluginId !== tool.pluginId) {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+    } 
+    // 2. 如果是外部链接或普通跳转
+    else {
+        const targetUrl = tool.isPro ? '/planet' : tool.url
+        if (targetUrl.startsWith('http')) {
+            window.open(targetUrl, '_blank', 'noopener,noreferrer')
+        } else {
+            router.push(targetUrl)
+        }
+    }
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-5">
@@ -88,6 +113,26 @@ export default function ToolsCollectionClient({ tools }: { tools: ToolItem[] }) 
       </aside>
 
       <section className="space-y-6">
+        {/* Active Plugin Area */}
+        {activePluginId && (
+            <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-bold text-text-primary flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-accent-tertiary animate-pulse"></span>
+                        交互体验中
+                    </h2>
+                    <button 
+                        onClick={() => setActivePluginId(null)}
+                        className="text-xs text-text-tertiary hover:text-accent-tertiary font-bold"
+                    >
+                        关闭插件 ✕
+                    </button>
+                </div>
+                <ToolPluginRegistry pluginId={activePluginId} />
+                <div className="h-px bg-border-default my-8"></div>
+            </div>
+        )}
+
         <div className="flex flex-wrap items-center gap-2 text-sm text-text-secondary">
           <span>{filteredTools.length} 个结果</span>
           {activeTag && <span className="text-text-tertiary">|</span>}
@@ -100,35 +145,50 @@ export default function ToolsCollectionClient({ tools }: { tools: ToolItem[] }) 
 
         {topThree.length > 0 ? (
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-            {topThree.map((tool, index) => (
-              <a
-                key={tool.id}
-                href={tool.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-bg-secondary border border-border-default rounded-2xl p-5 flex flex-col gap-4 hover:border-accent-tertiary hover:shadow-lg transition-all group"
-              >
-                <div className="flex items-center justify-between text-xs text-text-tertiary">
-                  <span className="uppercase tracking-widest">Rank #{index + 1}</span>
-                  <span className="text-base">🔧</span>
-                </div>
-                <div className="space-y-2">
-                  <h2 className="text-lg font-semibold text-text-primary group-hover:text-accent-tertiary transition-colors">
-                    {tool.name}
-                  </h2>
-                  <p className="text-sm text-text-secondary line-clamp-2">{tool.description}</p>
-                </div>
-                <div className="flex flex-wrap items-center gap-2 text-xs text-text-secondary">
-                  {(tool.tags || []).slice(0, 3).map((tag, tagIndex) => (
-                    <span key={tag} className={`label ${tagTones[tagIndex % tagTones.length]}`}>
-                      {tag}
-                    </span>
-                  ))}
-                  {tool.status && <span className="label label-gray">{tool.status}</span>}
-                </div>
-                <span className="text-xs text-accent-tertiary group-hover:underline">前往 GitHub →</span>
-              </a>
-            ))}
+            {topThree.map((tool, index) => {
+              const isPlugin = tool.type === 'plugin'
+              const CardTag = isPlugin ? 'button' : 'a'
+              const props = isPlugin 
+                ? { onClick: () => handleToolClick(tool), type: 'button' as const } 
+                : { href: tool.isPro ? '/planet' : tool.url, target: tool.isPro ? '_self' : '_blank', rel: 'noopener noreferrer' }
+
+              return (
+                <CardTag
+                  key={tool.id}
+                  {...props}
+                  className={`relative text-left bg-bg-secondary border rounded-2xl p-5 flex flex-col gap-4 hover:border-accent-tertiary hover:shadow-lg transition-all group overflow-hidden ${
+                    activePluginId === tool.pluginId ? 'border-accent-tertiary ring-2 ring-accent-tertiary/20' : 'border-border-default'
+                  }`}
+                >
+                  {tool.isPro && (
+                    <div className="absolute top-0 right-0 px-3 py-1 bg-accent-tertiary text-white text-[10px] font-bold rounded-bl-xl z-10">
+                      PRO
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between text-xs text-text-tertiary">
+                    <span className="uppercase tracking-widest">Rank #{index + 1}</span>
+                    <span className="text-base">{isPlugin ? '⚡' : (tool.isPro ? '🔒' : '🔧')}</span>
+                  </div>
+                  <div className="space-y-2">
+                    <h2 className="text-lg font-semibold text-text-primary group-hover:text-accent-tertiary transition-colors">
+                      {tool.name}
+                    </h2>
+                    <p className="text-sm text-text-secondary line-clamp-2">{tool.description}</p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-text-secondary">
+                    {(tool.tags || []).slice(0, 3).map((tag, tagIndex) => (
+                      <span key={tag} className={`label ${tagTones[tagIndex % tagTones.length]}`}>
+                        {tag}
+                      </span>
+                    ))}
+                    {tool.status && <span className="label label-gray">{tool.status}</span>}
+                  </div>
+                  <span className="text-xs text-accent-tertiary font-bold group-hover:underline">
+                      {isPlugin ? (activePluginId === tool.pluginId ? '正在运行...' : '立即试用 →') : (tool.isPro ? '点击解锁会员版 →' : '前往 GitHub →')}
+                  </span>
+                </CardTag>
+              )
+            })}
           </div>
         ) : (
           <div className="blankslate">
@@ -139,6 +199,14 @@ export default function ToolsCollectionClient({ tools }: { tools: ToolItem[] }) 
             </p>
           </div>
         )}
+
+        {/* Lead Gen Banner */}
+        <PlanetBanner 
+            title="需要更硬核的 AI 实战工具？" 
+            description="加入知识星球，获取 Pro 版工具完整源码、配套教程，以及作者 1对1 部署支持。" 
+            planetUrl={settings.planetUrl}
+            planetQrCode={settings.planetQrCode}
+        />
 
         {rest.length > 0 && (
           <div className="bg-bg-secondary border border-border-default rounded-2xl p-6">
@@ -167,10 +235,15 @@ export default function ToolsCollectionClient({ tools }: { tools: ToolItem[] }) 
                       <td className="py-3 pr-4">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-lg bg-bg-tertiary border border-border-default flex items-center justify-center">
-                            🔧
+                            {tool.type === 'plugin' ? '⚡' : (tool.isPro ? '🔒' : '🔧')}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-medium text-text-primary truncate">{tool.name}</p>
+                            <p className="font-medium text-text-primary truncate flex items-center gap-2">
+                                {tool.name}
+                                {tool.isPro && (
+                                    <span className="px-1.5 py-0.5 bg-accent-tertiary/10 text-accent-tertiary text-[10px] font-bold rounded">PRO</span>
+                                )}
+                            </p>
                             <p className="text-xs text-text-secondary truncate">{tool.description}</p>
                           </div>
                         </div>
@@ -184,14 +257,12 @@ export default function ToolsCollectionClient({ tools }: { tools: ToolItem[] }) 
                       </td>
                       <td className="py-3 pr-4 text-text-secondary">{tool.status || 'Active'}</td>
                       <td className="py-3">
-                        <a
-                          href={tool.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-accent-tertiary"
+                        <button
+                          onClick={() => handleToolClick(tool)}
+                          className="text-xs text-accent-tertiary font-bold"
                         >
-                          GitHub →
-                        </a>
+                          {tool.type === 'plugin' ? (activePluginId === tool.pluginId ? '运行中' : '试用') : (tool.isPro ? '解锁' : '详情')}
+                        </button>
                       </td>
                     </tr>
                   ))}

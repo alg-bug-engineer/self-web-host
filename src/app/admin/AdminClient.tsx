@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 const defaultPostContent = `## 新文章\n\n用人话写清楚一个 AI 概念。\n\n<InfoCard type=\"robot\" title=\"核心观点\">\n  - 这里写要点\n</InfoCard>\n`
@@ -29,23 +29,36 @@ export default function AdminClient({ isAuthed }: AdminClientProps) {
   })
   const [postStatus, setPostStatus] = useState('')
 
-  const [mangaForm, setMangaForm] = useState({
-    title: '',
-    description: '',
-    date: new Date().toISOString().slice(0, 10),
-    mood: '',
-  })
-  const [mangaFile, setMangaFile] = useState<File | null>(null)
-  const [mangaStatus, setMangaStatus] = useState('')
-
   const [toolForm, setToolForm] = useState({
     name: '',
     description: '',
     url: '',
     tags: '',
     status: 'Active',
+    isPro: false,
+    type: 'link',
+    pluginId: '',
   })
   const [toolStatus, setToolStatus] = useState('')
+
+  const [settingsForm, setSettingsForm] = useState({
+    planetQrCode: '',
+    planetUrl: '',
+    siteSlogan: '芝士AI吃鱼',
+  })
+  const [settingsStatus, setSettingsStatus] = useState('')
+
+  useEffect(() => {
+    if (isAuthed) {
+      fetch('/api/admin/settings')
+        .then(res => res.json())
+        .then(data => {
+          if (data.ok && data.settings) {
+            setSettingsForm(prev => ({ ...prev, ...data.settings }))
+          }
+        })
+    }
+  }, [isAuthed])
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -98,34 +111,6 @@ export default function AdminClient({ isAuthed }: AdminClientProps) {
     if (autoPublish) await triggerPublish()
   }
 
-  const handleMangaSubmit = async (event: React.FormEvent) => {
-    event.preventDefault()
-    setMangaStatus('提交中...')
-    if (!mangaFile) {
-      setMangaStatus('请先选择图片')
-      return
-    }
-    const formData = new FormData()
-    formData.append('title', mangaForm.title)
-    formData.append('description', mangaForm.description)
-    formData.append('date', mangaForm.date)
-    formData.append('mood', mangaForm.mood)
-    formData.append('image', mangaFile)
-    const response = await fetch('/api/admin/manga', {
-      method: 'POST',
-      body: formData,
-    })
-    if (!response.ok) {
-      const data = await response.json().catch(() => ({}))
-      setMangaStatus(data.message || '提交失败')
-      return
-    }
-    setMangaStatus('漫画已保存')
-    setMangaForm((prev) => ({ ...prev, title: '', description: '', mood: '' }))
-    setMangaFile(null)
-    if (autoPublish) await triggerPublish()
-  }
-
   const handleToolSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     setToolStatus('提交中...')
@@ -140,7 +125,32 @@ export default function AdminClient({ isAuthed }: AdminClientProps) {
       return
     }
     setToolStatus('工具已保存')
-    setToolForm((prev) => ({ ...prev, name: '', description: '', url: '', tags: '' }))
+    setToolForm({
+      name: '',
+      description: '',
+      url: '',
+      tags: '',
+      status: 'Active',
+      isPro: false,
+      type: 'link',
+      pluginId: '',
+    })
+    if (autoPublish) await triggerPublish()
+  }
+
+  const handleSettingsSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
+    setSettingsStatus('保存中...')
+    const response = await fetch('/api/admin/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(settingsForm),
+    })
+    if (!response.ok) {
+      setSettingsStatus('保存失败')
+      return
+    }
+    setSettingsStatus('配置已保存')
     if (autoPublish) await triggerPublish()
   }
 
@@ -173,11 +183,11 @@ export default function AdminClient({ isAuthed }: AdminClientProps) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-12">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-text-primary">内容管理后台</h1>
-          <p className="text-sm text-text-secondary">写文章、上传漫画、提交工具，并触发站点更新。</p>
+          <p className="text-sm text-text-secondary">管理文章、工具及全站系统配置。</p>
         </div>
         <div className="flex items-center gap-3">
           <label className="flex items-center gap-2 text-sm text-text-secondary">
@@ -200,6 +210,7 @@ export default function AdminClient({ isAuthed }: AdminClientProps) {
       {publishStatus && <p className="text-xs text-text-tertiary">{publishStatus}</p>}
 
       <section className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        {/* Post Form */}
         <form className="bg-bg-secondary border border-border-default rounded-2xl p-6 space-y-4" onSubmit={handlePostSubmit}>
           <div>
             <h2 className="text-lg font-semibold text-text-primary">发布文章</h2>
@@ -262,74 +273,86 @@ export default function AdminClient({ isAuthed }: AdminClientProps) {
         </form>
 
         <div className="space-y-6">
-          <form className="bg-bg-secondary border border-border-default rounded-2xl p-6 space-y-4" onSubmit={handleMangaSubmit}>
+          {/* System Settings Form */}
+          <form className="bg-bg-secondary border border-border-default rounded-2xl p-6 space-y-4" onSubmit={handleSettingsSubmit}>
             <div>
-              <h2 className="text-lg font-semibold text-text-primary">发布漫画</h2>
-              <p className="text-xs text-text-tertiary">上传图片并写入合集数据。</p>
+              <h2 className="text-lg font-semibold text-text-primary">系统配置</h2>
+              <p className="text-xs text-text-tertiary">配置知识星球引流链接与全站 Slogan。</p>
             </div>
-            <input
-              value={mangaForm.title}
-              onChange={(event) => setMangaForm({ ...mangaForm, title: event.target.value })}
-              placeholder="标题"
-              className="w-full px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
-            />
-            <input
-              value={mangaForm.description}
-              onChange={(event) => setMangaForm({ ...mangaForm, description: event.target.value })}
-              placeholder="描述"
-              className="w-full px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <input
-                type="date"
-                value={mangaForm.date}
-                onChange={(event) => setMangaForm({ ...mangaForm, date: event.target.value })}
-                className="w-full px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
-              />
-              <input
-                value={mangaForm.mood}
-                onChange={(event) => setMangaForm({ ...mangaForm, mood: event.target.value })}
-                placeholder="心情标签"
-                className="w-full px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
-              />
+            <div className="grid grid-cols-1 gap-3">
+                <input
+                    value={settingsForm.siteSlogan}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, siteSlogan: e.target.value })}
+                    placeholder="站点 Slogan"
+                    className="w-full px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
+                />
+                <input
+                    value={settingsForm.planetUrl}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, planetUrl: e.target.value })}
+                    placeholder="知识星球跳转链接"
+                    className="w-full px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
+                />
+                <input
+                    value={settingsForm.planetQrCode}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, planetQrCode: e.target.value })}
+                    placeholder="星球二维码图片 URL"
+                    className="w-full px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
+                />
             </div>
-            <input
-              type="file"
-              accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
-              onChange={(event) => setMangaFile(event.target.files?.[0] || null)}
-              className="w-full text-sm text-text-secondary"
-            />
             <div className="flex items-center gap-3">
               <button type="submit" className="btn-primary px-4 py-2 text-sm">
-                保存漫画
+                保存配置
               </button>
-              {mangaStatus && <span className="text-xs text-text-tertiary">{mangaStatus}</span>}
+              {settingsStatus && <span className="text-xs text-text-tertiary">{settingsStatus}</span>}
             </div>
           </form>
 
+          {/* Tool Form */}
           <form className="bg-bg-secondary border border-border-default rounded-2xl p-6 space-y-4" onSubmit={handleToolSubmit}>
             <div>
               <h2 className="text-lg font-semibold text-text-primary">发布工具</h2>
-              <p className="text-xs text-text-tertiary">提交 GitHub 工具链接。</p>
+              <p className="text-xs text-text-tertiary">提交新的 GitHub 工具或交互式插件。</p>
             </div>
-            <input
-              value={toolForm.name}
-              onChange={(event) => setToolForm({ ...toolForm, name: event.target.value })}
-              placeholder="工具名称"
-              className="w-full px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <input
+                value={toolForm.name}
+                onChange={(event) => setToolForm({ ...toolForm, name: event.target.value })}
+                placeholder="工具名称"
+                className="w-full px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
+                />
+                <select
+                    value={toolForm.type}
+                    onChange={(event) => setToolForm({ ...toolForm, type: event.target.value as any })}
+                    className="w-full px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
+                >
+                    <option value="link">外部链接</option>
+                    <option value="plugin">交互插件</option>
+                </select>
+            </div>
+            
             <input
               value={toolForm.description}
               onChange={(event) => setToolForm({ ...toolForm, description: event.target.value })}
               placeholder="工具描述"
               className="w-full px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
             />
-            <input
-              value={toolForm.url}
-              onChange={(event) => setToolForm({ ...toolForm, url: event.target.value })}
-              placeholder="GitHub 链接"
-              className="w-full px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
-            />
+            
+            {toolForm.type === 'link' ? (
+                <input
+                    value={toolForm.url}
+                    onChange={(event) => setToolForm({ ...toolForm, url: event.target.value })}
+                    placeholder="GitHub 链接"
+                    className="w-full px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
+                />
+            ) : (
+                <input
+                    value={toolForm.pluginId}
+                    onChange={(event) => setToolForm({ ...toolForm, pluginId: event.target.value })}
+                    placeholder="插件 ID (如 prompt-generator)"
+                    className="w-full px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
+                />
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <input
                 value={toolForm.tags}
@@ -337,15 +360,27 @@ export default function AdminClient({ isAuthed }: AdminClientProps) {
                 placeholder="标签（逗号分隔）"
                 className="w-full px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
               />
-              <select
-                value={toolForm.status}
-                onChange={(event) => setToolForm({ ...toolForm, status: event.target.value })}
-                className="w-full px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
-              >
-                <option value="Active">Active</option>
-                <option value="Beta">Beta</option>
-                <option value="Draft">Draft</option>
-              </select>
+              <div className="flex items-center gap-4 px-3">
+                <select
+                    value={toolForm.status}
+                    onChange={(event) => setToolForm({ ...toolForm, status: event.target.value })}
+                    className="flex-1 px-3 py-2 text-sm bg-bg-tertiary text-text-primary border border-border-default rounded-md"
+                >
+                    <option value="Active">Active</option>
+                    <option value="Beta">Beta</option>
+                    <option value="Hot">Hot</option>
+                    <option value="Pro">Pro</option>
+                </select>
+                <label className="flex items-center gap-2 text-sm text-text-secondary cursor-pointer">
+                    <input
+                        type="checkbox"
+                        checked={toolForm.isPro}
+                        onChange={(e) => setToolForm({ ...toolForm, isPro: e.target.checked })}
+                        className="h-4 w-4 rounded border-border-default bg-bg-tertiary text-accent-primary"
+                    />
+                    会员专属
+                </label>
+              </div>
             </div>
             <div className="flex items-center gap-3">
               <button type="submit" className="btn-primary px-4 py-2 text-sm">

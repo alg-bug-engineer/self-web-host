@@ -9,6 +9,9 @@ type ToolItem = {
   url: string
   tags: string[]
   status?: string
+  isPro?: boolean
+  type?: 'link' | 'plugin'
+  pluginId?: string
 }
 
 export async function POST(request: NextRequest) {
@@ -22,6 +25,9 @@ export async function POST(request: NextRequest) {
   const description = String(body.description || '').trim()
   const url = String(body.url || '').trim()
   const status = String(body.status || '').trim()
+  const isPro = Boolean(body.isPro)
+  const type = (body.type === 'plugin' ? 'plugin' : 'link') as 'link' | 'plugin'
+  const pluginId = String(body.pluginId || '').trim()
   const tags = Array.isArray(body.tags)
     ? body.tags.filter(Boolean)
     : String(body.tags || '')
@@ -40,6 +46,9 @@ export async function POST(request: NextRequest) {
     url,
     tags,
     status: status || 'Active',
+    isPro,
+    type,
+    pluginId: type === 'plugin' ? pluginId : undefined,
   }
 
   const list = await readJsonFile<ToolItem[]>(toolsDataPath, [])

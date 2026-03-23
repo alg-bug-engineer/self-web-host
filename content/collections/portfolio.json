@@ -1,60 +1,51 @@
 [
   {
-    "title": "把天书当漫画看-芝士AI吃鱼-漫画网站",
-    "type": "website",
-    "date": "2025-11-16",
-    "description": "通过生动有趣的漫画形式，轻松掌握人工智能前沿技术",
-    "image": "/images/portfolio/self-web-host-cover.png",
-    "link": "https://manga.ai-knowledgepoints.cn/",
-    "github": "https://github.com/alg-bug-engineer/manga-reader",
-    "tags": ["AI科普", "芝士AI吃鱼", "漫画", "大模型", "开源"]
-  },
-  {
-    "title": "你只管输入，AI负责整理-芝士AI吃鱼-工作效率笔记工具",
+    "title": "CogniFlow: AI 智能工作流与效率笔记平台",
     "type": "website",
     "date": "2025-10-11",
-    "description": "AI智能大脑，效率笔记，你负责输入，AI负责整理输出",
-    "image": "images/portfolio/cogniflow.png",
+    "description": "企业级 AI 知识管理方案，支持非结构化数据自动提取与结构化输出。集成多模型 API，实现从碎片化输入到系统化知识的自动化流转。已在 GitHub 获得高星关注。",
+    "image": "/images/portfolio/cogniflow.png",
     "link": "https://ci.ai-knowledgepoints.cn/",
     "github": "https://github.com/alg-bug-engineer/cogniflow",
-    "tags": ["CogniFlow", "芝士AI吃鱼", "效率", "工作流", "笔记", "大模型", "开源"]
+    "tags": ["企业级RAG", "工作流编排", "大模型落地", "Next.js", "Python"]
   },
   {
-    "title": "基于 Agent Skills 的一键部署 GitHub 项目-芝士AI吃鱼-Agent Skills",
-    "type": "article",
-    "date": "2026-2-5",
-    "description": "妈妈再也不用担心我部署 GitHub 啦",
-    "image": "images/portfolio/auto-ops.png",
+    "title": "Auto-Ops: 基于 Agent Skills 的自动化部署引擎",
+    "type": "opensource",
+    "date": "2026-02-05",
+    "description": "解决复杂 GitHub 项目“一键部署”难题。通过 Agent 自主识别环境需求并执行脚本，大幅降低了开发者试错成本。这是 Agent 在运维领域深度结合的典型案例。",
+    "image": "/images/portfolio/auto-ops.png",
     "link": "https://mp.weixin.qq.com/s/-t1N3dw1-T73R3Xzv9Awug",
     "github": "https://github.com/alg-bug-engineer/auto-ops",
-    "tags": ["GitHub", "芝士AI吃鱼", "自动化工具", "AgentSkills", "Skills", "大模型", "开源"]
+    "tags": ["AI运维", "AgentSkills", "自动化部署", "Docker"]
   },
   {
-    "title": "公众号文章合集-芝士AI吃鱼-合集",
-    "type": "article",
-    "date": "2024-1-1",
-    "description": "大模型相关的内容，包括 RAG、Agent、大模型、提示工程等，两年的时间，撰写相关的技术文档 300 余篇，总字数 120 万字。",
+    "title": "《RAG 极简入门》: 深度解析检索增强生成技术",
+    "type": "book",
+    "date": "2025-05-01",
+    "description": "由人民邮电出版社出版，系统化梳理 RAG 架构的理论边界与工程实践。为国内首批专注 RAG 实战的硬核技术丛书，获得多位业内专家联袂推荐。",
+    "image": "/images/portfolio/rag.png",
+    "link": "https://www.ptpress.com.cn/",
+    "tags": ["技术出版", "RAG架构", "实战指南"]
+  },
+  {
+    "title": "Cheesy-AI-Fish: 120万字 AI 核心技术沉淀",
+    "type": "opensource",
+    "date": "2024-01-01",
+    "description": "历时两年，涵盖 300+ 篇深度技术文档。从 Transformer 源码分析到 Agent 复杂编排，构建了完整的 AI 进阶知识图谱，全网阅读量突破 100w+。",
     "image": "/images/portfolio/self-web-host-cover.png",
     "link": "https://github.com/alg-bug-engineer/Cheesy-AI-Fish",
     "github": "https://github.com/alg-bug-engineer/Cheesy-AI-Fish",
-    "tags": ["合集", "芝士AI吃鱼", "大模型", "RAG", "智能体", "提示工程", "大模型", "开源"]
+    "tags": ["知识库", "技术专栏", "大模型进阶"]
   },
   {
-    "title": "RAG极简入门-芝士AI吃鱼-出版",
-    "type": "book",
-    "date": "2025-5-1",
-    "description": "本书全面解析了RAG 技术，涵盖从理论基础到实战应用的各个方面",
-    "image": "/images/portfolio/rag.png",
-    "link": "https://www.ptpress.com.cn/publishing/book/e70d55be-30a2-43b2-bb70-f2eb5ab65d25",
-    "tags": ["出版", "芝士AI吃鱼", "大模型", "RAG", "书籍", "大模型"]
-  },
-  {
-    "title": "这就是GEO-芝士AI吃鱼-出版",
-    "type": "book",
-    "date": "2026-2-1",
-    "description": "GEO 技术，涵盖从理论基础到实战应用的各个方面",
-    "image": "/images/portfolio/geo.png",
-    "link": "https://www.ptpress.com.cn/publishing/book/e70d55be-30a2-43b2-bb70-f2eb5ab65d25",
-    "tags": ["出版", "芝士AI吃鱼", "大模型", "GEO", "书籍", "大模型"]
+    "title": "天书漫画: AI 技术科普平台 (商业原型)",
+    "type": "website",
+    "date": "2025-11-16",
+    "description": "采用 Next.js 构建的高性能内容平台。通过视觉化叙事降低 AI 学习门槛，集成了动态渲染、内容分发流水线等技术细节，是技术与创意结合的尝试。",
+    "image": "/images/portfolio/self-web-host-cover.png",
+    "link": "https://manga.ai-knowledgepoints.cn/",
+    "github": "https://github.com/alg-bug-engineer/manga-reader",
+    "tags": ["Next.js", "视觉叙事", "科普平台"]
   }
 ]
