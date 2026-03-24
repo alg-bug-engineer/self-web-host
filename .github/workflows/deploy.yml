@@ -36,5 +36,5 @@ jobs:
 
             # 3. 重启 PM2
             # 建议使用项目具体的名称，如果不确定可以先用 all
-            pm2 restart all || pm2 start npm --name "web-host" -- start
+            pm2 restart ai-knowledgepoints
 
