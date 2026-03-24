@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import WechatCard from '@/components/WechatCard'
 
 export const metadata = {
   title: '关于我 | 芝士AI吃鱼',
@@ -246,6 +247,10 @@ export default function AboutPage() {
             </a>
             三种形式，帮助更多人理解和使用 AI 技术。
           </p>
+
+          <div className="pt-4">
+            <WechatCard />
+          </div>
         </div>
       </section>
 

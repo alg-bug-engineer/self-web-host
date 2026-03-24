@@ -5,6 +5,7 @@ import { mdxComponents } from '@/components/mdx'
 import Link from 'next/link'
 import Image from 'next/image'
 import PlanetBanner from '@/components/PlanetBanner'
+import WechatCard from '@/components/WechatCard'
 import { getSettings } from '@/lib/admin-storage'
 
 interface PageProps {
@@ -144,13 +145,18 @@ export default async function BlogPostPage({ params }: PageProps) {
         </div>
 
         {/* Lead Gen Banner */}
-        <div className="mb-16">
+        <div className="mb-8">
           <PlanetBanner 
             title="想要深入学习 AI 实战吗？" 
             description="加入知识星球，你可以获得本文配套的完整源码、进阶架构图，以及专属的技术答疑服务。" 
             planetUrl={settings.planetUrl}
             planetQrCode={settings.planetQrCode}
           />
+        </div>
+
+        {/* Wechat Subscription Card */}
+        <div className="mb-16">
+          <WechatCard />
         </div>
 
         {/* Footer */}
