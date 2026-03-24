@@ -8,30 +8,33 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-id: '20'
-          cache: 'npm'
-
-      - name: Install dependencies and Build
-        run: |
-          npm install
-          npm run build
-
-      - name: Deploy to ECS via SSH
-        uses: appleboy/ssh-action@master
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.ECS_HOST }}
-          username: ${{ secrets.ECS_USERNAME }}
+          username: ${{ secrets.ECS_USER }}
           key: ${{ secrets.ECS_SSH_KEY }}
+          # 注意：请确保下方 cd 的路径与您 ECS 上的实际项目路径一致
           script: |
-            cd /var/www/self-web-host
+            cd /Users/zhangqilai/project/self-web-host
+            
+            # 1. 拉取代码
             git pull origin main
-            npm install --production
+            
+            # 2. 安装依赖
+            npm install
+            
+            # 3. 清理构建缓存（防止 Contentlayer 索引失效导致的 404）
+            rm -rf .next .contentlayer
+            
+            # 4. 执行构建
             npm run build
-            pm2 reload ecosystem.config.js || pm2 start ecosystem.config.js
+            
+            # 5. 重启服务
+            # 如果您使用了 ecosystem.config.js，也可以使用 pm2 reload ecosystem.config.js
+            pm2 restart ai-knowledgepoints
