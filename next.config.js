@@ -9,6 +9,7 @@ const nextConfig = {
     'http://www.ai-knowledgepoints.cn',
   ],
   output: 'standalone',
+  optimizeFonts: false,
   images: {
     remotePatterns: [
       {

@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { getSettings } from '@/lib/admin-storage';
 
 export async function generateMetadata() {
@@ -101,7 +102,7 @@ export default async function PlanetPage() {
         </div>
         <div className="inline-block p-4 bg-white rounded-2xl shadow-xl">
           {settings.planetQrCode ? (
-            <img src={settings.planetQrCode} alt="星球二维码" className="w-48 h-48 object-contain" />
+            <Image src={settings.planetQrCode} alt="星球二维码" width={192} height={192} className="object-contain" />
           ) : (
             <div className="w-48 h-48 bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-300 text-gray-400">
               <div className="text-center">

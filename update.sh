@@ -1,0 +1,17 @@
+# 确保进入正确的目录
+cd /root/self-web-host
+
+# 1. 强制拉取最新代码（防止冲突）
+git fetch --all
+git reset --hard origin/main
+
+# 2. 安装依赖并构建
+# 使用 --frozen-lockfile 确保环境一致，如果是 npm 则用 npm ci 或 npm install
+npm install
+rm -rf .next .contentlayer
+npm run build
+
+# 3. 重启 PM2
+# 建议使用项目具体的名称，如果不确定可以先用 all
+pm2 restart ai-knowledgepoints
+

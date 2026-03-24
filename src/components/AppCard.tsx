@@ -1,8 +1,10 @@
 "use client";
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { getLanguageColor, formatNumber } from '@/lib/utils';
 import { Post } from 'contentlayer/generated';
+import { useState } from 'react';
 
 type Repository = {
     id: string;
@@ -51,25 +53,25 @@ const timeAgo = (date: string | undefined) => {
 
 export default function AppCard({ repository, variant = 'grid' }: AppCardProps) {
     const isPost = '_id' in repository;
+    const [imgSrc, setImgSrc] = useState(isPost ? '' : (repository as any).avatar_url || `https://github.com/${(repository as any).owner}.png`);
 
     const name = isPost ? repository.title : repository.name;
     const description = isPost ? repository.description : repository.description;
-    const url = isPost ? repository.url : `/repo/${repository.owner}/${repository.name}`;
-    const owner = isPost ? repository.author : repository.owner;
-    const avatarUrl = isPost ? undefined : repository.avatar_url || `https://github.com/${repository.owner}.png`;
-    const language = isPost ? "Markdown" : repository.language;
-    const stars = isPost ? 0 : repository.stars;
-    const topics = isPost ? repository.tags : repository.topics;
-    const latest_version = isPost ? undefined : repository.latest_version;
-    const lastUpdated = timeAgo(isPost ? repository.date : (repository.latest_release_date || repository.github_updated_at));
-    const fullName = isPost ? `By ${repository.author}` : repository.full_name;
+    const url = isPost ? repository.url : `/repo/${(repository as any).owner}/${(repository as any).name}`;
+    const owner = isPost ? repository.author : (repository as any).owner;
+    const language = isPost ? "Markdown" : (repository as any).language;
+    const stars = isPost ? 0 : (repository as any).stars;
+    const topics = isPost ? repository.tags : (repository as any).topics;
+    const latest_version = isPost ? undefined : (repository as any).latest_version;
+    const lastUpdated = timeAgo(isPost ? repository.date : ((repository as any).latest_release_date || (repository as any).github_updated_at));
+    const fullName = isPost ? `By ${repository.author}` : (repository as any).full_name;
 
     const postIcon = isPost
         ? ((repository as Post).icon === 'cat' ? '🐱' : '🤖')
         : null;
 
-    const handleAvatarError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
-        event.currentTarget.src = 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png';
+    const handleAvatarError = () => {
+        setImgSrc('https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png');
     };
 
     return (
@@ -83,12 +85,15 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
                             {postIcon}
                         </div>
                     ) : (
-                        <img
-                            src={avatarUrl}
-                            alt={owner}
-                            className="w-12 h-12 rounded-xl flex-shrink-0 bg-bg-tertiary object-cover"
-                            onError={handleAvatarError}
-                        />
+                        <div className="relative w-12 h-12 flex-shrink-0 overflow-hidden rounded-xl">
+                            <Image
+                                src={imgSrc}
+                                alt={owner}
+                                fill
+                                className="object-cover"
+                                onError={handleAvatarError}
+                            />
+                        </div>
                     )}
                     <div className="min-w-0 flex-1">
                         <div className="flex items-start justify-between gap-2">

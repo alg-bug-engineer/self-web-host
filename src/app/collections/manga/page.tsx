@@ -1,5 +1,6 @@
 import fs from 'fs/promises'
 import { mangaDataPath } from '@/lib/admin-storage'
+import Image from 'next/image'
 
 export const metadata = {
   title: '漫画合集 | 芝士AI吃鱼',
@@ -39,12 +40,13 @@ export default async function MangaCollectionPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {mangaGallery.map((item) => (
             <div key={item.id} className="bg-bg-secondary border border-border-default rounded-2xl overflow-hidden">
-              <div className="aspect-[4/3] bg-bg-tertiary">
-                <img
+              <div className="aspect-[4/3] bg-bg-tertiary relative">
+                <Image
                   src={item.image}
                   alt={item.title}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               </div>
               <div className="p-4 space-y-3">

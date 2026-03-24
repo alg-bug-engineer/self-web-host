@@ -1,9 +1,17 @@
 import type { Metadata } from 'next'
+import { JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import LayoutWrapper from '@/components/LayoutWrapper'
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'AI 知识点 | 芝士AI吃鱼 - 把 AI 天书，讲成人话',
@@ -27,12 +35,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-      </head>
-      <body className="min-h-screen antialiased bg-bg-primary text-text-primary">
+      <body className={`${jetbrainsMono.variable} min-h-screen antialiased bg-bg-primary text-text-primary`}>
         <ThemeProvider>
           <GoogleAnalytics />
           <LayoutWrapper>
