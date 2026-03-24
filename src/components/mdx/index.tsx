@@ -249,12 +249,12 @@ export const mdxComponents: MDXComponents = {
   ),
 
   img: (props: ComponentPropsWithoutRef<'img'>) => (
-    <figure className="my-8">
+    <figure className="my-8 flex flex-col items-center">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         {...props}
         alt={props.alt || ''}
-        className="rounded-xl w-full"
+        className="rounded-xl max-w-full h-auto"
       />
       {props.alt && (
         <figcaption className="mt-2 text-center text-sm text-text-tertiary">
