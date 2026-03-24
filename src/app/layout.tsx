@@ -1,17 +1,13 @@
 import type { Metadata } from 'next'
-import { JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import LayoutWrapper from '@/components/LayoutWrapper'
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-})
+// 移除 next/font/google，避免构建时由于无法访问 Google Fonts 导致的超时报错
+// 采用系统默认的等宽字体集
+const monoFontFamily = '"JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
 
 export const metadata: Metadata = {
   title: 'AI 知识点 | 芝士AI吃鱼 - 把 AI 天书，讲成人话',
@@ -35,7 +31,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN" suppressHydrationWarning>
-      <body className={`${jetbrainsMono.variable} min-h-screen antialiased bg-bg-primary text-text-primary`}>
+      <body 
+        className="min-h-screen antialiased bg-bg-primary text-text-primary"
+        style={{ '--font-jetbrains-mono': monoFontFamily } as React.CSSProperties}
+      >
         <ThemeProvider>
           <GoogleAnalytics />
           <LayoutWrapper>
