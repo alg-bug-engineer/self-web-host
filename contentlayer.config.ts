@@ -38,6 +38,11 @@ export const Post = defineDocumentType(() => ({
       type: 'boolean',
       default: true,
     },
+    category: {
+      type: 'enum',
+      options: ['tech', 'life'],
+      default: 'tech',
+    },
     icon: {
       type: 'enum',
       options: ['cat', 'robot'],

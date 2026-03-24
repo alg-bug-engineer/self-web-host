@@ -6,7 +6,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import PlanetBanner from '@/components/PlanetBanner'
 import WechatCard from '@/components/WechatCard'
+import AppCard from '@/components/AppCard'
 import { getSettings } from '@/lib/admin-storage'
+import { compareDesc } from 'date-fns'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -53,6 +55,25 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound()
   }
 
+  // Get sorted posts for navigation
+  const sortedPosts = allPosts
+    .filter((p) => p.published)
+    .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
+  
+  const currentIndex = sortedPosts.findIndex((p) => p.slug === slug)
+  const nextPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null
+  const prevPost = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null
+
+  // Get recommended posts based on common tags
+  const recommendedPosts = sortedPosts
+    .filter((p) => p.slug !== slug)
+    .map((p) => {
+      const commonTags = p.tags?.filter((tag) => post.tags?.includes(tag)).length || 0
+      return { ...p, score: commonTags }
+    })
+    .sort((a, b) => b.score - a.score || compareDesc(new Date(a.date), new Date(b.date)))
+    .slice(0, 2)
+
   // JSON-LD structured data for Google
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -96,15 +117,21 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Header */}
         <header className="mb-10">
-          {/* Tags */}
-          <div className="flex flex-wrap gap-2 mb-4">
+          {/* Category & Tags */}
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+            <span className="px-3 py-1 text-sm font-bold rounded-lg bg-bg-tertiary text-text-primary border border-border-default flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-accent-primary animate-pulse"></span>
+              {post.category === 'tech' ? '技术科普' : '社科感慨'}
+            </span>
+            <div className="h-4 w-[1px] bg-border-default mx-1"></div>
             {post.tags?.map((tag) => (
-              <span
+              <Link
                 key={tag}
-                className="px-3 py-1 text-sm font-medium rounded-full bg-accent-primary/10 text-accent-primary"
+                href={`/blog?tag=${encodeURIComponent(tag)}`}
+                className="px-3 py-1 text-sm font-medium rounded-full bg-accent-primary/10 text-accent-primary hover:bg-accent-primary hover:text-text-on-emphasis transition-all"
               >
-                {tag}
-              </span>
+                #{tag}
+              </Link>
             ))}
           </div>
 
@@ -158,6 +185,44 @@ export default async function BlogPostPage({ params }: PageProps) {
         <div className="mb-16">
           <WechatCard />
         </div>
+
+        {/* Post Navigation */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-12 border-t border-border-default pt-8">
+          {prevPost ? (
+            <Link href={prevPost.url} className="group p-4 rounded-2xl border border-border-default hover:border-accent-primary/50 transition-colors">
+              <p className="text-sm text-text-tertiary mb-1 flex items-center gap-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                上一篇
+              </p>
+              <p className="font-medium text-text-primary group-hover:text-accent-primary transition-colors line-clamp-1">{prevPost.title}</p>
+            </Link>
+          ) : <div />}
+          {nextPost ? (
+            <Link href={nextPost.url} className="group p-4 rounded-2xl border border-border-default hover:border-accent-primary/50 transition-colors text-right">
+              <p className="text-sm text-text-tertiary mb-1 flex items-center justify-end gap-1">
+                下一篇
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </p>
+              <p className="font-medium text-text-primary group-hover:text-accent-primary transition-colors line-clamp-1">{nextPost.title}</p>
+            </Link>
+          ) : <div />}
+        </div>
+
+        {/* Recommended Posts */}
+        {recommendedPosts.length > 0 && (
+          <div className="my-16">
+            <h2 className="text-2xl font-bold text-text-primary mb-8">推荐阅读</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {recommendedPosts.map((p) => (
+                <AppCard key={p.slug} repository={p} />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Footer */}
         <footer className="mt-16 pt-8 border-t border-border-default">
