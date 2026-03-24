@@ -1,43 +1,38 @@
 [
   {
     "id": "tool-1770097007291",
-    "name": "cuTile",
-    "description": "英伟达的新的编程模型：cuTile",
-    "url": "https://github.com/NVIDIA/cutile-python",
+    "name": "PPT 模板网站",
+    "description": "PPT 模板网站，涵盖课题申请、答辩、AI、人工智能等免费或付费PPT 模板",
+    "url": "https://ppt.ai-knowledgepoints.cn/",
     "tags": [
-      "cuTile"
+      "ppt模板",
+      "PPT",
+      "人工智能"
     ],
     "status": "Active"
   },
   {
     "id": "tool-1770096778398",
-    "name": "OpenViking",
-    "description": "OpenViking 是一个开源的、专为 AI Agent 设计的上下文数据库。",
-    "url": "https://github.com/volcengine/OpenViking",
+    "name": "Cogniflow知识流笔记",
+    "description": "开源的基于大模型的知识流笔记，你只管输入，大模型负责处理和记录",
+    "url": "https://ci.ai-knowledgepoints.cn/",
     "tags": [
-      "OpenViking",
-      "上下文数据库"
+      "大模型",
+      "智能笔记",
+      "开源"
     ],
     "status": "Active"
   },
   {
     "id": "tool-1770083369682",
-    "name": "Gtihub 商店",
-    "description": "搜索可下载的仓库",
-    "url": "https://github.com/rainxchzed/Github-Store",
+    "name": "AI 漫画网站",
+    "description": "基于 AI，生成的漫画网站，将人工智能、大模型、AI 等领域知识以漫画形式讲解",
+    "url": "https://manga.ai-knowledgepoints.cn/",
     "tags": [
-      "商店，release"
-    ],
-    "status": "Active"
-  },
-  {
-    "id": "tool-1770083193656",
-    "name": "Gemini 去水印工具",
-    "description": "Gemini Watermark Tool",
-    "url": "https://github.com/allenk/GeminiWatermarkTool",
-    "tags": [
-      "Gemini",
-      "水印"
+      "漫画",
+      "AI",
+      "大模型",
+      "人工智能"
     ],
     "status": "Active"
   }
