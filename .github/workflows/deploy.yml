@@ -22,7 +22,7 @@ jobs:
           # 注意：请确保下方 cd 的路径与您 ECS 上的实际项目路径一致
           script: |
             # 确保进入正确的目录
-            cd /Users/zhangqilai/project/self-web-host
+            cd /root/self-web-host
 
             # 1. 强制拉取最新代码（防止冲突）
             git fetch --all
