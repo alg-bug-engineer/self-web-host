@@ -61,7 +61,7 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
     const owner = isPost ? repository.author : (repository as any).owner;
     const language = isPost ? "Markdown" : (repository as any).language;
     const stars = isPost ? 0 : (repository as any).stars;
-    const topics = isPost ? repository.tags : (repository as any).topics;
+    const topics: string[] = (isPost ? repository.tags : (repository as any).topics) || [];
     const latest_version = isPost ? undefined : (repository as any).latest_version;
     const lastUpdated = timeAgo(isPost ? repository.date : ((repository as any).latest_release_date || (repository as any).github_updated_at));
     const fullName = isPost ? `By ${repository.author}` : (repository as any).full_name;
@@ -129,7 +129,7 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
                             {language}
                         </span>
                     )}
-                    {topics && topics.slice(0, 3).map((topic) => (
+                    {topics && topics.slice(0, 3).map((topic: string) => (
                         <span
                             key={topic}
                             className="rounded-full border border-border-default bg-bg-tertiary px-2.5 py-1 text-xs text-text-secondary"
