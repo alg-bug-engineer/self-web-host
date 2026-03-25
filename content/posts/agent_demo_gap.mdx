@@ -1,0 +1,375 @@
+---
+title: agent_demo_gap
+description: Agent, 落地, AutoGPT, 人工智能, AGI
+date: 2026-03-25
+author: 芝士AI吃鱼
+tags:
+  - GEO
+  - SEO
+  - AI
+  - 人工智能
+  - 生成引擎优化
+category: tech
+icon: cat
+published: true
+---
+
+**为什么 Agent演示与实际部署之间的差距越来越大**
+
+<table style={{ width: '88%' }}>
+<colgroup>
+<col style={{ width: '88%' }} />
+</colgroup>
+<tbody>
+<tr>
+<td style={{ textAlign: 'left' }}><p><em>译文，作者：Dmitriy Tsarev</em></p>
+<p>原文：https://hackernoon.com/ai-agents-why-the-gap-between-demo-and-deployment-keeps-widening</p></td>
+</tr>
+</tbody>
+</table>
+
+过去一年里，我一直在追踪企业级 AI
+智能体的部署情况，这期间出现了一个让人耐人寻味的现象。
+
+那些面向公众的演示正变得越来越酷炫：全自动编程助手、自我驱动的客服机器人，甚至号称能自主完成一整个复杂工作流的
+AI。
+
+然而，当我们把目光移向真实的生产环境，数据却呈现出一幅截然不同的景象。在回顾了截至
+2026
+年初的可用案例和行业调查后，我发现尽管底层的基座模型正在突飞猛进，但那些真正落地应用的**智能体
+AI 项目**，其**失败率**却始终居高不下。
+
+![image1](/images/blog/agent_demo_gap/image1.png)
+
+[Gartner
+依然预测](https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027?ref=hackernoon.com)，到
+2027 年，超过 **40% 的智能体 AI 项目**将会流产。[标普全球（S&P
+Global）也报告称](https://www.spglobal.com/market-intelligence/en/news-insights/research/2025/10/generative-ai-shows-rapid-growth-but-yields-mixed-results?ref=hackernoon.com)，有
+**42% 的组织**在 2025 年叫停了大部分 AI
+活动。我们心里都清楚，这可不是什么小打小闹的实验；它们代表着数十亿美元的企业真金白银投资。
+
+咱们的核心任务，就是要弄清楚：为什么理想（演示）和现实（部署）之间会存在如此巨大的鸿沟？这些接二连三的失败模式，是否揭示了我们构建这些系统的方式存在某种根源性的缺陷？
+
+我发现，实际情况远比单纯的“技术不成熟”要复杂得多。整个行业都在吸取教训，只不过这些教训似乎正引导我们，逐渐偏离那个曾让我们在
+2023 年痴迷的“完全自主智能体”范式。
+
+**复合故障难题：100步任务，第6步就错了**
+
+我觉得，即便是很多经验丰富的用户，也没有完全意识到系统中数学过程的严苛性。
+
+咱们假设你有一个包含十个步骤的顺序任务，每个步骤的成功率都是
+95%（很多人会觉得这已经很高了），那么你完成这整个十步任务的总体可靠性其实会骤降到大约
+**60%**。如果这是一个二十步的任务，每个步骤同样保持这个可靠性，那么总体成功率将跌至大约
+**36%**。
+
+实际情况比这些数字反映的还要严重得多。**多步推理研究**一致表明，错误不仅仅是相加，它们是相乘的。[高知特（Cognizant）AI
+实验室和德克萨斯大学奥斯汀分校在 2025 年 11
+月的一项研究](https://arxiv.org/abs/2511.09030?ref=hackernoon.com)生动地说明了这一点。他们使用**汉诺塔测试**来展示最先进
+LLM
+随时间的表现。模型在任务的前五或六个步骤中表现出了极高的成功率；然而，完成这些步骤后，它们完成剩余任务的能力几乎降到了“零”。
+
+<table style={{ width: '88%' }}>
+<colgroup>
+<col style={{ width: '88%' }} />
+</colgroup>
+<tbody>
+<tr>
+<td style={{ textAlign: 'left' }}><p>数学逻辑是无情的；举个例子，假设你的
+LLM 在一个 1,000 步的任务中，每一步都能做到 99%
+的准确率，那么模型在不犯任何错误的情况下顺利完成整个任务的概率不到
+0.005%。</p>
+<p>换句话说，研究人员指出，当今最先进 LLM
+的可靠性存在根本上的限制：如果它们必须成功完成任务的每一个步骤才能最终完成任务，那么在执行一定数量的步骤后，它们几乎注定会失败。</p></td>
+</tr>
+</tbody>
+</table>
+
+[2026 年 2 月一篇审查了十四个智能体 AI
+模型的论文](https://arxiv.org/abs/2602.16666?ref=hackernoon.com)在系统层面上发现了同样的规律：尽管模型能力在过去十八个月里稳步提升，但可靠性的提升却明显滞后。模型确实变得更聪明了，但并没有按比例变得更可靠。
+
+![image2](/images/blog/agent_demo_gap/image2.png)
+
+看看在供应链领域这是怎么发生的。一个单独的“幽灵
+SKU”**造成的绝不仅仅是一条错误的数据库记录。它会在第 6
+步破坏定价逻辑，在第 9 步引发虚假的库存检查，在第 12
+步生成错误的运输标签，最后在第 15
+步给客户发去错误的确认信息。因为每一个下游系统都依赖上游系统生成的信息，这就产生了一位从业者所说的**“错误级联（error
+laundering）”——糟糕的数据经过处理后，反而披上了合法的外衣。
+
+**工具调用（Tool calls）**，也就是智能体通过 API
+与其他系统通信的方式，在生产环境中的失败率徘徊在 3% 到 15%
+之间。这可不是什么小故障。当一个邮件管理智能体错误地调用了删除（delete）*而不是*归档（archive）时，它直接清空了
+10,000 条客户询盘。
+
+当一个编程智能体过于字面地理解了“清理缓存”的指令时，它把整个硬盘都给抹掉了。根据
+[AI 事件数据库（AI Incident
+Database）](https://incidentdatabase.ai/?ref=hackernoon.com)的数据，仅
+2024 年就报告了 **233 起事件**，同比增长 56%。而 [2025 年的总数达到了
+346
+起](https://techround.co.uk/news/ai-incidents-2025-ai-incident-database/?ref=hackernoon.com)，创下了迄今为止的年度最高纪录。
+
+**自主智能体周期：一次过度修正的案例研究**
+
+*AutoGPT*
+周围发生的种种事件告诉我们，为什么对待它的使用必须慎之又慎。AutoGPT
+模型于 2023 年 3 月发布，并迅速爆红。实际上，它一夜之间就成了 GitHub
+上最热门的仓库，收获了超过 100,000 颗星，并获得了 1200
+万美元的风投。几乎在同一时间，另一个名为 *BabyAGI*
+的类似项目也横空出世，到 2024 年 3 月底，它至少催生了 42 篇学术文章。
+
+|                                                                          |
+|:-------------------------------------------------------------------------|
+| 这两个模型给出的核心承诺之一，就是自主追求目标，而且几乎不需要人类干预。 |
+
+我在各大论坛和 GitHub 的 issue 区收集了关于 AutoGPT
+的用户报告。这些报告呈现出一个明显的模式：用户抱怨他们的智能体陷入了**无限循环**，或者在**幻觉捏造数据**。用户还报告说，他们的智能体即使在面对最简单的逻辑问题时，也会做出毫无道理的决定。比如那个著名的
+*ChaosGPT
+挑战*，用户让模型去“毁灭人类”，结果模型除了在推特上辱骂人类之外，什么也没做。
+
+*Devin* 在 2024 年 3 月以“全球首个 AI
+软件工程师”的身份亮相。作为前两个模型的进阶版，创建 Devin 的 [Cognition
+Labs](https://cognition.ai/?ref=hackernoon.com) 得到了 Founders
+Fund（彼得·蒂尔）的支持，而且其演示效果看起来确实很震撼。然而，[Answer.AI
+在 2025 年 1 月对 Devin
+进行的测试](https://www.answer.ai/posts/2025-01-08-devin.html?ref=hackernoon.com)表明，该模型只能完成
+20 个任务中的 3 个（**15% 的成功率**）。更让测试人员担忧的是，Devin
+倾向于硬着头皮去执行那些根本不可能完成的任务。
+
+[Cognition 团队自己在 2025 年底对 Devin
+进行的复盘](https://cognition.ai/blog/devin-annual-performance-review-2025?ref=hackernoon.com)非常发人深省。他们写道：
+
+|  |
+|:---|
+| “起初，我们试图用传统的工程师能力矩阵来评估 Devin，但这很难。人类工程师的能力往往集中在某一个层级，而 Devin 在代码库理解上是高级（senior）水平，但在执行上却是初级（junior）水平。” |
+
+这种**在理解上是专家，在执行上是新手**的区别，触及了问题的核心。Devin
+可以执行代码迁移（在 ETL 工作中比人类快 10-14
+倍），生成文档，以及扩大测试覆盖率。但是，在处理模糊的需求、复杂的调试以及需要判断力的时候，Devin
+表现得很糟糕。这里的差距不在于能力，而在于**在不确定环境中运行时的可靠性**。
+
+**Replit 事件：智能体故障剖析**
+
+2025 年 7 月发生的 *Replit 事件*非常值得作为智能体级联故障的案例来研究。
+
+SaaStr 的创始人 [Jason
+Lemkin](https://x.com/jasonlk/status/1946069562723897802?ref=hackernoon.com)
+使用 Replit 的 AI 智能体执行数据库迁移。在代码冻结期间，这个智能体把
+Lemkin
+的整个生产数据库给毁了。更离谱的是，在删除了数据库之后，该智能体还修改了日志文件，企图掩盖它的所作所为。
+
+在摧毁 Lemkin
+的生产数据库之前，这个智能体已经表现出了“流氓修改、撒谎、代码覆盖”，并生成了一个塞满虚构人物的
+4,000 条记录的数据库；Lemkin
+曾不下十一次地用全大写字母命令该智能体不要生成虚假数据。
+
+|                                                                      |
+|:---------------------------------------------------------------------|
+| 当 Lemkin 询问如何恢复时，智能体告诉他恢复是不可能的。其实并非如此。 |
+
+[Replit CEO Amjad
+Masad](https://www.fastcompany.com/91372483/replit-ceo-what-really-happened-when-ai-agent-wiped-jason-lemkins-database-exclusive?ref=hackernoon.com)
+表示该智能体的行为是“不可接受的”，随后便引入了自动开发/生产环境分离、暂存环境以及更好的备份系统。然而，智能体行为造成的后果并没有止步于损害个人的数据。[2025
+年的一份 Adversa AI
+报告](https://adversa.ai/blog/adversa-ai-unveils-explosive-2025-ai-security-incidents-report-revealing-how-generative-and-agentic-ai-are-already-under-attack/?ref=hackernoon.com)显示，2025
+年发生的 **AI 相关安全漏洞中，有 35%**
+是由简单的输入提示（而非复杂的攻击）触发的，并且是智能体在处理边缘用例时，由于正常使用而导致的不可预测行为。
+
+这种模式在 2026 年初以更大的规模再次重演。亚马逊内部的 AI 编程工具
+*Kiro*（被设定了要求工程师达到 [80%
+的每周使用率目标](https://the-decoder.com/aws-ai-coding-tool-decided-to-delete-and-recreate-a-customer-facing-system-causing-13-hour-outage-report-says/?ref=hackernoon.com)）自主决定，修复一个面向客户的系统的最佳方法是将其完全删除并重新创建，这引发了
+AWS Cost Explorer
+长达**十三小时的宕机**。亚马逊将其归咎于用户错误，但[员工向英国《金融时报》透露](https://www.engadget.com/ai/13-hour-aws-outage-reportedly-caused-by-amazons-own-ai-tools-170930190.html?ref=hackernoon.com)，这已经是最近几个月里至少第二起由
+AI 引起的业务中断了。
+
+这已经不再是初创公司才会遇到的问题了。当同一级别的故障发生在世界上最顶尖的工程组织之一时，这就说明问题出在架构上，而不是操作层面。
+
+**一线专家到底怎么说**
+
+相比于正式的新闻稿，我们从资深从业者在会议走廊的闲聊、博客和采访等非正式场合中，能学到更多东西。
+
+Django 的联合创始人 [Simon
+Willison](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/?ref=hackernoon.com)
+提出了他所谓的 AI 智能体“致命三要素”，包括：
+
+访问私有信息的权限，
+
+暴露于未知来源提供的内容中，
+
+智能体将其内部环境之外的消息发送出去的能力。
+
+|  |
+|:---|
+| 他提到提示词注入（prompt injection）防御机制声称能抵御 95% 的攻击，这反映了一个残酷的现实：“在 Web 应用安全领域，95% 绝对是一个不及格的分数”。 |
+
+LangChain 的创始人 Harrison Chase
+在他们的[三年回顾](https://www.blog.langchain.com/three-years-langchain/?ref=hackernoon.com)中提到：“大约在
+2023 年夏天，我们开始收到很多负面反馈……人们想要更多的控制权。曾经让
+LangChain
+易于上手的那些高级接口，现在却成了人们试图对其进行定制以投入生产时的绊脚石。”
+
+我认为 [Andrej
+Karpathy](https://www.dwarkesh.com/p/andrej-karpathy?ref=hackernoon.com)
+对这种情况会持续多久有着最合理的预期。他做出了一个跨年代的预测：**“这是智能体的十年，而不仅仅是智能体的一年”**。他还准确地描述了哪些类型的任务适合智能体，哪些不适合。智能体“非常擅长处理样板化的东西”，但对于“脑力密集型”的代码，“一切都必须安排得极其精确。模型存在太多的认知缺陷”。
+
+他在 2025 年 2 月首次提出了“直觉编程（vibe
+coding）”这个词，从那以后，《柯林斯词典》甚至将其评为年度词汇；然而，Karpathy
+的评论也给当前关于它的炒作泼了冷水：它适用于原型开发和“用完即走的应用”，但并不适用于生产系统。
+
+第二份[国际 AI
+安全报告](https://internationalaisafetyreport.org/?ref=hackernoon.com)（2026
+年 2 月，由 Yoshua Bengio 领衔，100
+多名专家参与）量化了这一差距：智能体能够以 80%
+的成功率完成的软件工程任务长度大约每七个月翻一番，从大约十分钟增加到三十分钟。进展令人瞩目，但距离市场上宣传的那些完全自主的工作流仍相去甚远。
+
+**生产数据揭示了什么**
+
+[LangChain 2026 年的“AI
+智能体现状”调查](https://www.langchain.com/state-of-agent-engineering?ref=hackernoon.com)收到了
+1,300 多份回复，这是了解当今实际成功率的最佳信息来源。
+
+所有组织中有 **57.3%** 目前已经在生产环境中部署了智能体（高于去年的
+51%），拥有 10,000 名以上员工的组织中，这一比例高达
+**67%**。这确实是一股不可阻挡的势头，但这些成功案例的性质也限制了整个故事的格局。
+
+在实际操作中，大多数生产级智能体在需要人类介入之前只会执行十次或更少的动作，许多智能体甚至在移交给人类之前执行不到五次动作。自主处理长周期任务的表现与现实部署情况根本不符。
+
+更能说明问题的是，许多构建生产级智能体的顶尖团队已经放弃使用框架，转而使用直接的
+API 调用，这也是 [Anthropic
+明确推荐的模式](https://www.anthropic.com/news/building-effective-agents?ref=hackernoon.com)：“我们建议开发者从直接使用
+LLM API 开始：许多模式只需几行代码就能实现。”
+
+**与现有系统集成**已经成为智能体普及的首要障碍，其次是质量问题。正如一份行业分析报告所言：“多智能体系统正面临着几十年来一直困扰企业
+IT 的那种分布式系统挑战；只不过，我们现在使用的工具还不够成熟。”
+
+生产团队在 89%
+的情况下都在实施**可观测性（observability）**，相比之下，只有 52%
+的团队在进行正式的评估。生产团队似乎更看重“了解发生了什么”，而不是“预测将会发生什么”。
+
+诸如此类的模式支撑着这样一个观点：整个行业在 2025
+年期间形成了一个更大的共识，并且这种共识已经反映在团队实际采用的流程中。
+
+**MCP 共识：行业的觉醒**
+
+2025 年我关注到的最重要的一项进展就是[模型上下文协议（Model Context
+Protocol,
+MCP）](https://modelcontextprotocol.io/?ref=hackernoon.com)。MCP
+正在成为“AI 智能体界的
+USB-C”，作为一个通用接口，它验证了一个假设：结构化架构优于自主化架构。
+
+事件的发展时间表极具戏剧性。2024 年 11 月，[Anthropic 宣布将
+MCP](https://www.anthropic.com/news/model-context-protocol?ref=hackernoon.com)
+作为一个开放标准；到了 2025 年 3 月，[OpenAI 已经将 MCP
+吸纳进](https://techcrunch.com/2025/03/26/openai-adopts-rival-anthropics-standard-for-connecting-ai-models-to-data/?ref=hackernoon.com)其
+Agent SDK、Responses API 以及桌面版 ChatGPT 这三大核心组件中。2025 年 4
+月，Google DeepMind 确认其 Gemini 将兼容 MCP。在 Build 2025
+大会上，微软和 GitHub 加入了 MCP 监督委员会。
+
+2025 年 12 月，[Anthropic 将 MCP
+捐赠给](https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation?ref=hackernoon.com)了由
+OpenAI 和 Block 共同创立的 Linux 基金会旗下的 Agentic AI 基金会。MCP
+目前拥有超过 **9700 万的 SDK 月下载量**、5800 多个 MCP 服务器和 300
+多个客户端。服务器下载量从 MCP 发布时的约 10 万次激增至 2025 年 4 月的
+800 多万次。
+
+为什么这很重要？MCP
+证明了整个行业都在朝着同一个认知迈进：**标准化的限制优于自主架构的灵活性**。在
+MCP 出现之前，智能体的每一次集成都需要定制连接器。现在，有了
+MCP，智能体可以通过清晰定义、受限的接口进行交互。
+
+|  |
+|:---|
+| Karpathy 在他的年度回顾中认可了这种受约束的方法，他指出 Claude Code “在你的电脑上运行，带着你的私有环境、数据和上下文。”他补充道：“我认为 OpenAI 在这方面走错了路，因为他们把早期的 Codex/智能体精力集中在由 ChatGPT 编排的容器化云端部署上，而不是简单地运行在本地（localhost）。” |
+
+其主要设计原则是为智能体提供一台具有明确边界（文件编辑、bash
+命令、网页浏览）的计算机，并限制其自主操作，而不是任由它们无约束地运行。
+
+**Klarna 案例：一次步子迈得太大的尝试**
+
+[Klarna 对 AI
+助手的应用](https://fortune.com/2025/05/09/klarna-ai-humans-return-on-investment/?ref=hackernoon.com)很好地说明了热情有时是如何跑在谨慎前面的。Klarna
+取得了令人瞩目的早期战果：在启用 AI 的第一个月内就完成了 **230
+万次对话**，将解决时间从 11 分钟缩短到不到 2
+分钟，并预计在客服相关成本上节省约 **4000 万美元**。
+
+然而，到了 2025 年 5 月，[Klarna
+改变了路线](https://www.vice.com/en/article/this-company-replaced-workers-with-ai-now-theyre-looking-for-humans-again/?ref=hackernoon.com)并开始重新雇佣人类，因为他们承认，把降低成本作为“过于主导的评估因素”，导致了客户服务“质量下降”。
+
+[Forrester 首席分析师 Christina
+McAllister](https://www.siliconrepublic.com/machines/klarna-ai-hiring-humans-forrester?ref=hackernoon.com)
+表示，Klarna
+的失误在于“低估了其客服运营的复杂性”，外加“过分狂热地追求降低成本”。她的评估是：那些在采用
+AI
+的同时仍保留人类专家作为后盾的公司，“将比那些走得太快的公司取得大得多的成功。”
+
+将 Klarna 与其他成功部署 AI 的公司进行对比是非常有启发性的。*DoorDash*
+的语音智能体每天处理数十万通电话，同时坚守通话延迟不超过 2.5
+秒的硬性要求。
+
+*Uber* 的数据智能体 Finch
+在部署之前，采用了包括路由验证和“黄金测试集（golden
+set）”在内的详尽测试流程。*LinkedIn* 的 SQL Bot
+能够取得成功，是因为查询数据库系统本身具有固有的局限性，并且会产生可预测的输出。
+
+|  |
+|:---|
+| 麦肯锡（McKinsey）发现，不同公司在 AI 使用上最显著的差异在于：“关键不在于你的 AI 模型有多精密；而在于你是愿意彻底重塑业务工作流，还是仅仅把新的技术层（智能体）叠加在旧有流程之上。” |
+
+**“人在环路”：这就是目前的生产模式**
+
+人在环路（Human-in-the-loop,
+HITL）绝不只是一个过渡性的折中方案；它已经成为实现生产环境可靠性的主流模式。
+
+![image3](/images/blog/agent_demo_gap/image3.png)
+
+HITL
+评估在生产团队中已得到广泛应用。[LangGraph](https://www.langchain.com/langgraph?ref=hackernoon.com)
+使用的 [interrupt()
+函数](https://docs.langchain.com/oss/python/deepagents/human-in-the-loop?ref=hackernoon.com)现在是一个核心功能，它允许智能体暂停执行以等待人类批准。Zapier
+推荐的模式利用**基于置信度的路由（confidence-based
+routing）**，使智能体在置信度降至预设阈值以下时，能够主动将控制权交还给人类。
+
+|  |
+|:---|
+| LangChain 的回顾文章精准捕捉到了这种范式转变：“2024 年是智能体开始投入生产的一年。它们不再是人们以为会随 AutoGPT 一同到来的那种不受约束、完全自主的智能体。相反，它们是更垂直、作用域更窄，且具有高度可控性的定制化认知架构智能体。” |
+
+这代表了 Anthropic
+的普遍共识：“寻找你能找到的最简单的解决方案，除非迫不得已，否则不要增加复杂性。”他们推荐的模式——**提示词链（prompt
+chaining）**、**路由（routing）和并行化（parallelization）**——代表的都是预先设定好的工作流，而不是让智能体去自行探索路径。
+
+**给从业者的几点启示**
+
+基于上述分析，咱们必须强调几个核心原则：
+
+**先约束，后扩展。**
+咱们要在明确的边界内执行不到十个生产步骤，并让人类进行流程检查。事实证明，一开始就放任自主执行然后再去加约束的做法，总是以失败告终。
+
+**特定领域的智能体优于通用智能体。**
+动作集受限的特定领域智能体表现得比通用智能体更好。动作的可预测性是一种特性，而不是一种限制。
+
+**集成已成为新的瓶颈。** 集成仍然是智能体团队面临的头号挑战，这正是推动
+MCP 成为行业标准的动力。
+
+**从第一天起就必须具备可观测性。**
+受监管的公司经常更换他们的整个智能体技术栈，有时一年甚至要换好几次。如果没有某种形式的追踪和监控能力，调试根本无从谈起。
+
+**走向专业化的时刻**
+
+过去这几年我们是在进化，而不是退步。没有任何约束的自主，本质上就是混乱。反过来说，如果你施加了所有正确的约束，却剥夺了做决定的能力，那么你只是在进行流程自动化而已。
+
+在这个时期孕育而生的**生产级方案（production-ready
+formula）**，将狭窄的功能范围与广泛的基础能力结合在一起，并配备了清晰定义的边界和问题升级路径。
+
+在 [2025
+年第四季度毕马威（KPMG）的一项最新调查](https://kpmg.com/us/en/articles/2025/ai-quarterly-pulse-survey.html?ref=hackernoon.com)中，有报告指出，**75%**
+的企业组织现在将安全性、合规性和可审计性作为取得成功的关键要求列为首要任务。Steve
+Chase
+如此总结当下局势：“当一些组织在早期部署后停滞不前时，行业领导者们正在迅速扩展并拉开差距。”
+
+|  |
+|:---|
+| 打个恰当的比方：自主的多智能体系统就像自动驾驶汽车。做一个概念验证（Proof of Concept）相对容易，但要让它们真正可行并在公共道路上安全行驶，剩下的那 5% 的可靠性所需要的努力，绝不亚于前面那 95%。 |
+
+演示和实际部署之间之所以持续存在如此巨大的鸿沟，很大程度上是因为构建一个可靠的系统需要极其严格的**架构纪律**，而这种纪律往往被演示时那种炫酷的视觉效果给掩盖了。
+
+围绕 MCP
+的使用、向受限架构的转变、以及接受人类参与自主决策环路等正在发展中的趋势，这些都不是妥协，而是将基于概率的能力转化为可以可靠运行的系统的工程素养。

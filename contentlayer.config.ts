@@ -61,9 +61,26 @@ export const Post = defineDocumentType(() => ({
     readingTime: {
       type: 'number',
       resolve: (post) => {
-        const wordsPerMinute = 200
-        const words = post.body.raw.split(/\s+/).length
-        return Math.ceil(words / wordsPerMinute)
+        const content = post.body.raw;
+        // 剔除一些 Markdown 语法干扰（如链接、图片链接等）
+        const pureText = content.replace(/\[.*?\]\(.*?\)/g, '').replace(/!\[.*?\]\(.*?\)/g, '');
+        
+        // 1. 统计中文字符数 (Unicode 范围 \u4e00-\u9fa5)
+        const chineseChars = pureText.match(/[\u4e00-\u9fa5]/g)?.length || 0;
+        
+        // 2. 统计英文单词数 (先剔除中文，再按空格分割)
+        const englishWords = pureText
+          .replace(/[\u4e00-\u9fa5]/g, ' ')
+          .split(/\s+/)
+          .filter(word => word.length > 0).length;
+        
+        // 3. 统计图片数量
+        const imageCount = content.match(/!\[.*?\]\(.*?\)/g)?.length || 0;
+        
+        // 计算预估时间 (假设：中文 300 字/分钟，英文 200 词/分钟，图片一张加 0.2 分钟)
+        const minutes = (chineseChars / 300) + (englishWords / 200) + (imageCount * 0.2);
+        
+        return Math.ceil(minutes) || 1; // 最小显示为 1 分钟
       },
     },
   },
