@@ -47,5 +47,23 @@
     "link": "https://manga.ai-knowledgepoints.cn/",
     "github": "https://github.com/alg-bug-engineer/manga-reader",
     "tags": ["Next.js", "视觉叙事", "科普平台"]
+  },
+  {
+    "title": "《这就是GEO》: 生成引擎优化技术解读",
+    "type": "book",
+    "date": "2026-03-15",
+    "description": "由人民邮电出版社出版，系统讲解了什么是 GEO、GEO的原理和应用，我们可以不用核武器，但不能没有核武器一样，GEO 技术是无罪的，但 GEO 带来的影响是无穷的。",
+    "image": "/images/portfolio/geo.png",
+    "link": "https://mp.weixin.qq.com/s/bGAFmbRQWgXun2jCD9dd0Q",
+    "tags": ["技术", "GEO", "生成引擎优化", "大模型"]
+  },
+  {
+    "title": "半小时读懂 Token 经济学",
+    "type": "book",
+    "date": "2026-04-28",
+    "description": "如果说千瓦时定义了电力时代，桶定义了石油时代，那么Token就是人工智能时代的核心计量单位。这本书用通俗的语言和鲜活的案例，带你看清Token如何从技术术语演变为全球算力经济的通用货币。从英伟达到DeepSeek，从杰文斯悖论到智能体崛起，从定价权争夺到算力期货半小时读懂AI背后的经济逻辑，看清下一个十年的财富流向。无论你是科技从业者、投资者，还是对未来充满好奇的普通读者，这本书都将为你打开一扇理解AI经济的新窗口。",
+    "image": "/images/portfolio/token.jpg",
+    "link": "https://weread.qq.com/book-detail?type=1&senderVid=72792937&v=eee326b0813abb5dbg017b48",
+    "tags": ["技术", "Token", "经济学", "大模型"]
   }
 ]
