@@ -13,13 +13,15 @@ icon: robot
 published: true
 ---
 
-在 AI 领域，Andrej Karpathy 这个名字想必很多人都不陌生。他曾在斯坦福任教，后来执掌特斯拉的 AI 部门，也曾在 OpenAI 供职。在我看来，他制作的 AI 教学视频也是目前全网最优秀的。
+在 AI 领域，Andrej Karpathy 这个名字想必很多人都不陌生。他曾在斯坦福任教，后来执掌特斯拉的 AI 部门，也曾在 OpenAI 供职。
 
-然而，他最近推出的 microGPT 项目，堪称一件不折不扣的艺术品。
+<InfoCard type="robot" title="为什么值得读">
+  Karpathy 的 **microGPT** 项目堪称一件艺术品。它仅用约 **200 行 Python 代码** 就实现了一个完整的 GPT 模型，没有调用任何外部深度学习库。这短短 200 行代码包揽了神经网络本身、Autograd 引擎、训练逻辑和推理过程。
+</InfoCard>
 
-microGPT 仅用约 200 行 Python 代码就实现了一个完整的 GPT 模型。这并非靠刻意压缩或混淆代码来博人眼球；恰恰相反，他的代码整洁、结构清晰，并且配有详尽的注释。它甚至没有调用任何外部深度学习库。也就是说，这短短 200 行代码同时包揽了神经网络本身，以及训练和运行该网络所需的最简框架。
+## 1. 极简主义的巅峰：microGPT 代码概览
 
-实际上，整个项目连个完整的代码仓库都没有——它直接以单个 GitHub Gist 的形式发布了出来。
+整个项目直接以单个 GitHub Gist 的形式发布，没有任何冗余。
 
 ```python
 """
@@ -68,7 +70,7 @@ class Value:
         other = other if isinstance(other, Value) else Value(other)
         return Value(self.data * other.data, (self, other), (other.data, self.data))
 
-    def __pow__(self, other): return Value(self.dataother, (self,), (other * self.data(other-1),))
+    def __pow__(self, other): return Value(self.data**other, (self,), (other * self.data**(other-1),))
     def log(self): return Value(math.log(self.data), (self,), (1/self.data,))
     def exp(self): return Value(math.exp(self.data), (self,), (math.exp(self.data),))
     def relu(self): return Value(max(0, self.data), (self,), (float(self.data > 0),))
@@ -77,8 +79,8 @@ class Value:
     def __sub__(self, other): return self + (-other)
     def __rsub__(self, other): return other + (-self)
     def __rmul__(self, other): return self * other
-    def __truediv__(self, other): return self * other-1
-    def __rtruediv__(self, other): return other * self-1
+    def __truediv__(self, other): return self * other**-1
+    def __rtruediv__(self, other): return other * self**-1
 
     def backward(self):
         topo = []
@@ -118,7 +120,7 @@ print(f"num params: {len(params)}")
 def linear(x, w):
     return [sum(wi * xi for wi, xi in zip(wo, x)) for wo in w]
 
-def softmax(logits):
+def compute_softmax(logits):
     max_val = max(val.data for val in logits)
     exps = [(val - max_val).exp() for val in logits]
     total = sum(exps)
@@ -126,7 +128,7 @@ def softmax(logits):
 
 def rmsnorm(x):
     ms = sum(xi * xi for xi in x) / len(x)
-    scale = (ms + 1e-5)  -0.5
+    scale = (ms + 1e-5) ** -0.5
     return [xi * scale for xi in x]
 
 def gpt(token_id, pos_id, keys, values):
@@ -150,8 +152,8 @@ def gpt(token_id, pos_id, keys, values):
             q_h = q[hs:hs+head_dim]
             k_h = [ki[hs:hs+head_dim] for ki in keys[li]]
             v_h = [vi[hs:hs+head_dim] for vi in values[li]]
-            attn_logits = [sum(q_h[j] * k_h[t][j] for j in range(head_dim)) / head_dim0.5 for t in range(len(k_h))]
-            attn_weights = softmax(attn_logits)
+            attn_logits = [sum(q_h[j] * k_h[t][j] for j in range(head_dim)) / head_dim**0.5 for t in range(len(k_h))]
+            attn_weights = compute_softmax(attn_logits)
             head_out = [sum(attn_weights[t] * v_h[t][j] for t in range(len(v_h))) for j in range(head_dim)]
             x_attn.extend(head_out)
         x = linear(x_attn, state_dict[f'layer{li}.attn_wo'])
@@ -187,7 +189,7 @@ for step in range(num_steps):
     for pos_id in range(n):
         token_id, target_id = tokens[pos_id], tokens[pos_id + 1]
         logits = gpt(token_id, pos_id, keys, values)
-        probs = softmax(logits)
+        probs = compute_softmax(logits)
         loss_t = -probs[target_id].log()
         losses.append(loss_t)
     loss = (1 / n) * sum(losses) # final average loss over the document sequence. May yours be low.
@@ -199,10 +201,10 @@ for step in range(num_steps):
     lr_t = learning_rate * (1 - step / num_steps) # linear learning rate decay
     for i, p in enumerate(params):
         m[i] = beta1 * m[i] + (1 - beta1) * p.grad
-        v[i] = beta2 * v[i] + (1 - beta2) * p.grad  2
-        m_hat = m[i] / (1 - beta1  (step + 1))
-        v_hat = v[i] / (1 - beta2  (step + 1))
-        p.data -= lr_t * m_hat / (v_hat  0.5 + eps_adam)
+        v[i] = beta2 * v[i] + (1 - beta2) * p.grad ** 2
+        m_hat = m[i] / (1 - beta1 ** (step + 1))
+        v_hat = v[i] / (1 - beta2 ** (step + 1))
+        p.data -= lr_t * m_hat / (v_hat ** 0.5 + eps_adam)
         p.grad = 0
 
     print(f"step {step+1:4d} / {num_steps:4d} | loss {loss.data:.4f}", end='\r')
@@ -216,642 +218,115 @@ for sample_idx in range(20):
     sample = []
     for pos_id in range(block_size):
         logits = gpt(token_id, pos_id, keys, values)
-        probs = softmax([l / temperature for l in logits])
+        probs = compute_softmax([l / temperature for l in logits])
         token_id = random.choices(range(vocab_size), weights=[p.data for p in probs])[0]
         if token_id == BOS:
             break
         sample.append(uchars[token_id])
     print(f"sample {sample_idx+1:2d}: {''.join(sample)}")
-
 ```
 
-在这篇文章中，我将尽量用通俗易懂的语言，向任何具备 Python 基础的人讲解这段绝妙的代码是如何运行的。
+<InfoCard type="tip" title="核心逻辑">
+  代码虽然精简，但涵盖了：
+  - **Value 类**：手动实现的自动微分（Autograd）引擎。
+  - **Transformer 架构**：包括嵌入（Embedding）、自注意力（Attention）和 MLP 块。
+  - **Adam 优化器**：完整的参数更新逻辑。
+  - **训练循环**：从字符级 Tokenizer 到 Loss 计算。
+</InfoCard>
 
-咱们先从 GPT 这个名字说起。
+---
 
-GPT 的全称是生成式预训练 Transformer (Generative Pretrained Transformer)。这一架构是当下大多数大语言模型 (LLM) 的基石。ChatGPT 本身就以此命名，目前市面上其他的主流大模型底层思路也都如出一辙。
+## 2. GPT 的本质：预测下一个词
 
-简单来说，GPT 模型就是根据已知的内容来预测下一个词（或 token）。
+GPT 的全称是 **Generative Pretrained Transformer**。简单来说，它就是一个根据已知内容预测下一个 Token 的概率模型。
 
-这也是所有语言模型的本质：每次只预测下一个词，以此来生成完整的回复。首先预测出下一个词，把它拼接到现有文本后面，接着再预测下一个，周而复始。
+<TwoColumnLayout>
+  <Left>
+    ### 输入
+    - 文本序列（由 Token 构成）
+    - 历史上下文信息
+    - 隐含的语义逻辑
+  </Left>
+  <Right>
+    ### 输出
+    - 下一个 Token 的概率分布
+    - 自动回归生成文本
+    - 涌现出的理解能力
+  </Right>
+</TwoColumnLayout>
 
-乍听起来很简单。但仔细琢磨就会发现，要想准确预测下一个词，模型必须对文本及其背后的含义具备相当程度的理解。
+神经网络通过一个极其庞大的数学函数来实现这个过程。输入的词被转换为向量，送入函数计算，最后映射回词表。我们的任务，就是找到那个能精准捕捉语言结构的“正确函数”。
 
-在神经网络中，这个思考过程实际上是由一个极其庞大的数学函数来实现的。
+---
 
-输入的词会被转换为数字，然后送入这个函数，再由它计算出下一个词。从原理上看，任何规则系统都可以用这类函数进行数学表达。因此，我们的核心任务，就是找到那个能精准捕捉语言结构的“正确函数”。
+## 3. 调教神经网络：梯度下降与 Autograd
 
-这个函数，也就是我们常说的“模型”。
+既然公式包含数亿个参数，人类无法手工设计，只能通过 **梯度下降 (Gradient Descent)** 自动化调参。
 
-棘手的地方在于，这个函数极其复杂。现代语言模型动辄包含数十亿个参数，这意味着描述它的数学公式同样包含数十亿个变量。面对如此庞大的公式，人类根本无法进行手工设计或运算。
+### 迷雾中的下山之路
+我们可以把误差（Loss）想象成高维空间里的山谷，海拔高度代表误差大小。
+1. **测量坡度**：计算导数（梯度）。
+2. **迈出一小步**：朝着坡度下降的方向更新参数。
+3. **重复**：直到抵达最低点。
 
-好在，业界有一种巧妙的变通之法。
+### 反向传播的极简实现
+在 Karpathy 的代码中，所有的梯度计算逻辑都在 `Value` 类中实现，总共只有 40 行左右。
 
-与其死磕写出精确的数学公式，不如先给公式定一个“模板”——一个包含海量可调参数的框架。接下来，机器会自动调整这些参数，直到模型跑出理想的效果。
+<InfoCard type="robot" title="技术原理">
+  它像录音机一样记录了所有的运算操作（Forward Pass），当调用 `backward()` 时，它沿着计算链条逆向回溯，利用 **链式法则** 算出相对于误差的总梯度。
+</InfoCard>
 
-根据要解决的具体问题，我们手头有几种不同的模板可供选择：
+---
 
-+ 卷积神经网络通常用于图像处理。
-+ 多层感知机 (MLP) 则用于通用的函数拟合。
-+ Transformer 架构被用于像 ChatGPT 这样的语言模型。
-+ ……
+## 4. Transformer 架构拆解
 
-这些模板构成了庞大的数学结构，一旦参数调整到位，就能拟合极其复杂的规则。
+GPT 的核心组件是 Transformer 的解码器堆叠（Decoder Stack）。
 
-剩下的问题是：我们该如何调整这些参数？或者换句话说，我们该怎么去调教一个神经网络？
+![Transformer 模型结构示意图](/images/blog/gpt-in-200-lines/1.png)
+*> Source: MachineLearningMastery.com*
 
-面对动辄数百万乃至数十亿参数的模型，纯手工调参显然是不现实的。
+### 嵌入（Embeddings）：赋予词语坐标
+模型并不直接处理字符，而是把它们映射成 16 维向量空间中的点。
+- **wte (Token Embedding)**：字符本身的意思。
+- **wpe (Position Embedding)**：字符所在的位置。
+两者相加，得到一个既有“意义”又有“顺序”的向量。
 
-幸运的是，我们可以利用数据来实现自动化调参。这个过程被称为训练，而背后的核心机制叫做梯度下降(gradient descent)。
+### 自注意力机制（Self-Attention）
+这是 Transformer 的灵魂。它计算每个 Token 与序列中其他所有 Token 的相关程度。
 
-如果我们有了海量数据和庞大的数学公式（也就是我们的模型），我们就可以计算出模型在数据集中每个样本上产生的误差。
+![Decoder only architecture](/images/blog/gpt-in-200-lines/2.png)
 
-以 Transformer 为例，整个过程大致如下：
+<InfoCard type="tip" title="注意力的三位一体">
+  - **Query (Q)**：我想找什么？
+  - **Key (K)**：我能提供什么？
+  - **Value (V)**：我具体的内容是什么？
+</InfoCard>
 
-词语被映射为高维向量空间中的点，词义相近的词在空间里也靠得更近。每个词都对应这个空间里的一个确切位置。
+通过 `compute_softmax(QK^T / √d_k)V`，模型能够捕捉长距离的依赖关系，比如将“法国”和“首都”在语义上绑定。
 
-模型接收一串词作为输入，并尝试预测下一个词。既然词都变成了向量，我们就能算出模型预测的词与实际正确的词之间的距离。这个距离就是误差的量化指标。
+![Multi-Head Attention Mechanism](/images/blog/gpt-in-200-lines/3.png)
 
-接下来就是见证奇迹的时候了。
+### 前馈网络（MLP）：知识的存储库
+MLP 扮演了“软硬盘”的角色，负责对注意力层提取的信息进行深层加工。
 
-借助梯度下降，我们可以计算出该怎么调整公式里的参数，才能让这个误差变小。
+![ArtificialNeuronModel](/images/blog/gpt-in-200-lines/4.png)
 
-只要数据管够、网络够大、训练时间够长，公式就会逐渐学会数据集里的规律，做出的预测也会越来越准。
+---
 
-但为什么这样做就是有效的？梯度下降到底是如何找到更优参数的？
+## 5. 总结：简洁背后的宏大
 
-我们可以把误差想象成高维空间里的一个函数，其中的每一个维度就代表模型的一个参数。
+Karpathy 的这 200 行代码不仅是一个教学工具，更是一份技术宣言。
 
-人脑几乎无法具象化高维空间，所以我们不妨打个简单的比方：想象一片连绵起伏的山丘与峡谷。
+<InfoCard type="cat">
+  🐱 猫说：虽然这个微型模型只能生成一些简单的名字，但它与支撑 ChatGPT 的底层逻辑是完全一致的。规模化的量变引发了智能的质变，但那最初的火花，就藏在这 200 行 Python 代码里。
+</InfoCard>
 
-在这个比喻中：
+在这个复杂的 AI 时代，回归底层的简洁，能帮我们看清技术演进的真实脉络。
 
-+ 地貌上的每一个点，都代表一组特定的模型参数组合。
-+ 该点所处的海拔高度，代表模型当前的误差大小。
+> 原文链接：[200 行代码即可了解 GPT：现代人工智能背后的精妙简洁](https://www.51cto.com/article/838469.html)
 
-训练刚开始的时候，参数是随机初始化的。这就像你被随机空投到了某个山坡上。
-
-我们的目标是让误差最小化，也就是要找到整片地貌的最低谷。
-
-难点在于，我们根本看不清周围的地形。这就像在浓雾中蒙着眼睛下山。那该怎么办？
-
-这就轮到梯度下降出场了。
-
-数学里有个概念叫导数，它描述的是函数在某个特定点的斜率。
-
-这在这里非常管用。导数能告诉我们当前所站的位置，往哪个方向走是下坡。
-
-因此，算法的操作就变得非常简单：
-
-1. 测量脚下地面的坡度。
-2. 朝着误差减小（下坡）的方向迈出一小步。
-3. 重复上述过程。
-
-就这样一步一步的，模型慢慢走下山坡，最终抵达误差地貌的最低点。
-
-这就是梯度下降的本质。
-
-那么剩下的问题是：面对如此复杂的函数，我们该如何计算它的坡度？
-
-我不打算在这里长篇大论地推导数学公式，因为 Karpathy 早就做过一期极佳的视频专门讲解这一点。
-
-对我们来说，了解以下内容就足够了。
-
-每一个数学运算都有对应的法则，供我们计算其局部梯度。此外，还有一个叫链式法则的定律，能把这些局部梯度串联起来，从而算出整个复合函数的梯度。
-
-核心思路是：我们沿着计算链条往回走，沿途收集所有的梯度。这个过程就叫作反向传播（backpropagation）。
-
-现有的主流深度学习框架都内置了这个机制。
-
-比如：
-
-+ TensorFlow 使用了一个名为 GradientTape 的系统，它像录音机一样把所有运算操作录下来，方便事后计算梯度。
-+ PyTorch 则直接将梯度信息绑定在张量 (tensor) 上。每个张量都记得自己是怎么被创建出来的，这样就能实现梯度的自动计算。这套系统叫做 autograd（自动微分）。
-
-Karpathy 的实现也遵循了同样的基本思路。咱们来看看他具体是怎么做的。
-
-```python
-# Let there be Autograd to recursively apply the chain rule through a computation graph
-class Value:
-    __slots__ = ('data', 'grad', '_children', '_local_grads') # Python optimization for memory usage
-
-    def __init__(self, data, children=(), local_grads=()):
-        self.data = data                # scalar value of this node calculated during forward pass
-        self.grad = 0                   # derivative of the loss w.r.t. this node, calculated in backward pass
-        self._children = children       # children of this node in the computation graph
-        self._local_grads = local_grads # local derivative of this node w.r.t. its children
-
-    def __add__(self, other):
-        other = other if isinstance(other, Value) else Value(other)
-        return Value(self.data + other.data, (self, other), (1, 1))
-
-    def __mul__(self, other):
-        other = other if isinstance(other, Value) else Value(other)
-        return Value(self.data * other.data, (self, other), (other.data, self.data))
-
-    def __pow__(self, other): return Value(self.dataother, (self,), (other * self.data(other-1),))
-    def log(self): return Value(math.log(self.data), (self,), (1/self.data,))
-    def exp(self): return Value(math.exp(self.data), (self,), (math.exp(self.data),))
-    def relu(self): return Value(max(0, self.data), (self,), (float(self.data > 0),))
-    def __neg__(self): return self * -1
-    def __radd__(self, other): return self + other
-    def __sub__(self, other): return self + (-other)
-    def __rsub__(self, other): return other + (-self)
-    def __rmul__(self, other): return self * other
-    def __truediv__(self, other): return self * other-1
-    def __rtruediv__(self, other): return other * self-1
-
-    def backward(self):
-        topo = []
-        visited = set()
-        def build_topo(v):
-            if v not in visited:
-                visited.add(v)
-                for child in v._children:
-                    build_topo(child)
-                topo.append(v)
-        build_topo(self)
-        self.grad = 1
-        for v in reversed(topo):
-            for child, local_grad in zip(v._children, v._local_grads):
-                child.grad += local_grad * v.grad
-
-```
-
-在 Karpathy 的代码中，所有的梯度计算逻辑都是在 `Value` 类中实现的，而这个类总共只有 40 行左右。
-
-这个类本质上就是对数值做了一层包装。除了保存数据本身，它还会记录：
-
-+ 它是通过哪些值计算得来的（也就是它的“子节点”），
-+ 以及反向传播所需的局部梯度。
-
-翻看代码我们就能发现，标准的数学运算符都被重写了：
-
-+ `__add__`
-+ `__mul__`
-+ 等等。
-
-这意味着，每当对 `Value` 对象进行数学运算时，程序在计算出结果的同时，还会同步记录下该结果的来源，以及梯度应当如何传递。
-
-最后，由 `backward()` 方法来执行反向传播。它会沿着运算链条逆向回溯，算出相对于误差的总梯度。
-
-这就是它的核心思路。
-
-训练过程的另一个重头戏就是梯度下降本身，它利用算好的梯度来更新模型参数。
-
-换句话说，下面这部分代码就是真正利用坡度信息去执行下山动作的环节。
-
-```python
-# Adam optimizer update: update the model parameters based on the corresponding gradients
-    lr_t = learning_rate * (1 - step / num_steps) # linear learning rate decay
-    for i, p in enumerate(params):
-        m[i] = beta1 * m[i] + (1 - beta1) * p.grad
-        v[i] = beta2 * v[i] + (1 - beta2) * p.grad  2
-        m_hat = m[i] / (1 - beta1  (step + 1))
-        v_hat = v[i] / (1 - beta2  (step + 1))
-        p.data -= lr_t * m_hat / (v_hat  0.5 + eps_adam)
-        p.grad = 0
-```
-
-在 Karpathy 的代码实现中，这一步是通过 Adam 优化器完成的。它是深度学习领域应用最广泛的优化算法之一。
-
-Adam 相比基础的梯度下降要更为精准。Adam 优化器不是固定大小的步长，而是根据过往梯度的历史记录，动态调整步长。这使得训练过程既快捷又稳定。
-
-在前面的内容中，我们提到的梯度计算，加上这一步的优化操作，就构成了代码中所谓的深度学习框架部分。
-
-每一个神经网络——无论是作为语言模型、图像生成器、机器人控制器还是自动驾驶汽车——训练的底层逻辑本质上都是相通的。
-
-寥寥数行代码，便精准提炼了现代 AI 背后的核心思想。
-
-像以下这类大型框架：
-
-+ TensorFlow
-+ PyTorch
-+ JAX
-
-这些框架都提供了高度优化的实现方案，能够在 GPU、TPU 以及分布式集群上运行，并且内置了大量额外的技巧与优化。
-
-但如果我们化繁为简，抛开所有细枝末节，其底层原理与这段轻量的 Python 实现完全一致。
-
-看完了代码中的深度学习框架，我们现在来探讨真正的神经网络，也就是 GPT 模型本身。
-
-正如前文提到的，GPT 的目标是根据上文的 token 来预测下一个 token。
-
-刚才的定义之所以特意强调 token，是因为模型的实际输入并非完整的单词，而是由 token（词元）构成的。
-
-token 和单词很像，但两者并非同一回事。系统并不依赖预先设定好的词典，而是通过统计学方法，直接从训练数据中学习。从这个角度看，token 本质上就是数据集中频繁出现的字符序列。
-
-所以，训练的起点不是一张已经给每个词编号的固定词表。相反，这本词典是在预处理阶段，从数据本身自然学习出来的。
-
-这种方法对匈牙利语等语种尤为适用，因为这类语言的单个词汇会因后缀和语法词尾的变化而衍生出极其繁多的形态。
-
-只要训练数据给足，语言模型就能学会任何语言，不管是自然语言还是人造语言。
-
-事实上，token 甚至不必非得代表文本。它们同样可以代表：
-
-+ 图像区块
-+ 音频片段
-+ 传感器读数
-+ 或者几乎任何类型的数据
-
-正因如此，Transformer 模型的应用远不止于语言处理。在图像生成、语音处理、机器人控制等众多领域，它们同样大有可为。
-
-Karpathy 有意把这个模型做得很小，因此在这里，token 并非单词，而是字符。
-
-相应地，模型的目标也不是生成完整的句子或回答，仅仅是像模像样地生成一些名字。
-
-它的训练集就是一份庞大的名字列表；训练结束后，我们期望模型能生成在统计学特征上与样本相似的全新名字。
-
-很显然，这无法与 ChatGPT 那种成熟的大规模语言模型相提并论。但在本质上，两者的区别仅仅在于规模。
-
-只要把这个模型放大几百万倍，把字符替换成真正的 token，再用从互联网上搜集的浩如烟海的数据去训练它，最终你就会得到一个和现代大模型极其相似的东西。
-
-这些大模型通常要经过两个阶段的训练：
-
-1. 预训练 (Pretraining) —— 利用海量的互联网数据进行训练，掌握通用的语言规律。
-2. 微调 (Fine-tuning) —— 利用人工精心编排的对话数据做进一步训练，以此来优化表现。
-
-整个过程极其消耗算力，也需要海量的高质量数据，光是算力成本往往就高达数百万美元。
-
-既然咱们普通人手里没这等资源，那就先老老实实地拿它来生成名字过把瘾吧。
-
-```python
-# Let there be a Dataset `docs`: list[str] of documents (e.g. a list of names)
-if not os.path.exists('input.txt'):
-    import urllib.request
-    names_url = 'https://raw.githubusercontent.com/karpathy/makemore/988aa59/names.txt'
-    urllib.request.urlretrieve(names_url, 'input.txt')
-docs = [line.strip() for line in open('input.txt') if line.strip()]
-random.shuffle(docs)
-print(f"num docs: {len(docs)}")
-
-# Let there be a tokenizer to translate strings to sequences of integers ("tokens") and back
-uchars = sorted(set(''.join(docs))) # unique characters in the dataset become token ids 0..n-1
-BOS = len(uchars) # token id for a special Beginning of Sequence (BOS) token
-vocab_size = len(uchars) + 1 # total number of unique tokens, +1 is for BOS
-print(f"vocab size: {vocab_size}")
-```
-
-在代码的开头，我们首先看到的是负责加载姓名数据集并构建词表的部分。
-
-在这里，词表非常简单，就是数据集中出现过的所有字符的集合。
-
-每个字符都会分配到一个数字 ID，这样一来，文本就转换成了神经网络能够处理的数字。
-
-接下来要讲的，是深度学习中最核心的概念之一：嵌入（embeddings）。
-
-它的核心思想简单而强大。我们并不直接使用原始的 token ID，而是把每个 token 映射成高维向量空间中的一个点。神经网络真正处理的，正是这些向量。
-
-事实上，任何神经网络都可以看作是一个大型函数，专门负责把向量从一个高维空间映射到另一个高维空间。
-
-举个例子：
-
-+ 如果我们训练一个识别猫狗的神经网络，网络就会把图像特征映射到一个二维空间里，其中一个维度代表“有多像狗”，另一个维度代表“有多像猫”。
-+ 再看看像 Midjourney 这样的图像生成器，它则是把随机噪声映射到一个高维空间，空间里的每一个点都对应着一张符合提示词的图像。
-
-无论具体任务是什么，神经网络干的始终是同一件事：用庞大的数学函数进行“向量到向量”的转换。
-
-GPT 也不例外。
-
-在这段代码中，向量空间的维度由常量 `n_embd` 定义，这里它的值设为了 16。
-
-这意味着每个 token（在当前语境下就是每个字符）都会用一个 16 维的向量来表示。
-
-从数学角度来看，这种映射其实就是一个矩阵乘法操作。
-
-在代码里，负责执行这个转换的矩阵叫作 `wte`，也就是 word/token embedding（词/词元嵌入）的缩写。
-
-不过，光知道出现了哪些字符还不够，字符的前后位置同样至关重要。
-
-毕竟，字符的排列顺序一变，整段文本的意思可能就完全不同了。
-
-为了把位置信息也融入进来，模型引入了位置嵌入（positional embeddings），这是通过另一个名为 `wpe` 的矩阵来实现的。
-
-代码会把 token 本身和它的位置都分别映射成 16 维向量，然后直接把这两个向量相加。
-
-最终得到的是一个单一向量，它同时包含了双重信息：
-
-+ token 是什么
-+ 它在序列中的具体位置
-
-前面提过，这些向量表示必须具备实际意义，因为模型后续需要根据向量之间的距离来计算误差。
-
-理想状态下：
-
-+ 差一点就对的预测，其向量应该离正确向量很近；
-+ 错得离谱的预测，其向量就该离得远远的。
-
-那么问题来了：一个好的嵌入空间（embedding space），我们到底该怎么设计？
-
-答案出奇地简单：我们根本不自己设计。
-
-我们只需要用随机数来初始化这两个嵌入矩阵（`wte` 和 `wpe`），剩下的事情交给梯度下降，让它在训练过程中自己去学习正确的表示方法。
-
-只要数据给足，优化过程就会不断调整这些矩阵，直到它们能够精准捕捉各种有用的关联。
-
-这种机制会催生出极其强大的“涌现”能力（emergent properties）。
-
-比如在著名的 word2vec 嵌入模型里，简单的向量加减法就能捕捉到词语间的语义关系。最经典的例子莫过于：
-
-```python
-king − man + woman ≈ queen
-```
-
-到这里我们已经能看出来，嵌入空间其实是在构建一个简化的世界模型。在这个模型里，现实概念之间的关联，全被转化成了向量之间的几何关系。
-
-既然搞清楚了向量是怎么来的，咱们终于可以来看看神经网络了。正是这个核心组件，负责将这些向量进行转换，生成代表下一个 token 的新向量。
-
-换句话说，神经网络把 token 嵌入空间里的向量又映射回了同一个空间，只是往后错位了一个 token。它会针对每一个 token，预测紧随其后的应该是什么。只要不断重复这个循环，模型就能生成一整段文本——在咱们这个项目里，就是生成一个名字。
-
-支撑这一过程的架构，被称作 Transformer。
-
-2017 年，谷歌的研究人员在他们那篇世界闻名的论文《Attention Is All You Need》中首次提出了 Transformer 架构。
-
-<!-- 这是一张图片，ocr 内容为：OUTPUT PROBABILITIES SOFTMAX LINEAR ADD&NORM FEED FORWARD ADD & NORM ADD & NORM MULTI-HEAD FEED ATTENTION NX FORWARD ADD & NORM NX ADD & NORM MASKED MULTI-HEAD MULTI-HEAD ATTENTION ATTENTION POSITIONAL POSITIONAL ENCODING ENCODING OUTPUT INPUT EMBEDDING EMBEDDING OUTPUTS INPUTS (SHIFTED RIGHT) -->
-![Transformer 模型结构示意图](https://cdn.nlark.com/yuque/0/2026/png/406504/1773713973865-f987b20d-6b5f-4ed2-8b18-efbcdfad03d5.png)  
-
-> The Transformer Model - MachineLearningMastery.com
-
-这一架构最初专为机器翻译而生。它包含两个核心组件：
-
-+ 编码器 (encoder)
-+ 解码器 (decoder)
-
-编码器负责处理输入的句子，解码器则用来生成翻译好的目标句。
-
-然而，像 GPT 这类生成式模型，我们其实只需保留原架构的一半：也就是解码器堆叠 (decoder stack) 这部分。
-
-<!-- 这是一张图片，ocr 内容为：OUTPUT PROBABILITIES SOFTMAX LINEAR ADD & NORM FEED FORWARD ADD & NORM MULTI-HEAD ATTENTION ADD & NORM MASKED MULTI-HEAD ATTENTION POSITIONAL ENCODING OUTPUT EMBEDDING OUTPUTS (SHIFTED RIGHT) -->
-![Decoder only architecture](https://cdn.nlark.com/yuque/0/2026/png/406504/1773714008983-27ec1a31-c8f9-407a-bbed-7a282aa9d386.png)
-
-> Decoder only architecture
-
-这就是为什么大家常把 GPT 叫做纯解码器（decoder-only）Transformer 模型。
-
-解码器接收输入的 token，并让它们在如上结构的网络层中反复。每一层都包含两个核心组件：
-
-+ 自注意力机制（Self-attention）
-+ 前馈神经网络（MLP）
-
-在大型模型里，这样的网络层会重复出现很多次。看架构图时，你经常会看到旁边标着“×N”，意思就是这个模块被复制了 N 次。
-
-Transformer 架构最关键的创新点在于：它能一次性处理整段文本序列。
-
-早期的语言模型，特别是循环神经网络（RNN），只能逐词处理文本，像接力一样把信息往后传。
-
-Transformer 完全不同。它可以同时处理所有的 token，让模型轻松捕捉文本中任意位置之间的关联。
-
-这种机制就叫作注意力（Attention），这也正是那篇开创性论文定名为《Attention Is All You Need》的原因。
-
-注意力机制会计算每个 token 与序列中其他所有 token 之间的相关程度。
-
-针对每一个 token 向量，模型都会算出一组权重，用来决定它该往其他 token 上分配多少注意力。随后，模型再根据这些权重，把其他 token 的信息融合进来。
-
-这样一来，计算得出的新向量既包含了 token 自身的特征，也完美融入了它在整段上下文里的特定含义。
-
-听起来可能有点绕，但背后的直觉很好懂。
-
-假设我们问语言模型：“法国的首都是哪里？”
-
-单看“首都”这个词，根本猜不出答案。但注意力机制能让模型把“首都”和“法国”这两个词死死绑定在一起。
-
-融合后的向量理解了“法国的首都”这个完整概念，模型自然就能吐出正确答案：巴黎。
-
-理解 Transformer 的一个好办法，是把它想象成一个软性数据库（soft database）。
-
-模型并没有死记硬背具体的事实，而是将知识以向量空间的形式存储起来。神经网络通过逼近函数而非死记规则来运作，因此它们往往能解答从未遇见过的新问题。
-
-回顾前面提到的嵌入（embedding）例子：只要训练数据里喂过“国王”和“女人”的信息，模型就算没直接背过，也能答出关于“女王”的问题，因为这些概念间的内在联系早就被向量空间捕获了。
-
-顺着这个数据库的比喻，我们可以粗略地认为：
-
-+ 注意力（Attention）扮演了索引的角色，负责帮模型快速定位相关信息。
-+ 前馈网络（MLP）层则像硬盘一样，存放着真正的“知识”。
-
-这种思维模型用来找感觉很棒，但严格来说并不完全准确。
-
-在 ChatGPT 这种真实的 Transformer 模型里，注意力 + MLP的组合块会重复叠加很多次。
-
-知识并没有乖乖待在某个特定的地方，而是散布在各个网络层之中。
-
-此外，每一层都带有一个残差连接（residual connection），负责把最开始的输入向量和刚刚计算出的新向量混合在一起。这让信息能在极深的网络里畅通无阻，同时让训练过程更稳定。
-
-随着向量在一层层网络中不断穿梭，更高维度的抽象概念和深层含义就会逐渐涌现。等走到最后一层输出结果时，模型其实已经把各个维度的信息都揉碎重组了一遍。
-
-这个过程极其复杂，单靠人类的直觉已经无法做到步步拆解了。
-
-尽管如此，这套系统在实际运行时的表现却好得令人惊叹。
-
-既然现在我们对 Transformer 架构有了个直观的认识，接下来就让我们放大细节，深挖它最重要的核心组件：注意力（attention）。
-
-```python
-# 1) Multi-head Attention block
-x_residual = x
-x = rmsnorm(x)
-q = linear(x, state_dict[f'layer{li}.attn_wq'])
-k = linear(x, state_dict[f'layer{li}.attn_wk'])
-v = linear(x, state_dict[f'layer{li}.attn_wv'])
-keys[li].append(k)
-values[li].append(v)
-x_attn = []
-for h in range(n_head):
-    hs = h * head_dim
-    q_h = q[hs:hs+head_dim]
-    k_h = [ki[hs:hs+head_dim] for ki in keys[li]]
-    v_h = [vi[hs:hs+head_dim] for vi in values[li]]
-    attn_logits = [sum(q_h[j] * k_h[t][j] for j in range(head_dim)) / head_dim0.5 for t in range(len(k_h))]
-    attn_weights = softmax(attn_logits)
-    head_out = [sum(attn_weights[t] * v_h[t][j] for t in range(len(v_h))) for j in range(head_dim)]
-    x_attn.extend(head_out)
-x = linear(x_attn, state_dict[f'layer{li}.attn_wo'])
-x = [a + b for a, b in zip(x, x_residual)]
-```
-
-在 Karpathy 的代码实现中，注意力机制的计算依赖于三个矩阵：
-
-+ Q (Query，查询)
-+ K (Key，键)
-+ V (Value，值)
-
-这些矩阵负责执行向量投影。换句话说，每个 token 向量都会被映射到三个不同的向量空间中。
-
-针对每个 token，我们会计算出：
-
-+ 一个查询向量
-+ 一个键向量
-+ 一个值向量
-
-拿到这些向量后，我们会把某一个 token 的查询向量，与序列中所有 token 的键向量逐一进行比对。
-
-在数学上，这是通过点积（内积）来实现的。点积会得出一个分数，代表两个向量之间的相关程度有多高。
-
-这样就能得出一组数值，反映出每个 token 与当前 token 的相关性。
-
-但是，这些原始分数还不是概率。为了将它们转化为概率分布，我们需要引入 softmax 函数，把这些分数转换成 0 到 1 之间且总和为 1 的数值。
-
-经过转换后的这些数值就代表了每个 token 应该获得多少注意力。
-
-最后，模型会根据这些注意力权重把值向量加权组合起来，生成一个汇聚了整个上下文信息的新向量。
-
-缩放点积注意力 (scaled dot-product attention) 的公式如下：
-
-$ \text{Attention}(Q, K, V) = \text{softmax}(QK^T / \sqrt{d_k}) V $
-
-其中：
-
-$ QK^T $用于计算查询和键之间的相似度
-
-$ \sqrt{d_k} $是一个缩放因子，用来稳定训练过程
-
-$ \text{softmax} $负责将分数转化为注意力概率
-
-$ V $提供实际的信息内容，随后根据上述概率进行加权组合
-
-最终得到的是每个 token 的全新表示，这个表示反映了该 token 在整个序列上下文中的含义。
-
-讲到这里，有必要提一下一个关键概念：上下文长度 (context length)。
-
-前面提到过，Transformer 会一次性处理整个序列。之所以必须这么做，是因为注意力机制要求把每一个 token 和其他所有 token 逐一比对。
-
-这意味着，计算成本会随着 token 数量的增加呈平方级增长。
-
-如果我们把上下文长度翻倍，计算量大约会暴增四倍。
-
-这是 Transformer 模型的主要局限之一。
-
-与其他一些架构不同，Transformer 并没有独立的记忆系统。它们只能“看到”刚好塞进其上下文窗口里的那些 token。
-
-窗口之外的一切，对模型而言完全不可见。
-
-这正是为什么在现代语言模型中，上下文长度是一项极其重要的指标。
-
-在许多现代 AI 系统中，人们通过引入外部记忆机制来突破这一限制。
-
-一个常见的做法是使用向量数据库。
-
-与其把知识强行塞进模型内部，不如将其转换为向量嵌入，存储在外部。
-
-当模型接收到问题时，系统可以执行以下操作：
-
-1. 将问题转换为向量。
-2. 在向量数据库中检索相关信息。
-3. 把检索到的信息插入到模型的上下文中。
-
-这样一来，模型就能同时看到：
-
-+ 提问本身
-+ 以及从数据库中提取出的相关知识
-
-既然这两者都出现在了上下文窗口里，模型自然就能依据这些信息生成回答。
-
-这门技术就是检索增强生成 (RAG)，在现代 AI 系统和智能体 (Agent) 框架中应用极为广泛。
-
-在这种架构下，语言模型的主要职责不再是存储知识，而是根据上下文中现有的信息，生成逻辑连贯的解答。
-
-但正如我们所见，这需要占用上下文窗口的空间，所以上下文长度依然至关重要。
-
-说回 Karpathy 的代码实现，模型采用了多头注意力 (multi-head attention)，这是基础注意力机制的进阶形态。
-
-  
-<!-- 这是一张图片，ocr 内容为：LINEAR CONCAT SCALED DOT-PRODUCT ATTENTION LINEAR LINEAR LINEAR -->
-![Multi-Head Attention Mechanism](https://cdn.nlark.com/yuque/0/2026/png/406504/1773714239294-784069d2-1c9d-4e15-8c62-b8e8470e84c4.png)
-
-> Multi-Head Attention Mechanism - GeeksforGeeks
-
-模型计算注意力靠的不再是单组 Q、K、V 矩阵，它同时并行了多个注意力头 (attention heads)。
-
-在这段代码实现中，一共设置了四个注意力头。
-
-每个头会各自学习关注 token 之间不同维度的关联。比如，有的头可能专门盯着语法关系，有的则负责捕捉长距离的上下文依赖。
-
-采用多头机制能有效提升特征表示的质量。
-
-为了让计算开销保持在差不多同等的水平，每个注意力头的维度会被相应压缩。
-
-前面提到过，我们会将向量从一个 16 维空间映射到另一个 16 维空间。
-
-换成四个注意力头后，每个头只需在一个 4 维空间里进行运算。算完之后，再把各个头得出的结果重新拼接成一个完整的向量。
-
-尽管单个头处理的向量维度降低了，但强强联合后的最终结果，通常比单打独斗的单头注意力更具表现力，也更加精准。
-
-聊完了注意力机制，咱们接着看 Transformer 模块的第二个核心组件：MLP，即前馈神经网络 (feed-forward neural network)。
-
-在代码中，MLP 模块大致长这个样子：
-
-```python
-# 2) MLP block
-x_residual = x
-x = rmsnorm(x)
-x = linear(x, state_dict[f'layer{li}.mlp_fc1'])
-x = [xi.relu() for xi in x]
-x = linear(x, state_dict[f'layer{li}.mlp_fc2'])
-x = [a + b for a, b in zip(x, x_residual)]
-```
-
-An MLP is a classic neural network architecture. If we look at the structure of the weight matrices, we can interpret the rows of the matrix as neurons.
-
-MLP 属于最经典的神经网络架构。分析权重矩阵结构你会发现，矩阵的每一行，本质上就可以看作是一层的神经元。
-
-<!-- 这是一张图片，ocr 内容为：WEIGHTS INPUTS IX W1 ACTIVATION FUNCTION INPUT NET I W2J NET; B ACTIVATION WA TRANSFER FUNCTION O; WNI N THRESHOLD -->
-![ArtificialNeuronModel](https://cdn.nlark.com/yuque/0/2026/png/406504/1773714433416-c6ffbf7f-22bd-4c06-89a2-3a2d5da5c7bc.png)  
-
-> ArtificialNeuronModel - Wikimedia Commons
-
-神经元是一个简单的计算单元，它：
-
-1. 将每个输入乘以一个权重，
-2. 将结果求和，
-3. 然后经过非线性激活函数来生成输出。
-
-这个模型最初的灵感来源于人脑中的生物神经元。从这个意义上讲，神经网络在发展初期的动力，正是试图模仿大脑处理信息的方式。
-
-然而，现代 AI 系统早已脱离了最初的类比范畴。
-
-在 MLP 模块里，我们多多少少还能看到点神经元的影子。但到了注意力机制这里，再想套用‘模拟大脑’那套说辞，就非常牵强了。
-
-正因如此，我们最好直接把现代 AI 系统看作可训练的数学函数，而不是人脑的类比模型。
-
-代码中的 MLP 模块主要包含三个步骤：
-
-1. 线性变换（矩阵乘法），
-2. 非线性激活函数（ReLU），
-3. 另一次线性变换。
-
-这看起来很简单，但这类结构具备一种极其强大的数学特性。
-
-这个模块也被称为通用近似器 (universal approximators)。
-
-这意味着，在特定条件下，一个足够大的 MLP 能够以任意精度拟合任何数学函数。
-
-理论上讲，一个庞大的 MLP 网络几乎能学会任何东西。
-
-但在实际操作中，这种做法效率极低。所以 Transformer 架构才会整合多种机制（包括注意力和层堆叠），从而更高效地分配计算量。
-
-网络的输出并不是一个单一的 token，而是所有可能 token 的概率分布。
-
-换句话说，针对词表中的每一个 token，模型都会输出它作为序列下一个词出现的概率。
-
-在生成阶段，算法会从这个概率分布中进行采样。
-
-也就是说，概率越高的 token 被选中的几率越大，但其中依然保留了一定的随机性。
-
-这种随机性由一个名为温度(temperature) 的参数来控制。
-
-温度参数决定了模型输出是偏向确定性，还是偏向创造性。
-
-+ 低温度 - 模型会强烈倾向于概率最高的 token，生成的回答更具可预测性且更准确。
-+ 高温度 - 概率分布变得更加平缓，那些原本概率较低的 token 也有了更多被选中的机会，从而产生更多样化、更具创造力的输出。
-
-比如：
-
-+ 如果我们想让模型分析文档并回答事实类问题，通常最好调低温度。
-+ 如果我们希望模型创作文本或探索新点子，较高的温度往往能带来更有趣的结果。
-
-关于这段优美的代码，以及 GPT 模型的整体原理，我想讲的大致就是这些。
-
-限于篇幅，许多地方的讲解难免有些浅尝辄止。我的初衷是在两者之间寻找平衡：既要尽可能多地提供有价值的见解，又要确保内容能收敛在一篇文章的容量之内。
-
-如果有读者觉得部分内容不够清晰，或者想进一步钻研细节，我强烈推荐你去看看 Andrej Karpathy 的个人网站、YouTube 频道以及他的博客。在那里，你会找到极佳的学习资料，足以帮你彻底吃透本文讨论的这些概念。
-
-希望这篇文章能对大家有所帮助。退一步讲，哪怕把这篇文章看做是一张入场券，能带你领略 AI 世界的奇妙，也就足够了。
-
+---
+**开启你的探索**
+- 📚 [漫画 AI 知识点](https://manga.ai-knowledgepoints.cn) - 视觉化学习中心
+- 🔧 [CI 效率工具站](https://ci.ai-knowledgepoints.cn) - 让 AI 成为你的外挂大脑
+- 🐙 [GitHub](https://github.com/alg-bug-engineer) - 这里的每一行代码都有生命
