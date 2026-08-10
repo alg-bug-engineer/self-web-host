@@ -38,6 +38,13 @@ if [[ -d "$CANDIDATE_DIR" ]]; then
   mv "$CANDIDATE_DIR" "${FAILED_DIR}-stale-$(date +%s)"
 fi
 
+# The live build can contain generated route declarations for pages that were
+# removed in the target commit. They are not needed at runtime, but TypeScript
+# would otherwise read them alongside the candidate build and reject the deploy.
+if [[ -d "$CURRENT_DIR/types" ]]; then
+  mv "$CURRENT_DIR/types" "${FAILED_DIR}-types-stale-$(date +%s)"
+fi
+
 npm ci
 NEXT_DIST_DIR=.next-candidate npm run build
 
