@@ -6,10 +6,26 @@
 2. `/api/health` 提供部署提交、进程存活时间和已发布文章数。
 3. `main` 分支更新后，GitHub Actions 先构建，再登录 ECS 执行候选构建、PM2 reload 和线上健康检查；失败时恢复上一份 `.next`。
 4. 每小时从 GitHub 检查首页与健康接口。
-5. 每日私有经营任务先巡检 Sitemap、canonical、noindex、JSON-LD、RSS、robots、`llms.txt`、内部链接和安全响应头，再把技术异常与流量质量合并进经营报告。
+5. 每日私有经营任务先巡检 Sitemap、canonical、noindex、JSON-LD、RSS、robots、`llms.txt`、内部链接和安全响应头，再评估部署行动，最后把技术异常、流量质量与学习结果合并进经营报告。
 6. ECS 内网运行 We-MP-RSS；每日 GitHub Action 通过 SSH 读取回环地址上的 RSS，生成 `published: false` 草稿并创建 PR，避免公开管理后台或未经审核直接发布。
 7. 自动化发布与监控只在服务器、GitHub Actions 和内部日志中运行，不提供面向访客的运维页面。
 8. 本地 `chatgpt2api` 可每天生成一篇 `published: false` 的候选文章；模型输出需通过长度、结构和危险标签校验，且必须人工复核后发布。
+
+## 私有经营行动与学习
+
+每次生产部署通过健康检查后，`scripts/record-deployment.mjs` 会把提交号、上一版本、提交主题和最多 100 个变更文件写入：
+
+```text
+<ANALYTICS_DATA_DIR>/operator/deployments.jsonl
+```
+
+每日 `npm run operator:learn` 将这些部署转换为行动记录，对比部署前 7 个自然日和部署后 7 个完整自然日。只有两侧各至少 5 个数据日才输出正向、负向或混合信号，并同时记录样本置信度；结果只表示相关性，不能在没有对照实验时声称因果。行动账本保存在：
+
+```text
+<ANALYTICS_DATA_DIR>/operator/actions.json
+```
+
+“有效访客”严格定义为：当日阅读至少 10 秒、达到 25% 阅读深度或具有回访信号的隐私化访客。由于访客哈希每日轮换，50,000 月度目标当前使用“有效访客天数”作为隐私保护代理值，不冒充跨 28 天完全去重的月 UV，也不再把所有页面请求当成合格流量。部署日志、行动账本、技术巡检和经营报告目录权限均为 `700`，文件权限为 `600`，且没有任何面向访客的展示页面。
 
 ## GitHub Secrets
 

@@ -83,5 +83,8 @@ if [[ "$healthy" != true ]]; then
 fi
 
 pm2 save
+if ! node scripts/record-deployment.mjs "$TARGET_SHA" "$CURRENT_SHA"; then
+  echo "警告：部署已成功，但经营行动日志写入失败。"
+fi
 echo "部署成功：$TARGET_SHA"
 echo "$response"

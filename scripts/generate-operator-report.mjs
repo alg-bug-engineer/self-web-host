@@ -13,6 +13,7 @@ const reportDir = path.join(dataDir, 'operator')
 const latestReportPath = path.join(reportDir, 'latest.json')
 const historyPath = path.join(reportDir, 'history.jsonl')
 const technicalAuditPath = path.join(reportDir, 'technical-latest.json')
+const actionsPath = path.join(reportDir, 'actions.json')
 const goalsPath = path.join(projectDir, 'ops/operator-goals.json')
 
 const readJson = async (file, fallback) => {
@@ -42,6 +43,7 @@ if (!goals?.objective?.target) throw new Error('缺少有效的 ops/operator-goa
 
 const store = await readJson(analyticsPath, { days: {} })
 const technicalAudit = await readJson(technicalAuditPath, null)
+const actionState = await readJson(actionsPath, { actions: [] })
 const analyticsDays = store.days && typeof store.days === 'object' ? store.days : {}
 const current28Days = dateRange(28)
 const previous28Days = dateRange(28, 28)
@@ -62,8 +64,20 @@ const engagedVisitorsFor = (days) => sum(days.map((day) => {
   }
   return visitors.size
 }))
+const qualifiedVisitorsFor = (days) => sum(days.map((day) => {
+  const daily = analyticsDays[day]
+  const visitors = new Set(Array.isArray(daily?.returningVisitors) ? daily.returningVisitors : [])
+  for (const signals of Object.values(daily?.engagement || {})) {
+    for (const [visitor, signal] of Object.entries(signals || {})) {
+      if (Number(signal?.seconds || 0) >= 10 || Number(signal?.depth || 0) >= 25) visitors.add(visitor)
+    }
+  }
+  return visitors.size
+}))
 const currentVisitors = visitorsFor(current28Days)
 const previousVisitors = visitorsFor(previous28Days)
+const currentQualifiedVisitors = qualifiedVisitorsFor(current28Days)
+const previousQualifiedVisitors = qualifiedVisitorsFor(previous28Days)
 const currentPageViews = pageViewsFor(current28Days)
 const current7Visitors = visitorsFor(current7Days)
 const previous7Visitors = visitorsFor(previous7Days)
@@ -77,6 +91,9 @@ const engagementRate = currentVisitors ? Math.min(100, Math.round((engagedVisito
 const activeDays = current28Days.filter((day) => analyticsDays[day]).length
 const projectedMonthlyVisitors = activeDays
   ? Math.round((currentVisitors / activeDays) * 30)
+  : 0
+const projectedMonthlyQualifiedVisitors = activeDays
+  ? Math.round((currentQualifiedVisitors / activeDays) * 30)
   : 0
 
 const pathTotals = {}
@@ -118,7 +135,7 @@ if (!activeDays) {
   })
 } else {
   observations.push(`最近 28 天已有 ${activeDays} 个自然日产生统计数据。`)
-  observations.push(`按现有日均速度推算月度访客为目标的 ${Math.round((projectedMonthlyVisitors / goals.objective.target) * 1000) / 10}%。`)
+  observations.push(`按现有日均速度推算月度有效访客为目标的 ${Math.round((projectedMonthlyQualifiedVisitors / goals.objective.target) * 1000) / 10}%。`)
   if (current7Visitors < previous7Visitors) {
     recommendedActions.push({
       priority: 1,
@@ -177,21 +194,31 @@ if (!technicalAudit) {
 }
 
 const report = {
-  version: 3,
+  version: 4,
   generatedAt: new Date().toISOString(),
   objective: goals.objective,
   status: {
     current28DayVisitors: currentVisitors,
     previous28DayVisitors: previousVisitors,
     visitorChangePercent: percentChange(currentVisitors, previousVisitors),
+    current28DayQualifiedVisitorDays: currentQualifiedVisitors,
+    previous28DayQualifiedVisitorDays: previousQualifiedVisitors,
+    qualifiedVisitorDayChangePercent: percentChange(currentQualifiedVisitors, previousQualifiedVisitors),
     current28DayPageViews: currentPageViews,
     current7DayVisitors: current7Visitors,
     previous7DayVisitors: previous7Visitors,
     sevenDayChangePercent: percentChange(current7Visitors, previous7Visitors),
     projectedMonthlyVisitors,
-    gapToTarget: Math.max(0, goals.objective.target - projectedMonthlyVisitors),
+    projectedMonthlyQualifiedVisitorDays: projectedMonthlyQualifiedVisitors,
+    gapToTarget: Math.max(0, goals.objective.target - projectedMonthlyQualifiedVisitors),
     activeDays,
     confidence: activeDays >= 21 ? 'medium' : activeDays >= 7 ? 'low' : 'insufficient',
+    measurement: {
+      unit: 'qualifiedVisitorDays',
+      dailyDeduplicated: true,
+      crossDayDeduplicated: false,
+      note: '隐私化访客哈希每日轮换；该值是有效访客天数，不是跨 28 天完全去重的月 UV。',
+    },
   },
   quality: {
     returningVisitors,
@@ -208,6 +235,25 @@ const report = {
     metrics: technicalAudit.metrics,
     issues: technicalAudit.issues,
   } : null,
+  learning: {
+    definition: actionState.definition || null,
+    totalActions: actionState.actions?.length || 0,
+    observingActions: actionState.actions?.filter((action) => action.status === 'observing').length || 0,
+    evaluatedActions: actionState.actions?.filter((action) => action.status === 'evaluated').length || 0,
+    insufficientDataActions: actionState.actions?.filter((action) => action.status === 'insufficient-data').length || 0,
+    recentActions: (actionState.actions || []).slice(0, 5).map((action) => ({
+      id: action.id,
+      category: action.category,
+      title: action.title,
+      commit: action.commit,
+      deployedAt: action.deployedAt,
+      status: action.status,
+      observationEnds: action.observationEnds,
+      outcome: action.outcome,
+      confidence: action.confidence,
+      changes: action.changes || null,
+    })),
+  },
   topPages,
   observations,
   recommendedActions,
