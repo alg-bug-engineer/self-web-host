@@ -17,9 +17,10 @@ if (!dryRun && (!appId || !appSecret)) throw new Error('公众号主动发布需
 
 const manifestPath = path.resolve(projectDir, manifestFile)
 const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'))
+const stateKey = manifest.date ? `${manifest.date}:${manifest.slug}` : manifest.slug
 const state = await readJson(stateFile, {})
-if (['published', 'draft'].includes(state[manifest.slug]?.status)) {
-  console.log(`${manifest.slug} 已存在公众号${state[manifest.slug].status === 'published' ? '发布记录' : '草稿'}，跳过重复操作。`)
+if (['published', 'draft'].includes(state[stateKey]?.status)) {
+  console.log(`${stateKey} 已存在公众号${state[stateKey].status === 'published' ? '发布记录' : '草稿'}，跳过重复操作。`)
   process.exit(0)
 }
 
@@ -27,11 +28,11 @@ const html = await fs.readFile(path.resolve(projectDir, manifest.htmlPath), 'utf
 const article = html.match(/<article>([\s\S]*?)<\/article>/i)?.[1]
 if (!article) throw new Error('公众号 HTML 中没有找到 article 正文。')
 const token = dryRun ? '' : await getAccessToken()
-if (!dryRun && state[manifest.slug]?.status === 'publishing' && state[manifest.slug]?.publishId) {
-  const result = await waitForPublish(token, state[manifest.slug].publishId)
-  state[manifest.slug] = { ...state[manifest.slug], status: 'published', articleId: result.article_id, updatedAt: new Date().toISOString() }
+if (!dryRun && state[stateKey]?.status === 'publishing' && state[stateKey]?.publishId) {
+  const result = await waitForPublish(token, state[stateKey].publishId)
+  state[stateKey] = { ...state[stateKey], status: 'published', articleId: result.article_id, updatedAt: new Date().toISOString() }
   await saveState(state)
-  console.log(`公众号发布已确认：${result.article_id || state[manifest.slug].publishId}`)
+  console.log(`公众号发布已确认：${result.article_id || state[stateKey].publishId}`)
   process.exit(0)
 }
 let content = article
@@ -74,6 +75,9 @@ const draftResponse = await wechatJson(`https://api.weixin.qq.com/cgi-bin/draft/
 const record = {
   status: autoPublish ? 'publishing' : 'draft',
   draftMediaId: draftResponse.media_id,
+  manifestDate: manifest.date || null,
+  manifestSlug: manifest.slug,
+  websiteUrl: manifest.websiteUrl,
   contentHash: crypto.createHash('sha256').update(content).digest('hex'),
   updatedAt: new Date().toISOString(),
 }
@@ -88,7 +92,7 @@ if (autoPublish) {
     if (error?.wechatCode !== 48001) throw error
     record.status = 'draft'
     record.publishNote = 'freepublish API 未授权（48001），已自动保留为公众号草稿。'
-    state[manifest.slug] = record
+    state[stateKey] = record
     await saveState(state)
     console.warn(record.publishNote)
     console.log(`公众号草稿已创建：${record.draftMediaId}`)
@@ -96,14 +100,14 @@ if (autoPublish) {
   }
   record.publishId = publishResponse.publish_id
   record.status = 'publishing'
-  state[manifest.slug] = record
+  state[stateKey] = record
   await saveState(state)
   const publishResult = await waitForPublish(token, publishResponse.publish_id)
   record.status = 'published'
   record.articleId = publishResult.article_id
 }
 
-state[manifest.slug] = record
+state[stateKey] = record
 await saveState(state)
 console.log(autoPublish ? `公众号发布任务已提交：${record.publishId}` : `公众号草稿已创建：${record.draftMediaId}`)
 
