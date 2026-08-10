@@ -130,6 +130,18 @@ curl --silent --fail -X POST "${request_headers[@]}" -H 'DNT: 1' \
   --data '{"kind":"conversion","path":"/portfolio","name":"view_book","target":"book-4"}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
 
+AUDIT_RESPONSE="$(curl --silent --fail -X POST \
+  -H 'Content-Type: application/json' \
+  -H 'User-Agent: ai-knowledgepoints-technical-audit/1.0' \
+  --data '{"path":"/"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view")"
+node - "$AUDIT_RESPONSE" <<'NODE'
+const result = JSON.parse(process.argv[2])
+if (result.ok !== true || result.ignored !== true) {
+  throw new Error('technical audit probe was not excluded from analytics')
+}
+NODE
+
 node - "$ANALYTICS_TEST_DIR/analytics.json" <<'NODE'
 const fs = require('node:fs')
 const analyticsFile = process.argv[2]
@@ -155,13 +167,28 @@ if (daily.engagement['/portfolio']?.[daily.visitors[0]]?.seconds !== 12) throw n
 if ((fs.statSync(analyticsFile).mode & 0o777) !== 0o600) throw new Error('analytics file is not private')
 NODE
 
+SITE_URL="http://127.0.0.1:${ANALYTICS_TEST_PORT}" \
+  ANALYTICS_DATA_DIR="$ANALYTICS_TEST_DIR" \
+  npm run operator:audit >/dev/null
+node - "$ANALYTICS_TEST_DIR/operator/technical-latest.json" <<'NODE'
+const fs = require('node:fs')
+const report = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
+if (report.version !== 4) throw new Error(`expected technical report version 4, got ${report.version}`)
+if (report.metrics.analyticsApiReadable !== true) throw new Error('analytics read probe failed')
+if (report.metrics.analyticsBotExclusionOk !== true) throw new Error('analytics bot exclusion probe failed')
+if (report.metrics.analyticsStoreReadable !== true) throw new Error('analytics store was not readable')
+if (report.metrics.analyticsStorePrivate !== true) throw new Error('analytics store permissions were not private')
+if (report.metrics.analyticsStoreVersion !== 5) throw new Error('analytics store schema was not verified')
+if (report.metrics.googleAnalyticsConfigured !== true) throw new Error('GA4 client configuration was not found in built assets')
+NODE
+
 ANALYTICS_DATA_DIR="$ANALYTICS_TEST_DIR" npm run operator:learn >/dev/null
 ANALYTICS_DATA_DIR="$ANALYTICS_TEST_DIR" npm run operator:report >/dev/null
 
 node - "$ANALYTICS_TEST_DIR/operator/latest.json" <<'NODE'
 const fs = require('node:fs')
 const report = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
-if (report.version !== 12) throw new Error(`expected report version 12, got ${report.version}`)
+if (report.version !== 13) throw new Error(`expected report version 13, got ${report.version}`)
 if (report.status.measurement.crossDayDeduplicated !== false) throw new Error('mixed migration day was treated as de-duplicated')
 if (report.status.currentMonthVisitors !== null) throw new Error('mixed migration day produced a monthly visitor count')
 if (report.status.currentMonthQualifiedVisitors !== null) throw new Error('mixed migration day produced a qualified monthly visitor count')
@@ -169,6 +196,8 @@ if (report.content !== null) throw new Error('missing content audit should be re
 if (report.value.conversionVisitors !== 1) throw new Error('report conversion visitor count is wrong')
 if (report.value.conversionRatePercent !== 100) throw new Error('report conversion rate is wrong')
 if (report.value.topConversions[0]?.name !== 'view_book') throw new Error('report top conversion is missing')
+if (!report.observations.some((item) => item.includes('站内隐私统计已核验'))) throw new Error('private analytics readiness observation is missing')
+if (!report.observations.some((item) => item.includes('GA4 客户端配置已在生产构建资源中核验'))) throw new Error('GA4 readiness observation is missing')
 NODE
 
 CORRUPT_TEST_DIR="$ANALYTICS_TEST_DIR/corrupt"
