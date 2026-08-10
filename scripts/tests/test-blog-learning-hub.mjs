@@ -66,6 +66,7 @@ if (itemList.numberOfItems !== itemList.itemListElement.length) {
 
 const listedUrls = itemList.itemListElement.map((item) => item.url)
 if (new Set(listedUrls).size !== listedUrls.length) throw new Error('文章 ItemList 存在重复 URL')
+const llmsBody = await fs.readFile(path.join(projectDir, '.next', 'server', 'app', 'llms.txt.body'), 'utf8')
 for (const url of listedUrls) {
   if (!url.startsWith('https://ai-knowledgepoints.cn/blog/')) {
     throw new Error(`文章 ItemList URL 不属于本站：${url}`)
@@ -73,6 +74,24 @@ for (const url of listedUrls) {
   if (!html.includes(`href="${new URL(url).pathname}"`)) {
     throw new Error(`结构化数据文章未在页面中可见：${url}`)
   }
+  const slug = new URL(url).pathname.split('/').filter(Boolean).at(-1)
+  const markdownUrl = `${url}/index.html.md`
+  const markdownDir = path.join(projectDir, '.next', 'server', 'app', 'blog', slug)
+  const markdown = await fs.readFile(path.join(markdownDir, 'index.html.md.body'), 'utf8')
+  const metadata = JSON.parse(await fs.readFile(path.join(markdownDir, 'index.html.md.meta'), 'utf8'))
+  if (!llmsBody.includes(markdownUrl)) throw new Error(`llms.txt 未引用文章 Markdown：${markdownUrl}`)
+  if (!metadata.headers?.['content-type']?.includes('text/markdown')) {
+    throw new Error(`文章 Markdown 内容类型错误：${markdownUrl}`)
+  }
+  if (!metadata.headers?.link?.includes(`<${url}>; rel="canonical"`)) {
+    throw new Error(`文章 Markdown canonical 错误：${markdownUrl}`)
+  }
+  if (!/^#\s+\S/m.test(markdown) || !markdown.includes('## 正文') || !markdown.includes(url)) {
+    throw new Error(`文章 Markdown 元数据或正文不完整：${markdownUrl}`)
+  }
+  if (/<\/?(?:InfoCard|TwoColumnLayout|Left|Right)\b/.test(markdown)) {
+    throw new Error(`文章 Markdown 仍包含展示组件标签：${markdownUrl}`)
+  }
 }
 
-console.log(`文章学习入口测试通过：${itemList.numberOfItems} 篇文章，3 条学习路径，4 个主题筛选。`)
+console.log(`文章学习入口测试通过：${itemList.numberOfItems} 篇文章及其 Markdown 正文，3 条学习路径，4 个主题筛选。`)

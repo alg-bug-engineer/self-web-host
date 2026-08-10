@@ -140,6 +140,27 @@ const llms = await fetchText(absolute('/llms.txt'))
 if (!llms.response?.ok || !/芝士AI吃鱼/.test(llms.text) || !/https:\/\/ai-knowledgepoints\.cn/.test(llms.text)) {
   addIssue('warning', 'geo', absolute('/llms.txt'), 'llms.txt 缺少站点或作者核心信息。')
 }
+const articleUrls = sitemapUrls.filter((target) => new URL(target).pathname.startsWith('/blog/'))
+const markdownResults = await mapLimit(articleUrls, 5, async (articleUrl) => {
+  const markdownUrl = `${articleUrl.replace(/\/+$/, '')}/index.html.md`
+  const result = await fetchText(markdownUrl)
+  const contentType = result.response?.headers.get('content-type') || ''
+  const canonicalHeader = result.response?.headers.get('link') || ''
+  const healthy = result.response?.ok === true
+    && contentType.toLowerCase().includes('text/markdown')
+    && /^#\s+\S/m.test(result.text)
+    && /## 正文/.test(result.text)
+    && result.text.includes(articleUrl)
+    && canonicalHeader.includes(`rel="canonical"`)
+    && !/<\/?(?:InfoCard|TwoColumnLayout|Left|Right)\b/.test(result.text)
+  if (!healthy) {
+    addIssue('error', 'geo-markdown', markdownUrl, result.error || '文章 Markdown 不可用、元数据不完整或仍包含展示组件标签。')
+  }
+  if (!llms.text.includes(markdownUrl)) {
+    addIssue('warning', 'geo-discovery', markdownUrl, 'llms.txt 未引用该文章的 Markdown 版本。')
+  }
+  return { markdownUrl, healthy }
+})
 let indexNowKeyOk = false
 if (indexNowConfig?.key && indexNowConfig?.keyFile) {
   const keyLocation = absolute(`/${indexNowConfig.keyFile}`)
@@ -178,7 +199,7 @@ for (const [header, label] of Object.entries(requiredHeaders)) {
 }
 
 const report = {
-  version: 1,
+  version: 2,
   checkedAt,
   target: siteUrl.origin,
   status: issues.some((issue) => issue.severity === 'error') ? 'degraded' : 'healthy',
@@ -187,6 +208,8 @@ const report = {
     sitemapPages: sitemapUrls.length,
     successfulPages: pageResults.filter((page) => page.status === 200).length,
     internalLinksChecked: internalLinks.length,
+    markdownPagesChecked: markdownResults.length,
+    markdownPagesHealthy: markdownResults.filter((item) => item.healthy).length,
     indexNowKeyOk,
     errors: issues.filter((issue) => issue.severity === 'error').length,
     warnings: issues.filter((issue) => issue.severity === 'warning').length,

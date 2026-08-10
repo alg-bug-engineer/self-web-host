@@ -78,6 +78,17 @@ test('最新日更文章包含完整正文结构和有效封面', async ({ page 
   if (await cover.count()) {
     await expect.poll(() => cover.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true)
   }
+
+  const markdownLink = page.locator('link[rel="alternate"][type="text/markdown"]')
+  await expect(markdownLink).toHaveAttribute('href', `https://ai-knowledgepoints.cn${href}/index.html.md`)
+  const markdown = await page.request.get(`${href}/index.html.md`)
+  expect(markdown.status()).toBe(200)
+  expect(markdown.headers()['content-type']).toContain('text/markdown')
+  expect(markdown.headers().link).toContain('rel="canonical"')
+  const markdownBody = await markdown.text()
+  expect(markdownBody).toContain('## 正文')
+  expect(markdownBody).toContain(`https://ai-knowledgepoints.cn${href}`)
+  expect(markdownBody).not.toMatch(/<\/?(?:InfoCard|TwoColumnLayout|Left|Right)\b/)
 })
 
 test('作品页公开作品并保持外链安全属性', async ({ page }) => {

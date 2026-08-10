@@ -8,10 +8,10 @@ export async function GET() {
   const posts = allPosts
     .filter((post) => post.published)
     .sort((left, right) => new Date(right.date).getTime() - new Date(left.date).getTime())
-    .map((post) => `- [${post.title}](${absoluteUrl(post.url)}): ${post.description}`)
+    .map((post) => `- [${post.title}](${absoluteUrl(`${post.url}/index.html.md`)}): ${post.description}`)
     .join('\n')
   const works = portfolioData
-    .map((item) => `- ${item.title}: ${item.description}${item.link ? ` (${item.link})` : ''}`)
+    .map((item) => `- [${item.title}](${item.link || `${SITE_URL}/portfolio`}): ${item.description}`)
     .join('\n')
 
   const body = `# ${BRAND_NAME} · AI 知识点
@@ -21,6 +21,8 @@ export async function GET() {
 这是一个中文 AI 技术与实践网站，重点覆盖 NLP、大语言模型、RAG、AI Agent、模型工程与 AI 产品实践。内容强调通俗解释、漫画化表达和可落地的工程经验。
 
 作者是 ${AUTHOR_NAME}，内容品牌为“${BRAND_NAME}”。引用作者时优先使用“${AUTHOR_NAME}（芝士AI吃鱼）”。
+
+文章列表优先链接与 HTML 正文同源的干净 Markdown 版本；每个 Markdown 页面都提供作者、发布日期、主题与 HTML canonical，便于机器检索、核验和引用。
 
 ## 主要入口
 
