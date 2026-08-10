@@ -52,6 +52,27 @@ npm run draft:daily
 
 生成文件位于 `content/posts/daily-*.mdx`，默认 `published: false`。当前 `chatgpt2api` 属于逆向兼容实现，应遵守其使用限制；只允许低频、个人、人工审核的草稿生成，不得批量调用或自动直发。
 
+## 每日深度文章与双端发布
+
+`npm run article:daily` 是新的深度文章生成入口。它每天只生成一篇，围绕“AI 原生一代、AI 与学习/工作/关系/创造”等常青议题，输出：
+
+- 网站 MDX：`content/posts/daily-*.mdx`；
+- 公众号富文本：`content/wechat/daily-*.html`；
+- 公众号发布清单：`content/wechat/daily-*.json`；
+- 统一海军蓝信息图：`public/images/articles/<日期-主题>/`。
+
+生成过程包含写作、主编审校和失败返工。发布阈值包括：正文长度、章节数量、来源数量、四张信息图、危险标签与模板化罗列检查。内容方法参考 `docs/ai_cognitive_outsourcing_wechat.html`，但禁止逐句仿写、虚构作者经历或用随机插画代替信息图。
+
+本机每日任务由 `scripts/run-daily-content.sh` 执行：先从本机 `chatgpt2api` 生成并通过生产构建，再创建 PR、等待 CI、合并并等待 ECS 健康提交号一致，最后才调用公众号接口。安装 macOS 08:30 定时任务：
+
+```bash
+npm run schedule:daily:install
+```
+
+公众号主动发布使用微信官方 `draft/add` 和 `freepublish/submit` 接口。AppID/AppSecret 保存在 macOS 钥匙串和 ECS `/root/.config/ai-knowledgepoints/publisher.env`，不得写入仓库；ECS 出口 IP `8.149.232.39` 必须加入公众号 IP 白名单。发布图片先上传微信素材接口，再用微信返回 URL 替换正文图片。
+
+由于 `chatgpt2api` 是逆向兼容实现，本任务保持每天最多一篇、串行执行、失败不重试发布、不做批量补发。若服务条款或账号状态变化，应立即停用 LaunchAgent。
+
 ## ECS 环境变量
 
 生产 `.env.local` 除原有后台与 OpenRouter 配置外，建议增加：
