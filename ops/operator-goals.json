@@ -1,5 +1,5 @@
 {
-  "version": 16,
+  "version": 17,
   "objective": {
     "metric": "monthlyQualifiedVisitorsEstimate",
     "target": 50000,
@@ -20,6 +20,7 @@
     "contentPipelineAvailability",
     "contentPipelineIsolation",
     "wechatInboundSyncRecovery",
+    "wechatRateLimitEvidence",
     "publicProfileFreshness",
     "verifiedIdentityMachineReadableCoverage",
     "experimentAttributionIntegrity",

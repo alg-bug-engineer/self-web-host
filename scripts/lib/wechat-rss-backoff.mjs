@@ -4,15 +4,16 @@ const DEFAULT_MAX_BACKOFF_HOURS = 168
 export function normalizeWechatRssSyncState(value = {}) {
   const consecutiveEmptyUpdates = Math.max(0, Number.parseInt(value.consecutiveEmptyUpdates, 10) || 0)
   return {
-    version: 1,
+    version: 2,
     consecutiveEmptyUpdates,
     lastAttemptAt: validIso(value.lastAttemptAt),
     lastSuccessfulAt: validIso(value.lastSuccessfulAt),
     backoffUntil: validIso(value.backoffUntil),
     lastItemCount: Math.max(0, Number.parseInt(value.lastItemCount, 10) || 0),
-    lastResult: ['items-available', 'empty-after-update'].includes(value.lastResult)
+    lastResult: ['items-available', 'empty-after-update', 'frequency-controlled'].includes(value.lastResult)
       ? value.lastResult
       : null,
+    lastFrequencyControlAt: validIso(value.lastFrequencyControlAt),
   }
 }
 
@@ -31,6 +32,7 @@ export function recordWechatRssUpdate({
   state,
   now = new Date(),
   itemCount,
+  frequencyControlled = false,
   emptyBackoffHours = DEFAULT_EMPTY_BACKOFF_HOURS,
   maxBackoffHours = DEFAULT_MAX_BACKOFF_HOURS,
 } = {}) {
@@ -59,8 +61,15 @@ export function recordWechatRssUpdate({
     lastAttemptAt: timestamp.toISOString(),
     backoffUntil: new Date(timestamp.getTime() + backoffHours * 3_600_000).toISOString(),
     lastItemCount: 0,
-    lastResult: 'empty-after-update',
+    lastResult: frequencyControlled ? 'frequency-controlled' : 'empty-after-update',
+    lastFrequencyControlAt: frequencyControlled
+      ? timestamp.toISOString()
+      : normalized.lastFrequencyControlAt,
   }
+}
+
+export function hasWechatFrequencyControlEvidence(value) {
+  return /(?:frequ(?:ency|encey)\s+control|\b200013\b|频率控制)/i.test(String(value || ''))
 }
 
 function validIso(value) {
