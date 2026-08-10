@@ -22,8 +22,11 @@ export function ThemeToggle() {
 
   return (
     <button
+      type="button"
       className="theme-toggle"
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+      aria-label={theme === "light" ? "切换到深色模式" : "切换到浅色模式"}
+      title={theme === "light" ? "切换到深色模式" : "切换到浅色模式"}
     >
       {theme === "light" ? <IconMoon className="w-6 h-6" /> : <IconSun className="w-6 h-6" />}
     </button>

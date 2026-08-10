@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ReactNode, ComponentPropsWithoutRef } from 'react'
+import { Children, ReactNode, ComponentPropsWithoutRef, isValidElement } from 'react'
 import type { MDXComponents } from 'mdx/types'
 
 // Info Card Component
@@ -177,6 +177,35 @@ function createHeading(level: 1 | 2 | 3 | 4 | 5 | 6) {
   return Heading
 }
 
+function MdxImage(props: ComponentPropsWithoutRef<'img'>) {
+  return (
+    <figure className="my-8 flex flex-col items-center">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        {...props}
+        alt={props.alt || ''}
+        className="rounded-xl max-w-full h-auto"
+      />
+      {props.alt && (
+        <figcaption className="mt-2 text-center text-sm text-text-tertiary">
+          {props.alt}
+        </figcaption>
+      )}
+    </figure>
+  )
+}
+
+function Paragraph({ children, ...props }: ComponentPropsWithoutRef<'p'>) {
+  const childNodes = Children.toArray(children)
+  const containsOnlyImage =
+    childNodes.length === 1 &&
+    isValidElement(childNodes[0]) &&
+    childNodes[0].type === MdxImage
+
+  if (containsOnlyImage) return <>{children}</>
+  return <p className="my-4 text-text-secondary leading-relaxed" {...props}>{children}</p>
+}
+
 // Export all MDX components
 export const mdxComponents: MDXComponents = {
   // Custom components
@@ -197,9 +226,7 @@ export const mdxComponents: MDXComponents = {
   h5: createHeading(5),
   h6: createHeading(6),
 
-  p: (props: ComponentPropsWithoutRef<'p'>) => (
-    <p className="my-4 text-text-secondary leading-relaxed" {...props} />
-  ),
+  p: Paragraph,
 
   a: (props: ComponentPropsWithoutRef<'a'>) => {
     const { href, children, ...rest } = props
@@ -248,21 +275,7 @@ export const mdxComponents: MDXComponents = {
     <pre className="my-6 p-4 rounded-xl bg-bg-inset text-text-primary overflow-x-auto font-mono text-sm" {...props} />
   ),
 
-  img: (props: ComponentPropsWithoutRef<'img'>) => (
-    <figure className="my-8 flex flex-col items-center">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        {...props}
-        alt={props.alt || ''}
-        className="rounded-xl max-w-full h-auto"
-      />
-      {props.alt && (
-        <figcaption className="mt-2 text-center text-sm text-text-tertiary">
-          {props.alt}
-        </figcaption>
-      )}
-    </figure>
-  ),
+  img: MdxImage,
 
   hr: () => <hr className="my-12 border-border-default" />,
 

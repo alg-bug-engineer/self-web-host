@@ -5,6 +5,7 @@ import { compareDesc } from 'date-fns'
 export const metadata = {
   title: '文章合集 | 芝士AI吃鱼',
   description: '精选文章排行与最新内容速览。',
+  alternates: { canonical: '/blog' },
 }
 
 const tagTones = ['label-blue', 'label-green', 'label-purple', 'label-orange', 'label-red']

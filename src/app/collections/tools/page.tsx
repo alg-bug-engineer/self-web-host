@@ -6,6 +6,7 @@ import type { ToolItem } from './types'
 export const metadata = {
   title: '工具合集 | 芝士AI吃鱼',
   description: '收集与自研的 AI 小工具清单。',
+  alternates: { canonical: '/collections/tools' },
 }
 
 export const dynamic = 'force-dynamic'

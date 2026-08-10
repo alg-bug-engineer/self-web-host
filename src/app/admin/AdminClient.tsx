@@ -2,14 +2,35 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import type { AnalyticsOverview } from '@/lib/analytics-storage'
 
 const defaultPostContent = `## 新文章\n\n用人话写清楚一个 AI 概念。\n\n<InfoCard type=\"robot\" title=\"核心观点\">\n  - 这里写要点\n</InfoCard>\n`
 
 type AdminClientProps = {
   isAuthed: boolean
+  analytics: AnalyticsOverview | null
 }
 
-export default function AdminClient({ isAuthed }: AdminClientProps) {
+const sourceLabel = (source: string) => {
+  if (source === 'direct') return '直接访问'
+  if (source === 'internal') return '站内跳转'
+  const [kind, value] = source.split(':', 2)
+  const labels: Record<string, string> = {
+    campaign: '活动',
+    search: '搜索',
+    social: '社交',
+    referral: '引荐',
+  }
+  return `${labels[kind] || kind} · ${value || source}`
+}
+
+const changeLabel = (change: number | null) => {
+  if (change === null) return '首次有数据'
+  if (change === 0) return '与上期持平'
+  return `较上期 ${change > 0 ? '+' : ''}${change}%`
+}
+
+export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {
   const router = useRouter()
   const [autoPublish, setAutoPublish] = useState(false)
   const [publishStatus, setPublishStatus] = useState('')
@@ -208,6 +229,103 @@ export default function AdminClient({ isAuthed }: AdminClientProps) {
         </div>
       </div>
       {publishStatus && <p className="text-xs text-text-tertiary">{publishStatus}</p>}
+
+      {analytics && (
+        <section className="space-y-5 rounded-2xl border border-border-default bg-bg-secondary p-5 sm:p-6" aria-labelledby="analytics-heading">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-tertiary">Private analytics</p>
+              <h2 id="analytics-heading" className="mt-1 text-lg font-semibold text-text-primary">最近 {analytics.days} 天网站表现</h2>
+            </div>
+            <p className="text-xs text-text-tertiary">访客按天匿名哈希；不保存原始 IP</p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+              <p className="text-xs text-text-tertiary">页面浏览 PV</p>
+              <strong className="mt-2 block text-2xl text-text-primary">{analytics.pageViews.toLocaleString('zh-CN')}</strong>
+              <span className="mt-1 block text-xs text-text-secondary">{changeLabel(analytics.pageViewChange)}</span>
+            </div>
+            <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+              <p className="text-xs text-text-tertiary">每日独立访客合计</p>
+              <strong className="mt-2 block text-2xl text-text-primary">{analytics.dailyVisitors.toLocaleString('zh-CN')}</strong>
+              <span className="mt-1 block text-xs text-text-secondary">{changeLabel(analytics.visitorChange)}</span>
+            </div>
+            <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+              <p className="text-xs text-text-tertiary">热门页面数</p>
+              <strong className="mt-2 block text-2xl text-text-primary">{analytics.topPaths.length}</strong>
+              <span className="mt-1 block text-xs text-text-secondary">有访问记录的前 10 页</span>
+            </div>
+            <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+              <p className="text-xs text-text-tertiary">有效来源数</p>
+              <strong className="mt-2 block text-2xl text-text-primary">{analytics.topSources.length}</strong>
+              <span className="mt-1 block text-xs text-text-secondary">搜索、社交、引荐与活动</span>
+            </div>
+          </div>
+
+          <div className="grid gap-5 xl:grid-cols-[1.2fr_.8fr]">
+            <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="text-sm font-semibold text-text-primary">访问趋势</h3>
+                <span className="text-xs text-text-tertiary">PV / 日</span>
+              </div>
+              <div className="flex h-36 items-end gap-1" aria-label="最近 30 天页面浏览趋势">
+                {analytics.timeline.map((point) => {
+                  const maximum = Math.max(1, ...analytics.timeline.map((item) => item.pageViews))
+                  const height = Math.max(point.pageViews ? 8 : 2, Math.round((point.pageViews / maximum) * 100))
+                  return (
+                    <div key={point.date} className="group relative flex h-full min-w-0 flex-1 items-end" title={`${point.date}：${point.pageViews} PV / ${point.visitors} 访客`}>
+                      <span className="w-full rounded-t-sm bg-accent-primary/70 transition-colors group-hover:bg-accent-primary" style={{ height: `${height}%` }} />
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+              <h3 className="mb-3 text-sm font-semibold text-text-primary">访问来源</h3>
+              {analytics.topSources.length ? (
+                <div className="space-y-2">
+                  {analytics.topSources.slice(0, 6).map((item) => (
+                    <div key={item.source} className="flex items-center justify-between gap-3 text-sm">
+                      <span className="truncate text-text-secondary" title={item.source}>{sourceLabel(item.source)}</span>
+                      <strong className="shrink-0 text-text-primary">{item.visitors.toLocaleString('zh-CN')}</strong>
+                    </div>
+                  ))}
+                </div>
+              ) : <p className="text-sm text-text-tertiary">新版本部署后开始记录来源。</p>}
+            </div>
+          </div>
+
+          <div className="grid gap-5 xl:grid-cols-2">
+            <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+              <h3 className="mb-3 text-sm font-semibold text-text-primary">热门页面</h3>
+              <div className="space-y-2.5">
+                {analytics.topPaths.slice(0, 6).map((item) => (
+                  <div key={item.pathname} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 text-sm">
+                    <span className="truncate text-text-secondary" title={item.pathname}>{item.pathname}</span>
+                    <span className="text-xs text-text-tertiary">{item.visitors} 访客</span>
+                    <strong className="text-text-primary">{item.views} PV</strong>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+              <h3 className="mb-3 text-sm font-semibold text-text-primary">主要落地页</h3>
+              {analytics.topLandingPaths.length ? (
+                <div className="space-y-2.5">
+                  {analytics.topLandingPaths.slice(0, 6).map((item) => (
+                    <div key={item.pathname} className="flex items-center justify-between gap-3 text-sm">
+                      <span className="truncate text-text-secondary" title={item.pathname}>{item.pathname}</span>
+                      <strong className="shrink-0 text-text-primary">{item.visitors} 访客</strong>
+                    </div>
+                  ))}
+                </div>
+              ) : <p className="text-sm text-text-tertiary">新版本部署后开始记录落地页。</p>}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Post Form */}

@@ -44,10 +44,11 @@ const timeAgo = (date: string | undefined) => {
   for (const unit of units) {
     const interval = Math.floor(diffInSeconds / unit.seconds);
     if (interval >= 1) {
-      return `Updated ${interval} ${unit.name}${interval > 1 ? 's' : ''} ago`;
+      const labels: Record<string, string> = { year: '年', month: '个月', week: '周', day: '天', hour: '小时', minute: '分钟' };
+      return `${interval} ${labels[unit.name]}前更新`;
     }
   }
-  return 'Updated just now';
+  return '刚刚更新';
 };
 
 
@@ -76,12 +77,12 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
 
     return (
         <div
-            className={`group relative rounded-2xl border border-border-default bg-bg-secondary/80 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent-primary/50 hover:shadow-lg hover:shadow-black/15 cursor-pointer ${variant === 'shelf' ? 'w-64 shrink-0' : 'w-full'}`}
+            className={`group relative overflow-hidden rounded-[1.15rem] border border-border-default bg-bg-secondary p-5 transition-all duration-300 hover:-translate-y-1 hover:border-accent-primary/50 hover:shadow-xl cursor-pointer before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-accent-primary/35 before:to-transparent before:opacity-0 before:transition-opacity hover:before:opacity-100 ${variant === 'shelf' ? 'w-64 shrink-0' : 'w-full'}`}
         >
             <Link href={url}>
                 <div className="flex items-start gap-3">
                     {isPost ? (
-                        <div className="w-12 h-12 rounded-xl flex-shrink-0 bg-bg-tertiary border border-border-default flex items-center justify-center text-2xl">
+                        <div className="w-12 h-12 rounded-[.85rem] flex-shrink-0 bg-gradient-to-br from-accent-primary/20 to-accent-secondary/10 border border-accent-primary/20 flex items-center justify-center text-xl">
                             {postIcon}
                         </div>
                     ) : (
@@ -98,7 +99,7 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
                     <div className="min-w-0 flex-1">
                         <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0">
-                                <h3 className="text-base font-semibold text-text-primary truncate">
+                                <h3 className="text-base font-semibold tracking-[-0.015em] text-text-primary truncate">
                                     {name}
                                 </h3>
                                 <p className="text-xs text-text-secondary truncate">
@@ -114,7 +115,7 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
                                 </div>
                             )}
                         </div>
-                        <p className="mt-2 text-sm text-text-primary/70 line-clamp-2" title={description}>
+                        <p className="mt-3 text-sm leading-6 text-text-secondary line-clamp-2" title={description}>
                             {description || 'No description provided.'}
                         </p>
                     </div>
@@ -123,7 +124,7 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
                 <div className="mt-4 flex flex-wrap items-center gap-2">
                     {language && (
                         <span
-                            className="inline-flex items-center gap-1.5 rounded-full border border-border-default bg-bg-tertiary px-2.5 py-1 text-xs text-text-secondary"
+                            className="inline-flex items-center gap-1.5 rounded-md border border-border-default bg-bg-tertiary px-2.5 py-1 text-[11px] text-text-secondary"
                         >
                             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: getLanguageColor(language) }}></span>
                             {language}
@@ -132,7 +133,7 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
                     {topics && topics.slice(0, 3).map((topic: string) => (
                         <span
                             key={topic}
-                            className="rounded-full border border-border-default bg-bg-tertiary px-2.5 py-1 text-xs text-text-secondary"
+                            className="rounded-md border border-border-default bg-bg-tertiary px-2.5 py-1 text-[11px] text-text-secondary"
                         >
                             {topic}
                         </span>
@@ -145,7 +146,7 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
                             {latest_version}
                         </span>
                     ) : (
-                         <span className="px-2 py-1 rounded-md bg-bg-tertiary border border-border-default text-text-primary/80">{isPost ? "Blog Post" : "Open Source"}</span>
+                         <span className="px-2 py-1 rounded-md bg-accent-primary/10 border border-accent-primary/15 text-accent-tertiary">{isPost ? "深度文章" : "开源项目"}</span>
                     )}
                     {lastUpdated && <span className="capitalize">{lastUpdated}</span>}
                 </div>

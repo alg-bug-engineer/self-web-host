@@ -72,5 +72,29 @@
     "link": "https://manga.ai-knowledgepoints.cn/",
     "github": "https://github.com/alg-bug-engineer/manga-reader",
     "tags": ["视觉叙事", "技术科普", "Next.js"]
+  },
+  {
+    "title": "Vibe Coding · 100 个小工具计划",
+    "type": "opensource",
+    "description": "持续用 Vibe Coding 完成可独立运行的小工具，覆盖内容创作、自动化、学习与数据处理，并保留清晰的复用说明。",
+    "link": "https://github.com/alg-bug-engineer/vibe-code-100-projects",
+    "github": "https://github.com/alg-bug-engineer/vibe-code-100-projects",
+    "tags": ["Vibe Coding", "自动化", "开源实践"]
+  },
+  {
+    "title": "Awesome Agent Skills",
+    "type": "opensource",
+    "description": "按框架、技能、工具、论文与教程整理 AI Agent 资源，为学习和搭建智能体提供可检索的入口。",
+    "link": "https://github.com/alg-bug-engineer/agent-skills-collections",
+    "github": "https://github.com/alg-bug-engineer/agent-skills-collections",
+    "tags": ["AI Agent", "Skills", "资源集合"]
+  },
+  {
+    "title": "Vibe Coding 学习资源集",
+    "type": "opensource",
+    "description": "汇总 AI 辅助编程的核心概念、工具比较、课程、工作流与实战项目，帮助开发者建立系统学习路径。",
+    "link": "https://github.com/alg-bug-engineer/vibe-coding-collection",
+    "github": "https://github.com/alg-bug-engineer/vibe-coding-collection",
+    "tags": ["Vibe Coding", "AI 编程", "学习路径"]
   }
 ]
