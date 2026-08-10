@@ -1,109 +1,44 @@
 'use client'
 
 import Link from 'next/link'
-import { ThemeToggle } from './ThemeToggle'
-import IconDiscover from './icons/IconDiscover'
-import IconBrowse from './icons/IconBrowse'
-import IconAbout from './icons/IconAbout'
-import IconPortfolio from './icons/IconPortfolio'
-import IconChat from './icons/IconChat'
 
 interface MobileMenuProps {
-    isOpen: boolean;
-    setIsOpen: (isOpen: boolean) => void;
+  isOpen: boolean
+  setIsOpen: (isOpen: boolean) => void
 }
 
-const mainNav = [
-    { label: '发现', href: '/', icon: <IconDiscover className="w-4 h-4" /> },
-    { label: '浏览', href: '/search', icon: <IconBrowse className="w-4 h-4" /> },
-    { label: 'AI助手', href: '/chat', icon: <IconChat className="w-4 h-4" /> },
-];
-
-const collectionNav = [
-    { label: '技术专栏', href: '/blog', icon: '📝' },
-    { label: 'AI 工具箱', href: '/collections/tools', icon: '🔧' },
-];
-
-const createNav = [
-    { label: '我的产品', href: '/portfolio', icon: <IconPortfolio className="w-4 h-4" /> },
-    { label: 'AI 运营实验', href: '/operator', icon: '📈' },
-    { label: '知识星球', href: '/planet', icon: '🪐' },
-];
+const navItems = [
+  { label: '首页', href: '/' },
+  { label: '文章', href: '/blog' },
+  { label: '著作与作品', href: '/portfolio' },
+  { label: 'AI 漫画', href: 'https://manga.ai-knowledgepoints.cn' },
+  { label: 'AI 工具', href: '/collections/tools' },
+  { label: '知识星球', href: '/planet' },
+  { label: '关于我', href: '/about' },
+]
 
 export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
-    if (!isOpen) return null;
+  if (!isOpen) return null
 
-    return (
-        <div className="lg:hidden fixed inset-0 z-50">
-            <div className="absolute inset-0 bg-black/50" onClick={() => setIsOpen(false)}></div>
-            <aside className="absolute left-0 top-0 h-full w-72 bg-bg-secondary border-r border-border-default p-4 flex flex-col">
-                <div className="flex items-center justify-between mb-4">
-                    <Link href="/" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
-                        <div className="flex items-center">
-                            <span className="text-2xl">🐱</span>
-                            <span className="text-2xl">🤖</span>
-                        </div>
-                        <span className="text-base font-semibold">芝士AI吃鱼</span>
-                    </Link>
-                    <button onClick={() => setIsOpen(false)} className="p-2 rounded-md hover:bg-bg-tertiary">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-                <div className="space-y-4 overflow-y-auto">
-                    <div>
-                        <p className="text-xs uppercase tracking-widest text-text-tertiary px-2 mb-2">内容</p>
-                        <div className="space-y-1">
-                            {mainNav.map((item) => (
-                                <Link key={item.href} href={item.href} className="nav-item" onClick={() => setIsOpen(false)}>
-                                    <span className="nav-icon">{item.icon}</span>
-                                    {item.label}
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                    <div>
-                        <p className="text-xs uppercase tracking-widest text-text-tertiary px-2 mb-2">合集</p>
-                        <div className="space-y-1">
-                            {collectionNav.map((item) => (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    className="nav-item"
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    <span className="nav-icon">{item.icon}</span>
-                                    {item.label}
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                    <div>
-                        <p className="text-xs uppercase tracking-widest text-text-tertiary px-2 mb-2">创造与变现</p>
-                        <div className="space-y-1">
-                            {createNav.map((item) => (
-                                <Link key={item.href} href={item.href} className="nav-item" onClick={() => setIsOpen(false)}>
-                                    <span className="nav-icon">{item.icon}</span>
-                                    {item.label}
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                    <div>
-                        <p className="text-xs uppercase tracking-widest text-text-tertiary px-2 mb-2">个人</p>
-                         <div className="space-y-1">
-                            <Link href="/about" className="nav-item" onClick={() => setIsOpen(false)}>
-                                <span className="nav-icon"><IconAbout className="w-4 h-4" /></span>
-                                关于我
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-                <div className="mt-auto pt-4 border-t border-border-default flex items-center justify-between">
-                    <ThemeToggle />
-                </div>
-            </aside>
+  return (
+    <div className="fixed inset-0 z-50 lg:hidden">
+      <button className="absolute inset-0 bg-black/45" onClick={() => setIsOpen(false)} aria-label="关闭菜单" />
+      <aside className="absolute right-0 top-0 flex h-full w-[min(88vw,360px)] flex-col border-l border-border-default bg-bg-primary p-6 shadow-2xl">
+        <div className="flex items-center justify-between border-b border-border-default pb-5">
+          <Link href="/" className="font-semibold text-text-primary" onClick={() => setIsOpen(false)}>芝士AI吃鱼</Link>
+          <button onClick={() => setIsOpen(false)} className="rounded-full p-2 hover:bg-bg-tertiary" aria-label="关闭菜单">
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeWidth="1.8" d="M6 6l12 12M18 6 6 18" /></svg>
+          </button>
         </div>
-    )
+        <nav className="mt-6 flex flex-col" aria-label="移动端导航">
+          {navItems.map((item, index) => (
+            <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)} className="flex items-center justify-between border-b border-border-default py-4 text-lg text-text-primary">
+              <span>{item.label}</span><span className="text-sm text-text-tertiary">0{index + 1}</span>
+            </Link>
+          ))}
+        </nav>
+        <Link href="/search" onClick={() => setIsOpen(false)} className="mt-auto rounded-full bg-text-primary px-5 py-3 text-center text-sm font-medium text-bg-primary">搜索网站内容</Link>
+      </aside>
+    </div>
+  )
 }

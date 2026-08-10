@@ -8,9 +8,9 @@ export const metadata = {
 
 const stats = [
   { number: '8+', label: '年算法经验', icon: '💼' },
-  { number: '6000+', label: '公众号粉丝', icon: '👥' },
+  { number: '8500+', label: '公众号读者', icon: '👥' },
   { number: '2000+', label: 'CSDN 粉丝', icon: '📝' },
-  { number: '100+', label: '原创文章', icon: '✍️' },
+  { number: '5', label: '本个人著作', icon: '📚' },
 ]
 
 const focusTags = [
@@ -230,6 +230,10 @@ export default function AboutPage() {
 
           <p className="text-sm text-text-secondary">
             现在，我通过
+            <Link href="/portfolio" className="text-accent-tertiary hover:underline">
+              著作
+            </Link>
+            、
             <a
               href="https://manga.ai-knowledgepoints.cn"
               target="_blank"
@@ -251,7 +255,7 @@ export default function AboutPage() {
             >
               工具
             </a>
-            三种形式，帮助更多人理解和使用 AI 技术。
+            多种形式，帮助更多人理解和使用 AI 技术。
           </p>
 
           <div id="wechat" className="pt-4 scroll-mt-20">

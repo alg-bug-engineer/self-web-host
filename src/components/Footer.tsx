@@ -3,8 +3,8 @@ import Image from 'next/image'
 
 export default function Footer() {
     return (
-        <footer className="app-footer p-6 mt-8">
-            <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-text-secondary">
+        <footer className="app-footer mt-16 border-t border-border-default p-6 lg:py-10">
+            <div className="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-text-secondary">
                 <div className="flex flex-col md:flex-row items-center gap-4">
                     <p>© {new Date().getFullYear()} 芝士AI吃鱼. All rights reserved.</p>
                     <a
@@ -17,9 +17,9 @@ export default function Footer() {
                     </a>
                 </div>
                 <div className="flex items-center gap-4">
-                    <Link href="/about" className="footer-link">About</Link>
-                    <Link href="/blog" className="footer-link">Blog</Link>
-                    <Link href="/operator" className="footer-link">AI Operator</Link>
+                    <Link href="/about" className="footer-link">关于</Link>
+                    <Link href="/blog" className="footer-link">文章</Link>
+                    <Link href="/portfolio" className="footer-link">著作与作品</Link>
                     <div className="relative group">
                         <button className="footer-link flex items-center gap-1 focus:outline-none">
                             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
