@@ -11,6 +11,8 @@
 7. 自动化发布与监控只在服务器、GitHub Actions 和内部日志中运行，不提供面向访客的运维页面。
 8. 本地 `chatgpt2api` 可每天生成一篇 `published: false` 的候选文章；模型输出需通过长度、结构和危险标签校验，且必须人工复核后发布。
 
+经营任务也会尝试读取 Google Search Console 的 finalized 搜索数据：最近 28 天点击、曝光、CTR、平均排名、查询词与落地页。数据固定滞后 3 天，并按 Google 的 `America/Los_Angeles` 日期口径保存到私有 `operator/search-console-latest.json`；凭据缺失或 API 异常只降低报告完整度，不中断站内统计、技术巡检和健康检查。
+
 ## 私有经营行动与学习
 
 每次生产部署通过健康检查后，`scripts/record-deployment.mjs` 会把提交号、上一版本、提交主题和最多 100 个变更文件写入：
@@ -112,6 +114,15 @@ NEXT_PUBLIC_BAIDU_SITE_VERIFICATION=
 ```
 
 统计只保存按天哈希后的访客指纹，不保存原始 IP，也不建立跨日用户标识。回访只由浏览器上报“此前日期访问过”的布尔信号；DNT、常见机器人和监控 User-Agent 不计数，单个每日指纹最多计入 100 PV，降低自动流量污染。数据默认保留 400 天。`ANALYTICS_DATA_DIR` 目录权限固定为 `700`，数据文件固定为 `600`，备份时需要同时备份该目录。
+
+## Google Search Console 私有数据
+
+1. 在 Google Cloud 项目中启用 Search Console API，并创建只读服务账号凭据。
+2. 在 Search Console 的 `sc-domain:ai-knowledgepoints.cn` property 中给该服务账号邮箱授予读取权限。
+3. 将 JSON 凭据保存到 ECS `/root/.config/ai-knowledgepoints/google-search-console-service-account.json`，目录权限 `700`、文件权限 `600`；不得写入仓库或 GitHub 日志。
+4. 如 property 名不同，用生产环境变量 `SEARCH_CONSOLE_SITE_URL` 覆盖；默认使用 `sc-domain:ai-knowledgepoints.cn`。
+
+采集只请求 `https://www.googleapis.com/auth/webmasters.readonly` 范围。Search Analytics API 只保证返回 Google 保留的顶部数据行，因此报告不得把查询词列表冒充完整搜索日志。
 
 ## 发布权限
 

@@ -13,6 +13,7 @@ const reportDir = path.join(dataDir, 'operator')
 const latestReportPath = path.join(reportDir, 'latest.json')
 const historyPath = path.join(reportDir, 'history.jsonl')
 const technicalAuditPath = path.join(reportDir, 'technical-latest.json')
+const searchConsolePath = path.join(reportDir, 'search-console-latest.json')
 const actionsPath = path.join(reportDir, 'actions.json')
 const goalsPath = path.join(projectDir, 'ops/operator-goals.json')
 
@@ -60,6 +61,7 @@ if (!goals?.objective?.target) throw new Error('缺少有效的 ops/operator-goa
 
 const store = await readJson(analyticsPath, { days: {} })
 const technicalAudit = await readJson(technicalAuditPath, null)
+const searchConsole = await readJson(searchConsolePath, null)
 const actionState = await readJson(actionsPath, { actions: [] })
 const analyticsDays = store.days && typeof store.days === 'object' ? store.days : {}
 const current28Days = dateRange(28)
@@ -251,8 +253,37 @@ if (!technicalAudit) {
   })
 }
 
+if (!searchConsole || searchConsole.status === 'unconfigured') {
+  recommendedActions.push({
+    priority: 2,
+    type: 'search-instrumentation',
+    action: '配置 Google Search Console 只读服务账号，接入真实曝光、点击、CTR、排名、查询词和落地页数据。',
+    reviewRequired: true,
+  })
+} else if (searchConsole.status === 'error') {
+  recommendedActions.push({
+    priority: 1,
+    type: 'search-instrumentation',
+    action: '修复 Google Search Console 数据授权或 API 连接；保留站内统计运行，不根据缺失搜索数据做 SEO 结论。',
+    reviewRequired: true,
+  })
+} else if (searchConsole.status === 'connected') {
+  const summary = searchConsole.summary || {}
+  observations.push(`Google Search Console 最近 28 天记录 ${summary.clicks || 0} 次点击、${summary.impressions || 0} 次曝光，CTR ${summary.ctrPercent || 0}%。`)
+  if (Number(summary.impressions || 0) >= 100 && Number(summary.ctrPercent || 0) < 2) {
+    const opportunity = searchConsole.topQueries?.find((item) => Number(item.impressions || 0) >= 20)
+      || searchConsole.topPages?.find((item) => Number(item.impressions || 0) >= 20)
+    recommendedActions.push({
+      priority: 2,
+      type: 'search-ctr',
+      action: `Search Console 的 28 天 CTR 低于 2%${opportunity ? `；优先评估“${opportunity.query || opportunity.page}”` : ''}，核对搜索意图、标题和摘要后只做单页实验。`,
+      reviewRequired: true,
+    })
+  }
+}
+
 const report = {
-  version: 5,
+  version: 6,
   generatedAt: new Date().toISOString(),
   objective: goals.objective,
   status: {
@@ -286,7 +317,19 @@ const report = {
     depth50Visitors,
     depth90Visitors,
   },
-  acquisition: { searchVisitors, searchSharePercent: searchShare, topSources },
+  acquisition: {
+    referrerEstimate: { searchVisitors, searchSharePercent: searchShare, topSources },
+    searchConsole: searchConsole ? {
+      status: searchConsole.status,
+      generatedAt: searchConsole.generatedAt,
+      property: searchConsole.property,
+      range: searchConsole.range || null,
+      summary: searchConsole.summary || null,
+      topQueries: (searchConsole.topQueries || []).slice(0, 20),
+      topPages: (searchConsole.topPages || []).slice(0, 20),
+      error: searchConsole.status === 'error' ? searchConsole.error : undefined,
+    } : null,
+  },
   experience: {
     coreWebVitals,
     slowestPages: slowestVitalPages,
