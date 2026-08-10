@@ -46,7 +46,7 @@ Core Web Vitals 通过 Next.js `useReportWebVitals` 在真实浏览器上采集�
 - `ECS_KNOWN_HOSTS`：运行 `ssh-keyscan -H <ECS_HOST>` 得到的完整主机公钥记录，用于阻止中间人攻击。
 - 公众号 RSS 服务固定监听 ECS `127.0.0.1:8001`，Feed ID 为 `MP_WXS_3212677307`。同步任务复用 ECS SSH Secrets，不需要公网 RSS 地址。
 
-IndexNow 不使用私密凭据。公开 key 与验证文件由 `ops/indexnow.json` 和 `public/<key>.txt` 管理；key 本来就必须能被搜索引擎从站点根目录读取。部署工作流只在公网健康接口已经返回目标提交号后运行 `npm run seo:indexnow`。文章文件映射到对应 `/blog/<slug>` 和 `/blog`，页面模板变化映射到受影响的文章集合，全局实体或布局变化才提交 Sitemap 中的全部 URL。`npm run test:indexnow` 离线验证域名归属、公开路由白名单、去重和验证文件一致性，不向外发送通知。
+IndexNow 不使用私密凭据。公开 key 与验证文件由 `ops/indexnow.json` 和 `public/<key>.txt` 管理；key 本来就必须能被搜索引擎从站点根目录读取。部署工作流保留前一提交历史，并只在公网健康接口已经返回目标提交号后运行 `npm run seo:indexnow`。文章文件映射到对应 `/blog/<slug>` 和 `/blog`，页面模板变化映射到受影响的文章集合，全局实体或布局变化才提交 Sitemap 中的全部 URL；工作流派发或浅克隆导致提交范围不可读时，安全回退到线上 Sitemap，而不是跳过通知。`npm run test:indexnow` 离线验证域名归属、公开路由白名单、去重、浅克隆回退和验证文件一致性，不向外发送通知。
 
 ## ECS 公众号 RSS 服务
 

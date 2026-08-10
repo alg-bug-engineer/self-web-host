@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import path from 'node:path'
 import {
   buildIndexNowPayload,
+  changedFilesBetween,
   chunkUrls,
   loadIndexNowConfig,
   loadPublishedPostPaths,
@@ -59,5 +60,10 @@ assert.throws(
   /不属于本站/,
 )
 assert.deepEqual(chunkUrls(['a', 'b', 'c', 'd', 'e'], 2), [['a', 'b'], ['c', 'd'], ['e']])
+assert.deepEqual(
+  await changedFilesBetween(projectDir, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'),
+  [],
+  '浅克隆或缺失提交必须回退全量通知，而不是让部署后的通知步骤崩溃',
+)
 
 console.log(`IndexNow 增量映射测试通过：${publishedPostPaths.length} 篇已发布文章，验证文件 ${config.keyFile}。`)
