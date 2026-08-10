@@ -89,6 +89,8 @@ npm run draft:daily
 
 本机每日任务由 `scripts/run-daily-content.sh` 执行：先从本机 `chatgpt2api` 生成并通过生产构建，再创建 PR、等待 CI、合并并等待 ECS 健康提交号一致，最后才调用公众号接口。安装 macOS 08:30 定时任务：
 
+GitHub 写操作如果发生超时，流水线会用 PR 的 head/base 和合并提交号对账远端状态：已经创建或合并则从断点继续，远端状态仍未确认才停止。该恢复逻辑不会绕过失败的 CI，也不会在未知状态下发布公众号内容。
+
 ```bash
 npm run schedule:daily:install
 ```

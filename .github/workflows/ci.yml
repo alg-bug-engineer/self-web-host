@@ -23,5 +23,6 @@ jobs:
           cache: npm
 
       - run: npm ci
+      - run: bash scripts/tests/test-github-pr-recovery.sh
       - run: npm run lint
       - run: npm run build
