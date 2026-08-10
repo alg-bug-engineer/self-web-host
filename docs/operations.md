@@ -70,6 +70,7 @@ npm run draft:daily
 - `CONTENT_WEB_SEARCH=true`：允许兼容后端调用网页搜索；开启后仍需人工核对每个来源。
 - `CONTENT_DATE=YYYY-MM-DD`：指定草稿日期，主要用于补稿与测试。
 - `CONTENT_FORCE=true`：允许同一天再次生成；默认会跳过，避免重复和批量滥用。
+- `CONTENT_MAX_REPAIR_ATTEMPTS=1..4`：结构化质检失败后的定向返工上限，默认 3；每轮会携带当前失败原因与历史原因，仍不合格则停止发布。
 
 生成文件位于 `content/posts/daily-*.mdx`，默认 `published: false`。当前 `chatgpt2api` 属于逆向兼容实现，应遵守其使用限制；只允许低频、个人、人工审核的草稿生成，不得批量调用或自动直发。
 
