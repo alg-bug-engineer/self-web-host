@@ -328,6 +328,36 @@ async function writeStore(store: AnalyticsStore) {
   await fs.rename(temporaryFile, analyticsFile)
 }
 
+export async function initializeAnalyticsStore() {
+  const task = writeQueue.then(async () => {
+    let store: AnalyticsStore
+    try {
+      const parsed = JSON.parse(await fs.readFile(analyticsFile, 'utf8')) as unknown
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        throw new Error('Analytics store must be a JSON object')
+      }
+      const days = (parsed as { days?: unknown }).days
+      if (!days || typeof days !== 'object' || Array.isArray(days)) {
+        throw new Error('Analytics store is missing its days object')
+      }
+      store = normalizeStore(parsed)
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error
+      store = emptyStore()
+    }
+
+    // Production calls this before accepting traffic. Persisting the schema
+    // boundary here makes the month-level measurement deterministic without
+    // generating a synthetic page view. Malformed files fail startup instead
+    // of being replaced, and writeStore keeps the update atomic.
+    await writeStore(store)
+    return store.visitorIdentity
+  })
+
+  writeQueue = task.catch(() => undefined)
+  return task
+}
+
 function analyticsRetentionDays() {
   const configured = Number(process.env.ANALYTICS_RETENTION_DAYS || 400)
   return Number.isFinite(configured) ? Math.min(1095, Math.max(90, Math.floor(configured))) : 400
