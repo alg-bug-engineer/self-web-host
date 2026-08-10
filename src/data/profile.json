@@ -1,6 +1,7 @@
 {
-  "version": 1,
+  "version": 2,
   "githubVerifiedAt": "2026-08-11",
+  "publicEvidenceVerifiedAt": "2026-08-11",
   "stats": {
     "books": "5",
     "csdnArticles": "325",
@@ -15,10 +16,33 @@
       "expectedPublicRepositories": 33
     }
   },
+  "publicIdentity": {
+    "headline": "天津大学计算机硕士，长期从事算法与人工智能研发，持续创作大模型、RAG、Agent 与 GEO 内容。",
+    "career": {
+      "employers": ["阿里", "百度", "滴滴", "浪潮"],
+      "summary": "先后在阿里、百度、滴滴、浪潮从事算法与人工智能研发，参与大模型知识库等工业项目。",
+      "sourceLabel": "《RAG 极简入门：原理与实践》公开作者简介",
+      "sourceUrl": "https://www.tenlong.com.tw/products/9787115668981"
+    }
+  },
+  "verifiedWorks": [
+    {
+      "type": "patent",
+      "title": "一种基于大语言模型的智能SQL查询生成方法及系统",
+      "identifier": "CN118861081B",
+      "status": "授权发明专利",
+      "publishedDate": "2025-01-21",
+      "description": "以大语言模型、多智能体协作、指令微调和反馈纠错实现自然语言到 SQL 的任务分解与生成。",
+      "url": "https://patents.google.com/patent/CN118861081B/zh",
+      "sourceLabel": "国家知识产权局公开专利文本 / Google Patents"
+    }
+  ],
   "sourceNotes": {
     "books": "作者提供的作品截图",
     "csdnArticles": "作者既有公开资料；平台不可核验时保留现值",
     "githubRepositories": "GitHub 公开主页与用户 API",
-    "wechatReaders": "作者提供的公众号数据"
+    "wechatReaders": "作者提供的公众号数据",
+    "career": "《RAG 极简入门：原理与实践》公开作者简介",
+    "verifiedWorks": "国家知识产权局公开专利文本"
   }
 }

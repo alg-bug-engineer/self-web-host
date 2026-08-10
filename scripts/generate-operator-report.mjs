@@ -563,7 +563,7 @@ if (!profileAudit) {
 } else if (profileAudit.status === 'unavailable') {
   observations.push('GitHub 公开资料本次无法核对；保留网站现值，等待下次日频巡检，不根据单次网络失败修改作者信息。')
 } else {
-  observations.push(`个人公开资料已核对：GitHub ${profileAudit.github?.publicRepositories || 0} 个公开仓库，品牌名与作者链接一致。`)
+  observations.push(`个人公开资料已核对：GitHub ${profileAudit.github?.publicRepositories || 0} 个公开仓库，${profileAudit.publicEvidence?.verifiedWorks?.length || 0} 项公开专业成果具有来源与唯一标识，品牌名与作者链接一致。`)
 }
 
 const searchEvidenceReady = searchConsole?.status === 'connected'

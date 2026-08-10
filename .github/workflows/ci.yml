@@ -38,8 +38,10 @@ jobs:
       - run: npm run test:indexnow
       - run: npm run test:llms-markdown
       - run: npm run test:profile-audit
+      - run: npm run test:identity-geo
       - run: npm run lint
       - run: npm run build
+      - run: npm run test:identity-geo-build
       - run: npx playwright install chromium --with-deps
       - run: npm run test:ui
       - run: bash scripts/tests/test-analytics-conversions.sh

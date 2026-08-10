@@ -5,8 +5,11 @@ import profileData from '@/data/profile.json'
 
 export const metadata = {
   title: '关于我 | 芝士AI吃鱼',
-  description: '天大计算机硕士，8年互联网大厂算法经验，专注大模型、RAG、Agent 技术布道',
-  alternates: { canonical: '/about' },
+  description: '张其来（芝士AI吃鱼）：天津大学计算机硕士，先后在阿里、百度、滴滴、浪潮从事算法与人工智能研发，持续创作大模型、RAG、Agent 与 GEO 内容。',
+  alternates: {
+    canonical: '/about',
+    types: { 'text/markdown': '/about/index.html.md' },
+  },
 }
 
 const stats = [
@@ -21,6 +24,9 @@ const focusTags = [
   { label: 'RAG 检索增强', tone: 'label-purple' },
   { label: 'Agent 智能体', tone: 'label-green' },
 ]
+
+const career = profileData.publicIdentity.career
+const verifiedWorks = profileData.verifiedWorks
 
 const techStack = [
   { name: '大语言模型', level: 95, color: 'bg-accent-primary' },
@@ -41,8 +47,8 @@ const timeline = [
   },
   {
     year: '职业初期',
-    title: '入职互联网大厂',
-    description: '在百度、阿里从事算法研发，积累工业级 AI 落地经验',
+    title: '阿里、百度、滴滴、浪潮 AI 研发',
+    description: '持续参与搜索、推荐、NLP 与大模型知识库等工业场景',
     icon: '🚀',
     tone: 'label-purple',
   },
@@ -86,20 +92,37 @@ const socialLinks = [
 export default function AboutPage() {
   const profileJsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'ProfilePage',
-    '@id': `${SITE_URL}/about#profile`,
-    url: `${SITE_URL}/about`,
-    name: `${AUTHOR_NAME}（${BRAND_NAME}）`,
-    mainEntity: {
-      '@type': 'Person',
-      '@id': `${SITE_URL}/#person`,
-      name: AUTHOR_NAME,
-      alternateName: BRAND_NAME,
-      url: `${SITE_URL}/about`,
-      sameAs: AUTHOR_PROFILES,
-      jobTitle: '算法工程师与 AI 内容创作者',
-      knowsAbout: ['大语言模型', 'RAG', 'AI Agent', 'NLP', 'AI 工程化', 'GEO'],
-    },
+    '@graph': [
+      {
+        '@type': 'ProfilePage',
+        '@id': `${SITE_URL}/about#profile`,
+        url: `${SITE_URL}/about`,
+        name: `${AUTHOR_NAME}（${BRAND_NAME}）`,
+        mainEntity: { '@id': `${SITE_URL}/#person` },
+      },
+      {
+        '@type': 'Person',
+        '@id': `${SITE_URL}/#person`,
+        name: AUTHOR_NAME,
+        alternateName: BRAND_NAME,
+        url: `${SITE_URL}/about`,
+        sameAs: AUTHOR_PROFILES,
+        jobTitle: '算法工程师与 AI 内容创作者',
+        alumniOf: { '@type': 'CollegeOrUniversity', name: '天津大学' },
+        knowsAbout: ['大语言模型', 'RAG', 'AI Agent', 'NLP', 'AI 工程化', 'GEO', 'Text-to-SQL'],
+      },
+      ...verifiedWorks.map((work) => ({
+        '@type': 'CreativeWork',
+        '@id': work.url,
+        name: work.title,
+        identifier: work.identifier,
+        datePublished: work.publishedDate,
+        description: work.description,
+        url: work.url,
+        creator: { '@id': `${SITE_URL}/#person` },
+        about: ['大语言模型', '多智能体', 'Text-to-SQL'],
+      })),
+    ],
   }
 
   return (
@@ -118,7 +141,7 @@ export default function AboutPage() {
                   <span className="label label-green">在线</span>
                 </div>
                 <p className="mt-1 text-sm text-text-secondary">
-                  天大计算机硕士 · 8年大厂算法经验 · AI 技术布道者
+                  天大计算机硕士 · 算法与人工智能研发 · AI 技术写作者
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {focusTags.map((tag) => (
@@ -197,8 +220,47 @@ export default function AboutPage() {
               ))}
             </div>
             <p className="mt-4 text-xs leading-5 text-text-tertiary">
-              GitHub 公开仓库数于 {profileData.githubVerifiedAt} 核对；著作、CSDN 内容与公众号数据沿用作者提供或既有公开资料。
+              GitHub 公开仓库数于 {profileData.githubVerifiedAt} 核对；职业履历与专业成果于 {profileData.publicEvidenceVerifiedAt} 通过公开作者简介和专利文本交叉核验。
             </p>
+          </div>
+
+          <div className="bg-bg-secondary border border-border-default rounded-2xl p-6">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="eyebrow">Public Evidence</p>
+                <h2 className="mt-2 text-lg font-semibold text-text-primary">公开可核验的专业成果</h2>
+              </div>
+              <span className="label label-green">已核验</span>
+            </div>
+            <p className="mt-4 text-sm leading-7 text-text-secondary">{career.summary}</p>
+            <a
+              href={career.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-flex text-xs text-accent-tertiary hover:underline"
+            >
+              来源：{career.sourceLabel} ↗
+            </a>
+            <div className="mt-5 space-y-3">
+              {verifiedWorks.map((work) => (
+                <article key={work.identifier} className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="label label-blue">{work.status}</span>
+                    <span className="text-xs text-text-tertiary">{work.identifier} · {work.publishedDate}</span>
+                  </div>
+                  <h3 className="mt-3 text-sm font-semibold leading-6 text-text-primary">{work.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-text-secondary">{work.description}</p>
+                  <a
+                    href={work.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex text-xs font-medium text-accent-tertiary hover:underline"
+                  >
+                    查看{work.sourceLabel} ↗
+                  </a>
+                </article>
+              ))}
+            </div>
           </div>
 
           <div className="bg-bg-secondary border border-border-default rounded-2xl p-6">
@@ -231,8 +293,8 @@ export default function AboutPage() {
           </p>
 
           <p className="text-sm text-text-secondary">
-            从天津大学计算机硕士毕业后，我在<span className="text-text-primary font-semibold">百度</span>和
-            <span className="text-text-primary font-semibold">阿里</span>从事了 8 年的算法研发工作，见证了 AI 从「实验室黑科技」变成「人人可用的工具」。
+            从天津大学计算机硕士毕业后，我先后在<span className="text-text-primary font-semibold">阿里、百度、滴滴、浪潮</span>
+            从事算法与人工智能研发，参与搜索、推荐、NLP 和大模型知识库等工业项目，见证了 AI 从「实验室黑科技」变成「人人可用的工具」。
           </p>
 
           <p className="text-sm text-text-secondary">
