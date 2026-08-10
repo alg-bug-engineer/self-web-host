@@ -28,14 +28,39 @@ const readJson = async (file, fallback) => {
   }
 }
 
+const configuredNow = process.env.OPERATOR_NOW ? new Date(process.env.OPERATOR_NOW) : new Date()
+if (Number.isNaN(configuredNow.getTime())) throw new Error('OPERATOR_NOW 必须是有效日期。')
+
 const dateKey = (offset = 0) => {
-  const value = new Date()
+  const value = new Date(configuredNow)
   value.setUTCDate(value.getUTCDate() - offset)
   return value.toISOString().slice(0, 10)
 }
 
 const dateRange = (days, offset = 0) =>
   Array.from({ length: days }, (_, index) => dateKey(index + offset))
+
+const calendarMonthRange = (monthOffset = 0) => {
+  const start = new Date(Date.UTC(
+    configuredNow.getUTCFullYear(),
+    configuredNow.getUTCMonth() + monthOffset,
+    1,
+  ))
+  const end = monthOffset === 0
+    ? new Date(configuredNow)
+    : new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth() + 1, 0))
+  const result = []
+  for (const cursor = new Date(start); cursor <= end; cursor.setUTCDate(cursor.getUTCDate() + 1)) {
+    result.push(cursor.toISOString().slice(0, 10))
+  }
+  return result
+}
+
+const daysInCalendarMonth = (value) => new Date(Date.UTC(
+  value.getUTCFullYear(),
+  value.getUTCMonth() + 1,
+  0,
+)).getUTCDate()
 
 const sum = (values) => values.reduce((total, value) => total + value, 0)
 const percentChange = (current, previous) => previous
@@ -76,11 +101,27 @@ const current28Days = dateRange(28)
 const previous28Days = dateRange(28, 28)
 const current7Days = dateRange(7)
 const previous7Days = dateRange(7, 7)
+const currentMonthDays = calendarMonthRange()
+const previousMonthDays = calendarMonthRange(-1)
+const monthlyIdentity = store.version === 5
+  && store.visitorIdentity?.scope === 'calendar-month'
+  && typeof store.visitorIdentity?.reliableFromDay === 'string'
+  ? store.visitorIdentity
+  : null
+const reliableFromDay = monthlyIdentity?.reliableFromDay || null
+const reliableCurrentMonthDays = reliableFromDay
+  ? currentMonthDays.filter((day) => day >= reliableFromDay)
+  : []
+const reliablePreviousMonthDays = reliableFromDay
+  && reliableFromDay <= previousMonthDays[0]
+  ? previousMonthDays
+  : []
 
 const reportableVisitorsForDay = (day) => new Set(Object.entries(analyticsDays[day]?.pathVisitors || {})
   .filter(([pathname]) => isReportablePath(pathname))
   .flatMap(([, visitors]) => Array.isArray(visitors) ? visitors : []))
 const visitorsFor = (days) => sum(days.map((day) => reportableVisitorsForDay(day).size))
+const uniqueVisitorsFor = (days) => new Set(days.flatMap((day) => [...reportableVisitorsForDay(day)])).size
 const pageViewsFor = (days) => sum(days.map((day) => Object.entries(analyticsDays[day]?.paths || {})
   .filter(([pathname]) => isReportablePath(pathname))
   .reduce((total, [, views]) => total + (Number(views) || 0), 0)))
@@ -114,6 +155,26 @@ const qualifiedVisitorsFor = (days) => sum(days.map((day) => {
   }
   return visitors.size
 }))
+const uniqueQualifiedVisitorsFor = (days) => {
+  const visitors = new Set()
+  for (const day of days) {
+    const daily = analyticsDays[day]
+    const reportableVisitors = reportableVisitorsForDay(day)
+    for (const visitor of daily?.returningVisitors || []) {
+      if (reportableVisitors.has(visitor)) visitors.add(visitor)
+    }
+    for (const [pathname, signals] of Object.entries(daily?.engagement || {})) {
+      if (!isReportablePath(pathname)) continue
+      for (const [visitor, signal] of Object.entries(signals || {})) {
+        if (reportableVisitors.has(visitor)
+          && (Number(signal?.seconds || 0) >= 10 || Number(signal?.depth || 0) >= 25)) {
+          visitors.add(visitor)
+        }
+      }
+    }
+  }
+  return visitors.size
+}
 const conversionVisitorsFor = (days) => sum(days.map((day) => {
   const visitors = new Set()
   for (const event of Object.values(analyticsDays[day]?.conversions || {})) {
@@ -126,6 +187,19 @@ const currentVisitors = visitorsFor(current28Days)
 const previousVisitors = visitorsFor(previous28Days)
 const currentQualifiedVisitors = qualifiedVisitorsFor(current28Days)
 const previousQualifiedVisitors = qualifiedVisitorsFor(previous28Days)
+const monthlyMetricAvailable = reliableCurrentMonthDays.length > 0
+const currentMonthVisitors = monthlyMetricAvailable
+  ? uniqueVisitorsFor(reliableCurrentMonthDays)
+  : null
+const currentMonthQualifiedVisitors = monthlyMetricAvailable
+  ? uniqueQualifiedVisitorsFor(reliableCurrentMonthDays)
+  : null
+const previousMonthVisitors = reliablePreviousMonthDays.length
+  ? uniqueVisitorsFor(reliablePreviousMonthDays)
+  : null
+const previousMonthQualifiedVisitors = reliablePreviousMonthDays.length
+  ? uniqueQualifiedVisitorsFor(reliablePreviousMonthDays)
+  : null
 const currentPageViews = pageViewsFor(current28Days)
 const current7Visitors = visitorsFor(current7Days)
 const previous7Visitors = visitorsFor(previous7Days)
@@ -147,6 +221,13 @@ const projectedMonthlyVisitors = activeDays
 const projectedMonthlyQualifiedVisitors = activeDays
   ? Math.round((currentQualifiedVisitors / activeDays) * 30)
   : 0
+const elapsedReliableCalendarDays = reliableCurrentMonthDays.length
+const projectedMonthlyUniqueVisitors = monthlyMetricAvailable
+  ? Math.round((currentMonthVisitors / elapsedReliableCalendarDays) * daysInCalendarMonth(configuredNow))
+  : null
+const projectedMonthlyUniqueQualifiedVisitors = monthlyMetricAvailable
+  ? Math.round((currentMonthQualifiedVisitors / elapsedReliableCalendarDays) * daysInCalendarMonth(configuredNow))
+  : null
 
 const pathTotals = {}
 const sourceTotals = {}
@@ -289,7 +370,11 @@ if (!activeDays) {
   })
 } else {
   observations.push(`最近 28 天已有 ${activeDays} 个自然日产生统计数据。`)
-  observations.push(`按现有日均速度推算月度有效访客为目标的 ${Math.round((projectedMonthlyQualifiedVisitors / goals.objective.target) * 1000) / 10}%。`)
+  if (monthlyMetricAvailable) {
+    observations.push(`本自然月从可信迁移边界起已记录 ${currentMonthQualifiedVisitors} 个跨日去重的有效访客估算；按当前日历进度推算为目标的 ${Math.round((projectedMonthlyUniqueQualifiedVisitors / goals.objective.target) * 1000) / 10}%。`)
+  } else {
+    observations.push('月内匿名去重口径仍在等待迁移边界后的首个完整数据日；期间继续保留访客天证据，不用旧数据冒充月 UV。')
+  }
   if (!audienceEvidenceReady) {
     observations.push(`自然数据尚未达到 ${decisionMinimumActiveDays} 个活跃日且 ${decisionMinimumVisitorDays} 个访客天；增长策略保持观察，不根据早期噪声修改标题、内容或 UI。`)
   }
@@ -462,10 +547,28 @@ const decision = buildOperatorDecision({
 })
 
 const report = {
-  version: 9,
-  generatedAt: new Date().toISOString(),
+  version: 10,
+  generatedAt: configuredNow.toISOString(),
   objective: goals.objective,
   status: {
+    currentMonth: currentMonthDays[0].slice(0, 7),
+    currentMonthVisitors,
+    previousMonthVisitors,
+    currentMonthQualifiedVisitors,
+    previousMonthQualifiedVisitors,
+    monthlyQualifiedVisitorChangePercent: currentMonthQualifiedVisitors !== null
+      && previousMonthQualifiedVisitors !== null
+      ? percentChange(currentMonthQualifiedVisitors, previousMonthQualifiedVisitors)
+      : null,
+    projectedMonthlyVisitors: projectedMonthlyUniqueVisitors,
+    projectedMonthlyQualifiedVisitors: projectedMonthlyUniqueQualifiedVisitors,
+    gapToTarget: currentMonthQualifiedVisitors === null
+      ? null
+      : Math.max(0, goals.objective.target - currentMonthQualifiedVisitors),
+    projectedGapToTarget: projectedMonthlyUniqueQualifiedVisitors === null
+      ? null
+      : Math.max(0, goals.objective.target - projectedMonthlyUniqueQualifiedVisitors),
+    current28DayVisitorDays: currentVisitors,
     current28DayVisitors: currentVisitors,
     previous28DayVisitors: previousVisitors,
     visitorChangePercent: percentChange(currentVisitors, previousVisitors),
@@ -476,16 +579,22 @@ const report = {
     current7DayVisitors: current7Visitors,
     previous7DayVisitors: previous7Visitors,
     sevenDayChangePercent: percentChange(current7Visitors, previous7Visitors),
-    projectedMonthlyVisitors,
+    projectedMonthlyVisitorDays: projectedMonthlyVisitors,
     projectedMonthlyQualifiedVisitorDays: projectedMonthlyQualifiedVisitors,
-    gapToTarget: Math.max(0, goals.objective.target - projectedMonthlyQualifiedVisitors),
     activeDays,
     confidence: activeDays >= 21 ? 'medium' : activeDays >= 7 ? 'low' : 'insufficient',
     measurement: {
-      unit: 'qualifiedVisitorDays',
+      unit: 'monthlyQualifiedVisitorsEstimate',
+      available: monthlyMetricAvailable,
+      calendarMonth: currentMonthDays[0].slice(0, 7),
+      identityScope: 'calendar-month',
+      reliableFromDay,
       dailyDeduplicated: true,
-      crossDayDeduplicated: false,
-      note: '隐私化访客哈希每日轮换；该值是有效访客天数，不是跨 28 天完全去重的月 UV。',
+      crossDayDeduplicated: monthlyMetricAvailable,
+      crossMonthLinkable: false,
+      note: monthlyMetricAvailable
+        ? '基于月内稳定、跨月轮换的 HMAC 匿名请求指纹估算；不保存原始 IP，不跨月关联，并继续排除 DNT 与机器人请求。访客天保留为实验门槛，不再冒充月 UV。'
+        : '旧的每日哈希不可安全还原为月 UV；等待迁移边界后的数据，不伪造或回填跨日身份。',
     },
   },
   quality: {

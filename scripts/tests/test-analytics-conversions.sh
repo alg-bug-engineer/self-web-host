@@ -16,6 +16,34 @@ cleanup() {
 trap cleanup EXIT
 
 cd "$PROJECT_DIR"
+# Simulate a production v4 file with historical days. The first write must
+# preserve the old metrics, upgrade the schema, and exclude the mixed rollout
+# day from month-level de-duplication.
+node - "$ANALYTICS_TEST_DIR/analytics.json" <<'NODE'
+const fs = require('node:fs')
+const file = process.argv[2]
+const yesterday = new Date()
+yesterday.setUTCDate(yesterday.getUTCDate() - 1)
+fs.writeFileSync(file, JSON.stringify({
+  version: 4,
+  days: {
+    [yesterday.toISOString().slice(0, 10)]: {
+      pageViews: 0,
+      visitors: [],
+      returningVisitors: [],
+      visitorPageViews: {},
+      paths: {},
+      pathVisitors: {},
+      engagement: {},
+      vitals: {},
+      sources: {},
+      landingPaths: {},
+      conversions: {},
+      conversionCountsByVisitor: {},
+    },
+  },
+}))
+NODE
 ANALYTICS_DATA_DIR="$ANALYTICS_TEST_DIR" PORT="$ANALYTICS_TEST_PORT" npm start >"$ANALYTICS_TEST_DIR/server.log" 2>&1 &
 ANALYTICS_TEST_PID="$!"
 
@@ -73,8 +101,12 @@ const fs = require('node:fs')
 const analyticsFile = process.argv[2]
 const store = JSON.parse(fs.readFileSync(analyticsFile, 'utf8'))
 const day = new Date().toISOString().slice(0, 10)
+const tomorrow = new Date()
+tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
 const daily = store.days[day]
-if (store.version !== 4) throw new Error(`expected store version 4, got ${store.version}`)
+if (store.version !== 5) throw new Error(`expected store version 5, got ${store.version}`)
+if (store.visitorIdentity?.scope !== 'calendar-month') throw new Error('monthly visitor identity scope is missing')
+if (store.visitorIdentity?.reliableFromDay !== tomorrow.toISOString().slice(0, 10)) throw new Error('legacy migration day was not excluded')
 if (daily.pageViews !== 1) throw new Error(`expected one page view, got ${daily.pageViews}`)
 if (daily.conversions.view_book.count !== 1) throw new Error('DNT or invalid event was recorded')
 if (daily.conversions.view_book.visitors.length !== 1) throw new Error('conversion visitor was not de-duplicated')
@@ -92,7 +124,10 @@ ANALYTICS_DATA_DIR="$ANALYTICS_TEST_DIR" npm run operator:report >/dev/null
 node - "$ANALYTICS_TEST_DIR/operator/latest.json" <<'NODE'
 const fs = require('node:fs')
 const report = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
-if (report.version !== 9) throw new Error(`expected report version 9, got ${report.version}`)
+if (report.version !== 10) throw new Error(`expected report version 10, got ${report.version}`)
+if (report.status.measurement.crossDayDeduplicated !== false) throw new Error('mixed migration day was treated as de-duplicated')
+if (report.status.currentMonthVisitors !== null) throw new Error('mixed migration day produced a monthly visitor count')
+if (report.status.currentMonthQualifiedVisitors !== null) throw new Error('mixed migration day produced a qualified monthly visitor count')
 if (report.content !== null) throw new Error('missing content audit should be represented as null')
 if (report.value.conversionVisitors !== 1) throw new Error('report conversion visitor count is wrong')
 if (report.value.conversionRatePercent !== 100) throw new Error('report conversion rate is wrong')

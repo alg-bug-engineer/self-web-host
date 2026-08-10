@@ -53,7 +53,12 @@ type EngagementSignal = {
 }
 
 type AnalyticsStore = {
-  version: 4
+  version: 5
+  visitorIdentity: {
+    scope: 'calendar-month'
+    startedAt: string
+    reliableFromDay: string
+  }
   days: Record<string, DailyAnalytics>
 }
 
@@ -103,7 +108,24 @@ type TrafficContext = {
   returningReader?: boolean
 }
 
-const emptyStore = (): AnalyticsStore => ({ version: 4, days: {} })
+function nextUtcDay(value: Date) {
+  const next = new Date(value)
+  next.setUTCDate(next.getUTCDate() + 1)
+  return next.toISOString().slice(0, 10)
+}
+
+const emptyStore = (): AnalyticsStore => {
+  const now = new Date()
+  return {
+    version: 5,
+    visitorIdentity: {
+      scope: 'calendar-month',
+      startedAt: now.toISOString(),
+      reliableFromDay: now.toISOString().slice(0, 10),
+    },
+    days: {},
+  }
+}
 const emptyDay = (): DailyAnalytics => ({
   pageViews: 0,
   visitors: [],
@@ -250,13 +272,37 @@ function normalizeDay(value: unknown): DailyAnalytics {
 
 function normalizeStore(value: unknown): AnalyticsStore {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return emptyStore()
-  const candidate = value as { days?: unknown }
+  const candidate = value as {
+    version?: unknown
+    visitorIdentity?: Partial<AnalyticsStore['visitorIdentity']>
+    days?: unknown
+  }
   if (!candidate.days || typeof candidate.days !== 'object' || Array.isArray(candidate.days)) {
     return emptyStore()
   }
 
+  const now = new Date()
+  const hasHistoricalDays = Object.keys(candidate.days).length > 0
+  const hasMonthlyIdentity = candidate.version === 5
+    && candidate.visitorIdentity?.scope === 'calendar-month'
+    && typeof candidate.visitorIdentity.startedAt === 'string'
+    && typeof candidate.visitorIdentity.reliableFromDay === 'string'
+  const visitorIdentity = hasMonthlyIdentity
+    ? candidate.visitorIdentity as AnalyticsStore['visitorIdentity']
+    : {
+        scope: 'calendar-month' as const,
+        startedAt: now.toISOString(),
+        // A legacy day's arrays may contain both old daily hashes and new
+        // monthly hashes during a rolling deployment. Start trustworthy
+        // cross-day reporting on the next UTC day instead of double-counting.
+        reliableFromDay: hasHistoricalDays
+          ? nextUtcDay(now)
+          : now.toISOString().slice(0, 10),
+      }
+
   return {
-    version: 4,
+    version: 5,
+    visitorIdentity,
     days: Object.fromEntries(
       Object.entries(candidate.days).map(([day, analytics]) => [day, normalizeDay(analytics)]),
     ),
@@ -294,12 +340,12 @@ export function normalizeAnalyticsPath(value: string) {
   return pathname.replace(/\/{2,}/g, '/')
 }
 
-export function createVisitorHash(input: string, day: string) {
+export function createVisitorHash(input: string, scopeKey: string) {
   const salt =
     process.env.ANALYTICS_HASH_SALT ||
     process.env.ADMIN_SESSION_SECRET ||
     'ai-knowledgepoints-local-development-only'
-  return crypto.createHash('sha256').update(`${salt}:${day}:${input}`).digest('hex').slice(0, 24)
+  return crypto.createHmac('sha256', salt).update(`${scopeKey}:${input}`).digest('hex').slice(0, 24)
 }
 
 export function normalizeConversionEventName(value: unknown): ConversionEventName | null {
@@ -353,8 +399,9 @@ export async function recordPageView(
       }
     }
 
-    // PV counts a real browser session entering the path. UV remains de-duplicated
-    // by a daily salted hash, so no raw IP or stable cross-day identity is stored.
+    // PV counts a real browser session entering the path. The anonymous hash is
+    // stable only inside one calendar month: enough for monthly de-duplication,
+    // but it cannot link readers across month boundaries and stores no raw IP.
     daily.pageViews += 1
     daily.visitorPageViews[visitorHash] = visitorPageViews + 1
     daily.paths[normalizedPath] = (daily.paths[normalizedPath] || 0) + 1
