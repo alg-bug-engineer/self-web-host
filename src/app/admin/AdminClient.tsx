@@ -240,7 +240,7 @@ export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {
             <p className="text-xs text-text-tertiary">访客按天匿名哈希；不保存原始 IP</p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
             <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
               <p className="text-xs text-text-tertiary">页面浏览 PV</p>
               <strong className="mt-2 block text-2xl text-text-primary">{analytics.pageViews.toLocaleString('zh-CN')}</strong>
@@ -250,6 +250,16 @@ export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {
               <p className="text-xs text-text-tertiary">每日独立访客合计</p>
               <strong className="mt-2 block text-2xl text-text-primary">{analytics.dailyVisitors.toLocaleString('zh-CN')}</strong>
               <span className="mt-1 block text-xs text-text-secondary">{changeLabel(analytics.visitorChange)}</span>
+            </div>
+            <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+              <p className="text-xs text-text-tertiary">回访读者信号</p>
+              <strong className="mt-2 block text-2xl text-text-primary">{analytics.returningRate}%</strong>
+              <span className="mt-1 block text-xs text-text-secondary">{analytics.returningDailyVisitors} 个每日回访信号</span>
+            </div>
+            <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+              <p className="text-xs text-text-tertiary">有效阅读率</p>
+              <strong className="mt-2 block text-2xl text-text-primary">{analytics.engagementRate}%</strong>
+              <span className="mt-1 block text-xs text-text-secondary">停留 ≥10 秒或阅读 ≥25%</span>
             </div>
             <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
               <p className="text-xs text-text-tertiary">热门页面数</p>
@@ -302,10 +312,12 @@ export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {
               <h3 className="mb-3 text-sm font-semibold text-text-primary">热门页面</h3>
               <div className="space-y-2.5">
                 {analytics.topPaths.slice(0, 6).map((item) => (
-                  <div key={item.pathname} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 text-sm">
+                  <div key={item.pathname} className="grid grid-cols-[1fr_auto] items-center gap-3 text-sm">
                     <span className="truncate text-text-secondary" title={item.pathname}>{item.pathname}</span>
-                    <span className="text-xs text-text-tertiary">{item.visitors} 访客</span>
                     <strong className="text-text-primary">{item.views} PV</strong>
+                    <span className="col-span-2 text-xs text-text-tertiary">
+                      {item.visitors} 访客 · {item.engagedVisitors} 有效阅读 · {item.depth50Visitors}/{item.depth90Visitors} 读到 50%/90% · 平均 {item.averageEngagedSeconds} 秒
+                    </span>
                   </div>
                 ))}
               </div>

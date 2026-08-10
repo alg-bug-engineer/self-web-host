@@ -7,10 +7,18 @@ import path from 'path'
 type DailyAnalytics = {
   pageViews: number
   visitors: string[]
+  returningVisitors: string[]
+  visitorPageViews: Record<string, number>
   paths: Record<string, number>
   pathVisitors: Record<string, string[]>
+  engagement: Record<string, Record<string, EngagementSignal>>
   sources: Record<string, number>
   landingPaths: Record<string, number>
+}
+
+type EngagementSignal = {
+  seconds: number
+  depth: number
 }
 
 type AnalyticsStore = {
@@ -26,7 +34,19 @@ export type AnalyticsOverview = {
   previousDailyVisitors: number
   pageViewChange: number | null
   visitorChange: number | null
-  topPaths: Array<{ pathname: string; views: number; visitors: number }>
+  returningDailyVisitors: number
+  engagedDailyVisitors: number
+  returningRate: number
+  engagementRate: number
+  topPaths: Array<{
+    pathname: string
+    views: number
+    visitors: number
+    engagedVisitors: number
+    depth50Visitors: number
+    depth90Visitors: number
+    averageEngagedSeconds: number
+  }>
   topSources: Array<{ source: string; visitors: number }>
   topLandingPaths: Array<{ pathname: string; visitors: number }>
   timeline: Array<{ date: string; pageViews: number; visitors: number }>
@@ -34,14 +54,18 @@ export type AnalyticsOverview = {
 
 type TrafficContext = {
   source?: string
+  returningReader?: boolean
 }
 
 const emptyStore = (): AnalyticsStore => ({ version: 2, days: {} })
 const emptyDay = (): DailyAnalytics => ({
   pageViews: 0,
   visitors: [],
+  returningVisitors: [],
+  visitorPageViews: {},
   paths: {},
   pathVisitors: {},
+  engagement: {},
   sources: {},
   landingPaths: {},
 })
@@ -72,6 +96,27 @@ function visitorRecord(value: unknown) {
   )
 }
 
+function engagementRecord(value: unknown) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+  return Object.fromEntries(
+    Object.entries(value).map(([pathname, signals]) => {
+      if (!signals || typeof signals !== 'object' || Array.isArray(signals)) return [pathname, {}]
+      return [pathname, Object.fromEntries(
+        Object.entries(signals).flatMap(([visitor, signal]) => {
+          if (!signal || typeof signal !== 'object' || Array.isArray(signal)) return []
+          const candidate = signal as Partial<EngagementSignal>
+          const seconds = Number(candidate.seconds)
+          const depth = Number(candidate.depth)
+          return [[visitor, {
+            seconds: Number.isFinite(seconds) ? Math.min(3600, Math.max(0, Math.round(seconds))) : 0,
+            depth: Number.isFinite(depth) ? Math.min(100, Math.max(0, Math.round(depth))) : 0,
+          }]]
+        }),
+      )]
+    }),
+  )
+}
+
 function normalizeDay(value: unknown): DailyAnalytics {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return emptyDay()
   const candidate = value as Partial<DailyAnalytics>
@@ -80,8 +125,13 @@ function normalizeDay(value: unknown): DailyAnalytics {
     visitors: Array.isArray(candidate.visitors)
       ? candidate.visitors.filter((item): item is string => typeof item === 'string')
       : [],
+    returningVisitors: Array.isArray(candidate.returningVisitors)
+      ? candidate.returningVisitors.filter((item): item is string => typeof item === 'string')
+      : [],
+    visitorPageViews: numberRecord(candidate.visitorPageViews),
     paths: numberRecord(candidate.paths),
     pathVisitors: visitorRecord(candidate.pathVisitors),
+    engagement: engagementRecord(candidate.engagement),
     sources: numberRecord(candidate.sources),
     landingPaths: numberRecord(candidate.landingPaths),
   }
@@ -104,14 +154,18 @@ function normalizeStore(value: unknown): AnalyticsStore {
 
 async function readStore(): Promise<AnalyticsStore> {
   try {
-    return normalizeStore(JSON.parse(await fs.readFile(analyticsFile, 'utf8')))
+    const store = normalizeStore(JSON.parse(await fs.readFile(analyticsFile, 'utf8')))
+    await fs.chmod(analyticsDataDir, 0o700).catch(() => undefined)
+    await fs.chmod(analyticsFile, 0o600).catch(() => undefined)
+    return store
   } catch {
     return emptyStore()
   }
 }
 
 async function writeStore(store: AnalyticsStore) {
-  await fs.mkdir(analyticsDataDir, { recursive: true })
+  await fs.mkdir(analyticsDataDir, { recursive: true, mode: 0o700 })
+  await fs.chmod(analyticsDataDir, 0o700).catch(() => undefined)
   const temporaryFile = `${analyticsFile}.${process.pid}.tmp`
   await fs.writeFile(temporaryFile, JSON.stringify(store), { encoding: 'utf8', mode: 0o600 })
   await fs.rename(temporaryFile, analyticsFile)
@@ -152,10 +206,19 @@ export async function recordPageView(
     const source = context.source?.slice(0, 120) || 'direct'
     const isNewVisitor = !daily.visitors.includes(visitorHash)
     const pathVisitors = daily.pathVisitors[normalizedPath] || []
+    const visitorPageViews = daily.visitorPageViews[visitorHash] || 0
+
+    if (visitorPageViews >= 100) {
+      return {
+        views: getPathViewsFromStore(store, normalizedPath),
+        visitors: getPathVisitorsFromStore(store, normalizedPath),
+      }
+    }
 
     // PV counts a real browser session entering the path. UV remains de-duplicated
     // by a daily salted hash, so no raw IP or stable cross-day identity is stored.
     daily.pageViews += 1
+    daily.visitorPageViews[visitorHash] = visitorPageViews + 1
     daily.paths[normalizedPath] = (daily.paths[normalizedPath] || 0) + 1
 
     if (!pathVisitors.includes(visitorHash)) {
@@ -167,6 +230,9 @@ export async function recordPageView(
       daily.visitors.push(visitorHash)
       daily.sources[source] = (daily.sources[source] || 0) + 1
       daily.landingPaths[normalizedPath] = (daily.landingPaths[normalizedPath] || 0) + 1
+    }
+    if (context.returningReader && !daily.returningVisitors.includes(visitorHash)) {
+      daily.returningVisitors.push(visitorHash)
     }
 
     store.days[day] = daily
@@ -183,6 +249,34 @@ export async function recordPageView(
       views: getPathViewsFromStore(store, normalizedPath),
       visitors: getPathVisitorsFromStore(store, normalizedPath),
     }
+  })
+
+  writeQueue = task.catch(() => undefined)
+  return task
+}
+
+export async function recordEngagement(
+  pathname: string,
+  visitorHash: string,
+  signal: EngagementSignal,
+) {
+  const normalizedPath = normalizeAnalyticsPath(pathname)
+  if (!normalizedPath) throw new Error('Invalid analytics path')
+
+  const task = writeQueue.then(async () => {
+    const store = await readStore()
+    const day = new Date().toISOString().slice(0, 10)
+    const daily = store.days[day] || emptyDay()
+    if (!daily.visitors.includes(visitorHash)) return
+    const pathSignals = daily.engagement[normalizedPath] || {}
+    const previous = pathSignals[visitorHash] || { seconds: 0, depth: 0 }
+    pathSignals[visitorHash] = {
+      seconds: Math.min(3600, Math.max(previous.seconds, Math.round(signal.seconds || 0))),
+      depth: Math.min(100, Math.max(previous.depth, Math.round(signal.depth || 0))),
+    }
+    daily.engagement[normalizedPath] = pathSignals
+    store.days[day] = daily
+    await writeStore(store)
   })
 
   writeQueue = task.catch(() => undefined)
@@ -256,7 +350,25 @@ export async function getAnalyticsOverview(days = 30): Promise<AnalyticsOverview
   const dailyVisitors = sumVisitors(selectedDays)
   const previousPageViews = sumPageViews(previousDays)
   const previousDailyVisitors = sumVisitors(previousDays)
-  const pathTotals: Record<string, { views: number; visitors: number }> = {}
+  const dailyEngagedVisitors = (day: DailyAnalytics | undefined) => new Set(
+    Object.values(day?.engagement || {}).flatMap((signals) => Object.keys(signals)),
+  ).size
+  const returningDailyVisitors = selectedDays.reduce(
+    (total, day) => total + (store.days[day]?.returningVisitors.length || 0),
+    0,
+  )
+  const engagedDailyVisitors = selectedDays.reduce(
+    (total, day) => total + dailyEngagedVisitors(store.days[day]),
+    0,
+  )
+  const pathTotals: Record<string, {
+    views: number
+    visitors: number
+    engagedVisitors: number
+    depth50Visitors: number
+    depth90Visitors: number
+    engagedSeconds: number
+  }> = {}
   const sourceTotals: Record<string, number> = {}
   const landingTotals: Record<string, number> = {}
 
@@ -264,9 +376,31 @@ export async function getAnalyticsOverview(days = 30): Promise<AnalyticsOverview
     const daily = store.days[day]
     if (!daily) continue
     for (const [pathname, views] of Object.entries(daily.paths)) {
-      pathTotals[pathname] ||= { views: 0, visitors: 0 }
+      pathTotals[pathname] ||= {
+        views: 0,
+        visitors: 0,
+        engagedVisitors: 0,
+        depth50Visitors: 0,
+        depth90Visitors: 0,
+        engagedSeconds: 0,
+      }
       pathTotals[pathname].views += views
       pathTotals[pathname].visitors += daily.pathVisitors[pathname]?.length || 0
+    }
+    for (const [pathname, signals] of Object.entries(daily.engagement)) {
+      pathTotals[pathname] ||= {
+        views: 0,
+        visitors: 0,
+        engagedVisitors: 0,
+        depth50Visitors: 0,
+        depth90Visitors: 0,
+        engagedSeconds: 0,
+      }
+      const values = Object.values(signals)
+      pathTotals[pathname].engagedVisitors += values.filter((signal) => signal.seconds >= 10 || signal.depth >= 25).length
+      pathTotals[pathname].depth50Visitors += values.filter((signal) => signal.depth >= 50).length
+      pathTotals[pathname].depth90Visitors += values.filter((signal) => signal.depth >= 90).length
+      pathTotals[pathname].engagedSeconds += values.reduce((total, signal) => total + signal.seconds, 0)
     }
     for (const [source, visitors] of Object.entries(daily.sources)) {
       sourceTotals[source] = (sourceTotals[source] || 0) + visitors
@@ -279,7 +413,17 @@ export async function getAnalyticsOverview(days = 30): Promise<AnalyticsOverview
   const topPaths = Object.entries(pathTotals)
     .sort(([, left], [, right]) => right.views - left.views)
     .slice(0, 10)
-    .map(([pathname, metrics]) => ({ pathname, ...metrics }))
+    .map(([pathname, metrics]) => ({
+      pathname,
+      views: metrics.views,
+      visitors: metrics.visitors,
+      engagedVisitors: metrics.engagedVisitors,
+      depth50Visitors: metrics.depth50Visitors,
+      depth90Visitors: metrics.depth90Visitors,
+      averageEngagedSeconds: metrics.engagedVisitors
+        ? Math.round(metrics.engagedSeconds / metrics.engagedVisitors)
+        : 0,
+    }))
   const topSources = Object.entries(sourceTotals)
     .sort(([, left], [, right]) => right - left)
     .slice(0, 10)
@@ -302,6 +446,14 @@ export async function getAnalyticsOverview(days = 30): Promise<AnalyticsOverview
     previousDailyVisitors,
     pageViewChange: percentageChange(pageViews, previousPageViews),
     visitorChange: percentageChange(dailyVisitors, previousDailyVisitors),
+    returningDailyVisitors,
+    engagedDailyVisitors,
+    returningRate: dailyVisitors
+      ? Math.min(100, Math.round((returningDailyVisitors / dailyVisitors) * 1000) / 10)
+      : 0,
+    engagementRate: dailyVisitors
+      ? Math.min(100, Math.round((engagedDailyVisitors / dailyVisitors) * 1000) / 10)
+      : 0,
     topPaths,
     topSources,
     topLandingPaths,

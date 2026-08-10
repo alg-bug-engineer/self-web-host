@@ -35,14 +35,14 @@ jobs:
           printf '%s\n' "$ECS_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Fetch private WeChat RSS from ECS
+      - name: Collect and fetch private WeChat RSS from ECS
         env:
           ECS_HOST: ${{ secrets.ECS_HOST }}
           ECS_USER: ${{ secrets.ECS_USER }}
           ECS_PORT: ${{ secrets.ECS_PORT }}
         run: |
           ssh -i ~/.ssh/ecs_deploy_key -p "${ECS_PORT:-22}" "$ECS_USER@$ECS_HOST" \
-            "curl -fsS 'http://127.0.0.1:8001/feed/MP_WXS_3212677307.rss?limit=50&is_update=true' >/dev/null; sleep 25; curl -fsS 'http://127.0.0.1:8001/feed/MP_WXS_3212677307.rss?limit=50&is_update=false'" \
+            "cd /root/self-web-host && git fetch origin '$GITHUB_SHA' && git show '$GITHUB_SHA:scripts/fetch-wechat-rss.mjs' | node --input-type=module" \
             > /tmp/wechat-rss.xml
           test -s /tmp/wechat-rss.xml
 

@@ -48,11 +48,30 @@ const previous7Days = dateRange(7, 7)
 
 const visitorsFor = (days) => sum(days.map((day) => analyticsDays[day]?.visitors?.length || 0))
 const pageViewsFor = (days) => sum(days.map((day) => Number(analyticsDays[day]?.pageViews) || 0))
+const returningVisitorsFor = (days) => sum(days.map((day) => analyticsDays[day]?.returningVisitors?.length || 0))
+const engagementSignalsForDay = (day) => Object.values(analyticsDays[day]?.engagement || {})
+  .flatMap((signals) => Object.values(signals || {}))
+const engagedVisitorsFor = (days) => sum(days.map((day) => {
+  const visitors = new Set()
+  for (const signals of Object.values(analyticsDays[day]?.engagement || {})) {
+    for (const [visitor, signal] of Object.entries(signals || {})) {
+      if (Number(signal?.seconds || 0) >= 10 || Number(signal?.depth || 0) >= 25) visitors.add(visitor)
+    }
+  }
+  return visitors.size
+}))
 const currentVisitors = visitorsFor(current28Days)
 const previousVisitors = visitorsFor(previous28Days)
 const currentPageViews = pageViewsFor(current28Days)
 const current7Visitors = visitorsFor(current7Days)
 const previous7Visitors = visitorsFor(previous7Days)
+const returningVisitors = returningVisitorsFor(current28Days)
+const engagedVisitors = engagedVisitorsFor(current28Days)
+const currentEngagementSignals = current28Days.flatMap(engagementSignalsForDay)
+const depth50Visitors = currentEngagementSignals.filter((signal) => Number(signal?.depth || 0) >= 50).length
+const depth90Visitors = currentEngagementSignals.filter((signal) => Number(signal?.depth || 0) >= 90).length
+const returningRate = currentVisitors ? Math.min(100, Math.round((returningVisitors / currentVisitors) * 1000) / 10) : 0
+const engagementRate = currentVisitors ? Math.min(100, Math.round((engagedVisitors / currentVisitors) * 1000) / 10) : 0
 const activeDays = current28Days.filter((day) => analyticsDays[day]).length
 const projectedMonthlyVisitors = activeDays
   ? Math.round((currentVisitors / activeDays) * 30)
@@ -114,6 +133,14 @@ if (!activeDays) {
       reviewRequired: true,
     })
   }
+  if (currentVisitors >= 20 && engagementRate < 25) {
+    recommendedActions.push({
+      priority: 2,
+      type: 'reading-experience',
+      action: '有效阅读率低于 25%，优先检查访问最高页面的首屏承诺、正文结构、移动端可读性与相关文章入口。',
+      reviewRequired: true,
+    })
+  }
   if (topPages[0]) {
     recommendedActions.push({
       priority: 3,
@@ -125,7 +152,7 @@ if (!activeDays) {
 }
 
 const report = {
-  version: 1,
+  version: 2,
   generatedAt: new Date().toISOString(),
   objective: goals.objective,
   status: {
@@ -140,6 +167,14 @@ const report = {
     gapToTarget: Math.max(0, goals.objective.target - projectedMonthlyVisitors),
     activeDays,
     confidence: activeDays >= 21 ? 'medium' : activeDays >= 7 ? 'low' : 'insufficient',
+  },
+  quality: {
+    returningVisitors,
+    returningRatePercent: returningRate,
+    engagedVisitors,
+    engagementRatePercent: engagementRate,
+    depth50Visitors,
+    depth90Visitors,
   },
   acquisition: { searchVisitors, searchSharePercent: searchShare, topSources },
   topPages,

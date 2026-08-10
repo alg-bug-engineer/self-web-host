@@ -3,6 +3,7 @@ import {
   createVisitorHash,
   getPathViews,
   normalizeAnalyticsPath,
+  recordEngagement,
   recordPageView,
 } from '@/lib/analytics-storage'
 
@@ -62,6 +63,22 @@ function trafficSource(body: Record<string, unknown>) {
   }
 }
 
+function requestVisitorHash(request: NextRequest) {
+  const forwardedFor = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+  const visitorInput = [
+    forwardedFor || request.headers.get('x-real-ip') || 'unknown',
+    request.headers.get('user-agent') || 'unknown',
+    request.headers.get('accept-language') || 'unknown',
+  ].join('|')
+  return createVisitorHash(visitorInput, new Date().toISOString().slice(0, 10))
+}
+
+function shouldIgnoreRequest(request: NextRequest) {
+  if (request.headers.get('dnt') === '1') return true
+  const userAgent = request.headers.get('user-agent') || ''
+  return /bot\b|crawler|spider|slurp|headless|lighthouse|pagespeed|preview|monitoring/i.test(userAgent)
+}
+
 export async function GET(request: NextRequest) {
   const pathname = normalizeAnalyticsPath(request.nextUrl.searchParams.get('path') || '')
   if (!pathname) {
@@ -80,20 +97,37 @@ export async function POST(request: NextRequest) {
   if (!pathname) {
     return NextResponse.json({ ok: false, message: '无效路径' }, { status: 400 })
   }
+  if (shouldIgnoreRequest(request)) {
+    return NextResponse.json({ ok: true, ignored: true }, { headers: noStoreHeaders })
+  }
 
-  const forwardedFor = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-  const visitorInput = [
-    forwardedFor || request.headers.get('x-real-ip') || 'unknown',
-    request.headers.get('user-agent') || 'unknown',
-    request.headers.get('accept-language') || 'unknown',
-  ].join('|')
-  const day = new Date().toISOString().slice(0, 10)
-  const result = await recordPageView(pathname, createVisitorHash(visitorInput, day), {
+  const result = await recordPageView(pathname, requestVisitorHash(request), {
     source: trafficSource(body),
+    returningReader: body.returningReader === true,
   })
 
   return NextResponse.json(
     { ok: true, path: pathname, views: result.views, visitors: result.visitors },
     { headers: noStoreHeaders },
   )
+}
+
+export async function PATCH(request: NextRequest) {
+  const body = await request.json().catch(() => ({}))
+  const pathname = normalizeAnalyticsPath(String(body.path || ''))
+  if (!pathname) {
+    return NextResponse.json({ ok: false, message: '无效路径' }, { status: 400 })
+  }
+  if (shouldIgnoreRequest(request)) {
+    return NextResponse.json({ ok: true, ignored: true }, { headers: noStoreHeaders })
+  }
+
+  const seconds = Math.min(3600, Math.max(0, Number(body.seconds) || 0))
+  const depth = Math.min(100, Math.max(0, Number(body.depth) || 0))
+  if (seconds < 10 && depth < 25) {
+    return NextResponse.json({ ok: false, message: '互动信号不足' }, { status: 400 })
+  }
+
+  await recordEngagement(pathname, requestVisitorHash(request), { seconds, depth })
+  return NextResponse.json({ ok: true }, { headers: noStoreHeaders })
 }
