@@ -4,8 +4,8 @@ import AdminClient from './AdminClient'
 
 export const dynamic = 'force-dynamic'
 
-export default function AdminPage() {
-  const token = cookies().get('admin_session')?.value
+export default async function AdminPage() {
+  const token = (await cookies()).get('admin_session')?.value
   const isAuthed = verifyAdminSession(token)
 
   return <AdminClient isAuthed={isAuthed} />

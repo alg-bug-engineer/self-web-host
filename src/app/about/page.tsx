@@ -75,7 +75,9 @@ const awards = [
 const socialLinks = [
   { name: 'GitHub', url: 'https://github.com/alg-bug-engineer', icon: 'github' },
   { name: 'CSDN', url: 'https://blog.csdn.net/wwlsm_zql', icon: 'csdn' },
-  { name: '公众号', url: '#', icon: 'wechat', note: '芝士AI吃鱼' },
+  { name: '掘金', url: 'https://juejin.cn/user/140380880250734', icon: 'article', note: '算法工程师' },
+  { name: '51CTO', url: 'https://blog.51cto.com/u_15610758', icon: 'article', note: 'NLP / 大模型' },
+  { name: '公众号', url: '/about#wechat', icon: 'wechat', note: '芝士AI吃鱼' },
 ]
 
 export default function AboutPage() {
@@ -110,7 +112,11 @@ export default function AboutPage() {
               🎯 用<span className="text-text-primary">爆笑漫画</span>，把 <span className="text-text-primary">AI 天书</span>讲成人话
             </p>
 
-            <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <p className="mt-3 text-sm text-text-secondary">
+              公开创作足迹覆盖公众号、51CTO、掘金、CSDN 与 GitHub，长期聚焦 NLP、大语言模型、RAG、Agent 和 AI 工程实践。
+            </p>
+
+            <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
               {socialLinks.map((link) => {
                 const isExternal = link.url.startsWith('http');
                 const linkProps = isExternal
@@ -248,7 +254,7 @@ export default function AboutPage() {
             三种形式，帮助更多人理解和使用 AI 技术。
           </p>
 
-          <div className="pt-4">
+          <div id="wechat" className="pt-4 scroll-mt-20">
             <WechatCard />
           </div>
         </div>

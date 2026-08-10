@@ -1,0 +1,51 @@
+name: Sync WeChat articles
+
+on:
+  schedule:
+    - cron: '15 1 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Import new articles as drafts
+        env:
+          WECHAT_RSS_URL: ${{ secrets.WECHAT_RSS_URL }}
+          WECHAT_AUTO_PUBLISH: 'false'
+        run: npm run sync:wechat
+
+      - name: Build imported content
+        run: npm run build
+
+      - name: Open review pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- content/posts; then
+            echo "没有新文章。"
+            exit 0
+          fi
+          branch="codex/wechat-sync-${GITHUB_RUN_ID}"
+          git config user.name "ai-knowledgepoints-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add content/posts
+          git commit -m "同步公众号文章草稿"
+          git push origin "$branch"
+          gh pr create --base main --head "$branch" --title "同步公众号文章草稿" --body "每日公众号同步生成的待审核草稿。审核正文与元数据后即可合并发布。"

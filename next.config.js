@@ -2,6 +2,7 @@ const { withContentlayer } = require('next-contentlayer2')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   allowedDevOrigins: [
     'https://ai-knowledgepoints.cn',
     'https://www.ai-knowledgepoints.cn',
@@ -9,12 +10,28 @@ const nextConfig = {
     'http://www.ai-knowledgepoints.cn',
   ],
   output: 'standalone',
-  optimizeFonts: false,
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**',
+        hostname: 'github.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'github.githubassets.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'mmbiz.qpic.cn',
+      },
+      {
+        protocol: 'https',
+        hostname: 'mmbiz.qlogo.cn',
       },
     ],
   },
