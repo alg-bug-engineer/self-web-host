@@ -1,10 +1,11 @@
 {
-  "version": 1,
+  "version": 2,
   "objective": {
-    "metric": "monthlyQualifiedVisitors",
+    "metric": "monthlyQualifiedVisitorDays",
     "target": 50000,
     "horizonMonths": 3,
-    "description": "在不购买广告、不制造垃圾内容的前提下，提高来自搜索、社交、可信引荐与直接访问的真实读者。"
+    "description": "在不购买广告、不制造垃圾内容的前提下，提高来自搜索、社交、可信引荐与直接访问的真实读者。",
+    "qualification": "当日阅读至少 10 秒、达到 25% 阅读深度或具有回访信号的访客。每日去重，跨日不建立稳定标识，因此该指标是月度有效访客天数代理值，不冒充跨月唯一用户数。"
   },
   "guardMetrics": [
     "organicSearchVisitors",
@@ -13,6 +14,12 @@
     "indexedHighQualityPages",
     "productionAvailability"
   ],
+  "learning": {
+    "beforeWindowDays": 7,
+    "afterWindowDays": 7,
+    "minimumActiveDaysPerWindow": 5,
+    "causalityPolicy": "部署前后变化只作为相关性信号；没有对照实验时不得声称因果。"
+  },
   "constraints": [
     "不购买流量、外链或广告",
     "不制造批量低质量 SEO 页面",
