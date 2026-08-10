@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "staticPaths": [
+    "/",
+    "/about",
+    "/blog",
+    "/chat",
+    "/collections/articles",
+    "/collections/manga",
+    "/collections/tools",
+    "/lab",
+    "/planet",
+    "/portfolio",
+    "/search"
+  ],
+  "dynamicPrefixes": [
+    "/blog/"
+  ]
+}

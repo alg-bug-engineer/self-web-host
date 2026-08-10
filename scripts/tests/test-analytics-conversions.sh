@@ -37,6 +37,10 @@ request_headers=(
 curl --silent --fail -X POST "${request_headers[@]}" \
   --data '{"path":"/portfolio","referrer":""}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+UNKNOWN_PATH_STATUS="$(curl --silent --output /dev/null --write-out '%{http_code}' -X POST "${request_headers[@]}" \
+  --data '{"path":"/operator","referrer":""}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view")"
+[[ "$UNKNOWN_PATH_STATUS" == "400" ]]
 curl --silent --fail -X POST "${request_headers[@]}" \
   --data '{"kind":"conversion","path":"/portfolio","name":"view_book","target":"book-3"}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null

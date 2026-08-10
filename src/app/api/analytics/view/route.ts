@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import {
   createVisitorHash,
   getPathViews,
-  normalizeAnalyticsPath,
   normalizeConversionEventName,
   normalizeConversionTarget,
   normalizeCoreWebVitalName,
@@ -11,6 +10,7 @@ import {
   recordPageView,
   recordWebVital,
 } from '@/lib/analytics-storage'
+import { normalizeTrackableAnalyticsPath } from '@/lib/trackable-analytics-path'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -85,7 +85,7 @@ function shouldIgnoreRequest(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  const pathname = normalizeAnalyticsPath(request.nextUrl.searchParams.get('path') || '')
+  const pathname = normalizeTrackableAnalyticsPath(request.nextUrl.searchParams.get('path') || '')
   if (!pathname) {
     return NextResponse.json({ ok: false, message: '无效路径' }, { status: 400 })
   }
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => ({}))
-  const pathname = normalizeAnalyticsPath(String(body.path || ''))
+  const pathname = normalizeTrackableAnalyticsPath(String(body.path || ''))
   if (!pathname) {
     return NextResponse.json({ ok: false, message: '无效路径' }, { status: 400 })
   }
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   const body = await request.json().catch(() => ({}))
-  const pathname = normalizeAnalyticsPath(String(body.path || ''))
+  const pathname = normalizeTrackableAnalyticsPath(String(body.path || ''))
   if (!pathname) {
     return NextResponse.json({ ok: false, message: '无效路径' }, { status: 400 })
   }
@@ -152,7 +152,7 @@ export async function PATCH(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   const body = await request.json().catch(() => ({}))
-  const pathname = normalizeAnalyticsPath(String(body.path || ''))
+  const pathname = normalizeTrackableAnalyticsPath(String(body.path || ''))
   const name = normalizeCoreWebVitalName(body.name)
   const value = Number(body.value)
   if (!pathname || !name || !Number.isFinite(value) || value < 0) {
