@@ -6,6 +6,7 @@ import path from 'node:path'
 import process from 'node:process'
 import { promisify } from 'node:util'
 import nextEnv from '@next/env'
+import { parseOperatorExperiment } from './lib/operator-experiments.mjs'
 
 const execFileAsync = promisify(execFile)
 const projectDir = process.cwd()
@@ -47,18 +48,22 @@ if (alreadyRecorded) {
 }
 
 const subject = await git('show', '-s', '--format=%s', commit)
+const commitMessage = await git('show', '-s', '--format=%B', commit)
+const experimentMetadata = parseOperatorExperiment(commitMessage)
 const changedFiles = (await git('diff', '--name-only', previousCommit, commit))
   .split('\n')
   .filter(Boolean)
   .slice(0, 100)
 
 const event = {
-  version: 1,
+  version: 2,
   commit,
   previousCommit,
   deployedAt: new Date().toISOString(),
   subject,
   changedFiles,
+  experiment: experimentMetadata.experiment,
+  experimentMetadataError: experimentMetadata.error,
 }
 
 await fs.mkdir(operatorDir, { recursive: true, mode: 0o700 })

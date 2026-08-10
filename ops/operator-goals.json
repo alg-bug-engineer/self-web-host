@@ -1,5 +1,5 @@
 {
-  "version": 15,
+  "version": 16,
   "objective": {
     "metric": "monthlyQualifiedVisitorsEstimate",
     "target": 50000,
@@ -22,6 +22,7 @@
     "wechatInboundSyncRecovery",
     "publicProfileFreshness",
     "verifiedIdentityMachineReadableCoverage",
+    "experimentAttributionIntegrity",
     "productionAvailability"
   ],
   "learning": {

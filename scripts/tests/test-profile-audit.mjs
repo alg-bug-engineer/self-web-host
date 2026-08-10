@@ -25,7 +25,7 @@ try {
   assert.deepEqual(report.issues, [])
   assert.equal((await fs.stat(path.join(dataDir, 'operator', 'profile-latest.json'))).mode & 0o777, 0o600)
   let operatorReport = await runOperatorReport()
-  assert.equal(operatorReport.version, 11)
+  assert.equal(operatorReport.version, 12)
   assert.equal(operatorReport.profile.status, 'healthy')
   assert.ok(operatorReport.observations.some((item) => item.includes('33 个公开仓库')))
   assert.ok(operatorReport.observations.some((item) => item.includes('1 项公开专业成果')))

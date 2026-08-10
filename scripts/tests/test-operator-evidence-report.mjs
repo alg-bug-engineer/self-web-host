@@ -36,7 +36,7 @@ await fs.writeFile(path.join(operatorDir, 'profile-latest.json'), JSON.stringify
 try {
   await writeAnalytics(1, 9)
   let report = await generateReport()
-  assert.equal(report.version, 11)
+  assert.equal(report.version, 12)
   assert.equal(report.decision.mode, 'observe')
   assert.equal(report.decision.growthReady, false)
   assert.equal(report.status.current28DayVisitors, 9)
@@ -70,6 +70,29 @@ try {
   assert.ok(report.recommendedActions.some((item) => item.type === 'reading-experience'))
   assert.ok(report.recommendedActions.some((item) => item.type === 'value-conversion'))
   assert.ok(report.recommendedActions.some((item) => item.type === 'content'))
+
+  await fs.writeFile(path.join(operatorDir, 'actions.json'), JSON.stringify({
+    version: 2,
+    actions: [{
+      intent: 'growth-experiment',
+      status: 'observing',
+      id: 'action-active',
+      title: '目标页阅读实验',
+      commit: 'a'.repeat(40),
+      deployedAt: '2026-08-10T00:00:00.000Z',
+      observationEnds: '2026-08-17',
+      experiment: {
+        id: 'article-reading-promise',
+        targetPath: '/blog/evidence',
+        primaryMetric: 'engagementRatePoints',
+      },
+    }],
+  }))
+  report = await generateReport()
+  assert.equal(report.decision.mode, 'experiment-observing')
+  assert.equal(report.decision.evidence.activeExperiments, 1)
+  assert.equal(report.learning.totalExperiments, 1)
+  assert.equal(report.learning.observingActions, 1)
 } finally {
   await fs.rm(dataDir, { recursive: true, force: true })
 }

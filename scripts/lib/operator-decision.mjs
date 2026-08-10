@@ -11,6 +11,8 @@ export function buildOperatorDecision({
   searchEvidenceReady = false,
   minimumActiveDays = 7,
   minimumVisitorDays = 20,
+  activeExperimentCount = 0,
+  maximumConcurrentExperiments = 1,
   recommendedActions = [],
 } = {}) {
   const minimums = {
@@ -19,6 +21,8 @@ export function buildOperatorDecision({
   }
   const audienceEvidenceReady = activeDays >= minimums.activeDays && visitorDays >= minimums.visitorDays
   const growthReady = audienceEvidenceReady || searchEvidenceReady === true
+  const activeExperiments = Math.max(0, Math.round(Number(activeExperimentCount) || 0))
+  const experimentLimit = Math.max(1, Math.round(Number(maximumConcurrentExperiments) || 1))
   const actions = recommendedActions
     .filter((action) => action && typeof action === 'object')
     .sort((left, right) => Number(left.priority || 99) - Number(right.priority || 99))
@@ -38,7 +42,18 @@ export function buildOperatorDecision({
       reason: '存在优先级 1 的已授权维护事项，应先恢复观测或生产闭环，再开展增长实验。',
       primaryAction: safeAction(automaticMaintenance),
       externalBlockers,
-      evidence: evidenceSnapshot({ activeDays, visitorDays, qualifiedVisitorDays, searchEvidenceReady, minimums }),
+      evidence: evidenceSnapshot({ activeDays, visitorDays, qualifiedVisitorDays, searchEvidenceReady, minimums, activeExperiments, experimentLimit }),
+    }
+  }
+
+  if (activeExperiments >= experimentLimit) {
+    return {
+      mode: 'experiment-observing',
+      growthReady,
+      reason: `已有 ${activeExperiments} 项显式增长实验处于观察窗口，达到并发上限 ${experimentLimit}；在其结束或判为数据不足前不启动新实验。`,
+      primaryAction: null,
+      externalBlockers,
+      evidence: evidenceSnapshot({ activeDays, visitorDays, qualifiedVisitorDays, searchEvidenceReady, minimums, activeExperiments, experimentLimit }),
     }
   }
 
@@ -49,7 +64,7 @@ export function buildOperatorDecision({
       reason: '自然数据已达到最低判断窗口；一次只评审并执行一个增长实验，部署后观察完整效果窗口。',
       primaryAction: safeAction(experiment),
       externalBlockers,
-      evidence: evidenceSnapshot({ activeDays, visitorDays, qualifiedVisitorDays, searchEvidenceReady, minimums }),
+      evidence: evidenceSnapshot({ activeDays, visitorDays, qualifiedVisitorDays, searchEvidenceReady, minimums, activeExperiments, experimentLimit }),
     }
   }
 
@@ -61,7 +76,7 @@ export function buildOperatorDecision({
       : `自然数据尚未达到 ${minimums.activeDays} 个活跃日且 ${minimums.visitorDays} 个访客天的最低窗口，不根据噪声改标题、内容或 UI。`,
     primaryAction: null,
     externalBlockers,
-    evidence: evidenceSnapshot({ activeDays, visitorDays, qualifiedVisitorDays, searchEvidenceReady, minimums }),
+    evidence: evidenceSnapshot({ activeDays, visitorDays, qualifiedVisitorDays, searchEvidenceReady, minimums, activeExperiments, experimentLimit }),
   }
 }
 
@@ -79,13 +94,16 @@ function safeAction(action) {
   }
 }
 
-function evidenceSnapshot({ activeDays, visitorDays, qualifiedVisitorDays, searchEvidenceReady, minimums }) {
+function evidenceSnapshot({ activeDays, visitorDays, qualifiedVisitorDays, searchEvidenceReady, minimums, activeExperiments, experimentLimit }) {
   return {
     activeDays: Math.max(0, Number(activeDays) || 0),
     visitorDays: Math.max(0, Number(visitorDays) || 0),
     qualifiedVisitorDays: Math.max(0, Number(qualifiedVisitorDays) || 0),
     searchEvidenceReady: searchEvidenceReady === true,
     minimums,
+    activeExperiments,
+    maximumConcurrentExperiments: experimentLimit,
+    experimentCapacityAvailable: activeExperiments < experimentLimit,
     remainingActiveDays: Math.max(0, minimums.activeDays - (Number(activeDays) || 0)),
     remainingVisitorDays: Math.max(0, minimums.visitorDays - (Number(visitorDays) || 0)),
   }

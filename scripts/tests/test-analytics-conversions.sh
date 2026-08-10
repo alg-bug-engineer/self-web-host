@@ -161,7 +161,7 @@ ANALYTICS_DATA_DIR="$ANALYTICS_TEST_DIR" npm run operator:report >/dev/null
 node - "$ANALYTICS_TEST_DIR/operator/latest.json" <<'NODE'
 const fs = require('node:fs')
 const report = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
-if (report.version !== 11) throw new Error(`expected report version 11, got ${report.version}`)
+if (report.version !== 12) throw new Error(`expected report version 12, got ${report.version}`)
 if (report.status.measurement.crossDayDeduplicated !== false) throw new Error('mixed migration day was treated as de-duplicated')
 if (report.status.currentMonthVisitors !== null) throw new Error('mixed migration day produced a monthly visitor count')
 if (report.status.currentMonthQualifiedVisitors !== null) throw new Error('mixed migration day produced a qualified monthly visitor count')

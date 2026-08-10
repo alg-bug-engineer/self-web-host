@@ -568,6 +568,17 @@ if (!profileAudit) {
 
 const searchEvidenceReady = searchConsole?.status === 'connected'
   && Number(searchConsole.summary?.impressions || 0) >= decisionMinimumSearchImpressions
+const activeExperiments = (actionState.actions || []).filter((action) =>
+  action.intent === 'growth-experiment' && action.status === 'observing').length
+const maximumConcurrentExperiments = Math.max(1, Number(goals.decision?.maximumConcurrentExperiments || 1))
+if (activeExperiments > 0) {
+  observations.push(`已有 ${activeExperiments} 项显式增长实验处于观察窗口；并发上限为 ${maximumConcurrentExperiments}，窗口结束前不启动重叠实验。`)
+}
+const invalidExperimentMetadataActions = (actionState.actions || []).filter((action) =>
+  action.status === 'invalid-experiment-metadata').length
+if (invalidExperimentMetadataActions > 0) {
+  observations.push(`${invalidExperimentMetadataActions} 次部署包含不完整的实验声明，已按普通部署隔离，不参与效果学习。`)
+}
 const decision = buildOperatorDecision({
   activeDays,
   visitorDays: currentVisitors,
@@ -575,11 +586,13 @@ const decision = buildOperatorDecision({
   searchEvidenceReady,
   minimumActiveDays: decisionMinimumActiveDays,
   minimumVisitorDays: decisionMinimumVisitorDays,
+  activeExperimentCount: activeExperiments,
+  maximumConcurrentExperiments,
   recommendedActions,
 })
 
 const report = {
-  version: 11,
+  version: 12,
   generatedAt: configuredNow.toISOString(),
   objective: goals.objective,
   status: {
@@ -675,12 +688,18 @@ const report = {
   learning: {
     definition: actionState.definition || null,
     totalActions: actionState.actions?.length || 0,
+    totalDeployments: actionState.actions?.length || 0,
+    recordedDeployments: actionState.actions?.filter((action) => action.status === 'recorded').length || 0,
+    totalExperiments: actionState.actions?.filter((action) => action.intent === 'growth-experiment').length || 0,
     observingActions: actionState.actions?.filter((action) => action.status === 'observing').length || 0,
     evaluatedActions: actionState.actions?.filter((action) => action.status === 'evaluated').length || 0,
+    confoundedActions: actionState.actions?.filter((action) => action.status === 'confounded').length || 0,
+    invalidExperimentMetadataActions: actionState.actions?.filter((action) => action.status === 'invalid-experiment-metadata').length || 0,
     insufficientDataActions: actionState.actions?.filter((action) => action.status === 'insufficient-data').length || 0,
     recentActions: (actionState.actions || []).slice(0, 5).map((action) => ({
       id: action.id,
       category: action.category,
+      intent: action.intent,
       title: action.title,
       commit: action.commit,
       deployedAt: action.deployedAt,
@@ -688,6 +707,7 @@ const report = {
       observationEnds: action.observationEnds,
       outcome: action.outcome,
       confidence: action.confidence,
+      experiment: action.experiment || null,
       changes: action.changes || null,
     })),
   },

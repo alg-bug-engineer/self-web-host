@@ -4,6 +4,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import nextEnv from '@next/env'
+import { primaryMetricSignal } from './lib/operator-experiments.mjs'
 
 const projectDir = process.cwd()
 nextEnv.loadEnvConfig(projectDir)
@@ -69,7 +70,7 @@ const percentile75 = (values) => {
 const analytics = await readJson(analyticsPath, { days: {} })
 const analyticsDays = analytics?.days && typeof analytics.days === 'object' ? analytics.days : {}
 
-const scorecardFor = (days) => {
+const scorecardFor = (days, targetPath = null) => {
   let visitors = 0
   let pageViews = 0
   let articlePageViews = 0
@@ -83,30 +84,45 @@ const scorecardFor = (days) => {
   for (const day of days) {
     const daily = analyticsDays[day]
     if (!daily) continue
+    const dailyVisitors = new Set(targetPath
+      ? (Array.isArray(daily.pathVisitors?.[targetPath]) ? daily.pathVisitors[targetPath] : [])
+      : (Array.isArray(daily.visitors) ? daily.visitors : []))
+    if (targetPath && dailyVisitors.size === 0 && Number(daily.paths?.[targetPath] || 0) === 0) continue
     activeDays += 1
-    const dailyVisitors = new Set(Array.isArray(daily.visitors) ? daily.visitors : [])
-    const returning = new Set(Array.isArray(daily.returningVisitors) ? daily.returningVisitors : [])
+    const allReturning = new Set(Array.isArray(daily.returningVisitors) ? daily.returningVisitors : [])
+    const returning = new Set([...dailyVisitors].filter((visitor) => allReturning.has(visitor)))
     const engaged = new Set()
-    for (const signals of Object.values(daily.engagement || {})) {
+    const engagementGroups = targetPath
+      ? [daily.engagement?.[targetPath] || {}]
+      : Object.values(daily.engagement || {})
+    for (const signals of engagementGroups) {
       for (const [visitor, signal] of Object.entries(signals || {})) {
-        if (Number(signal?.seconds || 0) >= 10 || Number(signal?.depth || 0) >= 25) engaged.add(visitor)
+        if (dailyVisitors.has(visitor) && (Number(signal?.seconds || 0) >= 10 || Number(signal?.depth || 0) >= 25)) engaged.add(visitor)
       }
     }
     const qualified = new Set([...returning, ...engaged])
     const converted = new Set()
+    let scopedConversionCount = 0
     for (const event of Object.values(daily.conversions || {})) {
-      for (const visitor of event?.visitors || []) converted.add(visitor)
+      if (targetPath) {
+        scopedConversionCount += Number(event?.paths?.[targetPath] || 0)
+      } else {
+        for (const visitor of event?.visitors || []) converted.add(visitor)
+      }
     }
     visitors += dailyVisitors.size
     returningVisitors += returning.size
     engagedVisitors += engaged.size
     qualifiedVisitors += qualified.size
-    conversionVisitors += converted.size
-    pageViews += Number(daily.pageViews || 0)
-    articlePageViews += sum(Object.entries(daily.paths || {})
-      .filter(([pathname]) => pathname.startsWith('/blog/'))
-      .map(([, views]) => Number(views || 0)))
-    for (const metrics of Object.values(daily.vitals || {})) {
+    conversionVisitors += targetPath ? Math.min(dailyVisitors.size, scopedConversionCount) : converted.size
+    pageViews += targetPath ? Number(daily.paths?.[targetPath] || 0) : Number(daily.pageViews || 0)
+    articlePageViews += targetPath
+      ? (targetPath.startsWith('/blog/') ? Number(daily.paths?.[targetPath] || 0) : 0)
+      : sum(Object.entries(daily.paths || {})
+        .filter(([pathname]) => pathname.startsWith('/blog/'))
+        .map(([, views]) => Number(views || 0)))
+    const vitalGroups = targetPath ? [daily.vitals?.[targetPath] || {}] : Object.values(daily.vitals || {})
+    for (const metrics of vitalGroups) {
       for (const name of Object.keys(webVitalValues)) {
         webVitalValues[name].push(...Object.values(metrics?.[name] || {}).map(Number).filter(Number.isFinite))
       }
@@ -144,6 +160,19 @@ const deployments = await readJsonLines(deploymentsPath)
 const previousState = await readJson(actionsPath, { actions: [] })
 const previousByCommit = new Map((previousState.actions || []).map((action) => [action.commit, action]))
 const today = (process.env.OPERATOR_NOW || new Date().toISOString()).slice(0, 10)
+const validExperimentDeployments = deployments.filter((event) => event?.experiment?.id && event?.deployedAt)
+
+const overlappingExperimentIds = (event, observationEnds) => {
+  const deployedDay = event.deployedAt.slice(0, 10)
+  return validExperimentDeployments
+    .filter((candidate) => candidate.commit !== event.commit)
+    .filter((candidate) => {
+      const candidateDay = candidate.deployedAt.slice(0, 10)
+      const candidateEnd = shiftDay(candidateDay, afterWindowDays)
+      return candidateDay <= observationEnds && candidateEnd >= deployedDay
+    })
+    .map((candidate) => candidate.experiment.id)
+}
 
 const actions = deployments
   .filter((event) => /^[0-9a-f]{40}$/i.test(event?.commit || '') && event?.deployedAt)
@@ -154,26 +183,55 @@ const actions = deployments
     const afterStart = shiftDay(deployedDay, 1)
     const afterDays = rangeFrom(afterStart, afterWindowDays)
     const observationEnds = afterDays.at(-1)
-    const before = scorecardFor(beforeDays)
-    const after = scorecardFor(afterDays)
+    const experiment = event.experiment || null
+    const targetPath = experiment?.targetPath || null
+    const before = scorecardFor(beforeDays, targetPath)
+    const after = scorecardFor(afterDays, targetPath)
     const previous = previousByCommit.get(event.commit)
     const base = {
       id: `action-${event.commit.slice(0, 12)}`,
       type: 'deployment',
+      intent: experiment ? 'growth-experiment' : 'deployment',
       category: classify(event.changedFiles || []),
       title: event.subject || `部署 ${event.commit.slice(0, 12)}`,
       commit: event.commit,
       previousCommit: event.previousCommit,
       deployedAt: event.deployedAt,
       changedFiles: event.changedFiles || [],
+      experiment,
+      experimentMetadataError: event.experimentMetadataError || null,
       beforeWindowDays,
       afterWindowDays,
       before,
       after,
     }
 
+    if (!experiment) {
+      return {
+        ...base,
+        status: event.experimentMetadataError ? 'invalid-experiment-metadata' : 'recorded',
+        observationEnds: null,
+        outcome: null,
+        confidence: 'not-applicable',
+      }
+    }
+
     if (today <= observationEnds) {
       return { ...base, status: 'observing', observationEnds, outcome: null, confidence: 'insufficient' }
+    }
+
+    const confoundedByExperimentIds = overlappingExperimentIds(event, observationEnds)
+    if (confoundedByExperimentIds.length) {
+      return {
+        ...base,
+        status: 'confounded',
+        observationEnds,
+        outcome: null,
+        confidence: 'insufficient',
+        confoundedByExperimentIds,
+        evaluatedAt: previous?.evaluatedAt || new Date().toISOString(),
+        caveat: '观察窗口与另一项显式增长实验重叠，不能分离效果，不生成胜负结论。',
+      }
     }
 
     if (before.activeDays < minimumActiveDays || after.activeDays < minimumActiveDays) {
@@ -207,31 +265,20 @@ const actions = deployments
         ? Math.round((after.coreWebVitals.CLS.p75 - before.coreWebVitals.CLS.p75) * 10_000) / 10_000
         : null,
     }
-    const positiveSignals = [
-      changes.qualifiedVisitorsPercent !== null && changes.qualifiedVisitorsPercent >= 5,
-      changes.articlePageViewsPercent !== null && changes.articlePageViewsPercent >= 5,
-      changes.engagementRatePoints >= 2,
-      changes.returningRatePoints >= 1,
-      changes.conversionRatePoints >= 1,
-      changes.lcpP75Percent !== null && changes.lcpP75Percent <= -5,
-      changes.inpP75Percent !== null && changes.inpP75Percent <= -5,
-      changes.clsP75Points !== null && changes.clsP75Points <= -0.02,
-    ].filter(Boolean).length
-    const negativeSignals = [
-      changes.qualifiedVisitorsPercent !== null && changes.qualifiedVisitorsPercent <= -5,
-      changes.articlePageViewsPercent !== null && changes.articlePageViewsPercent <= -5,
-      changes.engagementRatePoints <= -2,
-      changes.returningRatePoints <= -1,
-      changes.conversionRatePoints <= -1,
-      changes.lcpP75Percent !== null && changes.lcpP75Percent >= 5,
-      changes.inpP75Percent !== null && changes.inpP75Percent >= 5,
-      changes.clsP75Points !== null && changes.clsP75Points >= 0.02,
-    ].filter(Boolean).length
-    const outcome = positiveSignals >= 2 && negativeSignals === 0
-      ? 'positive-signal'
-      : negativeSignals >= 2 && positiveSignals === 0
-        ? 'negative-signal'
-        : 'mixed-signal'
+    const primaryMetricValue = changes[experiment.primaryMetric]
+    const outcome = primaryMetricSignal(experiment.primaryMetric, primaryMetricValue)
+    if (!outcome) {
+      return {
+        ...base,
+        status: 'insufficient-data',
+        observationEnds,
+        outcome: null,
+        confidence: 'insufficient',
+        changes,
+        evaluatedAt: previous?.evaluatedAt || new Date().toISOString(),
+        caveat: `主指标 ${experiment.primaryMetric} 缺少可比较样本，不生成结论。`,
+      }
+    }
     const sample = before.qualifiedVisitors + after.qualifiedVisitors
 
     return {
@@ -242,18 +289,23 @@ const actions = deployments
       confidence: sample >= 100 ? 'medium' : 'low',
       changes,
       evaluatedAt: previous?.evaluatedAt || new Date().toISOString(),
-      caveat: '结果表示部署前后相关性，不单独证明因果关系。',
+      primaryMetric: {
+        name: experiment.primaryMetric,
+        value: primaryMetricValue,
+      },
+      caveat: `结果只表示目标页面 ${experiment.targetPath} 在部署前后的相关性，不单独证明因果关系。`,
     }
   })
   .sort((left, right) => right.deployedAt.localeCompare(left.deployedAt))
   .slice(0, 200)
 
 const state = {
-  version: 1,
+  version: 2,
   generatedAt: new Date().toISOString(),
   definition: {
     qualifiedVisitor: '当日阅读至少 10 秒、达到 25% 阅读深度或具有回访信号的隐私化访客。',
     evaluation: `对比部署前 ${beforeWindowDays} 个自然日与部署后 ${afterWindowDays} 个完整自然日；至少各有 ${minimumActiveDays} 个数据日才给出结果。`,
+    experimentDeclaration: '只有提交信息同时包含 Operator-Experiment、Operator-Hypothesis、Operator-Primary-Metric 与 Operator-Target-Path 时，部署才进入增长实验评估。普通部署只留痕，不学习为增长结论。',
     causalityPolicy: goals?.learning?.causalityPolicy || '部署前后变化只作为相关性信号。',
   },
   actions,
@@ -266,5 +318,7 @@ await fs.chmod(actionsPath, 0o600).catch(() => undefined)
 
 const observing = actions.filter((action) => action.status === 'observing').length
 const evaluated = actions.filter((action) => action.status === 'evaluated').length
-console.log(`经营行动学习完成：${actions.length} 条；观察中 ${observing}；已评估 ${evaluated}`)
+const recorded = actions.filter((action) => action.status === 'recorded').length
+const confounded = actions.filter((action) => action.status === 'confounded').length
+console.log(`经营行动学习完成：${actions.length} 次部署；普通留痕 ${recorded}；实验观察中 ${observing}；已评估 ${evaluated}；混杂 ${confounded}`)
 console.log(`私有账本：${actionsPath}`)
