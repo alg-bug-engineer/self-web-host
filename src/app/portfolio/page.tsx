@@ -91,7 +91,7 @@ export default function PortfolioPage() {
           {books.map((book, index) => (
             <article key={book.title} className="group min-w-0">
               {book.link ? (
-                <Link href={book.link} target="_blank" rel="noopener noreferrer" aria-label={`查看《${book.title}》`}>
+                <Link href={book.link} target="_blank" rel="noopener noreferrer" aria-label={`查看《${book.title}》`} data-analytics-event="view_book" data-analytics-target={`book-${index + 1}`}>
                   <BookCover item={book} index={index} />
                 </Link>
               ) : (
@@ -113,7 +113,7 @@ export default function PortfolioPage() {
           <h2 className="mt-2 text-3xl font-semibold text-text-primary">产品与开源项目</h2>
         </div>
         <div className="grid gap-6 lg:grid-cols-3">
-          {projects.map((item) => (
+          {projects.map((item, index) => (
             <article key={item.title} className="overflow-hidden rounded-[1.75rem] border border-border-default bg-bg-secondary">
               <div className="relative aspect-[16/9] overflow-hidden bg-bg-tertiary">
                 {item.image ? (
@@ -138,8 +138,8 @@ export default function PortfolioPage() {
                   {item.tags?.map((tag) => <span key={tag} className="label label-gray">{tag}</span>)}
                 </div>
                 <div className="mt-6 flex gap-5 text-sm font-medium">
-                  {item.link && <Link href={item.link} target="_blank" rel="noopener noreferrer" className="text-accent-tertiary hover:underline">访问项目 ↗</Link>}
-                  {item.github && <Link href={item.github} target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-text-primary">GitHub ↗</Link>}
+                  {item.link && <Link href={item.link} target="_blank" rel="noopener noreferrer" className="text-accent-tertiary hover:underline" data-analytics-event="visit_project" data-analytics-target={`project-${index + 1}`}>访问项目 ↗</Link>}
+                  {item.github && <Link href={item.github} target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-text-primary" data-analytics-event="visit_github" data-analytics-target={`project-${index + 1}`}>GitHub ↗</Link>}
                 </div>
               </div>
             </article>

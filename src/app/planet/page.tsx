@@ -36,6 +36,8 @@ export default async function PlanetPage() {
             target="_blank" 
             rel="noopener noreferrer" 
             className="btn-primary px-8 py-3 text-lg"
+            data-analytics-event="join_planet"
+            data-analytics-target="planet-hero"
           >
             立即加入星球
           </a>

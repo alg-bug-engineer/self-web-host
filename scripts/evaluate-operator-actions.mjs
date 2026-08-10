@@ -76,6 +76,7 @@ const scorecardFor = (days) => {
   let returningVisitors = 0
   let engagedVisitors = 0
   let qualifiedVisitors = 0
+  let conversionVisitors = 0
   let activeDays = 0
   const webVitalValues = { LCP: [], INP: [], CLS: [] }
 
@@ -92,10 +93,15 @@ const scorecardFor = (days) => {
       }
     }
     const qualified = new Set([...returning, ...engaged])
+    const converted = new Set()
+    for (const event of Object.values(daily.conversions || {})) {
+      for (const visitor of event?.visitors || []) converted.add(visitor)
+    }
     visitors += dailyVisitors.size
     returningVisitors += returning.size
     engagedVisitors += engaged.size
     qualifiedVisitors += qualified.size
+    conversionVisitors += converted.size
     pageViews += Number(daily.pageViews || 0)
     articlePageViews += sum(Object.entries(daily.paths || {})
       .filter(([pathname]) => pathname.startsWith('/blog/'))
@@ -116,6 +122,8 @@ const scorecardFor = (days) => {
     articlePageViews,
     engagementRatePercent: visitors ? round((engagedVisitors / visitors) * 100) : 0,
     returningRatePercent: visitors ? round((returningVisitors / visitors) * 100) : 0,
+    conversionVisitors,
+    conversionRatePercent: visitors ? round((conversionVisitors / visitors) * 100) : 0,
     coreWebVitals: {
       LCP: { p75: percentile75(webVitalValues.LCP), samples: webVitalValues.LCP.length },
       INP: { p75: percentile75(webVitalValues.INP), samples: webVitalValues.INP.length },
@@ -188,6 +196,7 @@ const actions = deployments
       articlePageViewsPercent: percentChange(after.articlePageViews, before.articlePageViews),
       engagementRatePoints: round(after.engagementRatePercent - before.engagementRatePercent),
       returningRatePoints: round(after.returningRatePercent - before.returningRatePercent),
+      conversionRatePoints: round(after.conversionRatePercent - before.conversionRatePercent),
       lcpP75Percent: sufficientVitalSamples('LCP')
         ? percentChange(after.coreWebVitals.LCP.p75, before.coreWebVitals.LCP.p75)
         : null,
@@ -203,6 +212,7 @@ const actions = deployments
       changes.articlePageViewsPercent !== null && changes.articlePageViewsPercent >= 5,
       changes.engagementRatePoints >= 2,
       changes.returningRatePoints >= 1,
+      changes.conversionRatePoints >= 1,
       changes.lcpP75Percent !== null && changes.lcpP75Percent <= -5,
       changes.inpP75Percent !== null && changes.inpP75Percent <= -5,
       changes.clsP75Points !== null && changes.clsP75Points <= -0.02,
@@ -212,6 +222,7 @@ const actions = deployments
       changes.articlePageViewsPercent !== null && changes.articlePageViewsPercent <= -5,
       changes.engagementRatePoints <= -2,
       changes.returningRatePoints <= -1,
+      changes.conversionRatePoints <= -1,
       changes.lcpP75Percent !== null && changes.lcpP75Percent >= 5,
       changes.inpP75Percent !== null && changes.inpP75Percent >= 5,
       changes.clsP75Points !== null && changes.clsP75Points >= 0.02,

@@ -33,12 +33,16 @@ export default function PlanetBanner({
                         <Link 
                             href={planetUrl} 
                             className="px-6 py-2.5 bg-white text-accent-tertiary font-bold rounded-xl hover:bg-opacity-90 transition-colors"
+                            data-analytics-event="join_planet"
+                            data-analytics-target="content-banner"
                         >
                             立即加入
                         </Link>
                         <Link 
                             href="/planet" 
                             className="px-6 py-2.5 bg-accent-tertiary/20 backdrop-blur-md border border-white/30 text-white font-bold rounded-xl hover:bg-white/10 transition-colors"
+                            data-analytics-event="view_planet"
+                            data-analytics-target="content-banner"
                         >
                             了解更多
                         </Link>

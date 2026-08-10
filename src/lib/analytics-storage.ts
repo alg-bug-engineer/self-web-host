@@ -8,6 +8,18 @@ export const CORE_WEB_VITAL_NAMES = ['LCP', 'INP', 'CLS'] as const
 export type CoreWebVitalName = (typeof CORE_WEB_VITAL_NAMES)[number]
 export type CoreWebVitalRating = 'good' | 'needs-improvement' | 'poor'
 
+export const CONVERSION_EVENT_NAMES = [
+  'explore_articles',
+  'view_portfolio',
+  'view_book',
+  'visit_project',
+  'visit_github',
+  'view_planet',
+  'join_planet',
+  'open_tool',
+] as const
+export type ConversionEventName = (typeof CONVERSION_EVENT_NAMES)[number]
+
 type DailyWebVitals = Record<
   string,
   Partial<Record<CoreWebVitalName, Record<string, number>>>
@@ -24,6 +36,15 @@ type DailyAnalytics = {
   vitals: DailyWebVitals
   sources: Record<string, number>
   landingPaths: Record<string, number>
+  conversions: Record<string, DailyConversionEvent>
+  conversionCountsByVisitor: Record<string, number>
+}
+
+type DailyConversionEvent = {
+  count: number
+  visitors: string[]
+  paths: Record<string, number>
+  targets: Record<string, number>
 }
 
 type EngagementSignal = {
@@ -32,7 +53,7 @@ type EngagementSignal = {
 }
 
 type AnalyticsStore = {
-  version: 3
+  version: 4
   days: Record<string, DailyAnalytics>
 }
 
@@ -48,6 +69,15 @@ export type AnalyticsOverview = {
   engagedDailyVisitors: number
   returningRate: number
   engagementRate: number
+  conversionVisitors: number
+  conversionRate: number
+  topConversions: Array<{
+    name: ConversionEventName
+    count: number
+    visitors: number
+    paths: Array<{ pathname: string; count: number }>
+    targets: Array<{ target: string; count: number }>
+  }>
   webVitals: Array<{
     name: CoreWebVitalName
     p75: number | null
@@ -73,7 +103,7 @@ type TrafficContext = {
   returningReader?: boolean
 }
 
-const emptyStore = (): AnalyticsStore => ({ version: 3, days: {} })
+const emptyStore = (): AnalyticsStore => ({ version: 4, days: {} })
 const emptyDay = (): DailyAnalytics => ({
   pageViews: 0,
   visitors: [],
@@ -85,6 +115,8 @@ const emptyDay = (): DailyAnalytics => ({
   vitals: {},
   sources: {},
   landingPaths: {},
+  conversions: {},
+  conversionCountsByVisitor: {},
 })
 
 const analyticsDataDir =
@@ -174,6 +206,25 @@ function webVitalRecord(value: unknown): DailyWebVitals {
   )
 }
 
+function conversionRecord(value: unknown): Record<string, DailyConversionEvent> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+  return Object.fromEntries(
+    Object.entries(value).flatMap(([rawName, rawEvent]) => {
+      const name = normalizeConversionEventName(rawName)
+      if (!name || !rawEvent || typeof rawEvent !== 'object' || Array.isArray(rawEvent)) return []
+      const candidate = rawEvent as Partial<DailyConversionEvent>
+      return [[name, {
+        count: Number.isFinite(candidate.count) ? Math.max(0, Number(candidate.count)) : 0,
+        visitors: Array.isArray(candidate.visitors)
+          ? candidate.visitors.filter((item): item is string => typeof item === 'string').slice(0, 50_000)
+          : [],
+        paths: numberRecord(candidate.paths),
+        targets: numberRecord(candidate.targets),
+      }]]
+    }),
+  )
+}
+
 function normalizeDay(value: unknown): DailyAnalytics {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return emptyDay()
   const candidate = value as Partial<DailyAnalytics>
@@ -192,6 +243,8 @@ function normalizeDay(value: unknown): DailyAnalytics {
     vitals: webVitalRecord(candidate.vitals),
     sources: numberRecord(candidate.sources),
     landingPaths: numberRecord(candidate.landingPaths),
+    conversions: conversionRecord(candidate.conversions),
+    conversionCountsByVisitor: numberRecord(candidate.conversionCountsByVisitor),
   }
 }
 
@@ -203,7 +256,7 @@ function normalizeStore(value: unknown): AnalyticsStore {
   }
 
   return {
-    version: 3,
+    version: 4,
     days: Object.fromEntries(
       Object.entries(candidate.days).map(([day, analytics]) => [day, normalizeDay(analytics)]),
     ),
@@ -247,6 +300,33 @@ export function createVisitorHash(input: string, day: string) {
     process.env.ADMIN_SESSION_SECRET ||
     'ai-knowledgepoints-local-development-only'
   return crypto.createHash('sha256').update(`${salt}:${day}:${input}`).digest('hex').slice(0, 24)
+}
+
+export function normalizeConversionEventName(value: unknown): ConversionEventName | null {
+  const name = String(value || '').trim().toLowerCase()
+  return CONVERSION_EVENT_NAMES.includes(name as ConversionEventName)
+    ? name as ConversionEventName
+    : null
+}
+
+export function normalizeConversionTarget(eventName: ConversionEventName, value: unknown) {
+  const target = String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 64)
+  const allowedTargets: Record<ConversionEventName, RegExp> = {
+    explore_articles: /^(?:home-hero|home-latest|footer|header)$/,
+    view_portfolio: /^(?:home-hero|home-books|footer)$/,
+    view_book: /^(?:home-)?book-[1-9][0-9]{0,2}$/,
+    visit_project: /^project-[1-9][0-9]{0,2}$/,
+    visit_github: /^(?:project-[1-9][0-9]{0,2}|footer-profile|about-profile)$/,
+    view_planet: /^(?:footer|content-banner|tool-[0-9]{6,20})$/,
+    join_planet: /^(?:planet-hero|content-banner)$/,
+    open_tool: /^(?:tool-[0-9]{6,20}|plugin-[a-z0-9._-]{1,40})$/,
+  }
+  return allowedTargets[eventName].test(target) ? target : null
 }
 
 export async function recordPageView(
@@ -333,6 +413,52 @@ export async function recordEngagement(
       depth: Math.min(100, Math.max(previous.depth, Math.round(signal.depth || 0))),
     }
     daily.engagement[normalizedPath] = pathSignals
+    store.days[day] = daily
+    await writeStore(store)
+  })
+
+  writeQueue = task.catch(() => undefined)
+  return task
+}
+
+export async function recordConversion(
+  pathname: string,
+  visitorHash: string,
+  rawName: unknown,
+  rawTarget: unknown,
+) {
+  const normalizedPath = normalizeAnalyticsPath(pathname)
+  const name = normalizeConversionEventName(rawName)
+  if (!normalizedPath || !name) throw new Error('Invalid conversion event')
+  const target = normalizeConversionTarget(name, rawTarget)
+  if (!target) throw new Error('Invalid conversion target')
+
+  const task = writeQueue.then(async () => {
+    const store = await readStore()
+    const day = new Date().toISOString().slice(0, 10)
+    const daily = store.days[day] || emptyDay()
+    const visitorCount = daily.conversionCountsByVisitor[visitorHash] || 0
+    const totalEvents = Object.values(daily.conversions)
+      .reduce((total, event) => total + event.count, 0)
+
+    // Bound both per-browser activity and the whole private file. Event names
+    // and targets are normalized above, so callers cannot create arbitrary keys.
+    if (visitorCount >= 30 || totalEvents >= 50_000) return
+
+    const conversion = daily.conversions[name] || {
+      count: 0,
+      visitors: [],
+      paths: {},
+      targets: {},
+    }
+    conversion.count += 1
+    if (!conversion.visitors.includes(visitorHash) && conversion.visitors.length < 50_000) {
+      conversion.visitors.push(visitorHash)
+    }
+    conversion.paths[normalizedPath] = (conversion.paths[normalizedPath] || 0) + 1
+    conversion.targets[target] = (conversion.targets[target] || 0) + 1
+    daily.conversionCountsByVisitor[visitorHash] = visitorCount + 1
+    daily.conversions[name] = conversion
     store.days[day] = daily
     await writeStore(store)
   })
@@ -491,6 +617,8 @@ export async function getAnalyticsOverview(days = 30): Promise<AnalyticsOverview
   const webVitalValues = Object.fromEntries(
     CORE_WEB_VITAL_NAMES.map((name) => [name, [] as number[]]),
   ) as Record<CoreWebVitalName, number[]>
+  const conversionTotals: Record<string, DailyConversionEvent> = {}
+  let conversionVisitors = 0
 
   for (const day of selectedDays) {
     const daily = store.days[day]
@@ -533,6 +661,25 @@ export async function getAnalyticsOverview(days = 30): Promise<AnalyticsOverview
         webVitalValues[name].push(...Object.values(metrics[name] || {}))
       }
     }
+    const dailyConversionVisitors = new Set<string>()
+    for (const [rawName, event] of Object.entries(daily.conversions)) {
+      const name = normalizeConversionEventName(rawName)
+      if (!name) continue
+      const total = conversionTotals[name] || { count: 0, visitors: [], paths: {}, targets: {} }
+      total.count += event.count
+      for (const visitor of event.visitors) dailyConversionVisitors.add(visitor)
+      for (const [pathname, count] of Object.entries(event.paths)) {
+        total.paths[pathname] = (total.paths[pathname] || 0) + count
+      }
+      for (const [target, count] of Object.entries(event.targets)) {
+        total.targets[target] = (total.targets[target] || 0) + count
+      }
+      // Daily hashes cannot be de-duplicated across days, matching the visitor
+      // denominator. Prefixing the day keeps the same hash on separate days distinct.
+      total.visitors.push(...event.visitors.map((visitor) => `${day}:${visitor}`))
+      conversionTotals[name] = total
+    }
+    conversionVisitors += dailyConversionVisitors.size
   }
 
   const topPaths = Object.entries(pathTotals)
@@ -571,6 +718,24 @@ export async function getAnalyticsOverview(days = 30): Promise<AnalyticsOverview
       rating: p75 === null ? 'insufficient-data' as const : coreWebVitalRating(name, p75),
     }
   })
+  const topConversions = Object.entries(conversionTotals)
+    .flatMap(([rawName, event]) => {
+      const name = normalizeConversionEventName(rawName)
+      return name ? [{
+        name,
+        count: event.count,
+        visitors: new Set(event.visitors).size,
+        paths: Object.entries(event.paths)
+          .sort(([, left], [, right]) => right - left)
+          .slice(0, 5)
+          .map(([pathname, count]) => ({ pathname, count })),
+        targets: Object.entries(event.targets)
+          .sort(([, left], [, right]) => right - left)
+          .slice(0, 5)
+          .map(([target, count]) => ({ target, count })),
+      }] : []
+    })
+    .sort((left, right) => right.visitors - left.visitors || right.count - left.count)
 
   return {
     days: safeDays,
@@ -588,6 +753,11 @@ export async function getAnalyticsOverview(days = 30): Promise<AnalyticsOverview
     engagementRate: dailyVisitors
       ? Math.min(100, Math.round((engagedDailyVisitors / dailyVisitors) * 1000) / 10)
       : 0,
+    conversionVisitors,
+    conversionRate: dailyVisitors
+      ? Math.min(100, Math.round((conversionVisitors / dailyVisitors) * 1000) / 10)
+      : 0,
+    topConversions,
     webVitals,
     topPaths,
     topSources,

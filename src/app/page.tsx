@@ -61,10 +61,10 @@ export default async function Home() {
               一座为 AI 学习者打造的数字花园。用深度文章讲透原理，用著作构建体系，再用真实产品验证方法。
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <Link href="/blog" className="primary-cta">
+              <Link href="/blog" className="primary-cta" data-analytics-event="explore_articles" data-analytics-target="home-hero">
                 开始探索 <span aria-hidden="true">↗</span>
               </Link>
-              <Link href="/portfolio" className="secondary-cta">
+              <Link href="/portfolio" className="secondary-cta" data-analytics-event="view_portfolio" data-analytics-target="home-hero">
                 查看著作与作品
               </Link>
             </div>
@@ -134,7 +134,7 @@ export default async function Home() {
             <p className="eyebrow">LATEST INSIGHTS</p>
             <h2 className="mt-3 text-3xl font-semibold tracking-[-0.035em] text-text-primary sm:text-5xl">最近发布</h2>
           </div>
-          <Link href="/blog" className="section-link">浏览全部文章 <span>→</span></Link>
+          <Link href="/blog" className="section-link" data-analytics-event="explore_articles" data-analytics-target="home-latest">浏览全部文章 <span>→</span></Link>
         </div>
 
         <div className="insights-grid">
@@ -181,7 +181,7 @@ export default async function Home() {
             <p className="eyebrow">PUBLICATIONS</p>
             <h2>从一个概念，<br />到一本书。</h2>
             <p>系统写作，是把零散理解变成完整认知的最好方式。</p>
-            <Link href="/portfolio" className="section-link">查看全部著作与作品 <span>→</span></Link>
+            <Link href="/portfolio" className="section-link" data-analytics-event="view_portfolio" data-analytics-target="home-books">查看全部著作与作品 <span>→</span></Link>
           </div>
           <div className="book-shelf">
             {books.slice(0, 5).map((book, index) => {
@@ -202,7 +202,7 @@ export default async function Home() {
                   <p>{book.authors?.join('、')}</p>
                 </>
               )
-              return book.link ? <Link key={book.title} href={book.link} target="_blank" rel="noopener noreferrer" className="book-card">{content}</Link> : <article key={book.title} className="book-card">{content}</article>
+              return book.link ? <Link key={book.title} href={book.link} target="_blank" rel="noopener noreferrer" className="book-card" data-analytics-event="view_book" data-analytics-target={`home-book-${index + 1}`}>{content}</Link> : <article key={book.title} className="book-card">{content}</article>
             })}
           </div>
         </div>
