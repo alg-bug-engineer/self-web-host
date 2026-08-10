@@ -1,3 +1,7 @@
+const { loadEnvConfig } = require('@next/env')
+
+loadEnvConfig(__dirname)
+
 module.exports = {
     apps: [
       {
