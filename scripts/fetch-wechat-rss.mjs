@@ -1,12 +1,17 @@
 #!/usr/bin/env node
 
+import { execFile } from 'node:child_process'
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { promisify } from 'node:util'
 import {
+  hasWechatFrequencyControlEvidence,
   normalizeWechatRssSyncState,
   recordWechatRssUpdate,
   shouldAttemptWechatRssUpdate,
 } from './lib/wechat-rss-backoff.mjs'
+
+const execFileAsync = promisify(execFile)
 
 const baseUrl = (process.env.WECHAT_RSS_ADMIN_BASE_URL || 'http://127.0.0.1:8001').replace(/\/$/, '')
 const feedId = process.env.WECHAT_RSS_FEED_ID || 'MP_WXS_3212677307'
@@ -18,6 +23,8 @@ const emptyBackoffHours = Number(process.env.WECHAT_RSS_EMPTY_BACKOFF_HOURS || 4
 const maxBackoffHours = Number(process.env.WECHAT_RSS_MAX_BACKOFF_HOURS || 168)
 const pollIntervalMs = Math.min(5_000, Math.max(10, Number(process.env.WECHAT_RSS_POLL_INTERVAL_MS || 5_000)))
 const settleMs = Math.min(60_000, Math.max(10, Number(process.env.WECHAT_RSS_SETTLE_MS || 25_000)))
+const collectorContainer = process.env.WECHAT_RSS_CONTAINER_NAME || 'we-mp-rss'
+const collectorLogFile = process.env.WECHAT_RSS_COLLECTOR_LOG_FILE?.trim() || null
 
 const password = (await fs.readFile(passwordFile, 'utf8')).trim()
 if (!password) throw new Error('We-MP-RSS 管理密码文件为空。')
@@ -64,6 +71,7 @@ if (!attempt.allowed) {
 }
 
 const updateUrl = new URL(`${baseUrl}/api/v1/wx/mps/update/${encodeURIComponent(feedId)}`)
+const attemptStartedAt = new Date()
 updateUrl.searchParams.set('start_page', '0')
 updateUrl.searchParams.set('end_page', String(maxPages))
 const updateResponse = await fetch(updateUrl, { headers, signal: AbortSignal.timeout(30_000) })
@@ -91,15 +99,20 @@ await new Promise((resolve) => setTimeout(resolve, settleMs))
 
 const xml = await fetchFeed(`${feedUrl}&is_update=true`)
 const itemCount = countFeedItems(xml)
+const frequencyControlled = itemCount === 0
+  && hasWechatFrequencyControlEvidence(await readCollectorEvidence(attemptStartedAt))
 const nextState = recordWechatRssUpdate({
   state: syncState,
   itemCount,
+  frequencyControlled,
   emptyBackoffHours,
   maxBackoffHours,
 })
 await writeJsonPrivate(stateFile, nextState)
 if (itemCount === 0) {
-  console.error(`We-MP-RSS 授权与订阅有效，但采集后仍为 0 篇；为避免持续触发微信频控，${nextState.backoffUntil} 前不再请求文章列表。`)
+  console.error(frequencyControlled
+    ? `We-MP-RSS 检测到微信频率控制；${nextState.backoffUntil} 前只读取现有 Feed，不再次请求文章列表。`
+    : `We-MP-RSS 授权与订阅有效，但采集后仍为 0 篇；为避免触发微信频控，${nextState.backoffUntil} 前不再请求文章列表。`)
 }
 process.stdout.write(xml)
 
@@ -119,6 +132,24 @@ async function readJson(file, fallback) {
     return JSON.parse(await fs.readFile(file, 'utf8'))
   } catch {
     return fallback
+  }
+}
+
+async function readCollectorEvidence(since) {
+  if (collectorLogFile) return fs.readFile(collectorLogFile, 'utf8').catch(() => '')
+  if (!collectorContainer) return ''
+  try {
+    const { stdout, stderr } = await execFileAsync('docker', [
+      'logs',
+      '--since', since.toISOString(),
+      collectorContainer,
+    ], {
+      timeout: 15_000,
+      maxBuffer: 512 * 1024,
+    })
+    return `${stdout}\n${stderr}`
+  } catch {
+    return ''
   }
 }
 

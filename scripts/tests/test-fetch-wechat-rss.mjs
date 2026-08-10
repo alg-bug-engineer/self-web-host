@@ -13,6 +13,7 @@ const projectDir = path.resolve(import.meta.dirname, '..', '..')
 const temporaryDir = await fs.mkdtemp(path.join(os.tmpdir(), 'wechat-rss-fetch-test-'))
 const passwordFile = path.join(temporaryDir, 'password')
 const stateFile = path.join(temporaryDir, 'sync-state.json')
+const collectorLogFile = path.join(temporaryDir, 'collector.log')
 await fs.writeFile(passwordFile, 'test-only-password\n', { mode: 0o600 })
 
 let updateTime = 100
@@ -74,6 +75,22 @@ try {
   assert.match(second.stderr, /处于保护性退避/)
   assert.equal(updateCalls, 1)
   console.log('公众号 RSS 采集集成测试通过：首次空结果写入私有退避状态，后续只读 Feed。')
+
+  await fs.rm(stateFile)
+  await fs.writeFile(collectorLogFile, 'frequencey control, stop at 0\nsecret cookie value must never enter state\n')
+  const rateLimited = await execFileAsync(process.execPath, ['scripts/fetch-wechat-rss.mjs'], {
+    cwd: projectDir,
+    env: { ...env, WECHAT_RSS_COLLECTOR_LOG_FILE: collectorLogFile },
+  })
+  assert.equal(rateLimited.stdout, emptyFeed)
+  assert.match(rateLimited.stderr, /检测到微信频率控制/)
+  assert.equal(updateCalls, 2)
+  const rateLimitedState = JSON.parse(await fs.readFile(stateFile, 'utf8'))
+  assert.equal(rateLimitedState.version, 2)
+  assert.equal(rateLimitedState.lastResult, 'frequency-controlled')
+  assert.ok(rateLimitedState.lastFrequencyControlAt)
+  assert.ok(!JSON.stringify(rateLimitedState).includes('cookie'))
+  assert.ok(!JSON.stringify(rateLimitedState).includes('secret'))
 } finally {
   await new Promise((resolve) => server.close(resolve))
   await fs.rm(temporaryDir, { recursive: true, force: true })

@@ -82,6 +82,8 @@ async function inspectWechatRss() {
       consecutiveEmptyUpdates: syncState.consecutiveEmptyUpdates,
       backoffUntil: syncState.backoffUntil,
       lastAttemptAt: syncState.lastAttemptAt,
+      lastResult: syncState.lastResult,
+      lastFrequencyControlAt: syncState.lastFrequencyControlAt,
       checkedAt,
     }
   } catch {

@@ -92,6 +92,12 @@ export function buildContentOperationsReport({
       issues.push({ severity: 'error', code: 'wechat-rss-auth-expired', message: '公众号 RSS 微信扫码授权已失效。' })
     } else if (!rss.feedExists) {
       issues.push({ severity: 'error', code: 'wechat-rss-feed-missing', message: '公众号 RSS 订阅不存在。' })
+    } else if (Number(rss.itemCount || 0) === 0 && rssBackoffActive && rss.lastResult === 'frequency-controlled') {
+      issues.push({
+        severity: 'warning',
+        code: 'wechat-rss-rate-limited',
+        message: `微信明确返回文章列表频率控制；${new Date(rss.backoffUntil).toISOString()} 前只读取现有 Feed，不自动重试。`,
+      })
     } else if (Number(rss.itemCount || 0) === 0 && rssBackoffActive) {
       issues.push({
         severity: 'warning',
@@ -106,7 +112,7 @@ export function buildContentOperationsReport({
   const hasErrors = issues.some((issue) => issue.severity === 'error')
   const hasWarnings = issues.some((issue) => issue.severity === 'warning')
   return {
-    version: 1,
+    version: 2,
     generatedAt,
     status: hasErrors ? 'degraded' : hasWarnings ? 'limited' : 'healthy',
     website: {
@@ -166,6 +172,10 @@ function sanitizeRssStatus(rss) {
     consecutiveEmptyUpdates: Math.max(0, Number.parseInt(rss.consecutiveEmptyUpdates, 10) || 0),
     backoffUntil: validIsoDate(rss.backoffUntil),
     lastAttemptAt: validIsoDate(rss.lastAttemptAt),
+    lastResult: ['items-available', 'empty-after-update', 'frequency-controlled'].includes(rss.lastResult)
+      ? rss.lastResult
+      : null,
+    lastFrequencyControlAt: validIsoDate(rss.lastFrequencyControlAt),
     checkedAt: validIsoDate(rss.checkedAt),
   }
 }

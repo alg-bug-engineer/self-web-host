@@ -537,7 +537,9 @@ if (!contentOperations) {
       reviewRequired: true,
     })
   }
-  if (contentIssueCodes.has('wechat-rss-backoff')) {
+  if (contentIssueCodes.has('wechat-rss-rate-limited')) {
+    observations.push(`公众号文章列表被微信频率控制；已退避至 ${contentOperations.inboundSync?.rss?.backoffUntil || '下一安全窗口'}，期间只读 Feed，不发起采集。`)
+  } else if (contentIssueCodes.has('wechat-rss-backoff')) {
     observations.push(`公众号 RSS 授权有效但采集结果仍为空；已进入保护性退避至 ${contentOperations.inboundSync?.rss?.backoffUntil || '下一安全窗口'}，期间只读取现有 Feed。`)
   } else if (contentIssueCodes.has('wechat-rss-empty')) {
     observations.push('公众号 RSS 授权有效但 Feed 暂无文章；保持每日单次采集，不做频控重试。')

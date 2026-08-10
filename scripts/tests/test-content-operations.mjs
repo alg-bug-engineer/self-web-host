@@ -68,6 +68,7 @@ const report = buildContentOperationsReport({
   rss,
 })
 assert.equal(report.status, 'limited')
+assert.equal(report.version, 2)
 assert.equal(report.website.todayPublished, true)
 assert.equal(report.website.cadence7d, 2)
 assert.ok(report.website.diversity.conflict)
@@ -119,6 +120,27 @@ assert.ok(!protectedBackoff.issues.some((issue) => issue.code === 'wechat-rss-em
 assert.equal(protectedBackoff.inboundSync.rss.consecutiveEmptyUpdates, 1)
 assert.equal(protectedBackoff.inboundSync.rss.backoffUntil, '2026-08-13T01:00:00.000Z')
 assert.ok(!JSON.stringify(protectedBackoff).includes('must-not-leak'))
+
+const rateLimited = buildContentOperationsReport({
+  now: new Date('2026-08-11T02:00:00Z'),
+  articles,
+  manifests,
+  publishState,
+  rss: {
+    ...rss,
+    consecutiveEmptyUpdates: 1,
+    lastAttemptAt: '2026-08-11T01:00:00Z',
+    lastResult: 'frequency-controlled',
+    lastFrequencyControlAt: '2026-08-11T01:00:00Z',
+    backoffUntil: '2026-08-13T01:00:00Z',
+    collectorLog: 'must-not-leak-log',
+  },
+})
+assert.ok(rateLimited.issues.some((issue) => issue.code === 'wechat-rss-rate-limited'))
+assert.ok(!rateLimited.issues.some((issue) => issue.code === 'wechat-rss-backoff'))
+assert.equal(rateLimited.inboundSync.rss.lastResult, 'frequency-controlled')
+assert.equal(rateLimited.inboundSync.rss.lastFrequencyControlAt, '2026-08-11T01:00:00.000Z')
+assert.ok(!JSON.stringify(rateLimited).includes('must-not-leak'))
 
 const healthy = buildContentOperationsReport({
   now: new Date('2026-08-11T02:00:00Z'),
