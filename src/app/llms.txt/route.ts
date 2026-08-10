@@ -22,6 +22,7 @@ export async function GET() {
 - [文章](${SITE_URL}/blog)
 - [关于作者](${SITE_URL}/about)
 - [作品与项目](${SITE_URL}/portfolio)
+- [AI 网站运营实验](${SITE_URL}/operator)
 - [RSS](${SITE_URL}/feed.xml)
 
 ## 文章

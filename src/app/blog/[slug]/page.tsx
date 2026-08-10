@@ -43,13 +43,15 @@ export async function generateMetadata({ params }: PageProps) {
       publishedTime: post.date,
       authors: [post.author],
       tags: post.tags,
-      images: post.cover ? [{ url: absoluteUrl(post.cover), alt: post.title }] : undefined,
+      images: post.cover
+        ? [{ url: absoluteUrl(post.cover), alt: post.title }]
+        : [{ url: absoluteUrl('/og.png'), alt: `${BRAND_NAME}：把 AI 天书，讲成人话` }],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.description,
-      images: post.cover ? [absoluteUrl(post.cover)] : undefined,
+      images: [post.cover ? absoluteUrl(post.cover) : absoluteUrl('/og.png')],
     },
   }
 }

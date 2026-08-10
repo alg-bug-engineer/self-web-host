@@ -140,3 +140,30 @@ export async function getTopPaths(options?: { days?: number; prefix?: string; li
     .slice(0, limit)
     .map(([pathname, views]) => ({ pathname, views }))
 }
+
+export async function getAnalyticsOverview(days = 30) {
+  const store = await readStore()
+  const selectedDays = recentDays(days)
+  const pageViews = selectedDays.reduce(
+    (total, day) => total + (store.days[day]?.pageViews || 0),
+    0,
+  )
+  const visitorDays = selectedDays.reduce(
+    (total, day) => total + (store.days[day]?.visitors?.length || 0),
+    0,
+  )
+  const pathTotals: Record<string, number> = {}
+
+  for (const day of selectedDays) {
+    for (const [pathname, views] of Object.entries(store.days[day]?.paths || {})) {
+      pathTotals[pathname] = (pathTotals[pathname] || 0) + views
+    }
+  }
+
+  const topPaths = Object.entries(pathTotals)
+    .sort(([, left], [, right]) => right - left)
+    .slice(0, 8)
+    .map(([pathname, views]) => ({ pathname, views }))
+
+  return { days, pageViews, visitorDays, topPaths }
+}

@@ -41,11 +41,13 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: 'zh_CN',
     type: 'website',
+    images: [{ url: '/og.png', width: 1200, height: 630, alt: `${BRAND_NAME}：把 AI 天书，讲成人话` }],
   },
   twitter: {
     card: 'summary_large_image',
     title: `${SITE_NAME} | ${BRAND_NAME}`,
     description: SITE_DESCRIPTION,
+    images: ['/og.png'],
   },
 }
 

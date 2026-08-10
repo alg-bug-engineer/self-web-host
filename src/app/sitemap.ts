@@ -19,7 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '2026-01-01',
   )
 
-  const routes = ['', '/blog', '/collections/articles', '/collections/manga', '/collections/tools', '/portfolio', '/planet', '/about', '/lab', '/search'].map(
+  const routes = ['', '/blog', '/collections/articles', '/collections/manga', '/collections/tools', '/portfolio', '/operator', '/planet', '/about', '/lab', '/search'].map(
     (route) => ({
       url: `${baseUrl}${route}`,
       lastModified: new Date(latestPostDate),
