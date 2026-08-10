@@ -64,6 +64,8 @@ const conversionLabel = (name: string) => ({
   view_planet: '了解知识星球',
   join_planet: '加入知识星球',
   open_tool: '打开工具',
+  subscribe_feed: '订阅 RSS',
+  follow_wechat: '关注公众号',
 }[name] || name)
 
 export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {

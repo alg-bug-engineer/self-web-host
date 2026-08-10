@@ -1,18 +1,25 @@
-import React from 'react';
-import Image from 'next/image';
+import Image from 'next/image'
 
-export default function WechatCard() {
+export default function WechatCard({ analyticsTarget }: { analyticsTarget: 'about-card' | 'article-card' }) {
   return (
     <div className="bg-bg-secondary border border-border-default rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-sm hover:shadow-md transition-shadow">
-      <div className="w-32 h-32 bg-white border border-border-default rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden group">
-        <Image 
-          src="/images/qrcode.jpg" 
-          alt="公众号二维码" 
+      <a
+        href="/images/qrcode.jpg"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="放大芝士AI吃鱼公众号二维码"
+        className="w-32 h-32 bg-white border border-border-default rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary"
+        data-analytics-event="follow_wechat"
+        data-analytics-target={analyticsTarget}
+      >
+        <Image
+          src="/images/qrcode.jpg"
+          alt="芝士AI吃鱼公众号二维码"
           width={128} 
           height={128}
           className="object-cover"
         />
-      </div>
+      </a>
       
       <div className="flex-1 text-center md:text-left space-y-2">
         <h3 className="text-xl font-bold text-text-primary flex items-center justify-center md:justify-start gap-2">
@@ -28,7 +35,8 @@ export default function WechatCard() {
             <code className="text-xs bg-bg-tertiary px-1 py-0.5 rounded">求职指南</code>
           </span>
         </p>
+        <p className="text-xs text-text-tertiary">点击二维码可放大，使用微信扫码关注。</p>
       </div>
     </div>
-  );
+  )
 }

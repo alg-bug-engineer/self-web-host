@@ -8,6 +8,8 @@ import {
   transitionActiveReading,
 } from '@/lib/active-reading.mjs'
 
+const pendingPageViews = new Map<string, Promise<boolean>>()
+
 export default function InternalAnalytics() {
   const pathname = usePathname()
 
@@ -23,12 +25,54 @@ export default function InternalAnalytics() {
       firstSeen = localStorage.getItem(firstSeenKey)
       if (!firstSeen) localStorage.setItem(firstSeenKey, day)
       alreadyCounted = sessionStorage.getItem(storageKey) === '1'
-      if (!alreadyCounted) sessionStorage.setItem(storageKey, '1')
     } catch {
       // Some privacy modes disable Web Storage. Analytics still works with
       // the server-side daily hash, but no returning-reader signal is sent.
     }
     const returningReader = Boolean(firstSeen && firstSeen < day)
+
+    let pageViewReady: Promise<boolean> = Promise.resolve(alreadyCounted)
+    if (!alreadyCounted) {
+      const existingRequest = pendingPageViews.get(storageKey)
+      if (existingRequest) {
+        pageViewReady = existingRequest
+      } else {
+        const request = fetch('/api/analytics/view', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: pathname,
+            referrer: document.referrer,
+            returningReader,
+            utmSource: new URLSearchParams(window.location.search).get('utm_source'),
+            utmMedium: new URLSearchParams(window.location.search).get('utm_medium'),
+          }),
+          keepalive: true,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.ok && Number.isFinite(data.views)) {
+              try {
+                sessionStorage.setItem(storageKey, '1')
+              } catch {
+                // Privacy modes may disable Web Storage; the server-side
+                // anonymous page view remains the source of truth.
+              }
+              window.dispatchEvent(new CustomEvent('site:pageview', {
+                detail: { path: pathname, views: data.views },
+              }))
+              return true
+            }
+            return false
+          })
+          .catch(() => false)
+        pendingPageViews.set(storageKey, request)
+        void request.finally(() => {
+          if (pendingPageViews.get(storageKey) === request) pendingPageViews.delete(storageKey)
+        })
+        pageViewReady = request
+      }
+    }
 
     const sendConversion = (event: MouseEvent) => {
       const element = event.target instanceof Element
@@ -39,47 +83,26 @@ export default function InternalAnalytics() {
       if (!name) return
       const target = element.dataset.analyticsTarget || 'unspecified'
 
-      fetch('/api/analytics/view', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          kind: 'conversion',
-          path: pathname,
-          name,
-          target,
-        }),
-        keepalive: true,
-      }).catch(() => undefined)
+      void pageViewReady.then((pageViewRecorded) => {
+        if (!pageViewRecorded) return
+        return fetch('/api/analytics/view', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            kind: 'conversion',
+            path: pathname,
+            name,
+            target,
+          }),
+          keepalive: true,
+        }).catch(() => undefined)
+      })
 
       window.gtag?.('event', name, {
         content_type: 'value_cta',
         item_id: target,
         page_path: pathname,
       })
-    }
-
-    if (!alreadyCounted) {
-      fetch('/api/analytics/view', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          path: pathname,
-          referrer: document.referrer,
-          returningReader,
-          utmSource: new URLSearchParams(window.location.search).get('utm_source'),
-          utmMedium: new URLSearchParams(window.location.search).get('utm_medium'),
-        }),
-        keepalive: true,
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.ok && Number.isFinite(data.views)) {
-            window.dispatchEvent(new CustomEvent('site:pageview', {
-              detail: { path: pathname, views: data.views },
-            }))
-          }
-        })
-        .catch(() => undefined)
     }
 
     const readerIsActive = () => document.visibilityState === 'visible' && document.hasFocus()

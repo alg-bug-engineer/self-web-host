@@ -104,6 +104,22 @@ test('关于页展示经公开来源核对的 GitHub 信息', async ({ page }) =
   await expectNoHorizontalOverflow(page)
 })
 
+test('RSS 与公众号长期关系入口可访问且具备受限统计标记', async ({ page }) => {
+  await page.goto('/about')
+  const wechatQr = page.getByRole('link', { name: '放大芝士AI吃鱼公众号二维码' }).first()
+  await expect(wechatQr).toHaveAttribute('href', '/images/qrcode.jpg')
+  await expect(wechatQr).toHaveAttribute('target', '_blank')
+  await expect(wechatQr).toHaveAttribute('rel', /noopener/)
+  await expect(wechatQr).toHaveAttribute('data-analytics-event', 'follow_wechat')
+  await expect(wechatQr).toHaveAttribute('data-analytics-target', 'about-card')
+
+  const rss = page.getByRole('link', { name: 'RSS 订阅' })
+  await expect(rss).toHaveAttribute('href', '/feed.xml')
+  await expect(rss).toHaveAttribute('data-analytics-event', 'subscribe_feed')
+  await expect(rss).toHaveAttribute('data-analytics-target', 'footer')
+  await expectNoHorizontalOverflow(page)
+})
+
 test('运维入口保持不可见且分析接口拒绝其路径', async ({ page, request }) => {
   const operator = await request.get('/operator')
   const aiOperator = await request.get('/ai-operator')

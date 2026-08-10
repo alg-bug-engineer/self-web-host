@@ -17,6 +17,8 @@ export const CONVERSION_EVENT_NAMES = [
   'view_planet',
   'join_planet',
   'open_tool',
+  'subscribe_feed',
+  'follow_wechat',
 ] as const
 export type ConversionEventName = (typeof CONVERSION_EVENT_NAMES)[number]
 
@@ -401,6 +403,8 @@ export function normalizeConversionTarget(eventName: ConversionEventName, value:
     view_planet: /^(?:footer|content-banner|tool-[0-9]{6,20})$/,
     join_planet: /^(?:planet-hero|content-banner)$/,
     open_tool: /^(?:tool-[0-9]{6,20}|plugin-[a-z0-9._-]{1,40})$/,
+    subscribe_feed: /^(?:footer|article-card)$/,
+    follow_wechat: /^(?:footer-qr|about-card|article-card)$/,
   }
   return allowedTargets[eventName].test(target) ? target : null
 }
@@ -515,13 +519,19 @@ export async function recordConversion(
     const store = await readStore()
     const day = new Date().toISOString().slice(0, 10)
     const daily = store.days[day] || emptyDay()
+    if (!daily.visitors.includes(visitorHash)
+      || !daily.pathVisitors[normalizedPath]?.includes(visitorHash)) {
+      return { recorded: false, reason: 'missing-page-view' as const }
+    }
     const visitorCount = daily.conversionCountsByVisitor[visitorHash] || 0
     const totalEvents = Object.values(daily.conversions)
       .reduce((total, event) => total + event.count, 0)
 
     // Bound both per-browser activity and the whole private file. Event names
     // and targets are normalized above, so callers cannot create arbitrary keys.
-    if (visitorCount >= 30 || totalEvents >= 50_000) return
+    if (visitorCount >= 30 || totalEvents >= 50_000) {
+      return { recorded: false, reason: 'rate-limit' as const }
+    }
 
     const conversion = daily.conversions[name] || {
       count: 0,
@@ -539,6 +549,7 @@ export async function recordConversion(
     daily.conversions[name] = conversion
     store.days[day] = daily
     await writeStore(store)
+    return { recorded: true }
   })
 
   writeQueue = task.catch(() => undefined)

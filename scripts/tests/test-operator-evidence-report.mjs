@@ -50,6 +50,9 @@ try {
   assert.equal(report.topPages[0].qualifiedVisitorDays, 1)
   assert.equal(report.topPages[0].qualificationRatePercent, 11.1)
   assert.equal(report.topPages[0].averageActiveReadingSeconds, 12)
+  assert.equal(report.value.conversionVisitors, 0)
+  assert.deepEqual(report.value.topConversions, [])
+  assert.equal(report.topPages[0].conversionEvents, 0)
   assert.ok(!report.topPages.some((page) => page.pathname === '/operator'))
 
   await writeAnalytics(8, 5, true)
@@ -108,7 +111,14 @@ async function writeAnalytics(dayCount, visitorsPerDay, monthlyIdentity = false)
         },
       },
       sources: { direct: visitorsPerDay + 1 },
-      conversions: {},
+      conversions: {
+        subscribe_feed: {
+          count: 1,
+          visitors: [`conversion-without-page-view-${offset}`],
+          paths: { '/blog/evidence': 1 },
+          targets: { footer: 1 },
+        },
+      },
       vitals: {},
     }
   }
