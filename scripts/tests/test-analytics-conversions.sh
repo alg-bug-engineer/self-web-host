@@ -5,11 +5,16 @@ PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ANALYTICS_TEST_DIR="$(mktemp -d)"
 ANALYTICS_TEST_PORT="$((33000 + RANDOM % 1000))"
 ANALYTICS_TEST_PID=""
+CORRUPT_TEST_PID=""
 
 cleanup() {
   if [[ -n "$ANALYTICS_TEST_PID" ]]; then
     kill "$ANALYTICS_TEST_PID" >/dev/null 2>&1 || true
     wait "$ANALYTICS_TEST_PID" >/dev/null 2>&1 || true
+  fi
+  if [[ -n "$CORRUPT_TEST_PID" ]]; then
+    kill "$CORRUPT_TEST_PID" >/dev/null 2>&1 || true
+    wait "$CORRUPT_TEST_PID" >/dev/null 2>&1 || true
   fi
   rm -rf -- "$ANALYTICS_TEST_DIR"
 }
@@ -44,7 +49,7 @@ fs.writeFileSync(file, JSON.stringify({
   },
 }))
 NODE
-ANALYTICS_DATA_DIR="$ANALYTICS_TEST_DIR" PORT="$ANALYTICS_TEST_PORT" npm start >"$ANALYTICS_TEST_DIR/server.log" 2>&1 &
+ANALYTICS_DATA_DIR="$ANALYTICS_TEST_DIR" APP_COMMIT_SHA="analytics-v5-test" PORT="$ANALYTICS_TEST_PORT" npm start >"$ANALYTICS_TEST_DIR/server.log" 2>&1 &
 ANALYTICS_TEST_PID="$!"
 
 for _ in {1..40}; do
@@ -54,6 +59,17 @@ for _ in {1..40}; do
   sleep 0.25
 done
 curl --silent --fail "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/health" >/dev/null
+
+node - "$ANALYTICS_TEST_DIR/analytics.json" <<'NODE'
+const fs = require('node:fs')
+const store = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
+const tomorrow = new Date()
+tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
+if (store.version !== 5) throw new Error('production startup did not migrate analytics to v5')
+if (store.visitorIdentity?.scope !== 'calendar-month') throw new Error('startup migration did not persist identity scope')
+if (store.visitorIdentity?.reliableFromDay !== tomorrow.toISOString().slice(0, 10)) throw new Error('startup migration did not exclude the legacy rollout day')
+if (Object.keys(store.days || {}).length !== 1) throw new Error('startup migration changed historical day count')
+NODE
 
 request_headers=(
   -H 'Content-Type: application/json'
@@ -132,6 +148,32 @@ if (report.content !== null) throw new Error('missing content audit should be re
 if (report.value.conversionVisitors !== 1) throw new Error('report conversion visitor count is wrong')
 if (report.value.conversionRatePercent !== 100) throw new Error('report conversion rate is wrong')
 if (report.value.topConversions[0]?.name !== 'view_book') throw new Error('report top conversion is missing')
+NODE
+
+CORRUPT_TEST_DIR="$ANALYTICS_TEST_DIR/corrupt"
+CORRUPT_TEST_PORT="$((34000 + RANDOM % 1000))"
+mkdir -p "$CORRUPT_TEST_DIR"
+node - "$CORRUPT_TEST_DIR/analytics.json" <<'NODE'
+require('node:fs').writeFileSync(process.argv[2], '{"version":4,"days":')
+NODE
+
+ANALYTICS_DATA_DIR="$CORRUPT_TEST_DIR" APP_COMMIT_SHA="analytics-corrupt-test" PORT="$CORRUPT_TEST_PORT" npm start >"$CORRUPT_TEST_DIR/server.log" 2>&1 &
+CORRUPT_TEST_PID="$!"
+for _ in {1..20}; do
+  if ! kill -0 "$CORRUPT_TEST_PID" >/dev/null 2>&1; then
+    break
+  fi
+  sleep 0.25
+done
+if curl --silent --fail --max-time 2 "http://127.0.0.1:${CORRUPT_TEST_PORT}/api/health" >/dev/null 2>&1; then
+  echo 'corrupt analytics store unexpectedly reached healthy state' >&2
+  exit 1
+fi
+node - "$CORRUPT_TEST_DIR/analytics.json" <<'NODE'
+const fs = require('node:fs')
+if (fs.readFileSync(process.argv[2], 'utf8') !== '{"version":4,"days":') {
+  throw new Error('corrupt analytics file was overwritten')
+}
 NODE
 
 echo 'analytics conversion test passed'
