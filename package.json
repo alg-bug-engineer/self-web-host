@@ -14,6 +14,7 @@
     "test:operator-content-report": "node scripts/tests/test-operator-content-report.mjs",
     "test:active-reading": "node scripts/tests/test-active-reading.mjs",
     "test:operator-decision": "node scripts/tests/test-operator-decision.mjs && node scripts/tests/test-operator-evidence-report.mjs",
+    "test:ui": "playwright test",
     "publish:wechat": "node scripts/publish-wechat.mjs",
     "schedule:daily:install": "bash scripts/install-daily-content-launchd.sh",
     "operator:audit": "node scripts/audit-production.mjs",
@@ -44,6 +45,7 @@
     "undici": "^7.20.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",

@@ -6,6 +6,8 @@
 .env.production
 # testing
 /coverage
+/playwright-report/
+/test-results/
 /data/
 .claude
 .contentlayer

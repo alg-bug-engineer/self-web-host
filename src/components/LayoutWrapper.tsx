@@ -10,7 +10,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
 
     return (
         <div className="flex min-h-screen flex-col">
-            <Header setIsMobileMenuOpen={setIsMobileMenuOpen} />
+            <Header isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
             <main className="mx-auto w-full max-w-[1440px] flex-1 px-4 sm:px-6 lg:px-10">
                 {children}
             </main>
