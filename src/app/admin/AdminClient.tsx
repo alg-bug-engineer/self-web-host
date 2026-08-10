@@ -273,7 +273,7 @@ export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-tertiary">Private analytics</p>
               <h2 id="analytics-heading" className="mt-1 text-lg font-semibold text-text-primary">最近 {analytics.days} 天网站表现</h2>
             </div>
-            <p className="text-xs text-text-tertiary">访客按天匿名哈希；不保存原始 IP</p>
+            <p className="text-xs text-text-tertiary">访客哈希按月轮换；不保存原始 IP</p>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-7">
@@ -300,7 +300,7 @@ export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {
             <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
               <p className="text-xs text-text-tertiary">价值转化率</p>
               <strong className="mt-2 block text-2xl text-text-primary">{analytics.conversionRate}%</strong>
-              <span className="mt-1 block text-xs text-text-secondary">{analytics.conversionVisitors} 个每日匿名转化访客</span>
+              <span className="mt-1 block text-xs text-text-secondary">{analytics.conversionVisitors} 个按日去重转化访客</span>
             </div>
             <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
               <p className="text-xs text-text-tertiary">热门页面数</p>

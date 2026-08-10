@@ -1,11 +1,11 @@
 {
-  "version": 8,
+  "version": 9,
   "objective": {
-    "metric": "monthlyQualifiedVisitorDays",
+    "metric": "monthlyQualifiedVisitorsEstimate",
     "target": 50000,
     "horizonMonths": 3,
     "description": "在不购买广告、不制造垃圾内容的前提下，提高来自搜索、社交、可信引荐与直接访问的真实读者。",
-    "qualification": "当日页面可见且窗口聚焦的活跃阅读至少 10 秒、达到 25% 阅读深度或具有回访信号的访客。每日去重，跨日不建立稳定标识，因此该指标是月度有效访客天数代理值，不冒充跨月唯一用户数。"
+    "qualification": "页面可见且窗口聚焦的活跃阅读至少 10 秒、达到 25% 阅读深度或具有回访信号的访客。通过只在同一自然月稳定、跨月轮换的 HMAC 匿名指纹进行月内去重；不保存原始 IP，不建立跨月身份，结果明确标记为隐私化估算。"
   },
   "guardMetrics": [
     "organicSearchVisitors",

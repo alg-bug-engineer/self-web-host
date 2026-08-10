@@ -75,7 +75,10 @@ function requestVisitorHash(request: NextRequest) {
     request.headers.get('user-agent') || 'unknown',
     request.headers.get('accept-language') || 'unknown',
   ].join('|')
-  return createVisitorHash(visitorInput, new Date().toISOString().slice(0, 10))
+  // Keep the anonymous fingerprint stable only inside the current calendar
+  // month. This supports a month-level UV estimate without storing a raw IP or
+  // creating an identity that can be linked across months.
+  return createVisitorHash(visitorInput, new Date().toISOString().slice(0, 7))
 }
 
 function shouldIgnoreRequest(request: NextRequest) {
