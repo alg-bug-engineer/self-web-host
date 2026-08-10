@@ -6,6 +6,7 @@ import { Suspense } from 'react'
 export const metadata = {
   title: '博客文章 | 芝士AI吃鱼',
   description: 'AI 技术博客，深度解析大模型、Transformer、RAG 等前沿技术',
+  alternates: { canonical: '/blog' },
 }
 
 export default function BlogPage() {

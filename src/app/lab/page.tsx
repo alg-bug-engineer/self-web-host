@@ -6,6 +6,12 @@ import Link from 'next/link';
 import CssShadowGenerator from '@/components/lab/CssShadowGenerator';
 import ParticleAnimation from '@/components/lab/ParticleAnimation';
 
+export const metadata = {
+  title: 'AI 实验室 | 芝士AI吃鱼',
+  description: '可直接体验的 AI、前端与开发者工具实验。',
+  alternates: { canonical: '/lab' },
+}
+
 // Map string names to actual components
 const labComponentMap: { [key: string]: React.ComponentType } = {
   CssShadowGenerator,

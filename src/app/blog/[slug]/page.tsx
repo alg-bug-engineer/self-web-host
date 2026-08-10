@@ -10,7 +10,7 @@ import AppCard from '@/components/AppCard'
 import { getSettings } from '@/lib/admin-storage'
 import { compareDesc } from 'date-fns'
 import ArticleViewCounter from '@/components/ArticleViewCounter'
-import { BRAND_NAME, SITE_URL, absoluteUrl } from '@/lib/site'
+import { AUTHOR_NAME, BRAND_NAME, SITE_URL, absoluteUrl } from '@/lib/site'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -90,27 +90,37 @@ export default async function BlogPostPage({ params }: PageProps) {
     .slice(0, 2)
 
   // JSON-LD structured data for Google
+  const articleId = `${absoluteUrl(post.url)}#article`
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'TechArticle',
-    headline: post.title,
-    description: post.description,
-    mainEntityOfPage: absoluteUrl(post.url),
-    image: post.cover ? absoluteUrl(post.cover) : undefined,
-    datePublished: post.date,
-    dateModified: post.date,
-    inLanguage: 'zh-CN',
-    keywords: post.tags?.join(', '),
-    author: {
-      '@type': 'Person',
-      name: post.author,
-      url: `${SITE_URL}/about`,
-    },
-    publisher: {
-        '@type': 'Person',
-        name: BRAND_NAME,
-        url: `${SITE_URL}/about`,
-    }
+    '@graph': [
+      {
+        '@type': 'TechArticle',
+        '@id': articleId,
+        headline: post.title,
+        description: post.description,
+        mainEntityOfPage: absoluteUrl(post.url),
+        isPartOf: { '@id': `${SITE_URL}/#website` },
+        image: post.cover ? absoluteUrl(post.cover) : absoluteUrl('/og.png'),
+        datePublished: post.date,
+        dateModified: post.date,
+        inLanguage: 'zh-CN',
+        articleSection: post.category === 'tech' ? 'AI 技术科普' : 'AI 与社会观察',
+        keywords: post.tags?.join(', '),
+        citation: post.sourceUrl || undefined,
+        author: { '@id': `${SITE_URL}/#person`, name: AUTHOR_NAME, alternateName: post.author || BRAND_NAME },
+        publisher: { '@id': `${SITE_URL}/#person` },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${absoluteUrl(post.url)}#breadcrumb`,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: '首页', item: SITE_URL },
+          { '@type': 'ListItem', position: 2, name: '文章', item: `${SITE_URL}/blog` },
+          { '@type': 'ListItem', position: 3, name: post.title, item: absoluteUrl(post.url) },
+        ],
+      },
+    ],
   }
 
   return (

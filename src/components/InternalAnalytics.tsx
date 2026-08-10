@@ -17,7 +17,12 @@ export default function InternalAnalytics() {
     fetch('/api/analytics/view', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ path: pathname }),
+      body: JSON.stringify({
+        path: pathname,
+        referrer: document.referrer,
+        utmSource: new URLSearchParams(window.location.search).get('utm_source'),
+        utmMedium: new URLSearchParams(window.location.search).get('utm_medium'),
+      }),
       keepalive: true,
     }).catch(() => undefined)
   }, [pathname])

@@ -5,6 +5,7 @@ import Image from 'next/image'
 export const metadata = {
   title: '漫画合集 | 芝士AI吃鱼',
   description: '用漫画和心情记录 AI 学习日常。',
+  alternates: { canonical: '/collections/manga' },
 }
 
 export const dynamic = 'force-dynamic'

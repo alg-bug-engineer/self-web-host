@@ -45,29 +45,32 @@ export default function BlogClient({ posts }: BlogClientProps) {
   }
 
   return (
-    <section className="py-8">
-      <div className="max-w-6xl mx-auto px-4">
+    <section className="py-12 sm:py-20">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl sm:text-5xl font-bold text-text-primary mb-4">
-            博客文章
+        <div className="relative overflow-hidden rounded-[1.75rem] border border-border-default bg-bg-secondary px-6 py-16 text-center mb-12 sm:px-12 sm:py-24">
+          <div className="pointer-events-none absolute -right-28 -top-40 h-96 w-96 rounded-full bg-accent-primary/15 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-40 -left-28 h-80 w-80 rounded-full bg-accent-secondary/10 blur-3xl" />
+          <p className="eyebrow relative">AI KNOWLEDGE BASE</p>
+          <h1 className="relative mt-5 text-4xl sm:text-6xl font-semibold tracking-[-0.055em] text-text-primary">
+            用人话，讲透 AI 原理。
           </h1>
-          <p className="text-text-secondary text-lg max-w-2xl mx-auto">
-            深度技术文章，用人话讲透 AI 原理
+          <p className="relative mt-5 text-text-secondary text-base leading-8 max-w-2xl mx-auto">
+            从大模型、RAG 到 Agent 与行业变化，寻找复杂问题背后真正值得掌握的知识。
           </p>
         </div>
 
         {/* Filters & Search */}
-        <div className="flex flex-col md:flex-row gap-6 mb-12 items-center justify-between">
+        <div className="flex flex-col md:flex-row gap-6 mb-10 items-center justify-between">
           {/* Categories */}
-          <div className="flex p-1 bg-bg-tertiary rounded-xl w-full md:w-auto">
+          <div className="flex p-1 border border-border-default bg-bg-secondary rounded-xl w-full md:w-auto">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
                 className={`flex-1 md:flex-none px-6 py-2 rounded-lg text-sm font-medium transition-all ${
                   activeCategory === cat.id
-                    ? 'bg-bg-secondary text-accent-primary shadow-sm'
+                    ? 'bg-accent-primary text-white shadow-sm'
                     : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
@@ -83,7 +86,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
               placeholder="搜索文章、标签..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-bg-tertiary border border-border-default rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-primary/20 focus:border-accent-primary transition-all text-text-primary"
+              className="w-full pl-10 pr-4 py-2.5 bg-bg-secondary border border-border-default rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-primary/20 focus:border-accent-primary transition-all text-text-primary"
             />
             <svg
               className="absolute left-3 top-3 w-5 h-5 text-text-tertiary"
@@ -123,7 +126,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
             <p className="text-text-secondary text-lg">没有找到相关文章，换个关键词试试？</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredPosts.map((post) => (
               <AppCard key={post.slug} repository={post} />
             ))}

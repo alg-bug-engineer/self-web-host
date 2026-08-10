@@ -1,16 +1,18 @@
 import Link from 'next/link'
 import WechatCard from '@/components/WechatCard'
+import { AUTHOR_NAME, AUTHOR_PROFILES, BRAND_NAME, SITE_URL } from '@/lib/site'
 
 export const metadata = {
   title: '关于我 | 芝士AI吃鱼',
   description: '天大计算机硕士，8年互联网大厂算法经验，专注大模型、RAG、Agent 技术布道',
+  alternates: { canonical: '/about' },
 }
 
 const stats = [
-  { number: '8+', label: '年算法经验', icon: '💼' },
-  { number: '8500+', label: '公众号读者', icon: '👥' },
-  { number: '2000+', label: 'CSDN 粉丝', icon: '📝' },
   { number: '5', label: '本个人著作', icon: '📚' },
+  { number: '325', label: '篇 CSDN 内容', icon: '📝' },
+  { number: '31', label: '个 GitHub 仓库', icon: '⌘' },
+  { number: '8500+', label: '公众号读者', icon: '👥' },
 ]
 
 const focusTags = [
@@ -81,8 +83,27 @@ const socialLinks = [
 ]
 
 export default function AboutPage() {
+  const profileJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    '@id': `${SITE_URL}/about#profile`,
+    url: `${SITE_URL}/about`,
+    name: `${AUTHOR_NAME}（${BRAND_NAME}）`,
+    mainEntity: {
+      '@type': 'Person',
+      '@id': `${SITE_URL}/#person`,
+      name: AUTHOR_NAME,
+      alternateName: BRAND_NAME,
+      url: `${SITE_URL}/about`,
+      sameAs: AUTHOR_PROFILES,
+      jobTitle: '算法工程师与 AI 内容创作者',
+      knowsAbout: ['大语言模型', 'RAG', 'AI Agent', 'NLP', 'AI 工程化', 'GEO'],
+    },
+  }
+
   return (
     <div className="space-y-10">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(profileJsonLd) }} />
       <section className="grid grid-cols-1 xl:grid-cols-[1.1fr_1.6fr] gap-6">
         <div className="space-y-6">
           <div className="bg-bg-secondary border border-border-default rounded-2xl p-6">
@@ -172,6 +193,9 @@ export default function AboutPage() {
                 </div>
               ))}
             </div>
+            <p className="mt-4 text-xs leading-5 text-text-tertiary">
+              著作信息来自作者作品页截图；公开内容与仓库数量于 2026 年 8 月核对 CSDN、GitHub 主页。
+            </p>
           </div>
 
           <div className="bg-bg-secondary border border-border-default rounded-2xl p-6">

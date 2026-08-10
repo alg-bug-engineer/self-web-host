@@ -7,6 +7,7 @@ export async function generateMetadata() {
   return {
     title: `知识星球 | ${settings.siteSlogan || '芝士AI吃鱼'}`,
     description: '加入知识星球，获取深度 AI 技术教程、项目源码及 1对1 答疑，加速你的 AI 商业化之路。',
+    alternates: { canonical: '/planet' },
   };
 }
 

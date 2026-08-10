@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "objective": {
+    "metric": "monthlyQualifiedVisitors",
+    "target": 50000,
+    "horizonMonths": 3,
+    "description": "在不购买广告、不制造垃圾内容的前提下，提高来自搜索、社交、可信引荐与直接访问的真实读者。"
+  },
+  "guardMetrics": [
+    "organicSearchVisitors",
+    "returningReaderSignals",
+    "articleReadingDepth",
+    "indexedHighQualityPages",
+    "productionAvailability"
+  ],
+  "constraints": [
+    "不购买流量、外链或广告",
+    "不制造批量低质量 SEO 页面",
+    "不使用标题党、隐藏文字、关键词堆砌或互刷",
+    "不自动修改作者核心履历",
+    "不自动删除文章、统计数据或高价值页面",
+    "不自动修改 DNS、安全组、SSH 密钥、支付或云账号权限",
+    "新增文章、首页文案和导航改动必须经过代码审查"
+  ],
+  "permissions": {
+    "automatic": [
+      "健康检查",
+      "统计汇总",
+      "失效链接检测",
+      "Sitemap、RSS 与结构化数据校验",
+      "生成内部经营报告"
+    ],
+    "reviewRequired": [
+      "发布新文章",
+      "修改首页和导航",
+      "修改作者信息",
+      "大规模 SEO 调整"
+    ],
+    "forbidden": [
+      "DNS 与域名操作",
+      "ECS 安全组与云 IAM 操作",
+      "删除生产数据",
+      "购买流量或外链",
+      "绕过内容审核"
+    ]
+  }
+}

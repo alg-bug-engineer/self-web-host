@@ -14,7 +14,12 @@ export default function ArticleViewCounter({ path }: { path: string }) {
     fetch(`/api/analytics/view?path=${encodeURIComponent(path)}`, {
       method: alreadyCounted ? 'GET' : 'POST',
       headers: alreadyCounted ? undefined : { 'Content-Type': 'application/json' },
-      body: alreadyCounted ? undefined : JSON.stringify({ path }),
+      body: alreadyCounted ? undefined : JSON.stringify({
+        path,
+        referrer: document.referrer,
+        utmSource: new URLSearchParams(window.location.search).get('utm_source'),
+        utmMedium: new URLSearchParams(window.location.search).get('utm_medium'),
+      }),
       keepalive: !alreadyCounted,
     })
       .then((response) => response.json())
