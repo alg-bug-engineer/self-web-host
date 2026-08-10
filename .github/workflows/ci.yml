@@ -35,6 +35,7 @@ jobs:
       - run: npm run test:active-reading
       - run: npm run test:article-headings
       - run: npm run test:operator-decision
+      - run: npm run test:operator-experiments
       - run: npm run test:indexnow
       - run: npm run test:llms-markdown
       - run: npm run test:profile-audit

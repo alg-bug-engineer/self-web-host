@@ -17,6 +17,7 @@
     "test:active-reading": "node scripts/tests/test-active-reading.mjs",
     "test:article-headings": "node scripts/tests/test-article-headings.mjs",
     "test:operator-decision": "node scripts/tests/test-operator-decision.mjs && node scripts/tests/test-operator-evidence-report.mjs",
+    "test:operator-experiments": "node scripts/tests/test-operator-experiments.mjs",
     "test:ui": "playwright test",
     "publish:wechat": "node scripts/publish-wechat.mjs",
     "schedule:daily:install": "bash scripts/install-daily-content-launchd.sh",

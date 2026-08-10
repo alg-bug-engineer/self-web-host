@@ -23,6 +23,7 @@
 19. 公众号入站同步使用私有状态文件 `/opt/we-mp-rss/sync-state.json` 防止空库反复触发微信列表接口。一次采集完成后仍为 0 篇时，从 48 小时开始指数退避、最长 7 天；退避期内工作流只读取现有 Feed，不发起采集，出现文章后自动清零恢复。状态文件仅保存时间、计数和结果，权限为 `600`，不保存登录令牌、Cookie 或文章正文；私有内容运营报告会区分普通空 Feed 与保护性退避。
 20. 本机日更不在用户当前工作区生成内容：调度器先 fetch 并以 `origin/main` 是否已有当天文章作为唯一发布判据，再从该提交创建临时 detached worktree，完成依赖安装、生成、构建、提交、PR、部署与公众号交付后自动清理。用户的未提交修改和素材不会被读取、暂存或覆盖；失败发生在推送前，半成品随临时工作区清理；失败发生在推送后，则以确定的每日分支复用原稿并继续 PR/CI/部署，不重复调用模型。10:30、12:30 会在 08:30 之后做两次幂等补偿，远端已经发布时不启动 Docker 或模型。
 21. 作者经历与专业成果只写入具有交叉核验来源的信息：公开作者简介连接“张其来—芝士AI吃鱼—阿里/百度/滴滴/浪潮”，国家知识产权局公开文本用唯一专利号连接大语言模型、多智能体与 Text-to-SQL 成果。同名搜索结果、奖项候选名单和无法排除身份碰撞的资料不自动采用。`/about/index.html.md` 与 `/portfolio/index.html.md` 提供同源 Markdown，包含来源、专利号、ISBN 与 HTML canonical；`llms.txt` 直接发现这两个身份实体页，生产技术巡检持续验证内容类型、来源标识和 canonical。
+22. 部署留痕与增长实验严格分离：普通代码、内容和运维发布只记录提交，不从流量变化学习胜负；只有通过 commit trailer 声明唯一实验、可验证假设、允许主指标和公开目标路径的审查提交才进入目标页前后窗口。并发上限在决策代码中强制执行，重叠实验标为混杂且不输出归因结论。
 
 经营任务也会尝试读取 Google Search Console 的 finalized 搜索数据：最近 28 天点击、曝光、CTR、平均排名、查询词与落地页。数据固定滞后 3 天，并按 Google 的 `America/Los_Angeles` 日期口径保存到私有 `operator/search-console-latest.json`；凭据缺失或 API 异常只降低报告完整度，不中断站内统计、技术巡检和健康检查。
 
@@ -34,7 +35,16 @@
 <ANALYTICS_DATA_DIR>/operator/deployments.jsonl
 ```
 
-每日 `npm run operator:learn` 将这些部署转换为行动记录，对比部署前 7 个自然日和部署后 7 个完整自然日。只有两侧各至少 5 个数据日才输出正向、负向或混合信号，并同时记录样本置信度；结果只表示相关性，不能在没有对照实验时声称因果。行动账本保存在：
+每日 `npm run operator:learn` 将这些部署转换为私有行动记录，但普通发布、运维修复和日更只留痕，不再冒充增长实验。只有经过代码审查、且 squash 提交正文完整声明下列四个 trailer 的部署才进入效果观察：
+
+```text
+Operator-Experiment: article-reading-promise
+Operator-Hypothesis: 更清楚的首屏承诺会提高目标文章的有效阅读率。
+Operator-Primary-Metric: engagementRatePoints
+Operator-Target-Path: /blog/example
+```
+
+实验标识只能使用小写短横线；假设必须可验证；主指标只能来自站内允许列表；目标必须是公开站内路径，API 与运维路径会被拒绝。系统按目标页面对比部署前 7 个自然日和部署后 7 个完整自然日，只有两侧各至少 5 个数据日才输出信号。主指标低于最小变化阈值时记为混合信号；两个显式实验的观察窗口重叠时记为 `confounded`，不生成胜负结论。`maximumConcurrentExperiments` 会在经营决策层真实阻止并发实验，而不是只作为文档约定。所有结果都只表示前后相关性，不能在没有随机对照时声称因果。行动账本保存在：
 
 ```text
 <ANALYTICS_DATA_DIR>/operator/actions.json

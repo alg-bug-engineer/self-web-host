@@ -52,4 +52,18 @@ const searchExperiment = buildOperatorDecision({
 assert.equal(searchExperiment.mode, 'experiment-review')
 assert.equal(searchExperiment.evidence.searchEvidenceReady, true)
 
-console.log('经营决策门槛测试通过：维护优先、样本不足观察、证据就绪后单实验评审。')
+const experimentAtCapacity = buildOperatorDecision({
+  activeDays: 8,
+  visitorDays: 40,
+  activeExperimentCount: 1,
+  maximumConcurrentExperiments: 1,
+  recommendedActions: [
+    { priority: 2, type: 'seo', action: '再启动一个实验', reviewRequired: true },
+  ],
+})
+assert.equal(experimentAtCapacity.mode, 'experiment-observing')
+assert.equal(experimentAtCapacity.primaryAction, null)
+assert.equal(experimentAtCapacity.evidence.experimentCapacityAvailable, false)
+assert.equal(experimentAtCapacity.evidence.maximumConcurrentExperiments, 1)
+
+console.log('经营决策门槛测试通过：维护优先、样本不足观察、显式实验并发上限真实生效。')
