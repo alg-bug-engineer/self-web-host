@@ -57,7 +57,7 @@ fi
 mv "$CANDIDATE_DIR" "$CURRENT_DIR"
 
 if pm2 describe "$APP_NAME" >/dev/null 2>&1; then
-  APP_COMMIT_SHA="$TARGET_SHA" pm2 reload "$APP_NAME" --update-env
+  APP_COMMIT_SHA="$TARGET_SHA" pm2 reload ecosystem.config.js --only "$APP_NAME" --update-env
 else
   APP_COMMIT_SHA="$TARGET_SHA" pm2 start ecosystem.config.js --only "$APP_NAME"
 fi
@@ -77,7 +77,7 @@ if [[ "$healthy" != true ]]; then
   if [[ -d "$PREVIOUS_DIR" ]]; then
     mv "$CURRENT_DIR" "${FAILED_DIR}-${TARGET_SHA:0:12}-$(date +%s)"
     mv "$PREVIOUS_DIR" "$CURRENT_DIR"
-    APP_COMMIT_SHA="$CURRENT_SHA" pm2 reload "$APP_NAME" --update-env
+    APP_COMMIT_SHA="$CURRENT_SHA" pm2 reload ecosystem.config.js --only "$APP_NAME" --update-env
   fi
   exit 1
 fi
