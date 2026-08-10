@@ -10,6 +10,7 @@ const dateKey = parseDateKey(process.env.CONTENT_DATE)
 const autoPublish = process.env.CONTENT_AUTO_PUBLISH !== 'false'
 const runReview = process.env.CONTENT_AI_REVIEW !== 'false'
 const webSearch = process.env.CONTENT_WEB_SEARCH === 'true'
+const maxRepairAttempts = Math.min(4, Math.max(1, Number.parseInt(process.env.CONTENT_MAX_REPAIR_ATTEMPTS || '3', 10) || 3))
 const sourceConfigFile = process.env.CONTENT_AI_CONFIG_FILE?.trim() || path.resolve(projectDir, '..', 'chatgpt2api', 'config.json')
 const apiKey = process.env.CONTENT_AI_API_KEY?.trim() || (await readLocalAuthKey(sourceConfigFile))
 const postsDir = path.join(projectDir, 'content', 'posts')
@@ -159,19 +160,38 @@ async function requestJson(prompt, systemPrompt) {
 }
 
 async function ensureValidDraft(candidate, stage) {
-  candidate.sources = mergeSources(candidate.sources)
-  try {
-    return validateDraft(candidate)
-  } catch (error) {
-    const reason = error instanceof Error ? error.message : String(error)
-    console.log(`${stage}未通过质检，正在自动返工：${reason}`)
-    const repaired = await requestJson(
-      `下面的${stage}没有通过结构化质检，原因是：${reason}\n\n请只修复质检问题，并返回同结构的完整 JSON。不要缩短已有论证，不要删除可靠来源；正文必须达到 3500–5500 个中文字符。\n\n待返工内容：\n${JSON.stringify(candidate)}\n\n结构：\n${draftSchema()}`,
-      '你是“芝士AI吃鱼”的返工编辑。保留有效内容，只补足事实边界、论证、章节、来源或配图结构。只输出合法 JSON。',
-    )
-    repaired.sources = mergeSources(repaired.sources)
-    return validateDraft(repaired)
+  let current = candidate
+  const failureHistory = []
+  for (let attempt = 0; attempt <= maxRepairAttempts; attempt += 1) {
+    current.sources = mergeSources(current.sources)
+    try {
+      return validateDraft(current)
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error)
+      failureHistory.push(reason)
+      if (attempt === maxRepairAttempts) {
+        throw new Error(`${stage}经过 ${maxRepairAttempts} 轮定向返工仍未通过质检：${reason}`)
+      }
+      console.log(`${stage}未通过质检，正在进行第 ${attempt + 1}/${maxRepairAttempts} 轮定向返工：${reason}`)
+      current = await requestJson(
+        `下面的${stage}没有通过结构化质检。
+
+本轮必须修复：${reason}
+此前失败记录：${failureHistory.join('；')}
+
+只修复明确问题，并在输出前逐项自检所有结构化规则，避免修好一个问题又引入另一个问题。保留可靠论证和来源；不要缩短正文；全文保持 3500–5500 个中文字符。若问题涉及模板句式，请直接重写相关段落，不要只替换连接词。
+
+待返工内容：
+${JSON.stringify(current)}
+
+结构：
+${draftSchema()}`,
+        '你是“芝士AI吃鱼”的返工编辑。按质检失败原因做定向修订，保留事实边界和自然表达；返回前完整自检。只输出合法 JSON。',
+      )
+    }
   }
+
+  throw new Error(`${stage}返工流程异常结束。`)
 }
 
 function buildWriterPrompt(topic) {
