@@ -12,6 +12,7 @@ const analyticsPath = path.join(dataDir, 'analytics.json')
 const reportDir = path.join(dataDir, 'operator')
 const latestReportPath = path.join(reportDir, 'latest.json')
 const historyPath = path.join(reportDir, 'history.jsonl')
+const technicalAuditPath = path.join(reportDir, 'technical-latest.json')
 const goalsPath = path.join(projectDir, 'ops/operator-goals.json')
 
 const readJson = async (file, fallback) => {
@@ -40,6 +41,7 @@ const goals = await readJson(goalsPath, null)
 if (!goals?.objective?.target) throw new Error('缺少有效的 ops/operator-goals.json')
 
 const store = await readJson(analyticsPath, { days: {} })
+const technicalAudit = await readJson(technicalAuditPath, null)
 const analyticsDays = store.days && typeof store.days === 'object' ? store.days : {}
 const current28Days = dateRange(28)
 const previous28Days = dateRange(28, 28)
@@ -151,8 +153,31 @@ if (!activeDays) {
   }
 }
 
+if (!technicalAudit) {
+  recommendedActions.push({
+    priority: 1,
+    type: 'technical-audit',
+    action: '运行生产技术巡检，验证 Sitemap、索引、结构化数据、RSS 与内部链接。',
+    reviewRequired: false,
+  })
+} else if (technicalAudit.status !== 'healthy') {
+  recommendedActions.push({
+    priority: 1,
+    type: 'technical-seo',
+    action: `修复技术巡检发现的 ${technicalAudit.metrics?.errors || 0} 个错误和 ${technicalAudit.metrics?.warnings || 0} 个警告，优先处理不可访问页面与索引冲突。`,
+    reviewRequired: false,
+  })
+} else if (Number(technicalAudit.metrics?.warnings || 0) > 0) {
+  recommendedActions.push({
+    priority: 3,
+    type: 'technical-seo',
+    action: `评估技术巡检中的 ${technicalAudit.metrics.warnings} 个警告，确认是否需要低风险修复。`,
+    reviewRequired: false,
+  })
+}
+
 const report = {
-  version: 2,
+  version: 3,
   generatedAt: new Date().toISOString(),
   objective: goals.objective,
   status: {
@@ -177,6 +202,12 @@ const report = {
     depth90Visitors,
   },
   acquisition: { searchVisitors, searchSharePercent: searchShare, topSources },
+  technical: technicalAudit ? {
+    checkedAt: technicalAudit.checkedAt,
+    status: technicalAudit.status,
+    metrics: technicalAudit.metrics,
+    issues: technicalAudit.issues,
+  } : null,
   topPages,
   observations,
   recommendedActions,
