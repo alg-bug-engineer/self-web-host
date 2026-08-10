@@ -11,6 +11,7 @@
 7. 自动化发布与监控只在服务器、GitHub Actions 和内部日志中运行，不提供面向访客的运维页面。
 8. 本地 `chatgpt2api` 每天最多生成一篇深度文章；模型输出必须经过历史选题轮换、标题/摘要/标签/正文相似度检查、写作、主编复核、定向返工、结构与危险标签校验、lint、生产构建和 PR 留痕，全部通过后才在已批准的日更范围内自动发布。
 9. 文章索引页按“模型与原理、Agent 与实践、AI 与人”组织可重叠的主题入口，并提供三条人工策划的起始阅读路径；路径与筛选点击进入私有价值统计和 GA4 自定义事件。新增日更文章继续依靠标签自动进入对应栏目，不要求生成器维护一套容易失真的独立分类。
+10. 每次生产部署和公网健康检查通过后，IndexNow 根据 Git 变更只映射受影响的公开页面，并通知 Bing、Copilot 等参与该协议的搜索服务；后台、API、站内搜索和纯内部文件永不提交。全站布局或验证配置变化时才读取 Sitemap 做一次全量通知，通知失败只告警，不回滚已健康的生产版本。
 
 经营任务也会尝试读取 Google Search Console 的 finalized 搜索数据：最近 28 天点击、曝光、CTR、平均排名、查询词与落地页。数据固定滞后 3 天，并按 Google 的 `America/Los_Angeles` 日期口径保存到私有 `operator/search-console-latest.json`；凭据缺失或 API 异常只降低报告完整度，不中断站内统计、技术巡检和健康检查。
 
@@ -44,6 +45,8 @@ Core Web Vitals 通过 Next.js `useReportWebVitals` 在真实浏览器上采集�
 - `ECS_SSH_KEY`：部署专用私钥。不要直接复用个人日常登录私钥。
 - `ECS_KNOWN_HOSTS`：运行 `ssh-keyscan -H <ECS_HOST>` 得到的完整主机公钥记录，用于阻止中间人攻击。
 - 公众号 RSS 服务固定监听 ECS `127.0.0.1:8001`，Feed ID 为 `MP_WXS_3212677307`。同步任务复用 ECS SSH Secrets，不需要公网 RSS 地址。
+
+IndexNow 不使用私密凭据。公开 key 与验证文件由 `ops/indexnow.json` 和 `public/<key>.txt` 管理；key 本来就必须能被搜索引擎从站点根目录读取。部署工作流只在公网健康接口已经返回目标提交号后运行 `npm run seo:indexnow`。文章文件映射到对应 `/blog/<slug>` 和 `/blog`，页面模板变化映射到受影响的文章集合，全局实体或布局变化才提交 Sitemap 中的全部 URL。`npm run test:indexnow` 离线验证域名归属、公开路由白名单、去重和验证文件一致性，不向外发送通知。
 
 ## ECS 公众号 RSS 服务
 

@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "siteUrl": "https://ai-knowledgepoints.cn",
+  "endpoint": "https://api.indexnow.org/IndexNow",
+  "key": "d9d666e1951478d09e15df0e553c8c47",
+  "keyFile": "d9d666e1951478d09e15df0e553c8c47.txt",
+  "maxUrlsPerSubmission": 100
+}

@@ -19,6 +19,13 @@ const addIssue = (severity, check, target, message) => {
   issues.push({ severity, check, target, message })
 }
 
+let indexNowConfig = null
+try {
+  indexNowConfig = JSON.parse(await fs.readFile(path.join(projectDir, 'ops', 'indexnow.json'), 'utf8'))
+} catch (error) {
+  addIssue('warning', 'indexnow', siteUrl.origin, `无法读取 IndexNow 配置：${error instanceof Error ? error.message : String(error)}`)
+}
+
 const fetchText = async (target) => {
   try {
     const response = await fetch(target, {
@@ -133,6 +140,15 @@ const llms = await fetchText(absolute('/llms.txt'))
 if (!llms.response?.ok || !/芝士AI吃鱼/.test(llms.text) || !/https:\/\/ai-knowledgepoints\.cn/.test(llms.text)) {
   addIssue('warning', 'geo', absolute('/llms.txt'), 'llms.txt 缺少站点或作者核心信息。')
 }
+let indexNowKeyOk = false
+if (indexNowConfig?.key && indexNowConfig?.keyFile) {
+  const keyLocation = absolute(`/${indexNowConfig.keyFile}`)
+  const indexNowKey = await fetchText(keyLocation)
+  indexNowKeyOk = indexNowKey.response?.ok === true && indexNowKey.text.trim() === indexNowConfig.key
+  if (!indexNowKeyOk) {
+    addIssue('error', 'indexnow', keyLocation, 'IndexNow 域名验证文件不可用或内容与配置不一致。')
+  }
+}
 const search = await fetchText(absolute('/search'))
 if (!search.response?.ok || !robotsFrom(search.text).includes('noindex')) {
   addIssue('error', 'indexability', absolute('/search'), '站内搜索页未正确设置 noindex。')
@@ -171,6 +187,7 @@ const report = {
     sitemapPages: sitemapUrls.length,
     successfulPages: pageResults.filter((page) => page.status === 200).length,
     internalLinksChecked: internalLinks.length,
+    indexNowKeyOk,
     errors: issues.filter((issue) => issue.severity === 'error').length,
     warnings: issues.filter((issue) => issue.severity === 'warning').length,
   },

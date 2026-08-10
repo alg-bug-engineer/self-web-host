@@ -55,3 +55,10 @@ jobs:
           printf '%s\n' "$response"
           printf '%s' "$response" | grep -q '"ok":true'
           printf '%s' "$response" | grep -q "$GITHUB_SHA"
+
+      - name: Notify participating search engines
+        continue-on-error: true
+        env:
+          INDEXNOW_PREVIOUS_COMMIT: ${{ github.event.before }}
+          INDEXNOW_COMMIT: ${{ github.sha }}
+        run: npm run seo:indexnow
