@@ -1,0 +1,96 @@
+import { expect, test, type Page } from '@playwright/test'
+
+const expectNoHorizontalOverflow = async (page: Page) => {
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+}
+
+const collectPageErrors = (page: Page) => {
+  const errors: string[] = []
+  page.on('pageerror', (error) => errors.push(error.message))
+  page.on('console', (message) => {
+    if (message.type() === 'error') errors.push(message.text())
+  })
+  return errors
+}
+
+test('首页在桌面和移动端保持可读且无横向溢出', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const response = await page.goto('/')
+
+  expect(response?.ok()).toBe(true)
+  await expect(page.locator('h1')).toHaveCount(1)
+  await expect(page.locator('h1')).toBeVisible()
+  await expect(page.getByRole('link', { name: /开始探索|进入知识库/ }).first()).toBeVisible()
+  await expectNoHorizontalOverflow(page)
+  expect(errors).toEqual([])
+})
+
+test('移动菜单具备对话框语义、滚动锁定和键盘关闭', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-chromium', '仅移动端显示菜单按钮')
+
+  await page.goto('/')
+  const trigger = page.locator('button[aria-controls="mobile-navigation-dialog"]')
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false')
+  await trigger.click()
+
+  const dialog = page.getByRole('dialog', { name: '网站导航' })
+  await expect(dialog).toBeVisible()
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true')
+  await expect(page.locator('body')).toHaveCSS('overflow', 'hidden')
+  await expect(dialog.getByRole('link', { name: '文章' })).toBeVisible()
+  await expect(dialog.getByRole('button', { name: '关闭菜单' })).toBeFocused()
+
+  await page.keyboard.press('Escape')
+  await expect(dialog).toBeHidden()
+  await expect(trigger).toBeFocused()
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false')
+  await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden')
+})
+
+test('最新日更文章包含完整正文结构和有效封面', async ({ page }) => {
+  await page.goto('/')
+  const latestDaily = page.locator('a[href^="/blog/daily-"]').first()
+  await expect(latestDaily).toBeVisible()
+  const href = await latestDaily.getAttribute('href')
+  expect(href).toBeTruthy()
+
+  await page.goto(href!)
+  await expect(page.locator('h1')).toHaveCount(1)
+  await expect(page.locator('h1')).toBeVisible()
+  expect(await page.locator('.prose h2').count()).toBeGreaterThanOrEqual(4)
+  await expectNoHorizontalOverflow(page)
+
+  const cover = page.locator('article img').first()
+  if (await cover.count()) {
+    await expect.poll(() => cover.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true)
+  }
+})
+
+test('作品页公开作品并保持外链安全属性', async ({ page }) => {
+  await page.goto('/portfolio')
+  await expect(page.locator('h1')).toBeVisible()
+  await expect(page.getByText('共 5 本')).toBeVisible()
+  await expectNoHorizontalOverflow(page)
+
+  const externalLinks = page.locator('main a[target="_blank"]')
+  expect(await externalLinks.count()).toBeGreaterThan(0)
+  for (const link of await externalLinks.all()) {
+    await expect(link).toHaveAttribute('rel', /noopener/)
+    await expect(link).toHaveAttribute('rel', /noreferrer/)
+  }
+})
+
+test('运维入口保持不可见且分析接口拒绝其路径', async ({ page, request }) => {
+  const operator = await request.get('/operator')
+  const aiOperator = await request.get('/ai-operator')
+  const analytics = await request.post('/api/analytics/view', {
+    data: { path: '/operator', event: 'page_view' },
+  })
+
+  expect(operator.status()).toBe(404)
+  expect(aiOperator.status()).toBe(404)
+  expect(analytics.status()).toBe(400)
+
+  await page.goto('/')
+  await expect(page.getByText(/自动化运维|运营控制台/)).toHaveCount(0)
+})

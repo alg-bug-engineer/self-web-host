@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ThemeToggle } from './ThemeToggle'
 
 interface HeaderProps {
+  isMobileMenuOpen: boolean
   setIsMobileMenuOpen: (isOpen: boolean) => void
 }
 
@@ -15,7 +16,7 @@ const navItems = [
   { label: '关于', href: '/about' },
 ]
 
-export default function Header({ setIsMobileMenuOpen }: HeaderProps) {
+export default function Header({ isMobileMenuOpen, setIsMobileMenuOpen }: HeaderProps) {
   return (
     <header className="site-header">
       <div className="header-announcement">
@@ -42,7 +43,14 @@ export default function Header({ setIsMobileMenuOpen }: HeaderProps) {
           <ThemeToggle />
           <Link href="/search" className="header-search hidden sm:inline-flex">搜索内容 <span>⌕</span></Link>
           <Link href="/blog" className="header-cta hidden md:inline-flex" data-analytics-event="explore_articles" data-analytics-target="header">进入知识库 <span>↗</span></Link>
-          <button onClick={() => setIsMobileMenuOpen(true)} className="mobile-menu-button lg:hidden" aria-label="打开菜单">
+          <button
+            type="button"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="mobile-menu-button lg:hidden"
+            aria-label={isMobileMenuOpen ? '关闭菜单' : '打开菜单'}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-navigation-dialog"
+          >
             <span /><span />
           </button>
         </div>
