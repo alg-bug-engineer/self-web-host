@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "objective": {
     "metric": "monthlyQualifiedVisitorDays",
     "target": 50000,
@@ -39,6 +39,7 @@
       "统计汇总",
       "失效链接检测",
       "Sitemap、RSS 与结构化数据校验",
+      "部署成功后通过 IndexNow 通知发生变化的公开页面",
       "生成内部经营报告",
       "同步本人公众号最近 31 天已公开文章",
       "按既定质量门槛每日发布一篇 AI 深度文章"

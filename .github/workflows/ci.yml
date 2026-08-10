@@ -27,6 +27,7 @@ jobs:
       - run: node scripts/tests/test-search-console.mjs
       - run: node scripts/tests/test-import-wechat.mjs
       - run: npm run test:content-diversity
+      - run: npm run test:indexnow
       - run: npm run lint
       - run: npm run build
       - run: bash scripts/tests/test-analytics-conversions.sh

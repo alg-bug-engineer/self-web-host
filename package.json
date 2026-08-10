@@ -16,7 +16,9 @@
     "operator:search": "node scripts/fetch-search-console.mjs",
     "operator:learn": "node scripts/evaluate-operator-actions.mjs",
     "operator:report": "node scripts/generate-operator-report.mjs",
+    "seo:indexnow": "node scripts/submit-indexnow.mjs",
     "sync:wechat": "node scripts/import-wechat.mjs",
+    "test:indexnow": "node scripts/tests/test-indexnow.mjs",
     "deploy:production": "bash scripts/deploy.sh"
   },
   "dependencies": {
