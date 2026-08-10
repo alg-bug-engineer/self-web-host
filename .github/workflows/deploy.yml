@@ -47,7 +47,7 @@ jobs:
           ECS_PORT: ${{ secrets.ECS_PORT }}
         run: |
           ssh -i ~/.ssh/ecs_deploy_key -p "${ECS_PORT:-22}" "$ECS_USER@$ECS_HOST" \
-            "cd /root/self-web-host && git fetch origin '$GITHUB_SHA' && bash scripts/deploy.sh '$GITHUB_SHA'"
+            "cd /root/self-web-host && git fetch origin '$GITHUB_SHA' && git cat-file -e '$GITHUB_SHA:scripts/deploy.sh' && git show '$GITHUB_SHA:scripts/deploy.sh' | PROJECT_DIR=/root/self-web-host bash -s -- '$GITHUB_SHA'"
 
       - name: Verify public health
         run: |
