@@ -317,8 +317,8 @@ export function normalizeConversionTarget(eventName: ConversionEventName, value:
     .replace(/^-+|-+$/g, '')
     .slice(0, 64)
   const allowedTargets: Record<ConversionEventName, RegExp> = {
-    explore_articles: /^(?:home-hero|home-latest|footer|header)$/,
-    view_portfolio: /^(?:home-hero|home-books|footer)$/,
+    explore_articles: /^(?:home-hero|home-latest|footer|header|blog-(?:path|filter)-(?:all|principles|practice|insight))$/,
+    view_portfolio: /^(?:home-hero|home-books|footer|blog-proof)$/,
     view_book: /^(?:home-)?book-[1-9][0-9]{0,2}$/,
     visit_project: /^project-[1-9][0-9]{0,2}$/,
     visit_github: /^(?:project-[1-9][0-9]{0,2}|footer-profile|about-profile)$/,

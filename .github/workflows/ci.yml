@@ -29,3 +29,4 @@ jobs:
       - run: npm run lint
       - run: npm run build
       - run: bash scripts/tests/test-analytics-conversions.sh
+      - run: node scripts/tests/test-blog-learning-hub.mjs

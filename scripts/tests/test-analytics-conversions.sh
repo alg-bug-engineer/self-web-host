@@ -40,6 +40,9 @@ curl --silent --fail -X POST "${request_headers[@]}" \
 curl --silent --fail -X POST "${request_headers[@]}" \
   --data '{"kind":"conversion","path":"/portfolio","name":"view_book","target":"book-3"}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X POST "${request_headers[@]}" \
+  --data '{"kind":"conversion","path":"/blog","name":"explore_articles","target":"blog-path-principles"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
 
 INVALID_STATUS="$(curl --silent --output /dev/null --write-out '%{http_code}' -X POST "${request_headers[@]}" \
   --data '{"kind":"conversion","path":"/portfolio","name":"arbitrary_event","target":"https://example.com/private"}' \
@@ -66,6 +69,7 @@ if (daily.pageViews !== 1) throw new Error(`expected one page view, got ${daily.
 if (daily.conversions.view_book.count !== 1) throw new Error('DNT or invalid event was recorded')
 if (daily.conversions.view_book.visitors.length !== 1) throw new Error('conversion visitor was not de-duplicated')
 if (daily.conversions.view_book.targets['book-3'] !== 1) throw new Error('normalized target was not recorded')
+if (daily.conversions.explore_articles.targets['blog-path-principles'] !== 1) throw new Error('blog learning path was not recorded')
 if (daily.conversions.arbitrary_event) throw new Error('arbitrary event name was accepted')
 if ((fs.statSync(analyticsFile).mode & 0o777) !== 0o600) throw new Error('analytics file is not private')
 NODE
