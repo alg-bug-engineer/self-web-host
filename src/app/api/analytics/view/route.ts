@@ -3,7 +3,10 @@ import {
   createVisitorHash,
   getPathViews,
   normalizeAnalyticsPath,
+  normalizeConversionEventName,
+  normalizeConversionTarget,
   normalizeCoreWebVitalName,
+  recordConversion,
   recordEngagement,
   recordPageView,
   recordWebVital,
@@ -101,6 +104,19 @@ export async function POST(request: NextRequest) {
   }
   if (shouldIgnoreRequest(request)) {
     return NextResponse.json({ ok: true, ignored: true }, { headers: noStoreHeaders })
+  }
+
+  if (body.kind === 'conversion') {
+    const name = normalizeConversionEventName(body.name)
+    if (!name) {
+      return NextResponse.json({ ok: false, message: '无效转化事件' }, { status: 400 })
+    }
+    const target = normalizeConversionTarget(name, body.target)
+    if (!target) {
+      return NextResponse.json({ ok: false, message: '无效转化目标' }, { status: 400 })
+    }
+    await recordConversion(pathname, requestVisitorHash(request), name, target)
+    return NextResponse.json({ ok: true, name }, { headers: noStoreHeaders })
   }
 
   const result = await recordPageView(pathname, requestVisitorHash(request), {

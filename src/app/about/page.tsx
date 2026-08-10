@@ -150,6 +150,8 @@ export default function AboutPage() {
                     href={link.url}
                     className="flex flex-col gap-1 rounded-md border border-border-default bg-bg-tertiary px-3 py-2 text-sm text-text-secondary transition-colors hover:text-text-primary hover:border-accent-tertiary"
                     title={link.note || link.name}
+                    data-analytics-event={link.name === 'GitHub' ? 'visit_github' : undefined}
+                    data-analytics-target={link.name === 'GitHub' ? 'about-profile' : undefined}
                     {...linkProps}
                   >
                     <span className="flex items-center gap-2 text-text-primary">

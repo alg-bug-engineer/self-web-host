@@ -41,7 +41,7 @@ export default function Header({ setIsMobileMenuOpen }: HeaderProps) {
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <Link href="/search" className="header-search hidden sm:inline-flex">搜索内容 <span>⌕</span></Link>
-          <Link href="/blog" className="header-cta hidden md:inline-flex">进入知识库 <span>↗</span></Link>
+          <Link href="/blog" className="header-cta hidden md:inline-flex" data-analytics-event="explore_articles" data-analytics-target="header">进入知识库 <span>↗</span></Link>
           <button onClick={() => setIsMobileMenuOpen(true)} className="mobile-menu-button lg:hidden" aria-label="打开菜单">
             <span /><span />
           </button>

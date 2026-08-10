@@ -55,6 +55,17 @@ const vitalValue = (name: string, value: number | null) => {
   return name === 'CLS' ? value.toFixed(3) : `${Math.round(value)} ms`
 }
 
+const conversionLabel = (name: string) => ({
+  explore_articles: '进入文章',
+  view_portfolio: '查看作品',
+  view_book: '查看著作',
+  visit_project: '访问项目',
+  visit_github: '前往 GitHub',
+  view_planet: '了解知识星球',
+  join_planet: '加入知识星球',
+  open_tool: '打开工具',
+}[name] || name)
+
 export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {
   const router = useRouter()
   const [autoPublish, setAutoPublish] = useState(false)
@@ -265,7 +276,7 @@ export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {
             <p className="text-xs text-text-tertiary">访客按天匿名哈希；不保存原始 IP</p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-7">
             <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
               <p className="text-xs text-text-tertiary">页面浏览 PV</p>
               <strong className="mt-2 block text-2xl text-text-primary">{analytics.pageViews.toLocaleString('zh-CN')}</strong>
@@ -285,6 +296,11 @@ export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {
               <p className="text-xs text-text-tertiary">有效阅读率</p>
               <strong className="mt-2 block text-2xl text-text-primary">{analytics.engagementRate}%</strong>
               <span className="mt-1 block text-xs text-text-secondary">停留 ≥10 秒或阅读 ≥25%</span>
+            </div>
+            <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+              <p className="text-xs text-text-tertiary">价值转化率</p>
+              <strong className="mt-2 block text-2xl text-text-primary">{analytics.conversionRate}%</strong>
+              <span className="mt-1 block text-xs text-text-secondary">{analytics.conversionVisitors} 个每日匿名转化访客</span>
             </div>
             <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
               <p className="text-xs text-text-tertiary">热门页面数</p>
@@ -384,6 +400,32 @@ export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {
                 </div>
               ) : <p className="text-sm text-text-tertiary">新版本部署后开始记录落地页。</p>}
             </div>
+          </div>
+
+          <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+            <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-text-primary">个人价值转化漏斗</h3>
+                <p className="mt-1 text-xs text-text-tertiary">作品、著作、项目、GitHub、知识星球与工具的真实点击；同样按天匿名</p>
+              </div>
+              <span className="text-xs text-text-tertiary">总访客 → {analytics.conversionVisitors} 个转化访客</span>
+            </div>
+            {analytics.topConversions.length ? (
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                {analytics.topConversions.map((event) => (
+                  <div key={event.name} className="rounded-lg border border-border-default bg-bg-secondary p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <strong className="text-sm text-text-primary">{conversionLabel(event.name)}</strong>
+                      <span className="text-xs text-text-tertiary">{event.count} 次</span>
+                    </div>
+                    <p className="mt-2 text-xl font-semibold text-text-primary">{event.visitors} <span className="text-xs font-normal text-text-tertiary">访客</span></p>
+                    <p className="mt-2 truncate text-xs text-text-tertiary" title={event.targets.map((item) => `${item.target} ${item.count}`).join(' · ')}>
+                      {event.targets.slice(0, 2).map((item) => `${item.target} ${item.count}`).join(' · ') || '等待目标数据'}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : <p className="text-sm text-text-tertiary">新版本部署后开始记录价值转化。</p>}
           </div>
         </section>
       )}

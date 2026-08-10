@@ -156,6 +156,8 @@ export default function ToolsCollectionClient({ tools, settings }: { tools: Tool
                 <CardTag
                   key={tool.id}
                   {...props}
+                  data-analytics-event={tool.isPro ? 'view_planet' : 'open_tool'}
+                  data-analytics-target={String(tool.id)}
                   className={`relative text-left bg-bg-secondary border rounded-2xl p-5 flex flex-col gap-4 hover:border-accent-tertiary hover:shadow-lg transition-all group overflow-hidden ${
                     activePluginId === tool.pluginId ? 'border-accent-tertiary ring-2 ring-accent-tertiary/20' : 'border-border-default'
                   }`}
@@ -260,6 +262,8 @@ export default function ToolsCollectionClient({ tools, settings }: { tools: Tool
                         <button
                           onClick={() => handleToolClick(tool)}
                           className="text-xs text-accent-tertiary font-bold"
+                          data-analytics-event={tool.isPro ? 'view_planet' : 'open_tool'}
+                          data-analytics-target={String(tool.id)}
                         >
                           {tool.type === 'plugin' ? (activePluginId === tool.pluginId ? '运行中' : '试用') : (tool.isPro ? '解锁' : '详情')}
                         </button>

@@ -25,6 +25,34 @@ export default function InternalAnalytics() {
     }
     const returningReader = Boolean(firstSeen && firstSeen < day)
 
+    const sendConversion = (event: MouseEvent) => {
+      const element = event.target instanceof Element
+        ? event.target.closest<HTMLElement>('[data-analytics-event]')
+        : null
+      if (!element) return
+      const name = element.dataset.analyticsEvent
+      if (!name) return
+      const target = element.dataset.analyticsTarget || 'unspecified'
+
+      fetch('/api/analytics/view', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          kind: 'conversion',
+          path: pathname,
+          name,
+          target,
+        }),
+        keepalive: true,
+      }).catch(() => undefined)
+
+      window.gtag?.('event', name, {
+        content_type: 'value_cta',
+        item_id: target,
+        page_path: pathname,
+      })
+    }
+
     if (!alreadyCounted) {
       fetch('/api/analytics/view', {
         method: 'POST',
@@ -69,6 +97,7 @@ export default function InternalAnalytics() {
 
     updateDepth()
     window.addEventListener('scroll', updateDepth, { passive: true })
+    document.addEventListener('click', sendConversion)
     window.addEventListener('pagehide', sendEngagement)
     const interval = window.setInterval(sendEngagement, 30_000)
 
@@ -76,6 +105,7 @@ export default function InternalAnalytics() {
       sendEngagement()
       window.clearInterval(interval)
       window.removeEventListener('scroll', updateDepth)
+      document.removeEventListener('click', sendConversion)
       window.removeEventListener('pagehide', sendEngagement)
     }
   }, [pathname])

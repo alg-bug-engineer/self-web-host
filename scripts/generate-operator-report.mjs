@@ -93,6 +93,13 @@ const qualifiedVisitorsFor = (days) => sum(days.map((day) => {
   }
   return visitors.size
 }))
+const conversionVisitorsFor = (days) => sum(days.map((day) => {
+  const visitors = new Set()
+  for (const event of Object.values(analyticsDays[day]?.conversions || {})) {
+    for (const visitor of event?.visitors || []) visitors.add(visitor)
+  }
+  return visitors.size
+}))
 const currentVisitors = visitorsFor(current28Days)
 const previousVisitors = visitorsFor(previous28Days)
 const currentQualifiedVisitors = qualifiedVisitorsFor(current28Days)
@@ -102,11 +109,13 @@ const current7Visitors = visitorsFor(current7Days)
 const previous7Visitors = visitorsFor(previous7Days)
 const returningVisitors = returningVisitorsFor(current28Days)
 const engagedVisitors = engagedVisitorsFor(current28Days)
+const conversionVisitors = conversionVisitorsFor(current28Days)
 const currentEngagementSignals = current28Days.flatMap(engagementSignalsForDay)
 const depth50Visitors = currentEngagementSignals.filter((signal) => Number(signal?.depth || 0) >= 50).length
 const depth90Visitors = currentEngagementSignals.filter((signal) => Number(signal?.depth || 0) >= 90).length
 const returningRate = currentVisitors ? Math.min(100, Math.round((returningVisitors / currentVisitors) * 1000) / 10) : 0
 const engagementRate = currentVisitors ? Math.min(100, Math.round((engagedVisitors / currentVisitors) * 1000) / 10) : 0
+const conversionRate = currentVisitors ? Math.min(100, Math.round((conversionVisitors / currentVisitors) * 1000) / 10) : 0
 const activeDays = current28Days.filter((day) => analyticsDays[day]).length
 const projectedMonthlyVisitors = activeDays
   ? Math.round((currentVisitors / activeDays) * 30)
@@ -117,6 +126,7 @@ const projectedMonthlyQualifiedVisitors = activeDays
 
 const pathTotals = {}
 const sourceTotals = {}
+const conversionTotals = {}
 for (const day of current28Days) {
   const daily = analyticsDays[day]
   if (!daily) continue
@@ -125,6 +135,14 @@ for (const day of current28Days) {
   }
   for (const [source, visitors] of Object.entries(daily.sources || {})) {
     sourceTotals[source] = (sourceTotals[source] || 0) + Number(visitors || 0)
+  }
+  for (const [name, event] of Object.entries(daily.conversions || {})) {
+    conversionTotals[name] ||= { count: 0, visitorDays: 0, targets: {} }
+    conversionTotals[name].count += Number(event?.count || 0)
+    conversionTotals[name].visitorDays += Array.isArray(event?.visitors) ? event.visitors.length : 0
+    for (const [target, count] of Object.entries(event?.targets || {})) {
+      conversionTotals[name].targets[target] = (conversionTotals[name].targets[target] || 0) + Number(count || 0)
+    }
   }
 }
 
@@ -136,6 +154,17 @@ const topSources = Object.entries(sourceTotals)
   .sort((left, right) => right[1] - left[1])
   .slice(0, 10)
   .map(([source, visitors]) => ({ source, visitors }))
+const topConversions = Object.entries(conversionTotals)
+  .sort((left, right) => right[1].visitorDays - left[1].visitorDays || right[1].count - left[1].count)
+  .map(([name, event]) => ({
+    name,
+    count: event.count,
+    visitorDays: event.visitorDays,
+    topTargets: Object.entries(event.targets)
+      .sort((left, right) => right[1] - left[1])
+      .slice(0, 5)
+      .map(([target, count]) => ({ target, count })),
+  }))
 const searchVisitors = sum(topSources
   .filter((item) => item.source.startsWith('search:'))
   .map((item) => item.visitors))
@@ -205,6 +234,14 @@ if (!activeDays) {
       priority: 2,
       type: 'reading-experience',
       action: '有效阅读率低于 25%，优先检查访问最高页面的首屏承诺、正文结构、移动端可读性与相关文章入口。',
+      reviewRequired: true,
+    })
+  }
+  if (currentVisitors >= 20 && conversionRate < 5) {
+    recommendedActions.push({
+      priority: 2,
+      type: 'value-conversion',
+      action: '价值转化率低于 5%，核对高访问页面是否自然承接到著作、项目、GitHub、知识星球或工具；只优化一个高意图入口并观察 7 天。',
       reviewRequired: true,
     })
   }
@@ -283,7 +320,7 @@ if (!searchConsole || searchConsole.status === 'unconfigured') {
 }
 
 const report = {
-  version: 6,
+  version: 7,
   generatedAt: new Date().toISOString(),
   objective: goals.objective,
   status: {
@@ -316,6 +353,12 @@ const report = {
     engagementRatePercent: engagementRate,
     depth50Visitors,
     depth90Visitors,
+  },
+  value: {
+    conversionVisitors,
+    conversionRatePercent: conversionRate,
+    topConversions,
+    measurement: '按日匿名访客去重；记录受限的高价值入口点击，不保存原始 IP 或任意外链 URL。',
   },
   acquisition: {
     referrerEstimate: { searchVisitors, searchSharePercent: searchShare, topSources },
