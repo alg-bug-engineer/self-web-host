@@ -6,7 +6,7 @@ const baseUrl = (process.env.WECHAT_RSS_ADMIN_BASE_URL || 'http://127.0.0.1:8001
 const feedId = process.env.WECHAT_RSS_FEED_ID || 'MP_WXS_3212677307'
 const passwordFile = process.env.WECHAT_RSS_PASSWORD_FILE || '/opt/we-mp-rss/admin-password'
 const username = process.env.WECHAT_RSS_USERNAME || 'admin'
-const maxPages = Math.min(10, Math.max(1, Number(process.env.WECHAT_RSS_SYNC_PAGES || 5)))
+const maxPages = Math.min(10, Math.max(1, Number(process.env.WECHAT_RSS_SYNC_PAGES || 1)))
 
 const password = (await fs.readFile(passwordFile, 'utf8')).trim()
 if (!password) throw new Error('We-MP-RSS 管理密码文件为空。')

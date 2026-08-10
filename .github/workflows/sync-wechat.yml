@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
 
@@ -46,16 +47,21 @@ jobs:
             > /tmp/wechat-rss.xml
           test -s /tmp/wechat-rss.xml
 
-      - name: Import new articles as drafts
+      - name: Import verified recent articles
         env:
           WECHAT_RSS_FILE: /tmp/wechat-rss.xml
-          WECHAT_AUTO_PUBLISH: 'false'
+          WECHAT_AUTO_PUBLISH: 'true'
+          WECHAT_IMPORT_DAYS: '31'
+          WECHAT_MAX_IMPORTS: '12'
+          WECHAT_EXPECTED_BIZ: 'MzIxMjY3NzMwNw=='
         run: npm run sync:wechat
 
-      - name: Build imported content
-        run: npm run build
+      - name: Verify imported content
+        run: |
+          npm run lint
+          npm run build
 
-      - name: Open review pull request
+      - name: Merge verified sync pull request
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -68,6 +74,22 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git checkout -b "$branch"
           git add content/posts
-          git commit -m "同步公众号文章草稿"
+          git commit -m "同步公众号最近文章"
           git push origin "$branch"
-          gh pr create --base main --head "$branch" --title "同步公众号文章草稿" --body "每日公众号同步生成的待审核草稿。审核正文与元数据后即可合并发布。"
+          source scripts/lib/github-pr-recovery.sh
+          pr_number="$(github_create_or_find_pr main "$branch" "同步公众号最近文章" "自动同步本人公众号最近 31 天已经公开的文章。来源账号、时间范围、篇数、正文长度、lint 与生产构建均已校验。")"
+          merge_sha="$(github_merge_and_resolve_sha "$pr_number" "同步公众号最近文章 (#${pr_number})")"
+          gh workflow run deploy.yml --ref main
+          deployed=false
+          for _ in {1..30}; do
+            health="$(curl --fail --silent --show-error --max-time 15 https://ai-knowledgepoints.cn/api/health || true)"
+            if [[ "$health" == *"\"commit\":\"$merge_sha\""* ]]; then
+              deployed=true
+              break
+            fi
+            sleep 20
+          done
+          if [[ "$deployed" != true ]]; then
+            echo "网站在等待时间内没有部署到 $merge_sha。" >&2
+            exit 1
+          fi

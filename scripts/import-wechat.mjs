@@ -8,7 +8,14 @@ const feedUrl = process.env.WECHAT_RSS_URL?.trim()
 const feedFile = process.env.WECHAT_RSS_FILE?.trim()
 const htmlFile = process.env.WECHAT_HTML_FILE?.trim()
 const autoPublish = process.env.WECHAT_AUTO_PUBLISH === 'true'
-const postsDir = path.join(process.cwd(), 'content', 'posts')
+const postsDir = path.resolve(process.cwd(), process.env.WECHAT_POSTS_DIR?.trim() || path.join('content', 'posts'))
+const expectedBiz = process.env.WECHAT_EXPECTED_BIZ?.trim() || 'MzIxMjY3NzMwNw=='
+const importDays = Math.min(90, Math.max(1, Number.parseInt(process.env.WECHAT_IMPORT_DAYS || '31', 10) || 31))
+const maxImports = Math.min(20, Math.max(1, Number.parseInt(process.env.WECHAT_MAX_IMPORTS || '12', 10) || 12))
+const now = new Date(process.env.WECHAT_NOW || Date.now())
+if (Number.isNaN(now.getTime())) throw new Error('WECHAT_NOW 不是有效日期。')
+const cutoff = new Date(now)
+cutoff.setUTCDate(cutoff.getUTCDate() - importDays)
 
 if (!feedUrl && !feedFile && !htmlFile) {
   console.log('未配置公众号 RSS 或文章 HTML，跳过同步。')
@@ -26,6 +33,15 @@ const existingContent = await Promise.all(
     .filter((filename) => filename.endsWith('.mdx'))
     .map((filename) => fs.readFile(path.join(postsDir, filename), 'utf8')),
 )
+const existingArticleKeys = new Set(existingContent.flatMap((content) => {
+  const encoded = content.match(/^sourceUrl:\s*(.+)$/m)?.[1]
+  if (!encoded) return []
+  try {
+    return [wechatArticleKey(JSON.parse(encoded))]
+  } catch {
+    return []
+  }
+}).filter(Boolean))
 
 const turndown = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' })
 turndown.remove(['script', 'style', 'noscript'])
@@ -33,8 +49,10 @@ turndown.remove(['script', 'style', 'noscript'])
 let created = 0
 for (const item of items) {
   const title = textValue(item.title).trim()
-  const sourceUrl = linkValue(item.link) || textValue(item.guid) || textValue(item.id)
-  if (!title || !sourceUrl || existingContent.some((content) => content.includes(`sourceUrl: ${JSON.stringify(sourceUrl)}`))) {
+  const rawSourceUrl = linkValue(item.link) || textValue(item.guid) || textValue(item.id)
+  const sourceUrl = normalizeWechatUrl(rawSourceUrl)
+  const articleKey = wechatArticleKey(sourceUrl)
+  if (!title || !sourceUrl || !articleKey || existingArticleKeys.has(articleKey)) {
     continue
   }
 
@@ -47,18 +65,20 @@ for (const item of items) {
     .slice(0, 180)
     .trim()
   const dateValue = textValue(item.pubDate) || textValue(item.published) || textValue(item.updated)
-  const date = Number.isNaN(Date.parse(dateValue)) ? new Date() : new Date(dateValue)
+  const date = Number.isNaN(Date.parse(dateValue)) ? null : new Date(dateValue)
+  if (!date || date < cutoff || date > now) continue
   const slug = `wechat-${date.toISOString().slice(0, 10)}-${crypto
     .createHash('sha1')
-    .update(sourceUrl)
+    .update(articleKey)
     .digest('hex')
     .slice(0, 8)}`
   const markdown = turndown
-    .turndown(rawHtml)
+    .turndown(normalizeWechatImages(rawHtml))
     .replace(/\{/g, '&#123;')
     .replace(/\}/g, '&#125;')
     .replace(/\n{3,}/g, '\n\n')
     .trim()
+  if (markdown.length < 200) continue
 
   const frontmatter = [
     '---',
@@ -83,6 +103,8 @@ for (const item of items) {
     'utf8',
   )
   created += 1
+  existingArticleKeys.add(articleKey)
+  if (created >= maxImports) break
 }
 
 console.log(`公众号同步完成：新增 ${created} 篇${autoPublish ? '已发布文章' : '待审核草稿'}。`)
@@ -172,4 +194,40 @@ function stripHtml(value) {
     .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
     .replace(/\s+/g, ' ')
+}
+
+function normalizeWechatImages(value) {
+  return value.replace(/<img\b[^>]*>/gi, (tag) => {
+    const dataSrc = tag.match(/\sdata-src=(['"])(.*?)\1/i)?.[2]
+    if (!dataSrc) return tag
+    return tag
+      .replace(/\ssrc=(['"])(.*?)\1/i, '')
+      .replace(/\sdata-src=(['"])(.*?)\1/i, ` src="${dataSrc}"`)
+  })
+}
+
+function normalizeWechatUrl(value) {
+  try {
+    const url = new URL(String(value || '').trim())
+    if (url.hostname.toLowerCase() !== 'mp.weixin.qq.com') return ''
+    if (expectedBiz && url.searchParams.get('__biz') !== expectedBiz) return ''
+    url.protocol = 'https:'
+    url.hash = ''
+    return url.toString()
+  } catch {
+    return ''
+  }
+}
+
+function wechatArticleKey(value) {
+  try {
+    const url = new URL(value)
+    const biz = url.searchParams.get('__biz')
+    const mid = url.searchParams.get('mid')
+    const idx = url.searchParams.get('idx') || '1'
+    if (biz && mid) return `${biz}:${mid}:${idx}`
+    return url.toString()
+  } catch {
+    return ''
+  }
 }
