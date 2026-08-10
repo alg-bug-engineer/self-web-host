@@ -11,6 +11,8 @@
     "article:daily": "node scripts/generate-deep-article.mjs",
     "test:content-diversity": "node scripts/tests/test-content-diversity.mjs",
     "test:content-operations": "node scripts/tests/test-content-operations.mjs",
+    "test:wechat-rss-backoff": "node scripts/tests/test-wechat-rss-backoff.mjs",
+    "test:fetch-wechat-rss": "node scripts/tests/test-fetch-wechat-rss.mjs",
     "test:operator-content-report": "node scripts/tests/test-operator-content-report.mjs",
     "test:active-reading": "node scripts/tests/test-active-reading.mjs",
     "test:article-headings": "node scripts/tests/test-article-headings.mjs",

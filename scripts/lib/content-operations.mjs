@@ -83,12 +83,21 @@ export function buildContentOperationsReport({
   }
 
   if (rss.checked) {
+    const rssBackoffActive = typeof rss.backoffUntil === 'string'
+      && Number.isFinite(Date.parse(rss.backoffUntil))
+      && Date.parse(rss.backoffUntil) > now.getTime()
     if (!rss.reachable) {
       issues.push({ severity: 'error', code: 'wechat-rss-unreachable', message: '公众号 RSS 内网服务无法读取。' })
     } else if (rss.loginStatus !== true) {
       issues.push({ severity: 'error', code: 'wechat-rss-auth-expired', message: '公众号 RSS 微信扫码授权已失效。' })
     } else if (!rss.feedExists) {
       issues.push({ severity: 'error', code: 'wechat-rss-feed-missing', message: '公众号 RSS 订阅不存在。' })
+    } else if (Number(rss.itemCount || 0) === 0 && rssBackoffActive) {
+      issues.push({
+        severity: 'warning',
+        code: 'wechat-rss-backoff',
+        message: `公众号 RSS 授权有效，但最近一次采集仍为 0 篇；为避免持续触发微信频控，${new Date(rss.backoffUntil).toISOString()} 前只读取现有 Feed。`,
+      })
     } else if (Number(rss.itemCount || 0) === 0) {
       issues.push({ severity: 'warning', code: 'wechat-rss-empty', message: '公众号 RSS 授权有效，但 Feed 暂无文章；保持每日单次采集，避免触发频控。' })
     }
@@ -154,6 +163,9 @@ function sanitizeRssStatus(rss) {
     feedExists: rss.checked && rss.reachable ? Boolean(rss.feedExists) : null,
     feedName: typeof rss.feedName === 'string' ? rss.feedName.slice(0, 80) : null,
     itemCount: Number.isFinite(Number(rss.itemCount)) ? Number(rss.itemCount) : null,
+    consecutiveEmptyUpdates: Math.max(0, Number.parseInt(rss.consecutiveEmptyUpdates, 10) || 0),
+    backoffUntil: validIsoDate(rss.backoffUntil),
+    lastAttemptAt: validIsoDate(rss.lastAttemptAt),
     checkedAt: validIsoDate(rss.checkedAt),
   }
 }

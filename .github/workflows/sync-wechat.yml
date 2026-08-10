@@ -43,7 +43,7 @@ jobs:
           ECS_PORT: ${{ secrets.ECS_PORT }}
         run: |
           ssh -i ~/.ssh/ecs_deploy_key -p "${ECS_PORT:-22}" "$ECS_USER@$ECS_HOST" \
-            "cd /root/self-web-host && git fetch origin '$GITHUB_SHA' && git show '$GITHUB_SHA:scripts/fetch-wechat-rss.mjs' | node --input-type=module" \
+            "set -Eeuo pipefail; cd /root/self-web-host; git fetch origin '$GITHUB_SHA'; sync_dir=\$(mktemp -d); trap 'rm -rf \"\$sync_dir\"' EXIT; git archive '$GITHUB_SHA' scripts/fetch-wechat-rss.mjs scripts/lib/wechat-rss-backoff.mjs | tar -x -C \"\$sync_dir\"; cd \"\$sync_dir\"; node scripts/fetch-wechat-rss.mjs" \
             > /tmp/wechat-rss.xml
           test -s /tmp/wechat-rss.xml
 

@@ -101,6 +101,25 @@ const missedScheduledRun = buildContentOperationsReport({
 assert.equal(missedScheduledRun.website.expectedToday, true)
 assert.ok(missedScheduledRun.issues.some((issue) => issue.code === 'daily-content-stale'))
 
+const protectedBackoff = buildContentOperationsReport({
+  now: new Date('2026-08-11T02:00:00Z'),
+  articles,
+  manifests,
+  publishState,
+  rss: {
+    ...rss,
+    consecutiveEmptyUpdates: 1,
+    lastAttemptAt: '2026-08-11T01:00:00Z',
+    backoffUntil: '2026-08-13T01:00:00Z',
+    cookie: 'must-not-leak-cookie',
+  },
+})
+assert.ok(protectedBackoff.issues.some((issue) => issue.code === 'wechat-rss-backoff'))
+assert.ok(!protectedBackoff.issues.some((issue) => issue.code === 'wechat-rss-empty'))
+assert.equal(protectedBackoff.inboundSync.rss.consecutiveEmptyUpdates, 1)
+assert.equal(protectedBackoff.inboundSync.rss.backoffUntil, '2026-08-13T01:00:00.000Z')
+assert.ok(!JSON.stringify(protectedBackoff).includes('must-not-leak'))
+
 const healthy = buildContentOperationsReport({
   now: new Date('2026-08-11T02:00:00Z'),
   articles: [articles[0]],
