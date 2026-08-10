@@ -161,6 +161,31 @@ const markdownResults = await mapLimit(articleUrls, 5, async (articleUrl) => {
   }
   return { markdownUrl, healthy }
 })
+const identityMarkdownTargets = [
+  { pathname: '/about/index.html.md', canonical: '/about', required: ['张其来', '芝士AI吃鱼', 'CN118861081B', '公开来源'] },
+  { pathname: '/portfolio/index.html.md', canonical: '/portfolio', required: ['著作与作品', '9787115668981', '9787115689856'] },
+]
+const identityMarkdownResults = await mapLimit(identityMarkdownTargets, 2, async (target) => {
+  const markdownUrl = absolute(target.pathname)
+  const canonical = absolute(target.canonical)
+  const result = await fetchText(markdownUrl)
+  const contentType = result.response?.headers.get('content-type') || ''
+  const canonicalHeader = result.response?.headers.get('link') || ''
+  const healthy = result.response?.ok === true
+    && contentType.toLowerCase().includes('text/markdown')
+    && /^#\s+\S/m.test(result.text)
+    && target.required.every((token) => result.text.includes(token))
+    && result.text.includes(canonical)
+    && canonicalHeader.includes(`<${canonical}>`)
+    && canonicalHeader.includes('rel="canonical"')
+  if (!healthy) {
+    addIssue('error', 'geo-identity-markdown', markdownUrl, result.error || '作者或作品 Markdown 不可用、来源不完整或 canonical 错误。')
+  }
+  if (!llms.text.includes(markdownUrl)) {
+    addIssue('warning', 'geo-discovery', markdownUrl, 'llms.txt 未引用该身份实体的 Markdown 版本。')
+  }
+  return { markdownUrl, healthy }
+})
 let indexNowKeyOk = false
 if (indexNowConfig?.key && indexNowConfig?.keyFile) {
   const keyLocation = absolute(`/${indexNowConfig.keyFile}`)
@@ -199,7 +224,7 @@ for (const [header, label] of Object.entries(requiredHeaders)) {
 }
 
 const report = {
-  version: 2,
+  version: 3,
   checkedAt,
   target: siteUrl.origin,
   status: issues.some((issue) => issue.severity === 'error') ? 'degraded' : 'healthy',
@@ -210,6 +235,8 @@ const report = {
     internalLinksChecked: internalLinks.length,
     markdownPagesChecked: markdownResults.length,
     markdownPagesHealthy: markdownResults.filter((item) => item.healthy).length,
+    identityMarkdownPagesChecked: identityMarkdownResults.length,
+    identityMarkdownPagesHealthy: identityMarkdownResults.filter((item) => item.healthy).length,
     indexNowKeyOk,
     errors: issues.filter((issue) => issue.severity === 'error').length,
     warnings: issues.filter((issue) => issue.severity === 'warning').length,

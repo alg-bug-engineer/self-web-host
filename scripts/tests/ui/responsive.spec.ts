@@ -128,7 +128,19 @@ test('作品页公开作品并保持外链安全属性', async ({ page }) => {
   await page.goto('/portfolio')
   await expect(page.locator('h1')).toBeVisible()
   await expect(page.getByText('共 5 本')).toBeVisible()
+  await expect(page.getByText('ISBN 9787115668981')).toBeVisible()
+  await expect(page.getByText('ISBN 9787115689856')).toBeVisible()
   await expectNoHorizontalOverflow(page)
+
+  await expect(page.locator('link[rel="alternate"][type="text/markdown"]')).toHaveAttribute(
+    'href',
+    'https://ai-knowledgepoints.cn/portfolio/index.html.md',
+  )
+  const markdown = await page.request.get('/portfolio/index.html.md')
+  expect(markdown.status()).toBe(200)
+  expect(markdown.headers()['content-type']).toContain('text/markdown')
+  expect(markdown.headers().link).toContain('<https://ai-knowledgepoints.cn/portfolio>; rel="canonical"')
+  expect(await markdown.text()).toContain('ISBN：9787115668981')
 
   const externalLinks = page.locator('main a[target="_blank"]')
   expect(await externalLinks.count()).toBeGreaterThan(0)
@@ -145,6 +157,18 @@ test('关于页展示经公开来源核对的 GitHub 信息', async ({ page }) =
   await expect(page.getByText('个 GitHub 仓库', { exact: true })).toBeVisible()
   await expect(page.getByText(/GitHub 公开仓库数于 2026-08-11 核对/)).toBeVisible()
   await expect(page.getByRole('link', { name: 'GitHub', exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: '公开可核验的专业成果' })).toBeVisible()
+  await expect(page.getByText('CN118861081B', { exact: false })).toBeVisible()
+  await expect(page.getByText('阿里、百度、滴滴、浪潮', { exact: false }).first()).toBeVisible()
+  await expect(page.locator('link[rel="alternate"][type="text/markdown"]')).toHaveAttribute(
+    'href',
+    'https://ai-knowledgepoints.cn/about/index.html.md',
+  )
+  const markdown = await page.request.get('/about/index.html.md')
+  expect(markdown.status()).toBe(200)
+  expect(markdown.headers()['content-type']).toContain('text/markdown')
+  expect(markdown.headers().link).toContain('<https://ai-knowledgepoints.cn/about>; rel="canonical"')
+  expect(await markdown.text()).toContain('CN118861081B')
   await expectNoHorizontalOverflow(page)
 })
 

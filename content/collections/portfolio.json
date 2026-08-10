@@ -26,11 +26,13 @@
   {
     "title": "这就是 GEO：在 AI 流量红利中抢占先机",
     "type": "book",
-    "date": "2026-03-15",
+    "date": "2026-03-01",
     "authors": ["张其来", "武寒波"],
     "description": "系统介绍生成引擎优化的基本原理、内容策略与实践方法，帮助读者理解 AI 搜索时代的新流量入口。",
     "image": "/images/portfolio/geo.png",
     "link": "https://mp.weixin.qq.com/s/bGAFmbRQWgXun2jCD9dd0Q",
+    "isbn": "9787115689856",
+    "publisher": "人民邮电出版社",
     "tags": ["GEO", "生成引擎优化", "内容策略"]
   },
   {
@@ -41,6 +43,8 @@
     "description": "从检索、切分、向量化到生成，循序梳理 RAG 的核心概念与工程实践。",
     "image": "/images/portfolio/rag.png",
     "link": "https://www.ptpress.com.cn/",
+    "isbn": "9787115668981",
+    "publisher": "人民邮电出版社",
     "tags": ["RAG", "检索增强生成", "工程实践"]
   },
   {

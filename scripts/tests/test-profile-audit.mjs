@@ -19,12 +19,16 @@ try {
   let report = await runAudit()
   assert.equal(report.status, 'healthy')
   assert.equal(report.github.publicRepositories, 33)
+  assert.equal(report.version, 2)
+  assert.equal(report.publicEvidence.verifiedWorks.length, 1)
+  assert.equal(report.publicEvidence.verifiedWorks[0].identifier, 'CN118861081B')
   assert.deepEqual(report.issues, [])
   assert.equal((await fs.stat(path.join(dataDir, 'operator', 'profile-latest.json'))).mode & 0o777, 0o600)
   let operatorReport = await runOperatorReport()
   assert.equal(operatorReport.version, 11)
   assert.equal(operatorReport.profile.status, 'healthy')
   assert.ok(operatorReport.observations.some((item) => item.includes('33 个公开仓库')))
+  assert.ok(operatorReport.observations.some((item) => item.includes('1 项公开专业成果')))
 
   const staleProfile = structuredClone(originalProfile)
   staleProfile.checks.github.expectedPublicRepositories = 31

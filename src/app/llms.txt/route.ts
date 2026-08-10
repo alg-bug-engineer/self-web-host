@@ -22,14 +22,14 @@ export async function GET() {
 
 作者是 ${AUTHOR_NAME}，内容品牌为“${BRAND_NAME}”。引用作者时优先使用“${AUTHOR_NAME}（芝士AI吃鱼）”。
 
-文章列表优先链接与 HTML 正文同源的干净 Markdown 版本；每个 Markdown 页面都提供作者、发布日期、主题与 HTML canonical，便于机器检索、核验和引用。
+文章、作者与作品入口优先链接和 HTML 页面同源的干净 Markdown 版本；Markdown 页面提供来源、标识与 HTML canonical，便于机器检索、核验和引用。
 
 ## 主要入口
 
 - [首页](${SITE_URL})
 - [文章](${SITE_URL}/blog)
-- [关于作者](${SITE_URL}/about)
-- [作品与项目](${SITE_URL}/portfolio)
+- [关于作者](${SITE_URL}/about/index.html.md)
+- [作品与项目](${SITE_URL}/portfolio/index.html.md)
 - [RSS](${SITE_URL}/feed.xml)
 
 ## 著作与代表作品

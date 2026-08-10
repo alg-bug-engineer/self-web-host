@@ -31,6 +31,8 @@
     "test:indexnow": "node scripts/tests/test-indexnow.mjs",
     "test:llms-markdown": "node scripts/tests/test-llms-markdown.mjs",
     "test:profile-audit": "node scripts/tests/test-profile-audit.mjs",
+    "test:identity-geo": "node scripts/tests/test-identity-markdown.mjs",
+    "test:identity-geo-build": "node scripts/tests/test-identity-geo-build.mjs",
     "deploy:production": "bash scripts/deploy.sh"
   },
   "dependencies": {

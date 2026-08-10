@@ -14,9 +14,19 @@ const profilePath = process.env.PROFILE_DATA_FILE || path.join(projectDir, 'src'
 const fixturePath = process.env.PROFILE_GITHUB_FIXTURE
 const profile = JSON.parse(await fs.readFile(profilePath, 'utf8'))
 const expected = profile?.checks?.github
+const publicIdentity = profile?.publicIdentity
+const verifiedWorks = Array.isArray(profile?.verifiedWorks) ? profile.verifiedWorks : []
 
 if (!expected?.login || !expected?.profileUrl || !Number.isInteger(expected?.expectedPublicRepositories)) {
   throw new Error('src/data/profile.json 缺少有效的 GitHub 核对配置。')
+}
+if (!profile?.publicEvidenceVerifiedAt || !publicIdentity?.career?.sourceUrl || !verifiedWorks.length) {
+  throw new Error('src/data/profile.json 缺少公开身份或专业成果的核验来源。')
+}
+for (const work of verifiedWorks) {
+  if (!work?.title || !work?.identifier || !work?.url || !work?.sourceLabel) {
+    throw new Error('src/data/profile.json 存在缺少标识或来源的专业成果。')
+  }
 }
 
 const generatedAt = new Date().toISOString()
@@ -80,7 +90,7 @@ if (github) {
 
 const unavailable = issues.some((issue) => issue.code === 'github-profile-unavailable')
 const report = {
-  version: 1,
+  version: 2,
   generatedAt,
   status: unavailable ? 'unavailable' : issues.length ? 'review-needed' : 'healthy',
   profileVersion: profile.version,
@@ -93,10 +103,26 @@ const report = {
     profileUrl: expected.profileUrl,
     updatedAt: typeof github.updated_at === 'string' ? github.updated_at : null,
   } : null,
+  publicEvidence: {
+    verifiedAt: profile.publicEvidenceVerifiedAt,
+    careerSource: {
+      label: publicIdentity.career.sourceLabel,
+      url: publicIdentity.career.sourceUrl,
+    },
+    verifiedWorks: verifiedWorks.map((work) => ({
+      type: work.type,
+      title: work.title,
+      identifier: work.identifier,
+      url: work.url,
+      sourceLabel: work.sourceLabel,
+    })),
+  },
   manualClaims: [
     { key: 'books', source: profile.sourceNotes?.books || 'author-provided' },
     { key: 'csdnArticles', source: profile.sourceNotes?.csdnArticles || 'public-profile' },
     { key: 'wechatReaders', source: profile.sourceNotes?.wechatReaders || 'author-provided' },
+    { key: 'career', source: profile.sourceNotes?.career || 'public-author-bio' },
+    { key: 'verifiedWorks', source: profile.sourceNotes?.verifiedWorks || 'public-record' },
   ],
   issues,
 }

@@ -6,7 +6,10 @@ import { AUTHOR_NAME, BRAND_NAME, SITE_URL } from '@/lib/site'
 export const metadata = {
   title: '著作与作品 | 芝士AI吃鱼',
   description: '张其来的著作、AI 产品与开源项目，覆盖大模型、RAG、GEO、Token 经济、Agent 与 Vibe Coding。',
-  alternates: { canonical: '/portfolio' },
+  alternates: {
+    canonical: '/portfolio',
+    types: { 'text/markdown': '/portfolio/index.html.md' },
+  },
 }
 
 type PortfolioItem = {
@@ -19,6 +22,8 @@ type PortfolioItem = {
   link?: string
   github?: string
   tags?: string[]
+  isbn?: string
+  publisher?: string
 }
 
 const items = portfolioData as PortfolioItem[]
@@ -61,6 +66,10 @@ export default function PortfolioPage() {
       url: item.link || `${SITE_URL}/portfolio`,
       author: item.authors?.map((name) => ({ '@type': 'Person', name })) || { '@id': `${SITE_URL}/#person` },
       keywords: item.tags?.join(', '),
+      datePublished: item.date,
+      isbn: item.isbn,
+      publisher: item.publisher ? { '@type': 'Organization', name: item.publisher } : undefined,
+      image: item.image ? `${SITE_URL}${item.image}` : undefined,
     })),
   }
 
@@ -100,6 +109,11 @@ export default function PortfolioPage() {
               <div className="px-1 pt-5">
                 <h3 className="text-base font-semibold leading-6 text-text-primary">《{book.title}》</h3>
                 <p className="mt-2 text-sm text-text-tertiary">{book.authors?.join('、')}</p>
+                {(book.publisher || book.isbn) && (
+                  <p className="mt-2 text-xs leading-5 text-text-tertiary">
+                    {[book.publisher, book.isbn ? `ISBN ${book.isbn}` : null].filter(Boolean).join(' · ')}
+                  </p>
+                )}
                 <p className="mt-3 text-sm leading-6 text-text-secondary">{book.description}</p>
               </div>
             </article>
