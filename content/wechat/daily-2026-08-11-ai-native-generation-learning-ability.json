@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "date": "2026-08-11",
+  "slug": "ai-native-generation-learning-ability",
+  "title": "AI原生一代真正需要培养的学习能力",
+  "description": "生成式 AI 正在进入学习过程，搜索、写作、编程和资料整理等活动出现新的协作方式。当答案获取成本降低后，学习者需要投入更多精力理解信息、验证依据和迁移知识。AI 原生一代的重要能力，不是简单依赖工具，而是在使用模型辅助探索时保持判断和主动学习。",
+  "postPath": "content/posts/daily-2026-08-11-ai-native-generation-learning-ability.mdx",
+  "htmlPath": "content/wechat/daily-2026-08-11-ai-native-generation-learning-ability.html",
+  "coverPath": "public/images/articles/2026-08-11-ai-native-generation-learning-ability/cover.png",
+  "figurePaths": [
+    "public/images/articles/2026-08-11-ai-native-generation-learning-ability/figure-01.png",
+    "public/images/articles/2026-08-11-ai-native-generation-learning-ability/figure-02.png",
+    "public/images/articles/2026-08-11-ai-native-generation-learning-ability/figure-03.png",
+    "public/images/articles/2026-08-11-ai-native-generation-learning-ability/figure-04.png"
+  ],
+  "websiteUrl": "https://ai-knowledgepoints.cn/blog/daily-2026-08-11-ai-native-generation-learning-ability"
+}
