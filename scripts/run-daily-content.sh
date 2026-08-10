@@ -6,6 +6,9 @@ PUBLISHER_ENV_FILE="${PUBLISHER_ENV_FILE:-$HOME/.config/ai-knowledgepoints/publi
 LOCK_DIR="${CONTENT_LOCK_DIR:-/tmp/ai-knowledgepoints-daily-content.lockdir}"
 GIT_SSH_REWRITE="url.ssh://git@ssh.github.com:443/.insteadOf=https://github.com/"
 
+# shellcheck source=lib/github-pr-recovery.sh
+source "$PROJECT_DIR/scripts/lib/github-pr-recovery.sh"
+
 if ! mkdir "$LOCK_DIR" 2>/dev/null; then
   echo "已有日更内容任务在运行。"
   exit 0
@@ -78,12 +81,10 @@ git add "content/posts/daily-${date_key}-"*.mdx "content/wechat/daily-${date_key
 git commit -m "发布 ${date_key} AI 深度文章"
 git -c "$GIT_SSH_REWRITE" push -u origin "$branch"
 
-pr_url="$(gh pr create --base main --head "$branch" --title "发布 ${date_key} AI 深度文章" --body "本机 chatgpt2api 生成的每日深度文章、统一信息图和公众号发布稿。已通过本地生产构建与结构化内容校验。")"
-pr_number="${pr_url##*/}"
+pr_number="$(github_create_or_find_pr main "$branch" "发布 ${date_key} AI 深度文章" "本机 chatgpt2api 生成的每日深度文章、统一信息图和公众号发布稿。已通过本地生产构建与结构化内容校验。")"
 sleep 10
-gh pr checks "$pr_number" --watch --interval 15
-gh pr merge "$pr_number" --squash --delete-branch --subject "发布 ${date_key} AI 深度文章 (#${pr_number})"
-merge_sha="$(gh pr view "$pr_number" --json mergeCommit --jq '.mergeCommit.oid')"
+github_wait_for_pr_checks "$pr_number"
+merge_sha="$(github_merge_and_resolve_sha "$pr_number" "发布 ${date_key} AI 深度文章 (#${pr_number})")"
 
 deployed=false
 for _ in {1..30}; do
