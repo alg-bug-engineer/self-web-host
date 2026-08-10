@@ -37,6 +37,23 @@ const sum = (values) => values.reduce((total, value) => total + value, 0)
 const percentChange = (current, previous) => previous
   ? Math.round(((current - previous) / previous) * 1000) / 10
   : null
+const coreWebVitalNames = ['LCP', 'INP', 'CLS']
+const coreWebVitalThresholds = {
+  LCP: { good: 2_500, poor: 4_000, unit: 'ms' },
+  INP: { good: 200, poor: 500, unit: 'ms' },
+  CLS: { good: 0.1, poor: 0.25, unit: 'score' },
+}
+const percentile75 = (values) => {
+  if (!values.length) return null
+  const sorted = [...values].sort((left, right) => left - right)
+  return sorted[Math.max(0, Math.ceil(sorted.length * 0.75) - 1)]
+}
+const vitalRating = (name, value) => {
+  if (value === null) return 'insufficient-data'
+  const threshold = coreWebVitalThresholds[name]
+  if (value <= threshold.good) return 'good'
+  return value > threshold.poor ? 'poor' : 'needs-improvement'
+}
 
 const goals = await readJson(goalsPath, null)
 if (!goals?.objective?.target) throw new Error('缺少有效的 ops/operator-goals.json')
@@ -121,6 +138,35 @@ const searchVisitors = sum(topSources
   .filter((item) => item.source.startsWith('search:'))
   .map((item) => item.visitors))
 const searchShare = currentVisitors ? Math.round((searchVisitors / currentVisitors) * 1000) / 10 : 0
+const coreWebVitalValues = Object.fromEntries(coreWebVitalNames.map((name) => [name, []]))
+const coreWebVitalPathValues = {}
+for (const day of current28Days) {
+  for (const [pathname, metrics] of Object.entries(analyticsDays[day]?.vitals || {})) {
+    coreWebVitalPathValues[pathname] ||= Object.fromEntries(coreWebVitalNames.map((name) => [name, []]))
+    for (const name of coreWebVitalNames) {
+      const values = Object.values(metrics?.[name] || {}).filter((value) => Number.isFinite(Number(value))).map(Number)
+      coreWebVitalValues[name].push(...values)
+      coreWebVitalPathValues[pathname][name].push(...values)
+    }
+  }
+}
+const coreWebVitals = coreWebVitalNames.map((name) => {
+  const p75 = percentile75(coreWebVitalValues[name])
+  return {
+    name,
+    p75,
+    samples: coreWebVitalValues[name].length,
+    unit: coreWebVitalThresholds[name].unit,
+    rating: vitalRating(name, p75),
+  }
+})
+const slowestVitalPages = coreWebVitalNames.flatMap((name) => {
+  const candidates = Object.entries(coreWebVitalPathValues)
+    .map(([pathname, metrics]) => ({ pathname, name, p75: percentile75(metrics[name]), samples: metrics[name].length }))
+    .filter((item) => item.p75 !== null && item.samples >= 5)
+    .sort((left, right) => right.p75 - left.p75)
+  return candidates.slice(0, 1)
+})
 
 const observations = []
 const recommendedActions = []
@@ -170,6 +216,18 @@ if (!activeDays) {
   }
 }
 
+const actionableVital = coreWebVitals.find((metric) =>
+  metric.samples >= 10 && (metric.rating === 'poor' || metric.rating === 'needs-improvement'))
+if (actionableVital) {
+  const slowPage = slowestVitalPages.find((item) => item.name === actionableVital.name)
+  recommendedActions.push({
+    priority: actionableVital.rating === 'poor' ? 1 : 2,
+    type: 'performance',
+    action: `${actionableVital.name} 第 75 百分位未达良好阈值${slowPage ? `，优先检查 ${slowPage.pathname}` : ''}；先定位资源、主线程或布局位移原因，再做单项低风险优化。`,
+    reviewRequired: true,
+  })
+}
+
 if (!technicalAudit) {
   recommendedActions.push({
     priority: 1,
@@ -194,7 +252,7 @@ if (!technicalAudit) {
 }
 
 const report = {
-  version: 4,
+  version: 5,
   generatedAt: new Date().toISOString(),
   objective: goals.objective,
   status: {
@@ -229,6 +287,13 @@ const report = {
     depth90Visitors,
   },
   acquisition: { searchVisitors, searchSharePercent: searchShare, topSources },
+  experience: {
+    coreWebVitals,
+    slowestPages: slowestVitalPages,
+    percentile: 75,
+    thresholds: coreWebVitalThresholds,
+    note: '来自真实浏览器的现场数据；样本不足时不做性能结论。',
+  },
   technical: technicalAudit ? {
     checkedAt: technicalAudit.checkedAt,
     status: technicalAudit.status,

@@ -30,6 +30,31 @@ const changeLabel = (change: number | null) => {
   return `较上期 ${change > 0 ? '+' : ''}${change}%`
 }
 
+const vitalLabel = (name: string) => ({
+  LCP: '最大内容绘制',
+  INP: '交互响应',
+  CLS: '布局稳定性',
+}[name] || name)
+
+const vitalRatingLabel = (rating: string) => ({
+  good: '良好',
+  'needs-improvement': '需要改进',
+  poor: '较差',
+  'insufficient-data': '等待数据',
+}[rating] || rating)
+
+const vitalRatingTone = (rating: string) => {
+  if (rating === 'good') return 'label label-green'
+  if (rating === 'poor') return 'label label-orange'
+  if (rating === 'needs-improvement') return 'label label-purple'
+  return 'label label-gray'
+}
+
+const vitalValue = (name: string, value: number | null) => {
+  if (value === null) return '—'
+  return name === 'CLS' ? value.toFixed(3) : `${Math.round(value)} ms`
+}
+
 export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {
   const router = useRouter()
   const [autoPublish, setAutoPublish] = useState(false)
@@ -270,6 +295,30 @@ export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {
               <p className="text-xs text-text-tertiary">有效来源数</p>
               <strong className="mt-2 block text-2xl text-text-primary">{analytics.topSources.length}</strong>
               <span className="mt-1 block text-xs text-text-secondary">搜索、社交、引荐与活动</span>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+            <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-text-primary">真实用户体验 · Core Web Vitals</h3>
+                <p className="mt-1 text-xs text-text-tertiary">最近 {analytics.days} 天第 75 百分位；Google 推荐 LCP ≤2.5s、INP ≤200ms、CLS ≤0.1</p>
+              </div>
+              <span className="text-xs text-text-tertiary">仅统计真实浏览器，尊重 DNT</span>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {analytics.webVitals.map((metric) => (
+                <div key={metric.name} className="rounded-lg border border-border-default bg-bg-secondary p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-xs text-text-tertiary">{metric.name} · {vitalLabel(metric.name)}</p>
+                      <strong className="mt-2 block text-xl text-text-primary">{vitalValue(metric.name, metric.p75)}</strong>
+                    </div>
+                    <span className={vitalRatingTone(metric.rating)}>{vitalRatingLabel(metric.rating)}</span>
+                  </div>
+                  <p className="mt-3 text-xs text-text-tertiary">{metric.samples} 个匿名样本</p>
+                </div>
+              ))}
             </div>
           </div>
 
