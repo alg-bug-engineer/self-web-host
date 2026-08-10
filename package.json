@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "draft:daily": "node scripts/generate-daily-draft.mjs",
     "sync:wechat": "node scripts/import-wechat.mjs",
     "deploy:production": "bash scripts/deploy.sh"
   },

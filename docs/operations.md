@@ -8,6 +8,7 @@
 4. 每小时从 GitHub 检查首页与健康接口。
 5. 每日从标准 RSS/Atom 源同步公众号文章，默认生成 `published: false` 草稿并创建 PR，避免未经审核直接发布。
 6. `/operator` 公开展示运营目标、约束、真实阅读数据与 AI 行动记录，使每次改动都可被追踪和复盘。
+7. 本地 `chatgpt2api` 可每天生成一篇 `published: false` 的候选文章；模型输出需通过长度、结构和危险标签校验，且必须人工复核后发布。
 
 ## GitHub Secrets
 
@@ -19,6 +20,26 @@
 - `ECS_SSH_KEY`：部署专用私钥。不要直接复用个人日常登录私钥。
 - `ECS_KNOWN_HOSTS`：运行 `ssh-keyscan -H <ECS_HOST>` 得到的完整主机公钥记录，用于阻止中间人攻击。
 - `WECHAT_RSS_URL`：公众号对应的标准 RSS/Atom 地址，可来自自建 RSSHub 或已有内容分发服务。
+
+## AI 日更草稿
+
+本地模型服务使用 OpenAI 兼容的 Chat Completions 接口。密钥只通过环境变量传入，不得提交到 Git：
+
+```bash
+CONTENT_AI_BASE_URL=http://127.0.0.1:3000/v1 \
+CONTENT_AI_API_KEY='本地服务 auth-key' \
+CONTENT_AI_MODEL=auto \
+npm run draft:daily
+```
+
+可选参数：
+
+- `CONTENT_TOPIC`：指定本期选题；未指定时只生成常青技术内容。
+- `CONTENT_WEB_SEARCH=true`：允许兼容后端调用网页搜索；开启后仍需人工核对每个来源。
+- `CONTENT_DATE=YYYY-MM-DD`：指定草稿日期，主要用于补稿与测试。
+- `CONTENT_FORCE=true`：允许同一天再次生成；默认会跳过，避免重复和批量滥用。
+
+生成文件位于 `content/posts/daily-*.mdx`，默认 `published: false`。当前 `chatgpt2api` 属于逆向兼容实现，应遵守其使用限制；只允许低频、个人、人工审核的草稿生成，不得批量调用或自动直发。
 
 ## ECS 环境变量
 
