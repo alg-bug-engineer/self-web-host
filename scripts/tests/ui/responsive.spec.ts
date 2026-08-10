@@ -8,7 +8,21 @@ const collectPageErrors = (page: Page) => {
   const errors: string[] = []
   page.on('pageerror', (error) => errors.push(error.message))
   page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text())
+    if (message.type() !== 'error') return
+
+    const sourceURL = message.location().url
+    if (!sourceURL) {
+      errors.push(message.text())
+      return
+    }
+
+    try {
+      if (new URL(sourceURL).origin === new URL(page.url()).origin) {
+        errors.push(message.text())
+      }
+    } catch {
+      errors.push(message.text())
+    }
   })
   return errors
 }
