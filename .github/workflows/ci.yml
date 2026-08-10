@@ -24,6 +24,7 @@ jobs:
 
       - run: npm ci
       - run: bash scripts/tests/test-github-pr-recovery.sh
+      - run: bash scripts/tests/test-daily-content-isolation.sh
       - run: node scripts/tests/test-search-console.mjs
       - run: node scripts/tests/test-import-wechat.mjs
       - run: npm run test:wechat-rss-backoff

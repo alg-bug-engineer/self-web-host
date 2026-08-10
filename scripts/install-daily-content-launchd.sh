@@ -22,7 +22,11 @@ cat >"$PLIST" <<PLIST
   <key>Label</key><string>$LABEL</string>
   <key>ProgramArguments</key><array><string>/bin/bash</string><string>$escaped_project/scripts/run-daily-content.sh</string></array>
   <key>WorkingDirectory</key><string>$escaped_project</string>
-  <key>StartCalendarInterval</key><dict><key>Hour</key><integer>8</integer><key>Minute</key><integer>30</integer></dict>
+  <key>StartCalendarInterval</key><array>
+    <dict><key>Hour</key><integer>8</integer><key>Minute</key><integer>30</integer></dict>
+    <dict><key>Hour</key><integer>10</integer><key>Minute</key><integer>30</integer></dict>
+    <dict><key>Hour</key><integer>12</integer><key>Minute</key><integer>30</integer></dict>
+  </array>
   <key>EnvironmentVariables</key><dict>
     <key>PATH</key><string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
     <key>PUBLISHER_ENV_FILE</key><string>$escaped_home/.config/ai-knowledgepoints/publisher.env</string>
@@ -36,5 +40,5 @@ PLIST
 plutil -lint "$PLIST"
 launchctl bootout "gui/$(id -u)/$LABEL" 2>/dev/null || true
 launchctl bootstrap "gui/$(id -u)" "$PLIST"
-echo "已安装每日 08:30 内容任务：$PLIST"
+echo "已安装每日 08:30 内容任务，并在 10:30、12:30 幂等补偿重试：$PLIST"
 echo "公众号凭据文件：$CONFIG_DIR/publisher.env"
