@@ -18,6 +18,7 @@ const searchConsolePath = path.join(reportDir, 'search-console-latest.json')
 const contentOperationsPath = path.join(reportDir, 'content-latest.json')
 const actionsPath = path.join(reportDir, 'actions.json')
 const goalsPath = path.join(projectDir, 'ops/operator-goals.json')
+const publicAnalyticsPathsPath = path.join(projectDir, 'ops/public-analytics-paths.json')
 
 const readJson = async (file, fallback) => {
   try {
@@ -60,6 +61,10 @@ const vitalRating = (name, value) => {
 
 const goals = await readJson(goalsPath, null)
 if (!goals?.objective?.target) throw new Error('缺少有效的 ops/operator-goals.json')
+const publicAnalyticsPaths = await readJson(publicAnalyticsPathsPath, { staticPaths: [], dynamicPrefixes: [] })
+const publicStaticPaths = new Set(publicAnalyticsPaths.staticPaths || [])
+const isReportablePath = (pathname) => publicStaticPaths.has(pathname)
+  || (publicAnalyticsPaths.dynamicPrefixes || []).some((prefix) => pathname.startsWith(prefix))
 
 const store = await readJson(analyticsPath, { days: {} })
 const technicalAudit = await readJson(technicalAuditPath, null)
@@ -72,26 +77,39 @@ const previous28Days = dateRange(28, 28)
 const current7Days = dateRange(7)
 const previous7Days = dateRange(7, 7)
 
-const visitorsFor = (days) => sum(days.map((day) => analyticsDays[day]?.visitors?.length || 0))
-const pageViewsFor = (days) => sum(days.map((day) => Number(analyticsDays[day]?.pageViews) || 0))
-const returningVisitorsFor = (days) => sum(days.map((day) => analyticsDays[day]?.returningVisitors?.length || 0))
-const engagementSignalsForDay = (day) => Object.values(analyticsDays[day]?.engagement || {})
-  .flatMap((signals) => Object.values(signals || {}))
+const reportableVisitorsForDay = (day) => new Set(Object.entries(analyticsDays[day]?.pathVisitors || {})
+  .filter(([pathname]) => isReportablePath(pathname))
+  .flatMap(([, visitors]) => Array.isArray(visitors) ? visitors : []))
+const visitorsFor = (days) => sum(days.map((day) => reportableVisitorsForDay(day).size))
+const pageViewsFor = (days) => sum(days.map((day) => Object.entries(analyticsDays[day]?.paths || {})
+  .filter(([pathname]) => isReportablePath(pathname))
+  .reduce((total, [, views]) => total + (Number(views) || 0), 0)))
+const returningVisitorsFor = (days) => sum(days.map((day) => {
+  const reportableVisitors = reportableVisitorsForDay(day)
+  return (analyticsDays[day]?.returningVisitors || []).filter((visitor) => reportableVisitors.has(visitor)).length
+}))
+const engagementSignalsForDay = (day) => Object.entries(analyticsDays[day]?.engagement || {})
+  .filter(([pathname]) => isReportablePath(pathname))
+  .flatMap(([, signals]) => Object.values(signals || {}))
 const engagedVisitorsFor = (days) => sum(days.map((day) => {
   const visitors = new Set()
-  for (const signals of Object.values(analyticsDays[day]?.engagement || {})) {
+  const reportableVisitors = reportableVisitorsForDay(day)
+  for (const [pathname, signals] of Object.entries(analyticsDays[day]?.engagement || {})) {
+    if (!isReportablePath(pathname)) continue
     for (const [visitor, signal] of Object.entries(signals || {})) {
-      if (Number(signal?.seconds || 0) >= 10 || Number(signal?.depth || 0) >= 25) visitors.add(visitor)
+      if (reportableVisitors.has(visitor) && (Number(signal?.seconds || 0) >= 10 || Number(signal?.depth || 0) >= 25)) visitors.add(visitor)
     }
   }
   return visitors.size
 }))
 const qualifiedVisitorsFor = (days) => sum(days.map((day) => {
   const daily = analyticsDays[day]
-  const visitors = new Set(Array.isArray(daily?.returningVisitors) ? daily.returningVisitors : [])
-  for (const signals of Object.values(daily?.engagement || {})) {
+  const reportableVisitors = reportableVisitorsForDay(day)
+  const visitors = new Set((daily?.returningVisitors || []).filter((visitor) => reportableVisitors.has(visitor)))
+  for (const [pathname, signals] of Object.entries(daily?.engagement || {})) {
+    if (!isReportablePath(pathname)) continue
     for (const [visitor, signal] of Object.entries(signals || {})) {
-      if (Number(signal?.seconds || 0) >= 10 || Number(signal?.depth || 0) >= 25) visitors.add(visitor)
+      if (reportableVisitors.has(visitor) && (Number(signal?.seconds || 0) >= 10 || Number(signal?.depth || 0) >= 25)) visitors.add(visitor)
     }
   }
   return visitors.size
@@ -99,6 +117,7 @@ const qualifiedVisitorsFor = (days) => sum(days.map((day) => {
 const conversionVisitorsFor = (days) => sum(days.map((day) => {
   const visitors = new Set()
   for (const event of Object.values(analyticsDays[day]?.conversions || {})) {
+    if (!Object.keys(event?.paths || {}).some(isReportablePath)) continue
     for (const visitor of event?.visitors || []) visitors.add(visitor)
   }
   return visitors.size
@@ -119,9 +138,9 @@ const depth90Visitors = currentEngagementSignals.filter((signal) => Number(signa
 const returningRate = currentVisitors ? Math.min(100, Math.round((returningVisitors / currentVisitors) * 1000) / 10) : 0
 const engagementRate = currentVisitors ? Math.min(100, Math.round((engagedVisitors / currentVisitors) * 1000) / 10) : 0
 const conversionRate = currentVisitors ? Math.min(100, Math.round((conversionVisitors / currentVisitors) * 1000) / 10) : 0
-const activeDays = current28Days.filter((day) => analyticsDays[day]).length
-const current7ActiveDays = current7Days.filter((day) => analyticsDays[day]).length
-const previous7ActiveDays = previous7Days.filter((day) => analyticsDays[day]).length
+const activeDays = current28Days.filter((day) => reportableVisitorsForDay(day).size > 0).length
+const current7ActiveDays = current7Days.filter((day) => reportableVisitorsForDay(day).size > 0).length
+const previous7ActiveDays = previous7Days.filter((day) => reportableVisitorsForDay(day).size > 0).length
 const projectedMonthlyVisitors = activeDays
   ? Math.round((currentVisitors / activeDays) * 30)
   : 0
@@ -149,6 +168,7 @@ for (const day of current28Days) {
   const daily = analyticsDays[day]
   if (!daily) continue
   for (const [pathname, views] of Object.entries(daily.paths || {})) {
+    if (!isReportablePath(pathname)) continue
     const metrics = pathMetrics(pathname)
     metrics.views += Number(views || 0)
     const pathVisitors = new Set(daily.pathVisitors?.[pathname] || [])
@@ -167,6 +187,7 @@ for (const day of current28Days) {
     metrics.qualifiedVisitorDays += qualified.size
   }
   for (const [source, visitors] of Object.entries(daily.sources || {})) {
+    if (reportableVisitorsForDay(day).size === 0) continue
     sourceTotals[source] = (sourceTotals[source] || 0) + Number(visitors || 0)
   }
   for (const [name, event] of Object.entries(daily.conversions || {})) {
@@ -177,6 +198,7 @@ for (const day of current28Days) {
       conversionTotals[name].targets[target] = (conversionTotals[name].targets[target] || 0) + Number(count || 0)
     }
     for (const [pathname, count] of Object.entries(event?.paths || {})) {
+      if (!isReportablePath(pathname)) continue
       pathMetrics(pathname).conversionEvents += Number(count || 0)
     }
   }

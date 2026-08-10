@@ -33,12 +33,14 @@ try {
   assert.equal(report.version, 9)
   assert.equal(report.decision.mode, 'observe')
   assert.equal(report.decision.growthReady, false)
+  assert.equal(report.status.current28DayVisitors, 9)
   assert.ok(report.observations.some((item) => item.includes('不根据早期噪声')))
   assert.ok(!report.recommendedActions.some((item) => ['seo', 'content', 'reading-experience', 'value-conversion'].includes(item.type)))
   assert.equal(report.topPages[0].visitorDays, 9)
   assert.equal(report.topPages[0].qualifiedVisitorDays, 1)
   assert.equal(report.topPages[0].qualificationRatePercent, 11.1)
   assert.equal(report.topPages[0].averageActiveReadingSeconds, 12)
+  assert.ok(!report.topPages.some((page) => page.pathname === '/operator'))
 
   await writeAnalytics(8, 5)
   report = await generateReport()
@@ -67,18 +69,22 @@ async function writeAnalytics(dayCount, visitorsPerDay) {
     date.setUTCDate(date.getUTCDate() - offset)
     const day = date.toISOString().slice(0, 10)
     const visitors = Array.from({ length: visitorsPerDay }, (_, index) => `visitor-${offset}-${index}`)
+    const invalidVisitor = `operator-probe-${offset}`
     days[day] = {
-      pageViews: visitorsPerDay,
-      visitors,
+      pageViews: visitorsPerDay + 1,
+      visitors: [...visitors, invalidVisitor],
       returningVisitors: [],
-      paths: { '/blog/evidence': visitorsPerDay },
-      pathVisitors: { '/blog/evidence': visitors },
+      paths: { '/blog/evidence': visitorsPerDay, '/operator': 1 },
+      pathVisitors: { '/blog/evidence': visitors, '/operator': [invalidVisitor] },
       engagement: {
         '/blog/evidence': {
           [visitors[0]]: { seconds: 12, depth: 30 },
         },
+        '/operator': {
+          [invalidVisitor]: { seconds: 600, depth: 100 },
+        },
       },
-      sources: { direct: visitorsPerDay },
+      sources: { direct: visitorsPerDay + 1 },
       conversions: {},
       vitals: {},
     }
