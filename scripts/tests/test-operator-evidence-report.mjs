@@ -27,11 +27,16 @@ await fs.writeFile(path.join(operatorDir, 'content-latest.json'), JSON.stringify
 await fs.writeFile(path.join(operatorDir, 'search-console-latest.json'), JSON.stringify({
   status: 'unconfigured',
 }))
+await fs.writeFile(path.join(operatorDir, 'profile-latest.json'), JSON.stringify({
+  status: 'healthy',
+  github: { publicRepositories: 33 },
+  issues: [],
+}))
 
 try {
   await writeAnalytics(1, 9)
   let report = await generateReport()
-  assert.equal(report.version, 10)
+  assert.equal(report.version, 11)
   assert.equal(report.decision.mode, 'observe')
   assert.equal(report.decision.growthReady, false)
   assert.equal(report.status.current28DayVisitors, 9)

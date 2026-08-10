@@ -1,5 +1,5 @@
 {
-  "version": 9,
+  "version": 10,
   "objective": {
     "metric": "monthlyQualifiedVisitorsEstimate",
     "target": 50000,
@@ -16,6 +16,7 @@
     "indexedHighQualityPages",
     "contentTopicDiversity",
     "contentPipelineAvailability",
+    "publicProfileFreshness",
     "productionAvailability"
   ],
   "learning": {
@@ -50,6 +51,7 @@
       "部署成功后通过 IndexNow 通知发生变化的公开页面",
       "生成内部经营报告",
       "巡检日更、公众号草稿交付与内网 RSS 授权状态",
+      "巡检 GitHub 等公开作者资料是否与网站记录一致",
       "同步本人公众号最近 31 天已公开文章",
       "按既定质量门槛每日发布一篇 AI 深度文章"
     ],

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import WechatCard from '@/components/WechatCard'
 import { AUTHOR_NAME, AUTHOR_PROFILES, BRAND_NAME, SITE_URL } from '@/lib/site'
+import profileData from '@/data/profile.json'
 
 export const metadata = {
   title: '关于我 | 芝士AI吃鱼',
@@ -9,10 +10,10 @@ export const metadata = {
 }
 
 const stats = [
-  { number: '5', label: '本个人著作', icon: '📚' },
-  { number: '325', label: '篇 CSDN 内容', icon: '📝' },
-  { number: '31', label: '个 GitHub 仓库', icon: '⌘' },
-  { number: '8500+', label: '公众号读者', icon: '👥' },
+  { number: profileData.stats.books, label: '本个人著作', icon: '📚' },
+  { number: profileData.stats.csdnArticles, label: '篇 CSDN 内容', icon: '📝' },
+  { number: profileData.stats.githubRepositories, label: '个 GitHub 仓库', icon: '⌘' },
+  { number: profileData.stats.wechatReaders, label: '公众号读者', icon: '👥' },
 ]
 
 const focusTags = [
@@ -196,7 +197,7 @@ export default function AboutPage() {
               ))}
             </div>
             <p className="mt-4 text-xs leading-5 text-text-tertiary">
-              著作信息来自作者作品页截图；公开内容与仓库数量于 2026 年 8 月核对 CSDN、GitHub 主页。
+              GitHub 公开仓库数于 {profileData.githubVerifiedAt} 核对；著作、CSDN 内容与公众号数据沿用作者提供或既有公开资料。
             </p>
           </div>
 

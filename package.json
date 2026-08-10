@@ -20,11 +20,13 @@
     "operator:audit": "node scripts/audit-production.mjs",
     "operator:content": "node scripts/audit-content-operations.mjs",
     "operator:search": "node scripts/fetch-search-console.mjs",
+    "operator:profile": "node scripts/audit-profile.mjs",
     "operator:learn": "node scripts/evaluate-operator-actions.mjs",
     "operator:report": "node scripts/generate-operator-report.mjs",
     "seo:indexnow": "node scripts/submit-indexnow.mjs",
     "sync:wechat": "node scripts/import-wechat.mjs",
     "test:indexnow": "node scripts/tests/test-indexnow.mjs",
+    "test:profile-audit": "node scripts/tests/test-profile-audit.mjs",
     "deploy:production": "bash scripts/deploy.sh"
   },
   "dependencies": {
