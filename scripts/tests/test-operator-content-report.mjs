@@ -19,10 +19,18 @@ await fs.writeFile(path.join(operatorDir, 'content-latest.json'), JSON.stringify
   status: 'limited',
   website: { latestDailyDate: '2026-08-11', cadence7d: 2, todayPublished: true },
   delivery: { wechat: { status: 'draft', limitation: 'freepublish-api-unauthorized' } },
-  inboundSync: { rss: { checked: true, reachable: true, loginStatus: true, feedExists: true, itemCount: 0 } },
+  inboundSync: { rss: {
+    checked: true,
+    reachable: true,
+    loginStatus: true,
+    feedExists: true,
+    itemCount: 0,
+    consecutiveEmptyUpdates: 1,
+    backoffUntil: '2026-08-13T01:00:00.000Z',
+  } },
   issues: [
     { severity: 'warning', code: 'freepublish-api-unauthorized', message: '草稿已创建但未群发。' },
-    { severity: 'warning', code: 'wechat-rss-empty', message: 'Feed 暂无文章。' },
+    { severity: 'warning', code: 'wechat-rss-backoff', message: 'Feed 采集结果为空，处于保护性退避。' },
   ],
 }))
 
@@ -35,7 +43,7 @@ try {
   assert.equal(report.version, 11)
   assert.equal(report.content.status, 'limited')
   assert.ok(report.observations.some((item) => item.includes('近 7 天发布 2 天')))
-  assert.ok(report.observations.some((item) => item.includes('不做频控重试')))
+  assert.ok(report.observations.some((item) => item.includes('保护性退避至 2026-08-13T01:00:00.000Z')))
   assert.ok(report.recommendedActions.some((item) => item.type === 'wechat-permission'))
   assert.ok(!report.recommendedActions.some((item) => item.action.includes('循环重试')))
 } finally {

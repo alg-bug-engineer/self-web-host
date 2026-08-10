@@ -6,6 +6,7 @@ import path from 'node:path'
 import nextEnv from '@next/env'
 import { buildContentOperationsReport } from './lib/content-operations.mjs'
 import { parseArticle } from './lib/content-diversity.mjs'
+import { normalizeWechatRssSyncState } from './lib/wechat-rss-backoff.mjs'
 
 const projectDir = process.cwd()
 nextEnv.loadEnvConfig(projectDir)
@@ -46,6 +47,7 @@ async function inspectWechatRss() {
   const checkedAt = new Date().toISOString()
   const baseUrl = (process.env.WECHAT_RSS_ADMIN_BASE_URL || 'http://127.0.0.1:8001').replace(/\/$/, '')
   const passwordFile = process.env.WECHAT_RSS_PASSWORD_FILE || '/opt/we-mp-rss/admin-password'
+  const syncStateFile = process.env.WECHAT_RSS_SYNC_STATE_FILE || '/opt/we-mp-rss/sync-state.json'
   const feedId = process.env.WECHAT_RSS_FEED_ID || 'MP_WXS_3212677307'
   try {
     const password = (await fs.readFile(passwordFile, 'utf8')).trim()
@@ -69,6 +71,7 @@ async function inspectWechatRss() {
     const detail = await detailResponse.json()
     const xml = await feedResponse.text()
     if (!statusResponse.ok || !detailResponse.ok || !feedResponse.ok) throw new Error('rss-read-failed')
+    const syncState = normalizeWechatRssSyncState(await readJson(syncStateFile, {}))
     return {
       checked: true,
       reachable: true,
@@ -76,6 +79,9 @@ async function inspectWechatRss() {
       feedExists: Boolean(detail.data?.id),
       feedName: detail.data?.mp_name || detail.data?.name || null,
       itemCount: (xml.match(/<item(?:\s|>)/gi) || []).length,
+      consecutiveEmptyUpdates: syncState.consecutiveEmptyUpdates,
+      backoffUntil: syncState.backoffUntil,
+      lastAttemptAt: syncState.lastAttemptAt,
       checkedAt,
     }
   } catch {
