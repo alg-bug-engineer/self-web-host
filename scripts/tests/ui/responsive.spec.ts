@@ -94,6 +94,16 @@ test('作品页公开作品并保持外链安全属性', async ({ page }) => {
   }
 })
 
+test('关于页展示经公开来源核对的 GitHub 信息', async ({ page }) => {
+  await page.goto('/about')
+  await expect(page.locator('h1')).toHaveText('芝士AI吃鱼')
+  await expect(page.getByText('33', { exact: true })).toBeVisible()
+  await expect(page.getByText('个 GitHub 仓库', { exact: true })).toBeVisible()
+  await expect(page.getByText(/GitHub 公开仓库数于 2026-08-11 核对/)).toBeVisible()
+  await expect(page.getByRole('link', { name: 'GitHub', exact: true })).toBeVisible()
+  await expectNoHorizontalOverflow(page)
+})
+
 test('运维入口保持不可见且分析接口拒绝其路径', async ({ page, request }) => {
   const operator = await request.get('/operator')
   const aiOperator = await request.get('/ai-operator')

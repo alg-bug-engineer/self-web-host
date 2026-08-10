@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "githubVerifiedAt": "2026-08-11",
+  "stats": {
+    "books": "5",
+    "csdnArticles": "325",
+    "githubRepositories": "33",
+    "wechatReaders": "8500+"
+  },
+  "checks": {
+    "github": {
+      "login": "alg-bug-engineer",
+      "expectedName": "芝士AI吃鱼",
+      "profileUrl": "https://github.com/alg-bug-engineer",
+      "expectedPublicRepositories": 33
+    }
+  },
+  "sourceNotes": {
+    "books": "作者提供的作品截图",
+    "csdnArticles": "作者既有公开资料；平台不可核验时保留现值",
+    "githubRepositories": "GitHub 公开主页与用户 API",
+    "wechatReaders": "作者提供的公众号数据"
+  }
+}

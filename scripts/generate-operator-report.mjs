@@ -16,6 +16,7 @@ const historyPath = path.join(reportDir, 'history.jsonl')
 const technicalAuditPath = path.join(reportDir, 'technical-latest.json')
 const searchConsolePath = path.join(reportDir, 'search-console-latest.json')
 const contentOperationsPath = path.join(reportDir, 'content-latest.json')
+const profileAuditPath = path.join(reportDir, 'profile-latest.json')
 const actionsPath = path.join(reportDir, 'actions.json')
 const goalsPath = path.join(projectDir, 'ops/operator-goals.json')
 const publicAnalyticsPathsPath = path.join(projectDir, 'ops/public-analytics-paths.json')
@@ -95,6 +96,7 @@ const store = await readJson(analyticsPath, { days: {} })
 const technicalAudit = await readJson(technicalAuditPath, null)
 const searchConsole = await readJson(searchConsolePath, null)
 const contentOperations = await readJson(contentOperationsPath, null)
+const profileAudit = await readJson(profileAuditPath, null)
 const actionState = await readJson(actionsPath, { actions: [] })
 const analyticsDays = store.days && typeof store.days === 'object' ? store.days : {}
 const current28Days = dateRange(28)
@@ -534,6 +536,28 @@ if (!contentOperations) {
   }
 }
 
+if (!profileAudit) {
+  recommendedActions.push({
+    priority: 1,
+    type: 'profile-audit',
+    action: '运行个人公开资料巡检，核对 GitHub 品牌名、作者链接与公开仓库数量。',
+    reviewRequired: false,
+  })
+} else if (profileAudit.status === 'review-needed') {
+  const issueSummary = (profileAudit.issues || []).map((issue) => issue.message).join('；').slice(0, 400)
+  observations.push(`个人公开资料出现可核验漂移：${issueSummary}`)
+  recommendedActions.push({
+    priority: 2,
+    type: 'profile-review',
+    action: '公开资料与网站记录不一致；核对来源后通过代码审查更新作者页，不自动修改学历、经历、著作或公众号数据。',
+    reviewRequired: true,
+  })
+} else if (profileAudit.status === 'unavailable') {
+  observations.push('GitHub 公开资料本次无法核对；保留网站现值，等待下次日频巡检，不根据单次网络失败修改作者信息。')
+} else {
+  observations.push(`个人公开资料已核对：GitHub ${profileAudit.github?.publicRepositories || 0} 个公开仓库，品牌名与作者链接一致。`)
+}
+
 const searchEvidenceReady = searchConsole?.status === 'connected'
   && Number(searchConsole.summary?.impressions || 0) >= decisionMinimumSearchImpressions
 const decision = buildOperatorDecision({
@@ -547,7 +571,7 @@ const decision = buildOperatorDecision({
 })
 
 const report = {
-  version: 10,
+  version: 11,
   generatedAt: configuredNow.toISOString(),
   objective: goals.objective,
   status: {
@@ -639,6 +663,7 @@ const report = {
     issues: technicalAudit.issues,
   } : null,
   content: contentOperations,
+  profile: profileAudit,
   learning: {
     definition: actionState.definition || null,
     totalActions: actionState.actions?.length || 0,

@@ -31,4 +31,4 @@ jobs:
           ECS_PORT: ${{ secrets.ECS_PORT }}
         run: |
           ssh -i ~/.ssh/ecs_deploy_key -p "${ECS_PORT:-22}" "$ECS_USER@$ECS_HOST" \
-            "cd /root/self-web-host && NODE_ENV=production npm run operator:audit && NODE_ENV=production npm run operator:search && NODE_ENV=production npm run operator:content && NODE_ENV=production npm run operator:learn && NODE_ENV=production npm run operator:report"
+            "cd /root/self-web-host && NODE_ENV=production npm run operator:audit && NODE_ENV=production npm run operator:search && NODE_ENV=production npm run operator:content && NODE_ENV=production npm run operator:profile && NODE_ENV=production npm run operator:learn && NODE_ENV=production npm run operator:report"
