@@ -42,6 +42,14 @@ export const Post = defineDocumentType(() => ({
       type: 'string',
       required: false,
     },
+    topicId: {
+      type: 'string',
+      required: false,
+    },
+    topicCluster: {
+      type: 'string',
+      required: false,
+    },
     published: {
       type: 'boolean',
       default: true,

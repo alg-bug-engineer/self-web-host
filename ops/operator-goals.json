@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "objective": {
     "metric": "monthlyQualifiedVisitorDays",
     "target": 50000,
@@ -14,6 +14,7 @@
     "valueConversionRate",
     "coreWebVitalsP75",
     "indexedHighQualityPages",
+    "contentTopicDiversity",
     "productionAvailability"
   ],
   "learning": {
@@ -25,6 +26,7 @@
   "constraints": [
     "不购买流量、外链或广告",
     "不制造批量低质量 SEO 页面",
+    "连续日更不得重复同一主题；与历史文章过度相似的内容必须在写文件和发布前阻断",
     "不使用标题党、隐藏文字、关键词堆砌或互刷",
     "不自动修改作者核心履历",
     "不自动删除文章、统计数据或高价值页面",

@@ -2,6 +2,12 @@ import crypto from 'node:crypto'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import sharp from 'sharp'
+import {
+  assertContentDiversity,
+  inferTopicCluster,
+  loadArticleHistory,
+  selectTopic,
+} from './lib/content-diversity.mjs'
 
 const projectDir = process.cwd()
 const baseUrl = (process.env.CONTENT_AI_BASE_URL || 'http://127.0.0.1:3000/v1').replace(/\/$/, '')
@@ -16,13 +22,44 @@ const apiKey = process.env.CONTENT_AI_API_KEY?.trim() || (await readLocalAuthKey
 const postsDir = path.join(projectDir, 'content', 'posts')
 const wechatDir = path.join(projectDir, 'content', 'wechat')
 const imagesRoot = path.join(projectDir, 'public', 'images', 'articles')
-const sourceBank = [
-  { name: 'UNESCO', title: 'Guidance for generative AI in education and research', url: 'https://unesdoc.unesco.org/ark:/48223/pf0000386693', note: '教育与研究场景的治理建议，不等同于学习效果实验。' },
-  { name: 'Microsoft Research / CMU', title: 'The Impact of Generative AI on Critical Thinking', url: 'https://www.microsoft.com/en-us/research/publication/the-impact-of-generative-ai-on-critical-thinking-self-reported-reductions-in-cognitive-effort-and-confidence-effects-from-a-survey-of-knowledge-workers/', note: '基于知识工作者自我报告，不能推出永久智力下降。' },
-  { name: 'Noy & Zhang, Science', title: 'Experimental Evidence on the Productivity Effects of Generative Artificial Intelligence', url: 'https://www.science.org/doi/10.1126/science.adh2586', note: '研究对象是特定专业写作任务，结论不应泛化到所有认知活动。' },
-  { name: 'OECD', title: 'OECD Digital Education Outlook 2023', url: 'https://www.oecd.org/en/publications/oecd-digital-education-outlook-2023_c74f03de-en.html', note: '提供数字教育生态与政策背景。' },
-  { name: 'OpenAI', title: 'How people are using ChatGPT', url: 'https://openai.com/index/how-people-are-using-chatgpt/', note: '描述产品使用模式，不直接证明长期学习效果。' },
-]
+const sourceBanks = {
+  learning: [
+    { name: 'UNESCO', title: 'Guidance for generative AI in education and research', url: 'https://unesdoc.unesco.org/ark:/48223/pf0000386693', note: '教育与研究场景的治理建议，不等同于学习效果实验。' },
+    { name: 'Microsoft Research / CMU', title: 'The Impact of Generative AI on Critical Thinking', url: 'https://www.microsoft.com/en-us/research/publication/the-impact-of-generative-ai-on-critical-thinking-self-reported-reductions-in-cognitive-effort-and-confidence-effects-from-a-survey-of-knowledge-workers/', note: '基于知识工作者自我报告，不能推出永久智力下降。' },
+    { name: 'Noy & Zhang, Science', title: 'Experimental Evidence on the Productivity Effects of Generative Artificial Intelligence', url: 'https://www.science.org/doi/10.1126/science.adh2586', note: '研究对象是特定专业写作任务，结论不应泛化到所有认知活动。' },
+    { name: 'OECD', title: 'OECD Digital Education Outlook 2023', url: 'https://www.oecd.org/en/publications/oecd-digital-education-outlook-2023_c74f03de-en.html', note: '提供数字教育生态与政策背景。' },
+  ],
+  work: [
+    { name: 'ILO', title: 'Generative AI and Jobs: A Refined Global Index of Occupational Exposure', url: 'https://www.ilo.org/publications/generative-ai-and-jobs-refined-global-index-occupational-exposure', note: '衡量职业任务暴露，不等于预测岗位会被整体替代。' },
+    { name: 'Brynjolfsson, Li & Raymond / NBER', title: 'Generative AI at Work', url: 'https://www.nber.org/papers/w31161', note: '研究特定客服场景，生产率差异不能直接推广到所有职业。' },
+    { name: 'NBER', title: 'Shifting Work Patterns with Generative AI', url: 'https://www.nber.org/papers/w33795', note: '跨企业现场实验，仍需区分工具使用和组织层面的长期变化。' },
+    { name: 'Stanford HAI', title: 'The 2025 AI Index Report', url: 'https://hai.stanford.edu/ai-index/2025-ai-index-report', note: '提供产业与技术趋势背景，不替代具体岗位研究。' },
+  ],
+  creativity: [
+    { name: 'U.S. Copyright Office', title: 'Copyright and Artificial Intelligence, Part 2: Copyrightability', url: 'https://www.copyright.gov/ai/', note: '讨论美国法下人类创作贡献与可版权性，不代表全球统一规则。' },
+    { name: 'WIPO', title: 'Generative AI — IP and Frontier Technologies', url: 'https://www.wipo.int/publications/en/details.jsp?id=4750&plang=EN', note: '提供知识产权政策讨论，不是创作质量实验。' },
+    { name: 'Noy & Zhang, Science', title: 'Experimental Evidence on the Productivity Effects of Generative Artificial Intelligence', url: 'https://www.science.org/doi/10.1126/science.adh2586', note: '只支持特定专业写作任务中的短期表现结论。' },
+    { name: 'UNESCO', title: 'Recommendation on the Ethics of Artificial Intelligence', url: 'https://www.unesco.org/en/articles/recommendation-ethics-artificial-intelligence', note: '提供文化、多样性与人类监督的规范框架。' },
+  ],
+  society: [
+    { name: 'WHO', title: 'From loneliness to social connection: charting a path to healthier societies', url: 'https://www.who.int/publications/i/item/978240112360', note: '报告讨论人际社会连接，不能直接证明 AI 陪伴的因果影响。' },
+    { name: 'UNESCO', title: 'Recommendation on the Ethics of Artificial Intelligence', url: 'https://www.unesco.org/en/articles/recommendation-ethics-artificial-intelligence', note: '提供人权、尊严、透明与人类监督的规范背景。' },
+    { name: 'NIST', title: 'Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile', url: 'https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence', note: '是风险管理框架，不是社会效果测量。' },
+    { name: 'OpenAI', title: 'How people are using ChatGPT', url: 'https://openai.com/index/how-people-are-using-chatgpt/', note: '描述产品使用模式，不代表关系质量或长期福祉。' },
+  ],
+  product: [
+    { name: 'NIST', title: 'Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile', url: 'https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence', note: '用于设计风险管理过程，不是产品成功清单。' },
+    { name: 'Stanford HAI', title: 'The 2025 AI Index Report', url: 'https://hai.stanford.edu/ai-index/2025-ai-index-report', note: '提供采用率、成本和产业趋势背景。' },
+    { name: 'Brynjolfsson, Li & Raymond / NBER', title: 'Generative AI at Work', url: 'https://www.nber.org/papers/w31161', note: '说明特定工作流中的异质效果，不代表所有 AI 功能都产生价值。' },
+    { name: 'OpenAI', title: 'How people are using ChatGPT', url: 'https://openai.com/index/how-people-are-using-chatgpt/', note: '用于观察真实任务分布，不直接证明留存和商业价值。' },
+  ],
+  engineering: [
+    { name: 'NIST', title: 'Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile', url: 'https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence', note: '提供生成式 AI 风险分类与管理动作。' },
+    { name: 'Stanford HAI', title: 'The 2025 AI Index Report', url: 'https://hai.stanford.edu/ai-index/2025-ai-index-report', note: '汇总技术评测趋势，也明确复杂推理仍有边界。' },
+    { name: 'UNESCO', title: 'Recommendation on the Ethics of Artificial Intelligence', url: 'https://www.unesco.org/en/articles/recommendation-ethics-artificial-intelligence', note: '提供人类监督和责任边界的规范背景。' },
+    { name: 'OpenAI', title: 'How people are using ChatGPT', url: 'https://openai.com/index/how-people-are-using-chatgpt/', note: '真实使用模式只能作为系统设计背景。' },
+  ],
+}
 const styleProfile = [
   '开头从读者熟悉的真实行为变化切入，用短段落逐步提出问题，不用宏大背景开场。',
   '章节按“日常现场—可靠证据—变化机制—隐藏代价—反例与边界—人的选择”推进，而不是罗列几项能力。',
@@ -40,19 +77,32 @@ if (existing.some((file) => file.startsWith(`daily-${dateKey}-`) && file.endsWit
   process.exit(0)
 }
 
-const topic = process.env.CONTENT_TOPIC?.trim() || selectTopic(dateKey, existing)
+const articleHistory = await loadArticleHistory(postsDir, { beforeDate: dateKey, limit: 60 })
+const manualTopic = process.env.CONTENT_TOPIC?.trim()
+const topicPlan = manualTopic
+  ? {
+      id: `manual-${crypto.createHash('sha1').update(manualTopic).digest('hex').slice(0, 10)}`,
+      cluster: inferTopicCluster(manualTopic),
+      prompt: manualTopic,
+    }
+  : selectTopic(dateKey, articleHistory)
+const sourceBank = sourceBanks[topicPlan.cluster] || sourceBanks.engineering
+const recentHistory = formatHistoryForPrompt(articleHistory)
 const draft = await ensureValidDraft(
-  await requestJson(buildWriterPrompt(`${topic}\n\n可用资料库（sources 至少保留 4 项）：${JSON.stringify(sourceBank)}\n\n表达与推进方式：\n${styleProfile}`)),
+  await requestJson(buildWriterPrompt(topicPlan, sourceBank, recentHistory)),
   '初稿',
+  articleHistory,
 )
 const finalDraft = runReview
   ? await ensureValidDraft(
-      await requestJson(buildReviewerPrompt(draft), '你是严格但克制的中文主编，只输出合法 JSON。'),
+      await requestJson(buildReviewerPrompt(draft, recentHistory), '你是严格但克制的中文主编，只输出合法 JSON。'),
       '主编审校稿',
+      articleHistory,
     )
   : draft
 
 const slug = normalizeSlug(finalDraft.slug || finalDraft.title)
+assertContentDiversity({ ...finalDraft, slug }, articleHistory)
 const articleImageDir = path.join(imagesRoot, `${dateKey}-${slug}`)
 const imagePublicDir = `/images/articles/${dateKey}-${slug}`
 await fs.mkdir(articleImageDir, { recursive: true })
@@ -81,7 +131,8 @@ const body = `${markdownWithFigures}\n\n## 主要资料与延伸阅读\n\n${sour
 const publishedAt = `${dateKey}T08:30:00+08:00`
 const postFilename = `daily-${dateKey}-${slug}.mdx`
 const postPath = path.join(postsDir, postFilename)
-const tags = [...new Set(['AI原生一代', 'AI深度观察', ...finalDraft.tags.map(cleanLine)])].slice(0, 7)
+const baseTags = topicPlan.cluster === 'learning' ? ['AI原生一代', 'AI深度观察', 'AI'] : ['AI深度观察', 'AI']
+const tags = [...new Set([...baseTags, ...finalDraft.tags.map(cleanLine)])].slice(0, 7)
 const frontmatter = [
   '---',
   `title: ${JSON.stringify(cleanLine(finalDraft.title))}`,
@@ -93,6 +144,8 @@ const frontmatter = [
   'icon: robot',
   `published: ${autoPublish}`,
   `cover: ${JSON.stringify(`${imagePublicDir}/cover.png`)}`,
+  `topicId: ${JSON.stringify(topicPlan.id)}`,
+  `topicCluster: ${JSON.stringify(topicPlan.cluster)}`,
   '---',
   '',
 ].join('\n')
@@ -103,11 +156,13 @@ const htmlPath = path.join(wechatDir, htmlFilename)
 await fs.writeFile(htmlPath, renderWechatHtml(finalDraft, body, figureLinks), 'utf8')
 
 const manifest = {
-  version: 1,
+  version: 2,
   date: dateKey,
   slug,
   title: cleanLine(finalDraft.title),
   description: cleanLine(finalDraft.description),
+  topicId: topicPlan.id,
+  topicCluster: topicPlan.cluster,
   postPath: path.relative(projectDir, postPath),
   htmlPath: path.relative(projectDir, htmlPath),
   coverPath: path.relative(projectDir, coverPath),
@@ -159,13 +214,15 @@ async function requestJson(prompt, systemPrompt) {
   throw lastError
 }
 
-async function ensureValidDraft(candidate, stage) {
+async function ensureValidDraft(candidate, stage, history) {
   let current = candidate
   const failureHistory = []
   for (let attempt = 0; attempt <= maxRepairAttempts; attempt += 1) {
     current.sources = mergeSources(current.sources)
     try {
-      return validateDraft(current)
+      const validated = validateDraft(current)
+      assertContentDiversity(validated, history)
+      return validated
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error)
       failureHistory.push(reason)
@@ -194,12 +251,12 @@ ${draftSchema()}`,
   throw new Error(`${stage}返工流程异常结束。`)
 }
 
-function buildWriterPrompt(topic) {
-  return `围绕“${topic}”写一篇面向公众号和个人网站的中文深度文章。参考所给范文的内容方法，但不要复刻句子、标题或论证顺序。\n\n写作位置：作者是有算法工程和 AI 内容创作经验的观察者；只写可以核实的事实，不虚构亲历、采访和情绪场景。\n\n文章方法：\n1. 从一个读者熟悉的具体变化切入，再追问变化背后的能力、制度或代价。\n2. 必须有一个可争辩的中心判断，不做“AI 有利有弊”的空泛综述。\n3. 使用真实研究、官方报告或一手产品资料；精确数字必须有来源链接，研究结论要写清样本和边界。\n4. 正文 3500–5500 个中文字符，6–9 个二级标题；段落长短有呼吸，不用整齐排比堆金句。\n5. 不写“在这个日新月异的时代”“赋能”“重塑未来”等套话，不凭空增加凌晨、咖啡馆等场景。\n6. 先白描事实，再给判断；保留必要的犹豫、反问和限定，不装成全知口吻。\n7. 正文不包含一级标题、YAML、资料列表或配图 Markdown。\n\n配图方法：输出 4 张信息图规格。图不是装饰，分别承担数据对照、过程变化、分析框架或风险边界；每张 3–6 个项目，文字短、可独立读懂。afterSection 是放在第几个二级章节标题之后，取 1–6 且不重复。\n\n只返回一个 JSON：\n${draftSchema()}`
+function buildWriterPrompt(topic, sources, history) {
+  return `围绕“${topic.prompt}”写一篇面向公众号和个人网站的中文深度文章。主题簇是 ${topic.cluster}，主题标识是 ${topic.id}。参考所给范文的内容方法，但不要复刻句子、标题或论证顺序。\n\n最近已经发布的文章如下，它们是禁写清单：不得换标题复述相同中心判断，也不得沿用相同章节骨架。\n${history}\n\n可用的一手资料池（sources 至少保留 4 项）：${JSON.stringify(sources)}\n\n表达与推进方式：\n${styleProfile}\n\n写作位置：作者是有算法工程和 AI 内容创作经验的观察者；只写可以核实的事实，不虚构亲历、采访和情绪场景。\n\n文章方法：\n1. 从一个读者熟悉的具体变化切入，再追问变化背后的能力、制度或代价。\n2. 必须有一个可争辩的中心判断，不做“AI 有利有弊”的空泛综述。\n3. 使用真实研究、官方报告或一手产品资料；精确数字必须有来源链接，研究结论要写清样本和边界。\n4. 正文 3500–5500 个中文字符，6–9 个二级标题；段落长短有呼吸，不用整齐排比堆金句。\n5. 不写“在这个日新月异的时代”“赋能”“重塑未来”等套话，不凭空增加凌晨、咖啡馆等场景。\n6. 先白描事实，再给判断；保留必要的犹豫、反问和限定，不装成全知口吻。\n7. 正文不包含一级标题、YAML、资料列表或配图 Markdown。\n8. slug 必须准确描述本期问题，不得复用禁写清单中的 slug 或仅添加日期。\n\n配图方法：输出 4 张信息图规格。图不是装饰，分别承担数据对照、过程变化、分析框架或风险边界；每张 3–6 个项目，文字短、可独立读懂。afterSection 是放在第几个二级章节标题之后，取 1–6 且不重复。\n\n只返回一个 JSON：\n${draftSchema()}`
 }
 
-function buildReviewerPrompt(draft) {
-  return `下面是一篇 AI 深度文章草稿。请做一次克制的主编审校，并返回同结构完整 JSON。\n\n审校重点：\n- 删除无来源的精确数字、伪引语、虚构亲历和过度外推。\n- 核对来源 URL 是否为可靠的一手资料；不可靠就删掉相关断言和来源。\n- 中心判断必须清楚，但承认反例、样本边界和不确定性。\n- 去掉 AI 腔、工整排比和硬造金句；优先白描、短句和自然转折，不凭空添加生活场景。\n- 正文保持 3500–5500 个中文字符、6–9 个二级标题；保留 4 张真正帮助理解的信息图。\n- 不要改变 JSON 字段，不要输出审校说明。\n\n草稿：\n${JSON.stringify(draft)}\n\n结构：\n${draftSchema()}`
+function buildReviewerPrompt(draft, history) {
+  return `下面是一篇 AI 深度文章草稿。请做一次克制的主编审校，并返回同结构完整 JSON。\n\n最近已经发布的文章如下。审校不得把草稿改回这些文章的中心判断、标题表达或章节骨架：\n${history}\n\n审校重点：\n- 删除无来源的精确数字、伪引语、虚构亲历和过度外推。\n- 核对来源 URL 是否为可靠的一手资料；不可靠就删掉相关断言和来源。\n- 中心判断必须清楚，但承认反例、样本边界和不确定性。\n- 去掉 AI 腔、工整排比和硬造金句；优先白描、短句和自然转折，不凭空添加生活场景。\n- 正文保持 3500–5500 个中文字符、6–9 个二级标题；保留 4 张真正帮助理解的信息图。\n- 主动检查与历史文章的标题、摘要、正文和标签是否过近；相似时必须更换问题、证据或中心判断，不得只换词。\n- 不要改变 JSON 字段，不要输出审校说明。\n\n草稿：\n${JSON.stringify(draft)}\n\n结构：\n${draftSchema()}`
 }
 
 function draftSchema() {
@@ -348,26 +405,6 @@ function wrapText(value, size) {
   return lines.length ? lines : ['']
 }
 
-function selectTopic(date, existingFiles) {
-  const topics = [
-    'AI 原生一代如何形成真正的学习能力',
-    '当 AI 成为默认入口，年轻人还需要不会搜索吗',
-    'AI 原生员工进入职场后，初级岗位训练会发生什么',
-    '孩子先学会提问 AI，还是先学会独立判断',
-    '当答案随手可得，知识记忆还有没有价值',
-    'AI 陪伴进入日常后，关系和孤独会怎样变化',
-    '从会使用 AI 到拥有认知主权，中间差了什么',
-    'AI 原生创业者的速度优势与验证债务',
-    '当创作从空白页开始消失，原创能力如何形成',
-    'AI 时代的第一份工作，为什么越来越重要',
-    '把计划交给 AI 之后，人如何保留目标感',
-    'AI 教育最容易忽视的不是工具，而是练习过程',
-  ]
-  const used = new Set(existingFiles.map((file) => file.toLowerCase()))
-  const start = Number.parseInt(crypto.createHash('sha1').update(date).digest('hex').slice(0, 8), 16) % topics.length
-  return topics.find((topic, index) => !used.has(normalizeSlug(topics[(start + index) % topics.length]))) || topics[start]
-}
-
 function mergeSources(sources) {
   const merged = [...(Array.isArray(sources) ? sources : []), ...sourceBank]
   return [...new Map(
@@ -375,6 +412,16 @@ function mergeSources(sources) {
       .filter((source) => /^https:\/\//i.test(source?.url || ''))
       .map((source) => [source.url, source]),
   ).values()].slice(0, 8)
+}
+
+function formatHistoryForPrompt(history) {
+  const recent = history.filter((article) => article.title).slice(0, 12)
+  if (!recent.length) return '- 暂无历史文章。'
+  return recent.map((article) => {
+    const date = article.date?.slice(0, 10) || '未知日期'
+    const description = cleanLine(article.description).slice(0, 120)
+    return `- ${date}《${cleanLine(article.title)}》；slug=${article.slug}；摘要=${description}`
+  }).join('\n')
 }
 
 async function readLocalAuthKey(file) {

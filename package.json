@@ -9,6 +9,7 @@
     "lint": "next lint",
     "draft:daily": "node scripts/generate-daily-draft.mjs",
     "article:daily": "node scripts/generate-deep-article.mjs",
+    "test:content-diversity": "node scripts/tests/test-content-diversity.mjs",
     "publish:wechat": "node scripts/publish-wechat.mjs",
     "schedule:daily:install": "bash scripts/install-daily-content-launchd.sh",
     "operator:audit": "node scripts/audit-production.mjs",
