@@ -381,7 +381,7 @@ export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {
                     <span className="truncate text-text-secondary" title={item.pathname}>{item.pathname}</span>
                     <strong className="text-text-primary">{item.views} PV</strong>
                     <span className="col-span-2 text-xs text-text-tertiary">
-                      {item.visitors} 访客 · {item.engagedVisitors} 有效阅读 · {item.depth50Visitors}/{item.depth90Visitors} 读到 50%/90% · 平均 {item.averageEngagedSeconds} 秒
+                      {item.visitors} 访客 · {item.engagedVisitors} 有效阅读 · {item.depth50Visitors}/{item.depth90Visitors} 读到 50%/90% · 平均活跃阅读 {item.averageEngagedSeconds} 秒
                     </span>
                   </div>
                 ))}

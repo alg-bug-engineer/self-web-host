@@ -2,6 +2,11 @@
 
 import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
+import {
+  activeReadingSeconds,
+  createActiveReadingState,
+  transitionActiveReading,
+} from '@/lib/active-reading.mjs'
 
 export default function InternalAnalytics() {
   const pathname = usePathname()
@@ -77,15 +82,19 @@ export default function InternalAnalytics() {
         .catch(() => undefined)
     }
 
-    const startedAt = Date.now()
+    const readerIsActive = () => document.visibilityState === 'visible' && document.hasFocus()
+    let readingState = createActiveReadingState(readerIsActive(), performance.now())
     let maxDepth = 0
+    const syncReadingState = () => {
+      readingState = transitionActiveReading(readingState, readerIsActive(), performance.now())
+    }
     const updateDepth = () => {
       const scrollable = Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
       maxDepth = Math.max(maxDepth, Math.min(100, Math.round((window.scrollY / scrollable) * 100)))
     }
     const sendEngagement = () => {
       updateDepth()
-      const seconds = Math.min(3600, Math.round((Date.now() - startedAt) / 1000))
+      const seconds = Math.min(3600, activeReadingSeconds(readingState, performance.now()))
       if (seconds < 10 && maxDepth < 25) return
       fetch('/api/analytics/view', {
         method: 'PATCH',
@@ -97,6 +106,9 @@ export default function InternalAnalytics() {
 
     updateDepth()
     window.addEventListener('scroll', updateDepth, { passive: true })
+    window.addEventListener('focus', syncReadingState)
+    window.addEventListener('blur', syncReadingState)
+    document.addEventListener('visibilitychange', syncReadingState)
     document.addEventListener('click', sendConversion)
     window.addEventListener('pagehide', sendEngagement)
     const interval = window.setInterval(sendEngagement, 30_000)
@@ -105,6 +117,9 @@ export default function InternalAnalytics() {
       sendEngagement()
       window.clearInterval(interval)
       window.removeEventListener('scroll', updateDepth)
+      window.removeEventListener('focus', syncReadingState)
+      window.removeEventListener('blur', syncReadingState)
+      document.removeEventListener('visibilitychange', syncReadingState)
       document.removeEventListener('click', sendConversion)
       window.removeEventListener('pagehide', sendEngagement)
     }

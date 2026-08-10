@@ -43,6 +43,12 @@ curl --silent --fail -X POST "${request_headers[@]}" \
 curl --silent --fail -X POST "${request_headers[@]}" \
   --data '{"kind":"conversion","path":"/blog","name":"explore_articles","target":"blog-path-principles"}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X PATCH "${request_headers[@]}" \
+  --data '{"path":"/blog","seconds":30,"depth":50}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X PATCH "${request_headers[@]}" \
+  --data '{"path":"/portfolio","seconds":12,"depth":30}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
 
 INVALID_STATUS="$(curl --silent --output /dev/null --write-out '%{http_code}' -X POST "${request_headers[@]}" \
   --data '{"kind":"conversion","path":"/portfolio","name":"arbitrary_event","target":"https://example.com/private"}' \
@@ -71,6 +77,8 @@ if (daily.conversions.view_book.visitors.length !== 1) throw new Error('conversi
 if (daily.conversions.view_book.targets['book-3'] !== 1) throw new Error('normalized target was not recorded')
 if (daily.conversions.explore_articles.targets['blog-path-principles'] !== 1) throw new Error('blog learning path was not recorded')
 if (daily.conversions.arbitrary_event) throw new Error('arbitrary event name was accepted')
+if (daily.engagement['/blog']) throw new Error('engagement was accepted for a path the visitor did not view')
+if (daily.engagement['/portfolio']?.[daily.visitors[0]]?.seconds !== 12) throw new Error('valid active reading was not recorded')
 if ((fs.statSync(analyticsFile).mode & 0o777) !== 0o600) throw new Error('analytics file is not private')
 NODE
 
@@ -80,7 +88,7 @@ ANALYTICS_DATA_DIR="$ANALYTICS_TEST_DIR" npm run operator:report >/dev/null
 node - "$ANALYTICS_TEST_DIR/operator/latest.json" <<'NODE'
 const fs = require('node:fs')
 const report = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
-if (report.version !== 8) throw new Error(`expected report version 8, got ${report.version}`)
+if (report.version !== 9) throw new Error(`expected report version 9, got ${report.version}`)
 if (report.content !== null) throw new Error('missing content audit should be represented as null')
 if (report.value.conversionVisitors !== 1) throw new Error('report conversion visitor count is wrong')
 if (report.value.conversionRatePercent !== 100) throw new Error('report conversion rate is wrong')
