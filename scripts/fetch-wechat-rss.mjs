@@ -69,6 +69,6 @@ const feedResponse = await fetch(feedUrl, { signal: AbortSignal.timeout(30_000) 
 const xml = await feedResponse.text()
 if (!feedResponse.ok) throw new Error(`We-MP-RSS Feed 请求失败：HTTP ${feedResponse.status}`)
 if (!/<item(?:\s|>)/i.test(xml) && !/<entry(?:\s|>)/i.test(xml)) {
-  throw new Error('We-MP-RSS 采集完成后仍没有文章；请检查微信授权、频率限制和订阅配置。')
+  console.error('We-MP-RSS 授权与订阅有效，但 Feed 暂无文章；按日频等待下一次采集。')
 }
 process.stdout.write(xml)
