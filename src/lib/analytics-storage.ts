@@ -4,6 +4,15 @@ import crypto from 'crypto'
 import fs from 'fs/promises'
 import path from 'path'
 
+export const CORE_WEB_VITAL_NAMES = ['LCP', 'INP', 'CLS'] as const
+export type CoreWebVitalName = (typeof CORE_WEB_VITAL_NAMES)[number]
+export type CoreWebVitalRating = 'good' | 'needs-improvement' | 'poor'
+
+type DailyWebVitals = Record<
+  string,
+  Partial<Record<CoreWebVitalName, Record<string, number>>>
+>
+
 type DailyAnalytics = {
   pageViews: number
   visitors: string[]
@@ -12,6 +21,7 @@ type DailyAnalytics = {
   paths: Record<string, number>
   pathVisitors: Record<string, string[]>
   engagement: Record<string, Record<string, EngagementSignal>>
+  vitals: DailyWebVitals
   sources: Record<string, number>
   landingPaths: Record<string, number>
 }
@@ -22,7 +32,7 @@ type EngagementSignal = {
 }
 
 type AnalyticsStore = {
-  version: 2
+  version: 3
   days: Record<string, DailyAnalytics>
 }
 
@@ -38,6 +48,12 @@ export type AnalyticsOverview = {
   engagedDailyVisitors: number
   returningRate: number
   engagementRate: number
+  webVitals: Array<{
+    name: CoreWebVitalName
+    p75: number | null
+    samples: number
+    rating: CoreWebVitalRating | 'insufficient-data'
+  }>
   topPaths: Array<{
     pathname: string
     views: number
@@ -57,7 +73,7 @@ type TrafficContext = {
   returningReader?: boolean
 }
 
-const emptyStore = (): AnalyticsStore => ({ version: 2, days: {} })
+const emptyStore = (): AnalyticsStore => ({ version: 3, days: {} })
 const emptyDay = (): DailyAnalytics => ({
   pageViews: 0,
   visitors: [],
@@ -66,6 +82,7 @@ const emptyDay = (): DailyAnalytics => ({
   paths: {},
   pathVisitors: {},
   engagement: {},
+  vitals: {},
   sources: {},
   landingPaths: {},
 })
@@ -117,6 +134,46 @@ function engagementRecord(value: unknown) {
   )
 }
 
+export function normalizeCoreWebVitalName(value: unknown): CoreWebVitalName | null {
+  const name = String(value || '').toUpperCase()
+  return CORE_WEB_VITAL_NAMES.includes(name as CoreWebVitalName)
+    ? name as CoreWebVitalName
+    : null
+}
+
+function normalizeCoreWebVitalValue(name: CoreWebVitalName, value: unknown) {
+  const numeric = Number(value)
+  if (!Number.isFinite(numeric) || numeric < 0) return null
+  const maximum = name === 'CLS' ? 10 : 60_000
+  const clamped = Math.min(maximum, numeric)
+  return name === 'CLS'
+    ? Math.round(clamped * 10_000) / 10_000
+    : Math.round(clamped)
+}
+
+function webVitalRecord(value: unknown): DailyWebVitals {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+  return Object.fromEntries(
+    Object.entries(value).flatMap(([pathname, metrics]) => {
+      if (!metrics || typeof metrics !== 'object' || Array.isArray(metrics)) return []
+      const normalizedMetrics = Object.fromEntries(
+        Object.entries(metrics).flatMap(([rawName, visitors]) => {
+          const name = normalizeCoreWebVitalName(rawName)
+          if (!name || !visitors || typeof visitors !== 'object' || Array.isArray(visitors)) return []
+          const normalizedVisitors = Object.fromEntries(
+            Object.entries(visitors).flatMap(([visitor, rawValue]) => {
+              const normalizedValue = normalizeCoreWebVitalValue(name, rawValue)
+              return normalizedValue === null ? [] : [[visitor, normalizedValue]]
+            }),
+          )
+          return [[name, normalizedVisitors]]
+        }),
+      )
+      return [[pathname, normalizedMetrics]]
+    }),
+  )
+}
+
 function normalizeDay(value: unknown): DailyAnalytics {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return emptyDay()
   const candidate = value as Partial<DailyAnalytics>
@@ -132,6 +189,7 @@ function normalizeDay(value: unknown): DailyAnalytics {
     paths: numberRecord(candidate.paths),
     pathVisitors: visitorRecord(candidate.pathVisitors),
     engagement: engagementRecord(candidate.engagement),
+    vitals: webVitalRecord(candidate.vitals),
     sources: numberRecord(candidate.sources),
     landingPaths: numberRecord(candidate.landingPaths),
   }
@@ -145,7 +203,7 @@ function normalizeStore(value: unknown): AnalyticsStore {
   }
 
   return {
-    version: 2,
+    version: 3,
     days: Object.fromEntries(
       Object.entries(candidate.days).map(([day, analytics]) => [day, normalizeDay(analytics)]),
     ),
@@ -283,6 +341,65 @@ export async function recordEngagement(
   return task
 }
 
+export async function recordWebVital(
+  pathname: string,
+  visitorHash: string,
+  rawName: unknown,
+  rawValue: unknown,
+) {
+  const normalizedPath = normalizeAnalyticsPath(pathname)
+  const name = normalizeCoreWebVitalName(rawName)
+  if (!normalizedPath || !name) throw new Error('Invalid web vital')
+  const value = normalizeCoreWebVitalValue(name, rawValue)
+  if (value === null) throw new Error('Invalid web vital value')
+
+  const task = writeQueue.then(async () => {
+    const store = await readStore()
+    const day = new Date().toISOString().slice(0, 10)
+    const daily = store.days[day] || emptyDay()
+    const pathVitals = daily.vitals[normalizedPath] || {}
+    const signals = pathVitals[name] || {}
+    const totalSignals = Object.values(daily.vitals).reduce(
+      (total, metrics) => total + CORE_WEB_VITAL_NAMES.reduce(
+        (metricTotal, metricName) => metricTotal + Object.keys(metrics[metricName] || {}).length,
+        0,
+      ),
+      0,
+    )
+
+    // Keep the private file bounded even if an endpoint is deliberately hit
+    // with many synthetic visitor hashes. Normal traffic is far below this.
+    if (!(visitorHash in signals) && (Object.keys(signals).length >= 5_000 || totalSignals >= 50_000)) return
+    signals[visitorHash] = Math.max(signals[visitorHash] || 0, value)
+    pathVitals[name] = signals
+    daily.vitals[normalizedPath] = pathVitals
+    store.days[day] = daily
+    await writeStore(store)
+  })
+
+  writeQueue = task.catch(() => undefined)
+  return task
+}
+
+export function coreWebVitalRating(
+  name: CoreWebVitalName,
+  value: number,
+): CoreWebVitalRating {
+  const thresholds = {
+    LCP: { good: 2_500, poor: 4_000 },
+    INP: { good: 200, poor: 500 },
+    CLS: { good: 0.1, poor: 0.25 },
+  }[name]
+  if (value <= thresholds.good) return 'good'
+  return value > thresholds.poor ? 'poor' : 'needs-improvement'
+}
+
+function percentile75(values: number[]) {
+  if (!values.length) return null
+  const sorted = [...values].sort((left, right) => left - right)
+  return sorted[Math.max(0, Math.ceil(sorted.length * 0.75) - 1)]
+}
+
 function recentDays(days: number, offset = 0) {
   const result: string[] = []
   const cursor = new Date()
@@ -371,6 +488,9 @@ export async function getAnalyticsOverview(days = 30): Promise<AnalyticsOverview
   }> = {}
   const sourceTotals: Record<string, number> = {}
   const landingTotals: Record<string, number> = {}
+  const webVitalValues = Object.fromEntries(
+    CORE_WEB_VITAL_NAMES.map((name) => [name, [] as number[]]),
+  ) as Record<CoreWebVitalName, number[]>
 
   for (const day of selectedDays) {
     const daily = store.days[day]
@@ -408,6 +528,11 @@ export async function getAnalyticsOverview(days = 30): Promise<AnalyticsOverview
     for (const [pathname, visitors] of Object.entries(daily.landingPaths)) {
       landingTotals[pathname] = (landingTotals[pathname] || 0) + visitors
     }
+    for (const metrics of Object.values(daily.vitals)) {
+      for (const name of CORE_WEB_VITAL_NAMES) {
+        webVitalValues[name].push(...Object.values(metrics[name] || {}))
+      }
+    }
   }
 
   const topPaths = Object.entries(pathTotals)
@@ -437,6 +562,15 @@ export async function getAnalyticsOverview(days = 30): Promise<AnalyticsOverview
     pageViews: store.days[date]?.pageViews || 0,
     visitors: store.days[date]?.visitors.length || 0,
   }))
+  const webVitals = CORE_WEB_VITAL_NAMES.map((name) => {
+    const p75 = percentile75(webVitalValues[name])
+    return {
+      name,
+      p75,
+      samples: webVitalValues[name].length,
+      rating: p75 === null ? 'insufficient-data' as const : coreWebVitalRating(name, p75),
+    }
+  })
 
   return {
     days: safeDays,
@@ -454,6 +588,7 @@ export async function getAnalyticsOverview(days = 30): Promise<AnalyticsOverview
     engagementRate: dailyVisitors
       ? Math.min(100, Math.round((engagedDailyVisitors / dailyVisitors) * 1000) / 10)
       : 0,
+    webVitals,
     topPaths,
     topSources,
     topLandingPaths,

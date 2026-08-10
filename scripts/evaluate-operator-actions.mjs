@@ -60,6 +60,11 @@ const round = (value) => Math.round(value * 10) / 10
 const percentChange = (current, previous) => previous > 0
   ? round(((current - previous) / previous) * 100)
   : null
+const percentile75 = (values) => {
+  if (!values.length) return null
+  const sorted = [...values].sort((left, right) => left - right)
+  return sorted[Math.max(0, Math.ceil(sorted.length * 0.75) - 1)]
+}
 
 const analytics = await readJson(analyticsPath, { days: {} })
 const analyticsDays = analytics?.days && typeof analytics.days === 'object' ? analytics.days : {}
@@ -72,6 +77,7 @@ const scorecardFor = (days) => {
   let engagedVisitors = 0
   let qualifiedVisitors = 0
   let activeDays = 0
+  const webVitalValues = { LCP: [], INP: [], CLS: [] }
 
   for (const day of days) {
     const daily = analyticsDays[day]
@@ -94,6 +100,11 @@ const scorecardFor = (days) => {
     articlePageViews += sum(Object.entries(daily.paths || {})
       .filter(([pathname]) => pathname.startsWith('/blog/'))
       .map(([, views]) => Number(views || 0)))
+    for (const metrics of Object.values(daily.vitals || {})) {
+      for (const name of Object.keys(webVitalValues)) {
+        webVitalValues[name].push(...Object.values(metrics?.[name] || {}).map(Number).filter(Number.isFinite))
+      }
+    }
   }
 
   return {
@@ -105,6 +116,11 @@ const scorecardFor = (days) => {
     articlePageViews,
     engagementRatePercent: visitors ? round((engagedVisitors / visitors) * 100) : 0,
     returningRatePercent: visitors ? round((returningVisitors / visitors) * 100) : 0,
+    coreWebVitals: {
+      LCP: { p75: percentile75(webVitalValues.LCP), samples: webVitalValues.LCP.length },
+      INP: { p75: percentile75(webVitalValues.INP), samples: webVitalValues.INP.length },
+      CLS: { p75: percentile75(webVitalValues.CLS), samples: webVitalValues.CLS.length },
+    },
   }
 }
 
@@ -163,24 +179,42 @@ const actions = deployments
       }
     }
 
+    const sufficientVitalSamples = (name) =>
+      before.coreWebVitals[name].samples >= minimumActiveDays &&
+      after.coreWebVitals[name].samples >= minimumActiveDays
     const changes = {
       qualifiedVisitorsPercent: percentChange(after.qualifiedVisitors, before.qualifiedVisitors),
       visitorsPercent: percentChange(after.visitors, before.visitors),
       articlePageViewsPercent: percentChange(after.articlePageViews, before.articlePageViews),
       engagementRatePoints: round(after.engagementRatePercent - before.engagementRatePercent),
       returningRatePoints: round(after.returningRatePercent - before.returningRatePercent),
+      lcpP75Percent: sufficientVitalSamples('LCP')
+        ? percentChange(after.coreWebVitals.LCP.p75, before.coreWebVitals.LCP.p75)
+        : null,
+      inpP75Percent: sufficientVitalSamples('INP')
+        ? percentChange(after.coreWebVitals.INP.p75, before.coreWebVitals.INP.p75)
+        : null,
+      clsP75Points: sufficientVitalSamples('CLS') && after.coreWebVitals.CLS.p75 !== null && before.coreWebVitals.CLS.p75 !== null
+        ? Math.round((after.coreWebVitals.CLS.p75 - before.coreWebVitals.CLS.p75) * 10_000) / 10_000
+        : null,
     }
     const positiveSignals = [
       changes.qualifiedVisitorsPercent !== null && changes.qualifiedVisitorsPercent >= 5,
       changes.articlePageViewsPercent !== null && changes.articlePageViewsPercent >= 5,
       changes.engagementRatePoints >= 2,
       changes.returningRatePoints >= 1,
+      changes.lcpP75Percent !== null && changes.lcpP75Percent <= -5,
+      changes.inpP75Percent !== null && changes.inpP75Percent <= -5,
+      changes.clsP75Points !== null && changes.clsP75Points <= -0.02,
     ].filter(Boolean).length
     const negativeSignals = [
       changes.qualifiedVisitorsPercent !== null && changes.qualifiedVisitorsPercent <= -5,
       changes.articlePageViewsPercent !== null && changes.articlePageViewsPercent <= -5,
       changes.engagementRatePoints <= -2,
       changes.returningRatePoints <= -1,
+      changes.lcpP75Percent !== null && changes.lcpP75Percent >= 5,
+      changes.inpP75Percent !== null && changes.inpP75Percent >= 5,
+      changes.clsP75Points !== null && changes.clsP75Points >= 0.02,
     ].filter(Boolean).length
     const outcome = positiveSignals >= 2 && negativeSignals === 0
       ? 'positive-signal'

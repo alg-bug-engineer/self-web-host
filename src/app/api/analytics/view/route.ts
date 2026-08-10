@@ -3,8 +3,10 @@ import {
   createVisitorHash,
   getPathViews,
   normalizeAnalyticsPath,
+  normalizeCoreWebVitalName,
   recordEngagement,
   recordPageView,
+  recordWebVital,
 } from '@/lib/analytics-storage'
 
 export const runtime = 'nodejs'
@@ -129,5 +131,21 @@ export async function PATCH(request: NextRequest) {
   }
 
   await recordEngagement(pathname, requestVisitorHash(request), { seconds, depth })
+  return NextResponse.json({ ok: true }, { headers: noStoreHeaders })
+}
+
+export async function PUT(request: NextRequest) {
+  const body = await request.json().catch(() => ({}))
+  const pathname = normalizeAnalyticsPath(String(body.path || ''))
+  const name = normalizeCoreWebVitalName(body.name)
+  const value = Number(body.value)
+  if (!pathname || !name || !Number.isFinite(value) || value < 0) {
+    return NextResponse.json({ ok: false, message: '无效性能指标' }, { status: 400 })
+  }
+  if (shouldIgnoreRequest(request)) {
+    return NextResponse.json({ ok: true, ignored: true }, { headers: noStoreHeaders })
+  }
+
+  await recordWebVital(pathname, requestVisitorHash(request), name, value)
   return NextResponse.json({ ok: true }, { headers: noStoreHeaders })
 }
