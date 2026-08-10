@@ -1,5 +1,5 @@
 {
-  "version": 10,
+  "version": 11,
   "objective": {
     "metric": "monthlyQualifiedVisitorsEstimate",
     "target": 50000,
@@ -14,6 +14,7 @@
     "valueConversionRate",
     "coreWebVitalsP75",
     "indexedHighQualityPages",
+    "machineReadableArticleCoverage",
     "contentTopicDiversity",
     "contentPipelineAvailability",
     "publicProfileFreshness",
@@ -48,6 +49,7 @@
       "统计汇总",
       "失效链接检测",
       "Sitemap、RSS 与结构化数据校验",
+      "巡检 llms.txt 与每篇文章的机器可读 Markdown 正文",
       "部署成功后通过 IndexNow 通知发生变化的公开页面",
       "生成内部经营报告",
       "巡检日更、公众号草稿交付与内网 RSS 授权状态",

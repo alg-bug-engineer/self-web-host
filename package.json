@@ -26,6 +26,7 @@
     "seo:indexnow": "node scripts/submit-indexnow.mjs",
     "sync:wechat": "node scripts/import-wechat.mjs",
     "test:indexnow": "node scripts/tests/test-indexnow.mjs",
+    "test:llms-markdown": "node scripts/tests/test-llms-markdown.mjs",
     "test:profile-audit": "node scripts/tests/test-profile-audit.mjs",
     "deploy:production": "bash scripts/deploy.sh"
   },
