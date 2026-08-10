@@ -225,7 +225,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Wechat Subscription Card */}
         <div className="mb-16">
-          <WechatCard />
+          <WechatCard analyticsTarget="article-card" />
         </div>
 
         {/* Post Navigation */}

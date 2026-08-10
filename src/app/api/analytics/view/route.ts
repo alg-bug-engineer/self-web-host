@@ -118,8 +118,8 @@ export async function POST(request: NextRequest) {
     if (!target) {
       return NextResponse.json({ ok: false, message: '无效转化目标' }, { status: 400 })
     }
-    await recordConversion(pathname, requestVisitorHash(request), name, target)
-    return NextResponse.json({ ok: true, name }, { headers: noStoreHeaders })
+    const result = await recordConversion(pathname, requestVisitorHash(request), name, target)
+    return NextResponse.json({ ok: true, name, ...result }, { headers: noStoreHeaders })
   }
 
   const result = await recordPageView(pathname, requestVisitorHash(request), {

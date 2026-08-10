@@ -286,7 +286,7 @@ export default function AboutPage() {
           </p>
 
           <div id="wechat" className="pt-4 scroll-mt-20">
-            <WechatCard />
+            <WechatCard analyticsTarget="about-card" />
           </div>
         </div>
       </section>

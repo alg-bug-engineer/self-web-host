@@ -81,6 +81,9 @@ request_headers=(
 curl --silent --fail -X POST "${request_headers[@]}" \
   --data '{"path":"/portfolio","referrer":""}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X POST "${request_headers[@]}" \
+  --data '{"path":"/blog","referrer":""}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
 UNKNOWN_PATH_STATUS="$(curl --silent --output /dev/null --write-out '%{http_code}' -X POST "${request_headers[@]}" \
   --data '{"path":"/operator","referrer":""}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view")"
@@ -91,8 +94,23 @@ curl --silent --fail -X POST "${request_headers[@]}" \
 curl --silent --fail -X POST "${request_headers[@]}" \
   --data '{"kind":"conversion","path":"/blog","name":"explore_articles","target":"blog-path-principles"}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X POST "${request_headers[@]}" \
+  --data '{"kind":"conversion","path":"/blog","name":"subscribe_feed","target":"footer"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X POST "${request_headers[@]}" \
+  --data '{"kind":"conversion","path":"/blog","name":"follow_wechat","target":"article-card"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+UNSEEN_CONVERSION_RESPONSE="$(curl --silent --fail -X POST "${request_headers[@]}" \
+  --data '{"kind":"conversion","path":"/about","name":"follow_wechat","target":"about-card"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view")"
+node - "$UNSEEN_CONVERSION_RESPONSE" <<'NODE'
+const result = JSON.parse(process.argv[2])
+if (result.recorded !== false || result.reason !== 'missing-page-view') {
+  throw new Error('conversion without a matching page view was not rejected')
+}
+NODE
 curl --silent --fail -X PATCH "${request_headers[@]}" \
-  --data '{"path":"/blog","seconds":30,"depth":50}' \
+  --data '{"path":"/about","seconds":30,"depth":50}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
 curl --silent --fail -X PATCH "${request_headers[@]}" \
   --data '{"path":"/portfolio","seconds":12,"depth":30}' \
@@ -123,13 +141,16 @@ const daily = store.days[day]
 if (store.version !== 5) throw new Error(`expected store version 5, got ${store.version}`)
 if (store.visitorIdentity?.scope !== 'calendar-month') throw new Error('monthly visitor identity scope is missing')
 if (store.visitorIdentity?.reliableFromDay !== tomorrow.toISOString().slice(0, 10)) throw new Error('legacy migration day was not excluded')
-if (daily.pageViews !== 1) throw new Error(`expected one page view, got ${daily.pageViews}`)
+if (daily.pageViews !== 2) throw new Error(`expected two page views, got ${daily.pageViews}`)
 if (daily.conversions.view_book.count !== 1) throw new Error('DNT or invalid event was recorded')
 if (daily.conversions.view_book.visitors.length !== 1) throw new Error('conversion visitor was not de-duplicated')
 if (daily.conversions.view_book.targets['book-3'] !== 1) throw new Error('normalized target was not recorded')
 if (daily.conversions.explore_articles.targets['blog-path-principles'] !== 1) throw new Error('blog learning path was not recorded')
+if (daily.conversions.subscribe_feed.targets.footer !== 1) throw new Error('RSS subscription intent was not recorded')
+if (daily.conversions.follow_wechat.targets['article-card'] !== 1) throw new Error('WeChat follow intent was not recorded')
+if (daily.conversions.follow_wechat.paths['/about']) throw new Error('unseen page received a conversion')
 if (daily.conversions.arbitrary_event) throw new Error('arbitrary event name was accepted')
-if (daily.engagement['/blog']) throw new Error('engagement was accepted for a path the visitor did not view')
+if (daily.engagement['/about']) throw new Error('engagement was accepted for a path the visitor did not view')
 if (daily.engagement['/portfolio']?.[daily.visitors[0]]?.seconds !== 12) throw new Error('valid active reading was not recorded')
 if ((fs.statSync(analyticsFile).mode & 0o777) !== 0o600) throw new Error('analytics file is not private')
 NODE

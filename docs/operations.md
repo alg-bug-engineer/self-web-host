@@ -17,6 +17,7 @@
 13. CI 使用 Playwright 在桌面与移动端验证首页、最新日更文章、作品页和公开边界。检查包含横向溢出、菜单键盘交互、图片可用性、外链安全属性，以及 `/operator`、`/ai-operator` 持续返回 404；本地运行 `npm run build && npm run test:ui`。
 14. 站内统计只接受 `ops/public-analytics-paths.json` 声明的公开页面和 Contentlayer 中已发布文章；404、后台、API 与运维探测路径不进入 PV、访客天、来源或经营决策。历史报告也会过滤这些非公开路径，避免健康检查本身制造增长信号。
 15. 个人公开数据集中保存在 `src/data/profile.json`。每日私有任务通过 GitHub 公开 API 核对品牌名、作者链接和公开仓库数；出现漂移时只生成 `profile-review` 审查事项，不自动修改学历、工作经历、著作或公众号读者数。GitHub 单次不可用时保留现值并等待次日，不把网络故障当成资料变化。
+16. 价值转化只记录白名单内的站内入口与匿名访客，例如查看著作、访问项目、RSS 订阅和点击放大公众号二维码。服务端要求同一匿名访客当天已访问对应公开页面，才接受该页转化；未访问页面的直接 API 请求不会污染经营报告，也不保存账号、原始 IP 或任意外链地址。
 
 经营任务也会尝试读取 Google Search Console 的 finalized 搜索数据：最近 28 天点击、曝光、CTR、平均排名、查询词与落地页。数据固定滞后 3 天，并按 Google 的 `America/Los_Angeles` 日期口径保存到私有 `operator/search-console-latest.json`；凭据缺失或 API 异常只降低报告完整度，不中断站内统计、技术巡检和健康检查。
 

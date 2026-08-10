@@ -179,9 +179,12 @@ const uniqueQualifiedVisitorsFor = (days) => {
 }
 const conversionVisitorsFor = (days) => sum(days.map((day) => {
   const visitors = new Set()
+  const reportableVisitors = reportableVisitorsForDay(day)
   for (const event of Object.values(analyticsDays[day]?.conversions || {})) {
     if (!Object.keys(event?.paths || {}).some(isReportablePath)) continue
-    for (const visitor of event?.visitors || []) visitors.add(visitor)
+    for (const visitor of event?.visitors || []) {
+      if (reportableVisitors.has(visitor)) visitors.add(visitor)
+    }
   }
   return visitors.size
 }))
@@ -274,14 +277,17 @@ for (const day of current28Days) {
     sourceTotals[source] = (sourceTotals[source] || 0) + Number(visitors || 0)
   }
   for (const [name, event] of Object.entries(daily.conversions || {})) {
+    const reportableVisitors = reportableVisitorsForDay(day)
+    const validVisitors = new Set((event?.visitors || []).filter((visitor) => reportableVisitors.has(visitor)))
+    const reportablePaths = Object.entries(event?.paths || {}).filter(([pathname]) => isReportablePath(pathname))
+    if (validVisitors.size === 0 || reportablePaths.length === 0) continue
     conversionTotals[name] ||= { count: 0, visitorDays: 0, targets: {} }
-    conversionTotals[name].count += Number(event?.count || 0)
-    conversionTotals[name].visitorDays += Array.isArray(event?.visitors) ? event.visitors.length : 0
+    conversionTotals[name].count += sum(reportablePaths.map(([, count]) => Number(count || 0)))
+    conversionTotals[name].visitorDays += validVisitors.size
     for (const [target, count] of Object.entries(event?.targets || {})) {
       conversionTotals[name].targets[target] = (conversionTotals[name].targets[target] || 0) + Number(count || 0)
     }
-    for (const [pathname, count] of Object.entries(event?.paths || {})) {
-      if (!isReportablePath(pathname)) continue
+    for (const [pathname, count] of reportablePaths) {
       pathMetrics(pathname).conversionEvents += Number(count || 0)
     }
   }
