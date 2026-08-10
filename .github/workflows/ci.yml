@@ -24,5 +24,6 @@ jobs:
 
       - run: npm ci
       - run: bash scripts/tests/test-github-pr-recovery.sh
+      - run: node scripts/tests/test-search-console.mjs
       - run: npm run lint
       - run: npm run build
