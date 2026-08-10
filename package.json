@@ -12,6 +12,8 @@
     "test:content-diversity": "node scripts/tests/test-content-diversity.mjs",
     "test:content-operations": "node scripts/tests/test-content-operations.mjs",
     "test:operator-content-report": "node scripts/tests/test-operator-content-report.mjs",
+    "test:active-reading": "node scripts/tests/test-active-reading.mjs",
+    "test:operator-decision": "node scripts/tests/test-operator-decision.mjs && node scripts/tests/test-operator-evidence-report.mjs",
     "publish:wechat": "node scripts/publish-wechat.mjs",
     "schedule:daily:install": "bash scripts/install-daily-content-launchd.sh",
     "operator:audit": "node scripts/audit-production.mjs",

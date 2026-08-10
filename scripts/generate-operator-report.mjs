@@ -4,6 +4,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import nextEnv from '@next/env'
+import { buildOperatorDecision } from './lib/operator-decision.mjs'
 
 const projectDir = process.cwd()
 nextEnv.loadEnvConfig(projectDir)
@@ -119,6 +120,8 @@ const returningRate = currentVisitors ? Math.min(100, Math.round((returningVisit
 const engagementRate = currentVisitors ? Math.min(100, Math.round((engagedVisitors / currentVisitors) * 1000) / 10) : 0
 const conversionRate = currentVisitors ? Math.min(100, Math.round((conversionVisitors / currentVisitors) * 1000) / 10) : 0
 const activeDays = current28Days.filter((day) => analyticsDays[day]).length
+const current7ActiveDays = current7Days.filter((day) => analyticsDays[day]).length
+const previous7ActiveDays = previous7Days.filter((day) => analyticsDays[day]).length
 const projectedMonthlyVisitors = activeDays
   ? Math.round((currentVisitors / activeDays) * 30)
   : 0
@@ -129,11 +132,39 @@ const projectedMonthlyQualifiedVisitors = activeDays
 const pathTotals = {}
 const sourceTotals = {}
 const conversionTotals = {}
+const pathMetrics = (pathname) => {
+  pathTotals[pathname] ||= {
+    views: 0,
+    visitorDays: 0,
+    qualifiedVisitorDays: 0,
+    depth50VisitorDays: 0,
+    depth90VisitorDays: 0,
+    activeReadingSeconds: 0,
+    readingSignals: 0,
+    conversionEvents: 0,
+  }
+  return pathTotals[pathname]
+}
 for (const day of current28Days) {
   const daily = analyticsDays[day]
   if (!daily) continue
   for (const [pathname, views] of Object.entries(daily.paths || {})) {
-    pathTotals[pathname] = (pathTotals[pathname] || 0) + Number(views || 0)
+    const metrics = pathMetrics(pathname)
+    metrics.views += Number(views || 0)
+    const pathVisitors = new Set(daily.pathVisitors?.[pathname] || [])
+    metrics.visitorDays += pathVisitors.size
+    const qualified = new Set((daily.returningVisitors || []).filter((visitor) => pathVisitors.has(visitor)))
+    for (const [visitor, signal] of Object.entries(daily.engagement?.[pathname] || {})) {
+      if (!pathVisitors.has(visitor)) continue
+      const seconds = Number(signal?.seconds || 0)
+      const depth = Number(signal?.depth || 0)
+      if (seconds >= 10 || depth >= 25) qualified.add(visitor)
+      if (depth >= 50) metrics.depth50VisitorDays += 1
+      if (depth >= 90) metrics.depth90VisitorDays += 1
+      metrics.activeReadingSeconds += seconds
+      metrics.readingSignals += 1
+    }
+    metrics.qualifiedVisitorDays += qualified.size
   }
   for (const [source, visitors] of Object.entries(daily.sources || {})) {
     sourceTotals[source] = (sourceTotals[source] || 0) + Number(visitors || 0)
@@ -145,13 +176,30 @@ for (const day of current28Days) {
     for (const [target, count] of Object.entries(event?.targets || {})) {
       conversionTotals[name].targets[target] = (conversionTotals[name].targets[target] || 0) + Number(count || 0)
     }
+    for (const [pathname, count] of Object.entries(event?.paths || {})) {
+      pathMetrics(pathname).conversionEvents += Number(count || 0)
+    }
   }
 }
 
 const topPages = Object.entries(pathTotals)
-  .sort((left, right) => right[1] - left[1])
+  .sort((left, right) => right[1].views - left[1].views)
   .slice(0, 10)
-  .map(([pathname, views]) => ({ pathname, views }))
+  .map(([pathname, metrics]) => ({
+    pathname,
+    views: metrics.views,
+    visitorDays: metrics.visitorDays,
+    qualifiedVisitorDays: metrics.qualifiedVisitorDays,
+    qualificationRatePercent: metrics.visitorDays
+      ? Math.min(100, Math.round((metrics.qualifiedVisitorDays / metrics.visitorDays) * 1_000) / 10)
+      : 0,
+    depth50VisitorDays: metrics.depth50VisitorDays,
+    depth90VisitorDays: metrics.depth90VisitorDays,
+    averageActiveReadingSeconds: metrics.readingSignals
+      ? Math.round(metrics.activeReadingSeconds / metrics.readingSignals)
+      : 0,
+    conversionEvents: metrics.conversionEvents,
+  }))
 const topSources = Object.entries(sourceTotals)
   .sort((left, right) => right[1] - left[1])
   .slice(0, 10)
@@ -203,6 +251,11 @@ const slowestVitalPages = coreWebVitalNames.flatMap((name) => {
 
 const observations = []
 const recommendedActions = []
+const decisionMinimumActiveDays = Number(goals.decision?.minimumActiveDays || 7)
+const decisionMinimumVisitorDays = Number(goals.decision?.minimumVisitorDays || 20)
+const decisionMinimumSearchImpressions = Number(goals.decision?.minimumSearchImpressions || 100)
+const audienceEvidenceReady = activeDays >= decisionMinimumActiveDays
+  && currentVisitors >= decisionMinimumVisitorDays
 
 if (!activeDays) {
   observations.push('尚无生产访问数据，无法评估增长。')
@@ -215,7 +268,10 @@ if (!activeDays) {
 } else {
   observations.push(`最近 28 天已有 ${activeDays} 个自然日产生统计数据。`)
   observations.push(`按现有日均速度推算月度有效访客为目标的 ${Math.round((projectedMonthlyQualifiedVisitors / goals.objective.target) * 1000) / 10}%。`)
-  if (current7Visitors < previous7Visitors) {
+  if (!audienceEvidenceReady) {
+    observations.push(`自然数据尚未达到 ${decisionMinimumActiveDays} 个活跃日且 ${decisionMinimumVisitorDays} 个访客天；增长策略保持观察，不根据早期噪声修改标题、内容或 UI。`)
+  }
+  if (current7ActiveDays >= 5 && previous7ActiveDays >= 5 && current7Visitors < previous7Visitors) {
     recommendedActions.push({
       priority: 1,
       type: 'diagnosis',
@@ -223,7 +279,7 @@ if (!activeDays) {
       reviewRequired: false,
     })
   }
-  if (searchShare < 20) {
+  if (audienceEvidenceReady && searchShare < 20) {
     recommendedActions.push({
       priority: 2,
       type: 'seo',
@@ -231,27 +287,30 @@ if (!activeDays) {
       reviewRequired: true,
     })
   }
-  if (currentVisitors >= 20 && engagementRate < 25) {
+  const readingOpportunity = topPages.find((page) => page.visitorDays >= 10 && page.qualificationRatePercent < 25)
+  if (audienceEvidenceReady && readingOpportunity) {
     recommendedActions.push({
       priority: 2,
       type: 'reading-experience',
-      action: '有效阅读率低于 25%，优先检查访问最高页面的首屏承诺、正文结构、移动端可读性与相关文章入口。',
+      action: `${readingOpportunity.pathname} 有 ${readingOpportunity.visitorDays} 个访客天、有效阅读率 ${readingOpportunity.qualificationRatePercent}%；优先检查该页首屏承诺、正文结构、移动端可读性与相关文章入口。`,
       reviewRequired: true,
     })
   }
-  if (currentVisitors >= 20 && conversionRate < 5) {
+  const valueOpportunity = topPages.find((page) => page.visitorDays >= 10 && page.conversionEvents === 0)
+  if (audienceEvidenceReady && conversionRate < 5 && valueOpportunity) {
     recommendedActions.push({
       priority: 2,
       type: 'value-conversion',
-      action: '价值转化率低于 5%，核对高访问页面是否自然承接到著作、项目、GitHub、知识星球或工具；只优化一个高意图入口并观察 7 天。',
+      action: `${valueOpportunity.pathname} 有 ${valueOpportunity.visitorDays} 个访客天但尚无价值转化；核对是否自然承接到著作、项目、GitHub、知识星球或工具，只优化一个高意图入口并观察 7 天。`,
       reviewRequired: true,
     })
   }
-  if (topPages[0]) {
+  const contentOpportunity = topPages.find((page) => page.pathname.startsWith('/blog/') && page.qualifiedVisitorDays >= 5)
+  if (audienceEvidenceReady && contentOpportunity) {
     recommendedActions.push({
       priority: 3,
       type: 'content',
-      action: `围绕当前高访问页面 ${topPages[0].pathname} 补充一条自然的相关文章入口，并评估 7 天后的阅读深度。`,
+      action: `围绕已有 ${contentOpportunity.qualifiedVisitorDays} 个有效访客天的页面 ${contentOpportunity.pathname} 补充一条自然的相关文章入口，并评估 7 天后的阅读深度。`,
       reviewRequired: true,
     })
   }
@@ -368,8 +427,20 @@ if (!contentOperations) {
   }
 }
 
+const searchEvidenceReady = searchConsole?.status === 'connected'
+  && Number(searchConsole.summary?.impressions || 0) >= decisionMinimumSearchImpressions
+const decision = buildOperatorDecision({
+  activeDays,
+  visitorDays: currentVisitors,
+  qualifiedVisitorDays: currentQualifiedVisitors,
+  searchEvidenceReady,
+  minimumActiveDays: decisionMinimumActiveDays,
+  minimumVisitorDays: decisionMinimumVisitorDays,
+  recommendedActions,
+})
+
 const report = {
-  version: 8,
+  version: 9,
   generatedAt: new Date().toISOString(),
   objective: goals.objective,
   status: {
@@ -402,6 +473,7 @@ const report = {
     engagementRatePercent: engagementRate,
     depth50Visitors,
     depth90Visitors,
+    measurement: '停留秒数只累计页面可见且浏览器窗口聚焦的活跃阅读时间；滚动深度仍可独立形成有效阅读信号。',
   },
   value: {
     conversionVisitors,
@@ -455,6 +527,7 @@ const report = {
       changes: action.changes || null,
     })),
   },
+  decision,
   topPages,
   observations,
   recommendedActions,

@@ -406,6 +406,7 @@ export async function recordEngagement(
     const day = new Date().toISOString().slice(0, 10)
     const daily = store.days[day] || emptyDay()
     if (!daily.visitors.includes(visitorHash)) return
+    if (!daily.pathVisitors[normalizedPath]?.includes(visitorHash)) return
     const pathSignals = daily.engagement[normalizedPath] || {}
     const previous = pathSignals[visitorHash] || { seconds: 0, depth: 0 }
     pathSignals[visitorHash] = {
