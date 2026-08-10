@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>芝士AI吃鱼</title>
+    <item>
+      <title>最近一篇完整公众号文章</title>
+      <link>http://mp.weixin.qq.com/s?__biz=MzIxMjY3NzMwNw==&amp;mid=2247490001&amp;idx=1&amp;scene=1</link>
+      <pubDate>Fri, 07 Aug 2026 13:23:25 GMT</pubDate>
+      <description><![CDATA[这是一篇用于验证最近文章同步的完整摘要。]]></description>
+      <content:encoded><![CDATA[
+        <div>
+          <p>生成式人工智能正在改变学习、工作与创造的方式。真正重要的不是简单追逐工具，而是建立问题意识、验证能力和持续学习的方法。</p>
+          <p>一篇有价值的文章需要提出清楚的问题，说明证据来自哪里，并明确结论适用的边界。读者也需要看到推理过程，而不只是得到一个看似完整的答案。</p>
+          <p>当工具可以快速生成文本时，人仍然需要判断哪些信息可靠、哪些假设需要核查，以及如何把知识迁移到新的情境。这样的能力不会因为模型变强而失去价值。</p>
+          <p>网站同步保留原文链接、发布时间和作者信息，使读者可以回到公众号核对来源，同时也让内容在搜索、RSS 和站内阅读场景中保持可访问。</p>
+          <img src="" data-src="https://mmbiz.qpic.cn/test-image.jpg" />
+        </div>
+      ]]></content:encoded>
+    </item>
+    <item>
+      <title>同一文章的重复链接</title>
+      <link>https://mp.weixin.qq.com/s?scene=99&amp;idx=1&amp;mid=2247490001&amp;__biz=MzIxMjY3NzMwNw==</link>
+      <pubDate>Fri, 07 Aug 2026 13:23:25 GMT</pubDate>
+      <content:encoded><![CDATA[<p>这条记录拥有不同查询参数顺序，但 mid、idx 和 biz 相同，不应再次导入。为了通过长度前置检查，这里补充足够多的文字，不过规范化文章标识仍然必须把它识别为重复内容。重复内容会稀释站点质量，因此同步逻辑必须稳定去重，不能依赖完整 URL 字符串相等。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>超过时间范围的旧文章</title>
+      <link>https://mp.weixin.qq.com/s?__biz=MzIxMjY3NzMwNw==&amp;mid=2247489000&amp;idx=1</link>
+      <pubDate>Mon, 01 Jun 2026 08:00:00 GMT</pubDate>
+      <content:encoded><![CDATA[<p>这篇文章已经超过最近三十一天的同步范围，即使正文足够长也不能被本轮自动导入。自动运营应当限制每次改动规模，避免一次性制造大量历史页面。这里继续补充文字，使正文长度超过最低阈值，并验证时间过滤发生在写入文件之前。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>其他公众号文章</title>
+      <link>https://mp.weixin.qq.com/s?__biz=WrongAccount&amp;mid=2247490002&amp;idx=1</link>
+      <pubDate>Sat, 08 Aug 2026 08:00:00 GMT</pubDate>
+      <content:encoded><![CDATA[<p>这篇内容来自其他公众号。即使它出现在 RSS 中，也必须因为 biz 不匹配而被拒绝，防止错误订阅或被污染的 Feed 把第三方内容自动发布到个人网站。这里补充足够长度，用于确认账号校验独立于正文长度检查。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>正文过短的文章</title>
+      <link>https://mp.weixin.qq.com/s?__biz=MzIxMjY3NzMwNw==&amp;mid=2247490003&amp;idx=1</link>
+      <pubDate>Sun, 09 Aug 2026 08:00:00 GMT</pubDate>
+      <content:encoded><![CDATA[<p>内容太短。</p>]]></content:encoded>
+    </item>
+  </channel>
+</rss>

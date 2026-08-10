@@ -7,9 +7,9 @@
 3. `main` 分支更新后，GitHub Actions 先构建，再登录 ECS 执行候选构建、PM2 reload 和线上健康检查；失败时恢复上一份 `.next`。
 4. 每小时从 GitHub 检查首页与健康接口。
 5. 每日私有经营任务先巡检 Sitemap、canonical、noindex、JSON-LD、RSS、robots、`llms.txt`、内部链接和安全响应头，再评估部署行动，最后把技术异常、流量质量与学习结果合并进经营报告。
-6. ECS 内网运行 We-MP-RSS；每日 GitHub Action 通过 SSH 读取回环地址上的 RSS，生成 `published: false` 草稿并创建 PR，避免公开管理后台或未经审核直接发布。
+6. ECS 内网运行 We-MP-RSS；每日 GitHub Action 通过 SSH 读取回环地址上的 RSS，只接收本人公众号最近 31 天已公开文章，经账号、时间、篇数、正文长度、lint 与生产构建校验后创建 PR、自动合并并显式触发部署；管理后台始终不公开。
 7. 自动化发布与监控只在服务器、GitHub Actions 和内部日志中运行，不提供面向访客的运维页面。
-8. 本地 `chatgpt2api` 可每天生成一篇 `published: false` 的候选文章；模型输出需通过长度、结构和危险标签校验，且必须人工复核后发布。
+8. 本地 `chatgpt2api` 每天最多生成一篇深度文章；模型输出必须经过写作、主编复核、定向返工、结构与危险标签校验、lint、生产构建和 PR 留痕，全部通过后才在已批准的日更范围内自动发布。
 
 经营任务也会尝试读取 Google Search Console 的 finalized 搜索数据：最近 28 天点击、曝光、CTR、平均排名、查询词与落地页。数据固定滞后 3 天，并按 Google 的 `America/Los_Angeles` 日期口径保存到私有 `operator/search-console-latest.json`；凭据缺失或 API 异常只降低报告完整度，不中断站内统计、技术巡检和健康检查。
 
@@ -51,7 +51,7 @@ Core Web Vitals 通过 Next.js `useReportWebVitals` 在真实浏览器上采集�
 - 当前公众号：`芝士AI吃鱼`，Feed ID `MP_WXS_3212677307`。
 - 微信授权 Token 有有效期；失效后通过 SSH 隧道进入授权管理重新扫码。
 
-同步工作流会先登录内网管理 API、检查微信扫码授权，再调用 `/api/v1/wx/mps/update/<feed-id>` 采集最多 5 页历史文章，并轮询 RSS。不要用 Feed 的 `is_update=true` 代替采集接口；该参数只刷新数据库中的 RSS 输出，不会主动抓取公众号。授权失效时任务会明确失败并要求重新扫码。
+同步工作流会先登录内网管理 API、检查微信扫码授权，再调用 `/api/v1/wx/mps/update/<feed-id>` 每天只采集第 1 页并轮询 RSS。导入端固定校验公众号 `biz`、最近 31 天、单次最多 12 篇、正文至少 200 字，并用 `biz + mid + idx` 去重；不批量导入旧档。不要用 Feed 的 `is_update=true` 代替采集接口；该参数只刷新数据库中的 RSS 输出，不会主动抓取公众号。授权失效时任务会明确失败并要求重新扫码。
 
 微信可能返回 `200013` 频率控制。自动任务每天只触发一次更新，不应循环重试；频控期间 RSS 会保留已有内容，待限制解除后再补采集。
 
@@ -74,7 +74,7 @@ npm run draft:daily
 - `CONTENT_FORCE=true`：允许同一天再次生成；默认会跳过，避免重复和批量滥用。
 - `CONTENT_MAX_REPAIR_ATTEMPTS=1..4`：结构化质检失败后的定向返工上限，默认 3；每轮会携带当前失败原因与历史原因，仍不合格则停止发布。
 
-生成文件位于 `content/posts/daily-*.mdx`，默认 `published: false`。当前 `chatgpt2api` 属于逆向兼容实现，应遵守其使用限制；只允许低频、个人、人工审核的草稿生成，不得批量调用或自动直发。
+`npm run draft:daily` 生成的候选稿默认 `published: false`；生产日更使用 `npm run article:daily`，只允许每天一篇、串行调用，并必须通过主编复核、结构化校验、构建和 PR 记录后发布。当前 `chatgpt2api` 属于逆向兼容实现，应遵守其使用限制，不得批量调用或绕过质量门槛直发。
 
 ## 每日深度文章与双端发布
 
@@ -126,6 +126,6 @@ NEXT_PUBLIC_BAIDU_SITE_VERIFICATION=
 
 ## 发布权限
 
-- 自动执行：构建、健康检查、Sitemap/RSS/结构化数据、公众号草稿同步。
-- PR 审核：新文章、首页文案、作者信息、导航和栏目调整。
+- 自动执行：构建、健康检查、Sitemap/RSS/结构化数据、本人公众号已公开文章同步、已批准范围内每日一篇深度文章的 PR/CI/部署与公众号草稿写入。
+- PR 审核：超出上述范围的新文章、首页文案、作者信息、导航和栏目调整。
 - 禁止自动化：DNS、ECS 安全组、SSH 密钥轮换、删除文章或统计数据。
