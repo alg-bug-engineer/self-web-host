@@ -24,7 +24,10 @@ if (!feedUrl && !feedFile && !htmlFile) {
 
 const items = htmlFile ? [await htmlItem(htmlFile)] : await rssFeedItems(feedUrl, feedFile)
 
-if (!items.length) throw new Error('公众号 RSS 中没有找到文章条目。')
+if (!items.length) {
+  console.log('公众号 RSS 暂无文章条目：新增 0 篇。')
+  process.exit(0)
+}
 
 await fs.mkdir(postsDir, { recursive: true })
 const existingFiles = await fs.readdir(postsDir)
@@ -129,6 +132,11 @@ async function rssFeedItems(url, file) {
     textNodeName: '#text',
   })
   const document = parser.parse(feedXml)
+  const hasRssChannel = Boolean(document?.rss) && Object.hasOwn(document.rss, 'channel')
+  const hasAtomFeed = Boolean(document?.feed)
+  if (!hasRssChannel && !hasAtomFeed) {
+    throw new Error('公众号 RSS 不是有效的 RSS 或 Atom Feed。')
+  }
   const rssItems = toArray(document?.rss?.channel?.item)
   const atomItems = toArray(document?.feed?.entry)
   return rssItems.length ? rssItems : atomItems
