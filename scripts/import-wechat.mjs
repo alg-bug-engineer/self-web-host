@@ -6,36 +6,16 @@ import TurndownService from 'turndown'
 
 const feedUrl = process.env.WECHAT_RSS_URL?.trim()
 const feedFile = process.env.WECHAT_RSS_FILE?.trim()
+const htmlFile = process.env.WECHAT_HTML_FILE?.trim()
 const autoPublish = process.env.WECHAT_AUTO_PUBLISH === 'true'
 const postsDir = path.join(process.cwd(), 'content', 'posts')
 
-if (!feedUrl && !feedFile) {
-  console.log('WECHAT_RSS_URL 与 WECHAT_RSS_FILE 均未配置，跳过公众号同步。')
+if (!feedUrl && !feedFile && !htmlFile) {
+  console.log('未配置公众号 RSS 或文章 HTML，跳过同步。')
   process.exit(0)
 }
 
-let feedXml
-if (feedFile) {
-  feedXml = await fs.readFile(path.resolve(process.cwd(), feedFile), 'utf8')
-} else {
-  const response = await fetch(feedUrl, {
-    headers: { 'User-Agent': 'ai-knowledgepoints-wechat-sync/1.0' },
-  })
-  if (!response.ok) {
-    throw new Error(`公众号 RSS 请求失败：${response.status} ${response.statusText}`)
-  }
-  feedXml = await response.text()
-}
-
-const parser = new XMLParser({
-  ignoreAttributes: false,
-  attributeNamePrefix: '@_',
-  textNodeName: '#text',
-})
-const document = parser.parse(feedXml)
-const rssItems = toArray(document?.rss?.channel?.item)
-const atomItems = toArray(document?.feed?.entry)
-const items = rssItems.length ? rssItems : atomItems
+const items = htmlFile ? [await htmlItem(htmlFile)] : await rssFeedItems(feedUrl, feedFile)
 
 if (!items.length) throw new Error('公众号 RSS 中没有找到文章条目。')
 
@@ -77,6 +57,7 @@ for (const item of items) {
     .turndown(rawHtml)
     .replace(/\{/g, '&#123;')
     .replace(/\}/g, '&#125;')
+    .replace(/\n{3,}/g, '\n\n')
     .trim()
 
   const frontmatter = [
@@ -105,6 +86,63 @@ for (const item of items) {
 }
 
 console.log(`公众号同步完成：新增 ${created} 篇${autoPublish ? '已发布文章' : '待审核草稿'}。`)
+
+async function rssFeedItems(url, file) {
+  let feedXml
+  if (file) {
+    feedXml = await fs.readFile(path.resolve(process.cwd(), file), 'utf8')
+  } else {
+    const response = await fetch(url, {
+      headers: { 'User-Agent': 'ai-knowledgepoints-wechat-sync/1.0' },
+    })
+    if (!response.ok) {
+      throw new Error(`公众号 RSS 请求失败：${response.status} ${response.statusText}`)
+    }
+    feedXml = await response.text()
+  }
+
+  const parser = new XMLParser({
+    ignoreAttributes: false,
+    attributeNamePrefix: '@_',
+    textNodeName: '#text',
+  })
+  const document = parser.parse(feedXml)
+  const rssItems = toArray(document?.rss?.channel?.item)
+  const atomItems = toArray(document?.feed?.entry)
+  return rssItems.length ? rssItems : atomItems
+}
+
+async function htmlItem(file) {
+  const html = await fs.readFile(path.resolve(process.cwd(), file), 'utf8')
+  const article = html.match(
+    /<div[^>]*id="js_content"[^>]*>([\s\S]*?<p style="display: none;">[\s\S]*?<\/p>)<\/div>/,
+  )?.[1]
+  if (!article) throw new Error('文章 HTML 中没有找到 #js_content 正文。')
+
+  const title = process.env.WECHAT_TITLE?.trim() || metaContent(html, 'og:title')
+  const description = process.env.WECHAT_DESCRIPTION?.trim() || metaContent(html, 'og:description')
+  const sourceUrl = process.env.WECHAT_SOURCE_URL?.trim() || metaContent(html, 'og:url')
+  const published = process.env.WECHAT_DATE?.trim() || extractPublishedDate(html)
+  if (!title || !sourceUrl) throw new Error('文章 HTML 缺少标题或原文链接。')
+
+  return {
+    title,
+    link: sourceUrl,
+    description,
+    pubDate: published,
+    'content:encoded': article,
+  }
+}
+
+function metaContent(html, property) {
+  const escaped = property.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return html.match(new RegExp(`<meta[^>]+property=["']${escaped}["'][^>]+content=["']([^"']*)`, 'i'))?.[1] || ''
+}
+
+function extractPublishedDate(html) {
+  const seconds = html.match(/\bct\s*=\s*["']?(\d{10})/)?.[1]
+  return seconds ? new Date(Number(seconds) * 1000).toISOString() : ''
+}
 
 function toArray(value) {
   if (!value) return []

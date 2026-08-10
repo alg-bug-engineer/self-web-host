@@ -7,7 +7,7 @@
 3. `main` 分支更新后，GitHub Actions 先构建，再登录 ECS 执行候选构建、PM2 reload 和线上健康检查；失败时恢复上一份 `.next`。
 4. 每小时从 GitHub 检查首页与健康接口。
 5. ECS 内网运行 We-MP-RSS；每日 GitHub Action 通过 SSH 读取回环地址上的 RSS，生成 `published: false` 草稿并创建 PR，避免公开管理后台或未经审核直接发布。
-6. `/operator` 公开展示运营目标、约束、真实阅读数据与 AI 行动记录，使每次改动都可被追踪和复盘。
+6. 自动化发布与监控只在服务器、GitHub Actions 和内部日志中运行，不提供面向访客的运维页面。
 7. 本地 `chatgpt2api` 可每天生成一篇 `published: false` 的候选文章；模型输出需通过长度、结构和危险标签校验，且必须人工复核后发布。
 
 ## GitHub Secrets

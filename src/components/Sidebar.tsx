@@ -23,7 +23,6 @@ const collectionNav = [
 
 const createNav = [
     { label: '我的产品', href: '/portfolio', icon: <IconPortfolio className="w-4 h-4" /> },
-    { label: 'AI 运营实验', href: '/operator', icon: '📈' },
     { label: '知识星球', href: '/planet', icon: '🪐' },
 ];
 

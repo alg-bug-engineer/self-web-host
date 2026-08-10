@@ -41,6 +41,30 @@ body {
   line-height: 1.5;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  background-image: radial-gradient(circle at 10% 0%, color-mix(in srgb, var(--accent-primary) 7%, transparent), transparent 32rem);
+}
+
+.eyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.home-hero {
+  box-shadow: 0 35px 100px color-mix(in srgb, var(--text-primary) 8%, transparent);
+}
+
+.home-orbit {
+  position: absolute;
+  width: 28rem;
+  height: 28rem;
+  right: -9rem;
+  top: -11rem;
+  border: 1px solid var(--border-default);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3.5rem color-mix(in srgb, var(--accent-primary) 4%, transparent), 0 0 0 7rem color-mix(in srgb, var(--accent-primary) 3%, transparent);
 }
 
 /* Selection styling */
