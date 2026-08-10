@@ -3,8 +3,10 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
+import nextEnv from '@next/env'
 
 const projectDir = process.cwd()
+nextEnv.loadEnvConfig(projectDir)
 const dataDir = process.env.ANALYTICS_DATA_DIR || path.join(projectDir, 'data')
 const analyticsPath = path.join(dataDir, 'analytics.json')
 const reportDir = path.join(dataDir, 'operator')
