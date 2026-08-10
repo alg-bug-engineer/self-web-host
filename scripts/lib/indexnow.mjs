@@ -76,13 +76,18 @@ export async function loadPublishedPostPaths(projectDir) {
 
 export async function changedFilesBetween(projectDir, fromCommit, toCommit) {
   if (!isCommit(fromCommit) || !isCommit(toCommit) || /^0+$/.test(fromCommit)) return []
-  const { stdout } = await execFileAsync('git', [
-    'diff',
-    '--name-only',
-    '--diff-filter=ACMRD',
-    `${fromCommit}..${toCommit}`,
-  ], { cwd: projectDir, maxBuffer: 1024 * 1024 })
-  return stdout.split('\n').map((item) => item.trim()).filter(Boolean)
+  try {
+    const { stdout } = await execFileAsync('git', [
+      'diff',
+      '--name-only',
+      '--diff-filter=ACMRD',
+      `${fromCommit}..${toCommit}`,
+    ], { cwd: projectDir, maxBuffer: 1024 * 1024 })
+    return stdout.split('\n').map((item) => item.trim()).filter(Boolean)
+  } catch {
+    console.warn('IndexNow 无法读取完整提交范围，将回退到线上 Sitemap，不中断搜索发现通知。')
+    return []
+  }
 }
 
 export function mapChangedFilesToUrls(changedFiles, { siteUrl, publishedPostPaths = [] }) {
