@@ -5,20 +5,26 @@ import { XMLParser } from 'fast-xml-parser'
 import TurndownService from 'turndown'
 
 const feedUrl = process.env.WECHAT_RSS_URL?.trim()
+const feedFile = process.env.WECHAT_RSS_FILE?.trim()
 const autoPublish = process.env.WECHAT_AUTO_PUBLISH === 'true'
 const postsDir = path.join(process.cwd(), 'content', 'posts')
 
-if (!feedUrl) {
-  console.log('WECHAT_RSS_URL 未配置，跳过公众号同步。')
+if (!feedUrl && !feedFile) {
+  console.log('WECHAT_RSS_URL 与 WECHAT_RSS_FILE 均未配置，跳过公众号同步。')
   process.exit(0)
 }
 
-const response = await fetch(feedUrl, {
-  headers: { 'User-Agent': 'ai-knowledgepoints-wechat-sync/1.0' },
-})
-
-if (!response.ok) {
-  throw new Error(`公众号 RSS 请求失败：${response.status} ${response.statusText}`)
+let feedXml
+if (feedFile) {
+  feedXml = await fs.readFile(path.resolve(process.cwd(), feedFile), 'utf8')
+} else {
+  const response = await fetch(feedUrl, {
+    headers: { 'User-Agent': 'ai-knowledgepoints-wechat-sync/1.0' },
+  })
+  if (!response.ok) {
+    throw new Error(`公众号 RSS 请求失败：${response.status} ${response.statusText}`)
+  }
+  feedXml = await response.text()
 }
 
 const parser = new XMLParser({
@@ -26,7 +32,7 @@ const parser = new XMLParser({
   attributeNamePrefix: '@_',
   textNodeName: '#text',
 })
-const document = parser.parse(await response.text())
+const document = parser.parse(feedXml)
 const rssItems = toArray(document?.rss?.channel?.item)
 const atomItems = toArray(document?.feed?.entry)
 const items = rssItems.length ? rssItems : atomItems

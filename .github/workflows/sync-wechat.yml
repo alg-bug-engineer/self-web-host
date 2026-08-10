@@ -24,9 +24,31 @@ jobs:
 
       - run: npm ci
 
+      - name: Configure ECS SSH
+        env:
+          ECS_SSH_KEY: ${{ secrets.ECS_SSH_KEY }}
+          ECS_KNOWN_HOSTS: ${{ secrets.ECS_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$ECS_SSH_KEY" > ~/.ssh/ecs_deploy_key
+          chmod 600 ~/.ssh/ecs_deploy_key
+          printf '%s\n' "$ECS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Fetch private WeChat RSS from ECS
+        env:
+          ECS_HOST: ${{ secrets.ECS_HOST }}
+          ECS_USER: ${{ secrets.ECS_USER }}
+          ECS_PORT: ${{ secrets.ECS_PORT }}
+        run: |
+          ssh -i ~/.ssh/ecs_deploy_key -p "${ECS_PORT:-22}" "$ECS_USER@$ECS_HOST" \
+            "curl -fsS 'http://127.0.0.1:8001/feed/MP_WXS_3212677307.rss?limit=50&is_update=true' >/dev/null; sleep 25; curl -fsS 'http://127.0.0.1:8001/feed/MP_WXS_3212677307.rss?limit=50&is_update=false'" \
+            > /tmp/wechat-rss.xml
+          test -s /tmp/wechat-rss.xml
+
       - name: Import new articles as drafts
         env:
-          WECHAT_RSS_URL: ${{ secrets.WECHAT_RSS_URL }}
+          WECHAT_RSS_FILE: /tmp/wechat-rss.xml
           WECHAT_AUTO_PUBLISH: 'false'
         run: npm run sync:wechat
 

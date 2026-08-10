@@ -6,7 +6,7 @@
 2. `/api/health` 提供部署提交、进程存活时间和已发布文章数。
 3. `main` 分支更新后，GitHub Actions 先构建，再登录 ECS 执行候选构建、PM2 reload 和线上健康检查；失败时恢复上一份 `.next`。
 4. 每小时从 GitHub 检查首页与健康接口。
-5. 每日从标准 RSS/Atom 源同步公众号文章，默认生成 `published: false` 草稿并创建 PR，避免未经审核直接发布。
+5. ECS 内网运行 We-MP-RSS；每日 GitHub Action 通过 SSH 读取回环地址上的 RSS，生成 `published: false` 草稿并创建 PR，避免公开管理后台或未经审核直接发布。
 6. `/operator` 公开展示运营目标、约束、真实阅读数据与 AI 行动记录，使每次改动都可被追踪和复盘。
 7. 本地 `chatgpt2api` 可每天生成一篇 `published: false` 的候选文章；模型输出需通过长度、结构和危险标签校验，且必须人工复核后发布。
 
@@ -19,7 +19,18 @@
 - `ECS_PORT`：SSH 端口，通常为 `22`。
 - `ECS_SSH_KEY`：部署专用私钥。不要直接复用个人日常登录私钥。
 - `ECS_KNOWN_HOSTS`：运行 `ssh-keyscan -H <ECS_HOST>` 得到的完整主机公钥记录，用于阻止中间人攻击。
-- `WECHAT_RSS_URL`：公众号对应的标准 RSS/Atom 地址，可来自自建 RSSHub 或已有内容分发服务。
+- 公众号 RSS 服务固定监听 ECS `127.0.0.1:8001`，Feed ID 为 `MP_WXS_3212677307`。同步任务复用 ECS SSH Secrets，不需要公网 RSS 地址。
+
+## ECS 公众号 RSS 服务
+
+- 容器：`we-mp-rss`，重启策略 `unless-stopped`。
+- 数据：`/opt/we-mp-rss/data`，应纳入 ECS 数据备份。
+- 管理端：仅 `127.0.0.1:8001`，需要时使用 SSH 本地转发，禁止直接开放安全组或 Nginx 公网入口。
+- 管理密码：随机密码只保存在 ECS `/opt/we-mp-rss/admin-password`，权限为 `600`。
+- 当前公众号：`芝士AI吃鱼`，Feed ID `MP_WXS_3212677307`。
+- 微信授权 Token 有有效期；失效后通过 SSH 隧道进入授权管理重新扫码。
+
+微信可能返回 `200013` 频率控制。自动任务每天只触发一次更新，不应循环重试；频控期间 RSS 会保留已有内容，待限制解除后再补采集。
 
 ## AI 日更草稿
 
