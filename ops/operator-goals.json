@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 7,
   "objective": {
     "metric": "monthlyQualifiedVisitorDays",
     "target": 50000,
@@ -15,6 +15,7 @@
     "coreWebVitalsP75",
     "indexedHighQualityPages",
     "contentTopicDiversity",
+    "contentPipelineAvailability",
     "productionAvailability"
   ],
   "learning": {
@@ -41,6 +42,7 @@
       "Sitemap、RSS 与结构化数据校验",
       "部署成功后通过 IndexNow 通知发生变化的公开页面",
       "生成内部经营报告",
+      "巡检日更、公众号草稿交付与内网 RSS 授权状态",
       "同步本人公众号最近 31 天已公开文章",
       "按既定质量门槛每日发布一篇 AI 深度文章"
     ],

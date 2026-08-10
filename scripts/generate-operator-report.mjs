@@ -14,6 +14,7 @@ const latestReportPath = path.join(reportDir, 'latest.json')
 const historyPath = path.join(reportDir, 'history.jsonl')
 const technicalAuditPath = path.join(reportDir, 'technical-latest.json')
 const searchConsolePath = path.join(reportDir, 'search-console-latest.json')
+const contentOperationsPath = path.join(reportDir, 'content-latest.json')
 const actionsPath = path.join(reportDir, 'actions.json')
 const goalsPath = path.join(projectDir, 'ops/operator-goals.json')
 
@@ -62,6 +63,7 @@ if (!goals?.objective?.target) throw new Error('缺少有效的 ops/operator-goa
 const store = await readJson(analyticsPath, { days: {} })
 const technicalAudit = await readJson(technicalAuditPath, null)
 const searchConsole = await readJson(searchConsolePath, null)
+const contentOperations = await readJson(contentOperationsPath, null)
 const actionState = await readJson(actionsPath, { actions: [] })
 const analyticsDays = store.days && typeof store.days === 'object' ? store.days : {}
 const current28Days = dateRange(28)
@@ -319,8 +321,55 @@ if (!searchConsole || searchConsole.status === 'unconfigured') {
   }
 }
 
+if (!contentOperations) {
+  recommendedActions.push({
+    priority: 1,
+    type: 'content-operations',
+    action: '运行私有内容运营巡检，验证日更时效、公众号交付状态与 RSS 授权。',
+    reviewRequired: false,
+  })
+} else {
+  const contentIssueCodes = new Set((contentOperations.issues || []).map((issue) => issue.code))
+  observations.push(`最近日更为 ${contentOperations.website?.latestDailyDate || '未知'}；近 7 天发布 ${contentOperations.website?.cadence7d || 0} 天。`)
+  if (contentIssueCodes.has('daily-content-stale') || contentIssueCodes.has('daily-content-missing')) {
+    recommendedActions.push({
+      priority: 1,
+      type: 'content-liveness',
+      action: '日更已中断；检查本机 LaunchAgent、Docker、GitHub 登录与流水线日志，修复原因后只补当天一篇，不批量补发。',
+      reviewRequired: false,
+    })
+  }
+  if (contentIssueCodes.has('wechat-manifest-missing') || contentIssueCodes.has('wechat-delivery-missing')) {
+    recommendedActions.push({
+      priority: 1,
+      type: 'wechat-delivery',
+      action: '最新网站文章未形成公众号交付记录；检查发布清单、图片上传和公众号接口错误，不重复创建草稿。',
+      reviewRequired: false,
+    })
+  }
+  if (contentIssueCodes.has('freepublish-api-unauthorized') || contentIssueCodes.has('wechat-draft-only')) {
+    recommendedActions.push({
+      priority: 2,
+      type: 'wechat-permission',
+      action: '公众号草稿已创建但未自动群发；确认账号是否具备 freepublish 权限，权限不足期间保留草稿供人工发布，不绕过平台限制。',
+      reviewRequired: true,
+    })
+  }
+  if (contentIssueCodes.has('wechat-rss-auth-expired')) {
+    recommendedActions.push({
+      priority: 1,
+      type: 'wechat-rss-auth',
+      action: '公众号 RSS 扫码授权已失效；通过内网管理端重新扫码，禁止开放公网管理入口。',
+      reviewRequired: true,
+    })
+  }
+  if (contentIssueCodes.has('wechat-rss-empty')) {
+    observations.push('公众号 RSS 授权有效但 Feed 暂无文章；保持每日单次采集，不做频控重试。')
+  }
+}
+
 const report = {
-  version: 7,
+  version: 8,
   generatedAt: new Date().toISOString(),
   objective: goals.objective,
   status: {
@@ -386,6 +435,7 @@ const report = {
     metrics: technicalAudit.metrics,
     issues: technicalAudit.issues,
   } : null,
+  content: contentOperations,
   learning: {
     definition: actionState.definition || null,
     totalActions: actionState.actions?.length || 0,

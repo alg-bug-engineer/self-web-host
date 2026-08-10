@@ -80,7 +80,8 @@ ANALYTICS_DATA_DIR="$ANALYTICS_TEST_DIR" npm run operator:report >/dev/null
 node - "$ANALYTICS_TEST_DIR/operator/latest.json" <<'NODE'
 const fs = require('node:fs')
 const report = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
-if (report.version !== 7) throw new Error(`expected report version 7, got ${report.version}`)
+if (report.version !== 8) throw new Error(`expected report version 8, got ${report.version}`)
+if (report.content !== null) throw new Error('missing content audit should be represented as null')
 if (report.value.conversionVisitors !== 1) throw new Error('report conversion visitor count is wrong')
 if (report.value.conversionRatePercent !== 100) throw new Error('report conversion rate is wrong')
 if (report.value.topConversions[0]?.name !== 'view_book') throw new Error('report top conversion is missing')
