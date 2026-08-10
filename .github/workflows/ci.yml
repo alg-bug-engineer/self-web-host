@@ -30,6 +30,7 @@ jobs:
       - run: npm run test:content-operations
       - run: npm run test:operator-content-report
       - run: npm run test:active-reading
+      - run: npm run test:article-headings
       - run: npm run test:operator-decision
       - run: npm run test:indexnow
       - run: npm run test:llms-markdown

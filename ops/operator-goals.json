@@ -1,5 +1,5 @@
 {
-  "version": 11,
+  "version": 12,
   "objective": {
     "metric": "monthlyQualifiedVisitorsEstimate",
     "target": 50000,
@@ -11,6 +11,7 @@
     "organicSearchVisitors",
     "returningReaderSignals",
     "articleReadingDepth",
+    "articleNavigationCoverage",
     "valueConversionRate",
     "coreWebVitalsP75",
     "indexedHighQualityPages",

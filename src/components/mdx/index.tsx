@@ -163,7 +163,7 @@ function createHeading(level: 1 | 2 | 3 | 4 | 5 | 6) {
   const Heading = ({ children, id, ...props }: ComponentPropsWithoutRef<'h1'>) => {
     const Tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
     return (
-      <Tag id={id} className={`${sizes[level]} font-bold text-text-primary mt-8 mb-4 group`} {...props}>
+      <Tag id={id} className={`${sizes[level]} scroll-mt-24 font-bold text-text-primary mt-8 mb-4 group`} {...props}>
         {children}
         {id && (
           <a href={`#${id}`} className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity text-accent-primary">
