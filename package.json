@@ -11,6 +11,7 @@
     "article:daily": "node scripts/generate-deep-article.mjs",
     "publish:wechat": "node scripts/publish-wechat.mjs",
     "schedule:daily:install": "bash scripts/install-daily-content-launchd.sh",
+    "operator:audit": "node scripts/audit-production.mjs",
     "operator:report": "node scripts/generate-operator-report.mjs",
     "sync:wechat": "node scripts/import-wechat.mjs",
     "deploy:production": "bash scripts/deploy.sh"
