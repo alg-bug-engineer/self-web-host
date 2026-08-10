@@ -79,9 +79,21 @@ const record = {
 }
 
 if (autoPublish) {
-  const publishResponse = await wechatJson(`https://api.weixin.qq.com/cgi-bin/freepublish/submit?access_token=${encodeURIComponent(token)}`, {
-    media_id: draftResponse.media_id,
-  })
+  let publishResponse
+  try {
+    publishResponse = await wechatJson(`https://api.weixin.qq.com/cgi-bin/freepublish/submit?access_token=${encodeURIComponent(token)}`, {
+      media_id: draftResponse.media_id,
+    })
+  } catch (error) {
+    if (error?.wechatCode !== 48001) throw error
+    record.status = 'draft'
+    record.publishNote = 'freepublish API 未授权（48001），已自动保留为公众号草稿。'
+    state[manifest.slug] = record
+    await saveState(state)
+    console.warn(record.publishNote)
+    console.log(`公众号草稿已创建：${record.draftMediaId}`)
+    process.exit(0)
+  }
   record.publishId = publishResponse.publish_id
   record.status = 'publishing'
   state[manifest.slug] = record
@@ -133,7 +145,11 @@ async function wechatJson(url, body) {
     method: 'POST', headers: { 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify(body), signal: AbortSignal.timeout(60_000),
   })
   const data = await response.json()
-  if (!response.ok || (data.errcode && data.errcode !== 0)) throw new Error(`公众号接口失败：${wechatError(data)}`)
+  if (!response.ok || (data.errcode && data.errcode !== 0)) {
+    const error = new Error(`公众号接口失败：${wechatError(data)}`)
+    error.wechatCode = Number(data?.errcode)
+    throw error
+  }
   return data
 }
 
