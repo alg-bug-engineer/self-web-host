@@ -96,7 +96,7 @@ export const Post = defineDocumentType(() => ({
 
 export default makeSource({
   contentDirPath: 'content',
-  contentDirExclude: ['collections'],
+  contentDirExclude: ['collections', 'wechat'],
   documentTypes: [Post],
   mdx: {
     remarkPlugins: [remarkGfm],

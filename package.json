@@ -8,6 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "draft:daily": "node scripts/generate-daily-draft.mjs",
+    "article:daily": "node scripts/generate-deep-article.mjs",
+    "publish:wechat": "node scripts/publish-wechat.mjs",
+    "schedule:daily:install": "bash scripts/install-daily-content-launchd.sh",
     "sync:wechat": "node scripts/import-wechat.mjs",
     "deploy:production": "bash scripts/deploy.sh"
   },
@@ -23,6 +26,7 @@
     "rehype-highlight": "^7.0.2",
     "rehype-slug": "^6.0.0",
     "remark-gfm": "^4.0.1",
+    "sharp": "0.35.3",
     "turndown": "^7.2.4",
     "undici": "^7.20.0"
   },
