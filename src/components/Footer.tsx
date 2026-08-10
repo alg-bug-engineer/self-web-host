@@ -19,6 +19,7 @@ export default function Footer() {
                 <div className="flex items-center gap-4">
                     <Link href="/about" className="footer-link">About</Link>
                     <Link href="/blog" className="footer-link">Blog</Link>
+                    <Link href="/operator" className="footer-link">AI Operator</Link>
                     <div className="relative group">
                         <button className="footer-link flex items-center gap-1 focus:outline-none">
                             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">

@@ -1,11 +1,12 @@
 import { allPosts } from 'contentlayer/generated'
 import { MetadataRoute } from 'next'
+import { SITE_URL } from '@/lib/site'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://www.ai-knowledgepoints.cn'
+  const baseUrl = SITE_URL
 
   // 文章路由
-  const postUrls = allPosts.map((post) => ({
+  const postUrls = allPosts.filter((post) => post.published).map((post) => ({
     url: `${baseUrl}${post.url}`,
     lastModified: new Date(post.date),
     changeFrequency: 'weekly' as const,
@@ -13,10 +14,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }))
 
   // 基础路由
-  const routes = ['', '/blog', '/collections/tools', '/portfolio', '/planet', '/about', '/search'].map(
+  const latestPostDate = allPosts.reduce(
+    (latest, post) => (post.date > latest ? post.date : latest),
+    '2026-01-01',
+  )
+
+  const routes = ['', '/blog', '/collections/articles', '/collections/manga', '/collections/tools', '/portfolio', '/operator', '/planet', '/about', '/lab', '/search'].map(
     (route) => ({
       url: `${baseUrl}${route}`,
-      lastModified: new Date(),
+      lastModified: new Date(latestPostDate),
       changeFrequency: 'daily' as const,
       priority: route === '' ? 1 : 0.9,
     })

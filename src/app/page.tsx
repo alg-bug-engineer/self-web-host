@@ -3,19 +3,28 @@ import { compareDesc } from 'date-fns'
 import Link from 'next/link'
 import AppCard from '@/components/AppCard'
 import { getSettings } from '@/lib/admin-storage'
+import { getTopPaths } from '@/lib/analytics-storage'
 
-const projectThoughts = [
+export const dynamic = 'force-dynamic'
+
+const contentTracks = [
     {
-        title: '用漫画讲清 AI',
-        description: '把复杂概念变成对话场景，让记忆更牢。',
+        title: '漫画学 AI',
+        description: '把抽象概念变成角色、场景和对话。',
+        href: 'https://manga.ai-knowledgepoints.cn',
+        label: '轻松入门',
     },
     {
-        title: '让知识可以落地',
-        description: '从 RAG/Agent 到工具流程，强调可操作性。',
+        title: 'RAG / Agent 实战',
+        description: '从原理、代码到可上线的工程方案。',
+        href: '/blog',
+        label: '深度实践',
     },
     {
-        title: '稳定节奏输出',
-        description: '保持持续更新，用系列化内容沉淀方法论。',
+        title: '独立产品实验',
+        description: '公开记录 AI 产品从想法到落地的过程。',
+        href: '/portfolio',
+        label: '边做边学',
     },
 ];
 
@@ -25,7 +34,15 @@ export default async function Home() {
         .filter((post) => post.published)
         .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
 
-    const trendingPosts = posts.slice(0, 5);
+    const weeklyTopPaths = await getTopPaths({ days: 7, prefix: '/blog/', limit: 5 });
+    const weeklyViews = new Map(weeklyTopPaths.map((item) => [item.pathname, item.views]));
+    const rankedPosts = weeklyTopPaths
+        .map((item) => posts.find((post) => post.url === item.pathname))
+        .filter((post): post is (typeof posts)[number] => Boolean(post));
+    const trendingPosts = [
+        ...rankedPosts,
+        ...posts.filter((post) => !rankedPosts.some((ranked) => ranked.url === post.url)),
+    ].slice(0, 5);
     const latestPosts = posts.slice(0, 8);
 
     const tagCounts = posts.reduce((acc, post) => {
@@ -50,16 +67,16 @@ export default async function Home() {
                                 🐱🤖
                             </div>
                             <div>
-                                <p className="text-xs uppercase tracking-widest text-text-tertiary">Discovery</p>
+                                <p className="text-xs uppercase tracking-widest text-text-tertiary">AI Engineering · Visual Learning</p>
                                 <h1 className="text-3xl font-semibold text-text-primary">
-                                    {settings.siteSlogan || '芝士AI吃鱼'} · 发现页
+                                    把 AI 天书，讲成人话
                                 </h1>
-                                <p className="text-sm text-text-secondary">用漫画 + 人话拆解 AI 技术</p>
+                                <p className="text-sm text-text-secondary">{settings.siteSlogan || '芝士AI吃鱼'} · 算法工程师与 AI 内容创作者</p>
                             </div>
                         </div>
 
                         <p className="text-lg max-w-2xl text-text-secondary">
-                            这里汇总了最新文章、主题标签与内容方向，帮你快速找到值得深挖的知识点。
+                            用漫画降低理解门槛，用长文讲透原理，再用真实项目验证方法。这里持续分享大模型、RAG、Agent 与 AI 工程实践。
                         </p>
 
                         <div className="flex flex-wrap items-center gap-2">
@@ -83,38 +100,46 @@ export default async function Home() {
                                 阅读最新文章
                             </Link>
                             <Link
-                                href={settings.planetUrl || '/planet'}
+                                href="https://manga.ai-knowledgepoints.cn"
                                 className="btn-secondary px-6 py-3 text-sm flex items-center gap-2"
                             >
-                                🪐 知识星球
+                                🐱 漫画学 AI
+                            </Link>
+                            <Link href="/about" className="px-3 py-3 text-sm text-text-secondary hover:text-text-primary">
+                                认识作者 →
                             </Link>
                         </div>
                     </div>
 
                     <div className="flex flex-col gap-4">
                         <div className="rounded-2xl border border-border-default p-6 bg-bg-secondary/80">
-                            <p className="text-xs uppercase tracking-widest text-text-tertiary">项目思考</p>
+                            <p className="text-xs uppercase tracking-widest text-text-tertiary">从哪里开始</p>
                             <h2 className="mt-2 text-lg font-semibold text-text-primary">
-                                让 AI 知识更好记、更可用
+                                一条从理解到创造的学习路径
                             </h2>
                             <ul className="mt-4 space-y-3 text-sm text-text-secondary">
-                                {projectThoughts.map((item) => (
-                                    <li key={item.title} className="flex gap-3">
-                                        <span className="mt-1 h-2 w-2 rounded-full bg-accent-primary"></span>
-                                        <div>
-                                            <p className="font-medium text-text-primary">{item.title}</p>
-                                            <p className="text-text-secondary">{item.description}</p>
-                                        </div>
+                                {contentTracks.map((item) => (
+                                    <li key={item.title}>
+                                        <Link href={item.href} className="group flex gap-3 rounded-xl p-2 -mx-2 hover:bg-bg-tertiary">
+                                            <span className="mt-1 h-2 w-2 rounded-full bg-accent-primary"></span>
+                                            <div className="flex-1">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <p className="font-medium text-text-primary group-hover:text-accent-primary">{item.title}</p>
+                                                    <span className="label label-gray">{item.label}</span>
+                                                </div>
+                                                <p className="text-text-secondary">{item.description}</p>
+                                            </div>
+                                        </Link>
                                     </li>
                                 ))}
                             </ul>
                         </div>
 
                         <div className="rounded-2xl border border-border-default p-6 bg-bg-secondary/80">
-                            <p className="text-xs uppercase tracking-widest text-text-tertiary">内容路线</p>
+                            <p className="text-xs uppercase tracking-widest text-text-tertiary">长期关注</p>
                             <div className="mt-3 space-y-2 text-sm text-text-secondary">
                                 <div className="flex items-center justify-between">
-                                    <span>AI 基础概念</span>
+                                    <span>NLP / 大语言模型</span>
                                     <span className="label label-blue">入门</span>
                                 </div>
                                 <div className="flex items-center justify-between">
@@ -122,7 +147,7 @@ export default async function Home() {
                                     <span className="label label-green">实战</span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span>效率工具与方法论</span>
+                                    <span>AI 产品与自动化</span>
                                     <span className="label label-purple">应用</span>
                                 </div>
                             </div>
@@ -135,7 +160,7 @@ export default async function Home() {
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 className="text-xl font-semibold text-text-primary">Trending This Week</h2>
-                        <p className="text-sm text-text-secondary">文章排行 · 最近更新与讨论度最高</p>
+                        <p className="text-sm text-text-secondary">{weeklyTopPaths.length ? '基于最近 7 天真实阅读数据' : '统计数据积累中，暂按最近更新排序'}</p>
                     </div>
                     <Link href="/search" className="text-sm text-accent-tertiary hover:underline">
                         浏览全部
@@ -158,6 +183,7 @@ export default async function Home() {
                                 <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-text-tertiary">
                                     <span>{new Date(post.date).toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })}</span>
                                     <span>· {post.readingTime} 分钟</span>
+                                    {weeklyViews.get(post.url) ? <span>· {weeklyViews.get(post.url)} 次阅读</span> : null}
                                     {(post.tags || []).slice(0, 2).map((tag) => (
                                         <span key={tag} className="label label-gray">
                                             {tag}

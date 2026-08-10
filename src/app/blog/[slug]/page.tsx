@@ -9,34 +9,49 @@ import WechatCard from '@/components/WechatCard'
 import AppCard from '@/components/AppCard'
 import { getSettings } from '@/lib/admin-storage'
 import { compareDesc } from 'date-fns'
+import ArticleViewCounter from '@/components/ArticleViewCounter'
+import { BRAND_NAME, SITE_URL, absoluteUrl } from '@/lib/site'
 
 interface PageProps {
   params: Promise<{ slug: string }>
 }
 
 export async function generateStaticParams() {
-  return allPosts.map((post) => ({
+  return allPosts.filter((post) => post.published).map((post) => ({
     slug: post.slug,
   }))
 }
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params
-  const post = allPosts.find((post) => post.slug === slug)
+  const post = allPosts.find((post) => post.slug === slug && post.published)
 
   if (!post) {
     return { title: '文章未找到' }
   }
 
   return {
-    title: `${post.title} | 芝士AI吃鱼`,
+    title: post.title,
     description: post.description,
+    keywords: post.tags,
+    alternates: { canonical: post.url },
     openGraph: {
       title: post.title,
       description: post.description,
       type: 'article',
+      url: absoluteUrl(post.url),
       publishedTime: post.date,
       authors: [post.author],
+      tags: post.tags,
+      images: post.cover
+        ? [{ url: absoluteUrl(post.cover), alt: post.title }]
+        : [{ url: absoluteUrl('/og.png'), alt: `${BRAND_NAME}：把 AI 天书，讲成人话` }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.description,
+      images: [post.cover ? absoluteUrl(post.cover) : absoluteUrl('/og.png')],
     },
   }
 }
@@ -48,7 +63,7 @@ function MDXContent({ code }: { code: string }) {
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params
-  const post = allPosts.find((post) => post.slug === slug)
+  const post = allPosts.find((post) => post.slug === slug && post.published)
   const settings = await getSettings()
 
   if (!post) {
@@ -80,19 +95,21 @@ export default async function BlogPostPage({ params }: PageProps) {
     '@type': 'TechArticle',
     headline: post.title,
     description: post.description,
-    image: post.cover || 'https://www.ai-knowledgepoints.cn/og-image.png',
+    mainEntityOfPage: absoluteUrl(post.url),
+    image: post.cover ? absoluteUrl(post.cover) : undefined,
     datePublished: post.date,
+    dateModified: post.date,
+    inLanguage: 'zh-CN',
+    keywords: post.tags?.join(', '),
     author: {
       '@type': 'Person',
       name: post.author,
+      url: `${SITE_URL}/about`,
     },
     publisher: {
-        '@type': 'Organization',
-        name: '芝士AI吃鱼',
-        logo: {
-            '@type': 'ImageObject',
-            url: 'https://www.ai-knowledgepoints.cn/favicon.ico'
-        }
+        '@type': 'Person',
+        name: BRAND_NAME,
+        url: `${SITE_URL}/about`,
     }
   }
 
@@ -150,7 +167,22 @@ export default async function BlogPostPage({ params }: PageProps) {
             <span>{new Date(post.date).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
             <span>·</span>
             <span>{post.readingTime} 分钟阅读</span>
+            <span>·</span>
+            <ArticleViewCounter path={post.url} />
           </div>
+          {post.sourceUrl && (
+            <p className="mt-4 text-sm text-text-tertiary">
+              来源：
+              <a
+                href={post.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent-tertiary hover:underline"
+              >
+                {post.sourceName || '芝士AI吃鱼公众号'}
+              </a>
+            </p>
+          )}
         </header>
 
         {/* Cover Image */}

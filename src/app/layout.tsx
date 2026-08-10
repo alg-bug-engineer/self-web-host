@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
+import InternalAnalytics from '@/components/InternalAnalytics'
+import SiteStructuredData from '@/components/SiteStructuredData'
+import { BRAND_NAME, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site'
 
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import LayoutWrapper from '@/components/LayoutWrapper'
@@ -10,17 +13,41 @@ import LayoutWrapper from '@/components/LayoutWrapper'
 const monoFontFamily = '"JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
 
 export const metadata: Metadata = {
-  title: 'AI 知识点 | 芝士AI吃鱼 - 把 AI 天书，讲成人话',
-  description: '左手画漫画，右手写代码。用爆笑漫画把 AI 天书讲成人话，提供 AI 效率工具助你提升工作效率。',
-  keywords: ['AI', '人工智能', '漫画', 'Transformer', '大模型', 'LLM', '效率工具', '博客'],
-  authors: [{ name: '芝士AI吃鱼' }],
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} | ${BRAND_NAME} - 把 AI 天书，讲成人话`,
+    template: `%s | ${BRAND_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  keywords: ['AI', '人工智能', '漫画', 'Transformer', '大模型', 'LLM', 'NLP', 'RAG', 'AI Agent', '效率工具'],
+  authors: [{ name: BRAND_NAME, url: `${SITE_URL}/about` }],
+  creator: BRAND_NAME,
+  publisher: BRAND_NAME,
+  alternates: {
+    canonical: '/',
+    types: { 'application/rss+xml': `${SITE_URL}/feed.xml` },
+  },
+  robots: { index: true, follow: true },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+    other: process.env.NEXT_PUBLIC_BAIDU_SITE_VERIFICATION
+      ? { 'baidu-site-verification': process.env.NEXT_PUBLIC_BAIDU_SITE_VERIFICATION }
+      : undefined,
+  },
   openGraph: {
-    title: 'AI 知识点 | 芝士AI吃鱼',
-    description: '把 AI 天书，讲成人话。',
-    url: 'https://www.ai-knowledgepoints.cn',
-    siteName: 'AI 知识点',
+    title: `${SITE_NAME} | ${BRAND_NAME}`,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
     locale: 'zh_CN',
     type: 'website',
+    images: [{ url: '/og.png', width: 1200, height: 630, alt: `${BRAND_NAME}：把 AI 天书，讲成人话` }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${SITE_NAME} | ${BRAND_NAME}`,
+    description: SITE_DESCRIPTION,
+    images: ['/og.png'],
   },
 }
 
@@ -37,6 +64,8 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <GoogleAnalytics />
+          <InternalAnalytics />
+          <SiteStructuredData />
           <LayoutWrapper>
             {children}
           </LayoutWrapper>
