@@ -71,7 +71,31 @@ test('最新日更文章包含完整正文结构和有效封面', async ({ page 
   await page.goto(href!)
   await expect(page.locator('h1')).toHaveCount(1)
   await expect(page.locator('h1')).toBeVisible()
-  expect(await page.locator('.prose h2').count()).toBeGreaterThanOrEqual(4)
+  const sectionCount = await page.locator('.prose h2').count()
+  expect(sectionCount).toBeGreaterThanOrEqual(4)
+
+  const progress = page.getByTestId('article-reading-progress')
+  const readingGuide = page.getByRole('navigation', { name: '本文目录' })
+  const guideLinks = readingGuide.locator('a[href^="#"]')
+  await expect(progress).toHaveCount(1)
+  await expect(readingGuide).toBeVisible()
+  await expect(guideLinks).toHaveCount(sectionCount)
+
+  for (const link of await guideLinks.all()) {
+    const targetId = (await link.getAttribute('href'))?.slice(1)
+    expect(targetId).toBeTruthy()
+    expect(await page.evaluate((id) => Boolean(document.getElementById(id)), targetId!)).toBe(true)
+  }
+
+  const lastLink = guideLinks.last()
+  const lastTargetId = (await lastLink.getAttribute('href'))!.slice(1)
+  await lastLink.click()
+  await expect.poll(() => decodeURIComponent(new URL(page.url()).hash.slice(1))).toBe(lastTargetId)
+  await expect.poll(() => page.evaluate((id) => {
+    const top = document.getElementById(id)?.getBoundingClientRect().top
+    return typeof top === 'number' && top >= 0 && top < window.innerHeight
+  }, lastTargetId)).toBe(true)
+  await expect.poll(() => progress.evaluate((element) => Number.parseFloat((element as HTMLElement).style.width))).toBeGreaterThan(0)
   await expectNoHorizontalOverflow(page)
 
   const cover = page.locator('article img').first()
@@ -89,6 +113,15 @@ test('最新日更文章包含完整正文结构和有效封面', async ({ page 
   expect(markdownBody).toContain('## 正文')
   expect(markdownBody).toContain(`https://ai-knowledgepoints.cn${href}`)
   expect(markdownBody).not.toMatch(/<\/?(?:InfoCard|TwoColumnLayout|Left|Right)\b/)
+})
+
+test('旧长文保留阅读进度但不伪造目录结构', async ({ page }) => {
+  const response = await page.goto('/blog/the-folding-time')
+
+  expect(response?.ok()).toBe(true)
+  await expect(page.getByTestId('article-reading-progress')).toHaveCount(1)
+  await expect(page.getByRole('navigation', { name: '本文目录' })).toHaveCount(0)
+  await expectNoHorizontalOverflow(page)
 })
 
 test('作品页公开作品并保持外链安全属性', async ({ page }) => {

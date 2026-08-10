@@ -10,7 +10,9 @@ import AppCard from '@/components/AppCard'
 import { getSettings } from '@/lib/admin-storage'
 import { compareDesc } from 'date-fns'
 import ArticleViewCounter from '@/components/ArticleViewCounter'
+import ArticleReadingGuide from '@/components/ArticleReadingGuide'
 import { AUTHOR_NAME, BRAND_NAME, SITE_URL, absoluteUrl } from '@/lib/site'
+import { extractArticleHeadings } from '@/lib/article-headings.mjs'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -72,6 +74,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   if (!post) {
     notFound()
   }
+  const articleHeadings = extractArticleHeadings(post.body.raw)
 
   // Get sorted posts for navigation
   const sortedPosts = allPosts
@@ -211,8 +214,10 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         )}
 
+        <ArticleReadingGuide headings={articleHeadings} />
+
         {/* Content */}
-        <div className="prose prose-lg max-w-none mb-16">
+        <div data-article-content className="article-content prose prose-lg max-w-none mb-16">
           <MDXContent code={post.body.code} />
         </div>
 
