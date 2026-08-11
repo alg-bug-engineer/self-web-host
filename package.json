@@ -37,6 +37,7 @@
     "test:public-claims": "node scripts/tests/test-public-claim-policy.mjs",
     "test:identity-geo": "node scripts/tests/test-identity-markdown.mjs",
     "test:identity-geo-build": "node scripts/tests/test-identity-geo-build.mjs",
+    "test:traffic-source": "node scripts/tests/test-traffic-source.mjs",
     "deploy:production": "bash scripts/deploy.sh"
   },
   "dependencies": {

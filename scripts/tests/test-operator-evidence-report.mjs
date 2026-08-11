@@ -36,7 +36,7 @@ await fs.writeFile(path.join(operatorDir, 'profile-latest.json'), JSON.stringify
 try {
   await writeAnalytics(1, 9)
   let report = await generateReport()
-  assert.equal(report.version, 13)
+  assert.equal(report.version, 14)
   assert.equal(report.decision.mode, 'observe')
   assert.equal(report.decision.growthReady, false)
   assert.equal(report.status.current28DayVisitors, 9)
@@ -67,6 +67,13 @@ try {
   assert.equal(report.status.measurement.crossDayDeduplicated, true)
   assert.equal(report.status.measurement.crossMonthLinkable, false)
   assert.equal(report.decision.primaryAction.type, 'seo')
+  assert.equal(report.acquisition.referrerEstimate.aiReferralVisitors, 16)
+  assert.equal(report.acquisition.referrerEstimate.aiReferralSharePercent, 40)
+  assert.deepEqual(report.acquisition.referrerEstimate.topAiReferrers, [
+    { source: 'ai:chatgpt', visitors: 8 },
+    { source: 'ai:gemini', visitors: 8 },
+  ])
+  assert.ok(report.observations.some((item) => item.includes('16 个 AI 助手引荐访客天')))
   assert.ok(report.recommendedActions.some((item) => item.type === 'reading-experience'))
   assert.ok(report.recommendedActions.some((item) => item.type === 'value-conversion'))
   assert.ok(report.recommendedActions.some((item) => item.type === 'content'))
@@ -133,7 +140,9 @@ async function writeAnalytics(dayCount, visitorsPerDay, monthlyIdentity = false)
           [invalidVisitor]: { seconds: 600, depth: 100 },
         },
       },
-      sources: { direct: visitorsPerDay + 1 },
+      sources: monthlyIdentity
+        ? { direct: visitorsPerDay - 1, 'ai:chatgpt': 1, 'ai:gemini': 1 }
+        : { direct: visitorsPerDay + 1 },
       conversions: {
         subscribe_feed: {
           count: 1,
