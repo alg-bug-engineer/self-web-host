@@ -311,10 +311,10 @@ const topPages = Object.entries(pathTotals)
       : 0,
     conversionEvents: metrics.conversionEvents,
   }))
-const topSources = Object.entries(sourceTotals)
+const rankedSources = Object.entries(sourceTotals)
   .sort((left, right) => right[1] - left[1])
-  .slice(0, 10)
   .map(([source, visitors]) => ({ source, visitors }))
+const topSources = rankedSources.slice(0, 10)
 const topConversions = Object.entries(conversionTotals)
   .sort((left, right) => right[1].visitorDays - left[1].visitorDays || right[1].count - left[1].count)
   .map(([name, event]) => ({
@@ -326,10 +326,19 @@ const topConversions = Object.entries(conversionTotals)
       .slice(0, 5)
       .map(([target, count]) => ({ target, count })),
   }))
-const searchVisitors = sum(topSources
+const searchVisitors = sum(rankedSources
   .filter((item) => item.source.startsWith('search:'))
   .map((item) => item.visitors))
 const searchShare = currentVisitors ? Math.round((searchVisitors / currentVisitors) * 1000) / 10 : 0
+const aiReferralVisitors = sum(rankedSources
+  .filter((item) => item.source.startsWith('ai:'))
+  .map((item) => item.visitors))
+const aiReferralShare = currentVisitors
+  ? Math.round((aiReferralVisitors / currentVisitors) * 1000) / 10
+  : 0
+const topAiReferrers = rankedSources
+  .filter((item) => item.source.startsWith('ai:'))
+  .slice(0, 10)
 const coreWebVitalValues = Object.fromEntries(coreWebVitalNames.map((name) => [name, []]))
 const coreWebVitalPathValues = {}
 for (const day of current28Days) {
@@ -385,6 +394,9 @@ if (!activeDays) {
   }
   if (!audienceEvidenceReady) {
     observations.push(`自然数据尚未达到 ${decisionMinimumActiveDays} 个活跃日且 ${decisionMinimumVisitorDays} 个访客天；增长策略保持观察，不根据早期噪声修改标题、内容或 UI。`)
+  }
+  if (aiReferralVisitors > 0) {
+    observations.push(`最近 28 天识别到 ${aiReferralVisitors} 个 AI 助手引荐访客天，占同期公开页面访客天估算的 ${aiReferralShare}%；继续观察其落地页与有效阅读，不根据单次引荐改版。`)
   }
   if (current7ActiveDays >= 5 && previous7ActiveDays >= 5 && current7Visitors < previous7Visitors) {
     recommendedActions.push({
@@ -603,7 +615,7 @@ const decision = buildOperatorDecision({
 })
 
 const report = {
-  version: 13,
+  version: 14,
   generatedAt: configuredNow.toISOString(),
   objective: goals.objective,
   status: {
@@ -669,7 +681,14 @@ const report = {
     measurement: '按日匿名访客去重；记录受限的高价值入口点击，不保存原始 IP 或任意外链 URL。',
   },
   acquisition: {
-    referrerEstimate: { searchVisitors, searchSharePercent: searchShare, topSources },
+    referrerEstimate: {
+      searchVisitors,
+      searchSharePercent: searchShare,
+      aiReferralVisitors,
+      aiReferralSharePercent: aiReferralShare,
+      topAiReferrers,
+      topSources,
+    },
     searchConsole: searchConsole ? {
       status: searchConsole.status,
       generatedAt: searchConsole.generatedAt,
