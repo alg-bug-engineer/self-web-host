@@ -5,11 +5,53 @@ on:
     - cron: '17 * * * *'
   workflow_dispatch:
 
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: production-health-recovery
+  cancel-in-progress: false
+
 jobs:
   health:
     runs-on: ubuntu-latest
     steps:
-      - name: Check homepage and health endpoint
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Check homepage, health endpoint and deployed commit
+        id: initial_health
+        continue-on-error: true
+        env:
+          EXPECTED_COMMIT: ${{ github.sha }}
+        run: npm run operator:health
+
+      - name: Recover through the production deployment workflow
+        if: steps.initial_health.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          curl --fail --silent --show-error --max-time 20 https://ai-knowledgepoints.cn/ >/dev/null
-          curl --fail --silent --show-error --max-time 20 https://ai-knowledgepoints.cn/api/health | grep -q '"ok":true'
+          active_deployments="$(gh run list --workflow deploy.yml --branch main --limit 20 \
+            --json status --jq '[.[] | select(.status != "completed")] | length')"
+          if [[ "$active_deployments" == "0" ]]; then
+            echo "生产状态异常，触发已有的部署与回滚流水线。"
+            gh workflow run deploy.yml --ref main
+          else
+            echo "已有生产部署运行，等待其完成后复检。"
+          fi
+
+          for attempt in {1..40}; do
+            latest_main="$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)"
+            if EXPECTED_COMMIT="$latest_main" PRODUCTION_HEALTH_TIMEOUT_MS=5000 npm run operator:health; then
+              echo "生产已恢复到 main 最新提交 $latest_main。"
+              exit 0
+            fi
+            sleep 15
+          done
+
+          echo "生产在恢复观察窗口内仍不健康。" >&2
+          exit 1

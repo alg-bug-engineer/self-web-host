@@ -29,6 +29,7 @@
     "operator:profile": "node scripts/audit-profile.mjs",
     "operator:learn": "node scripts/evaluate-operator-actions.mjs",
     "operator:report": "node scripts/generate-operator-report.mjs",
+    "operator:health": "node scripts/check-production-health.mjs",
     "seo:indexnow": "node scripts/submit-indexnow.mjs",
     "sync:wechat": "node scripts/import-wechat.mjs",
     "test:indexnow": "node scripts/tests/test-indexnow.mjs",
@@ -38,6 +39,7 @@
     "test:identity-geo": "node scripts/tests/test-identity-markdown.mjs",
     "test:identity-geo-build": "node scripts/tests/test-identity-geo-build.mjs",
     "test:traffic-source": "node scripts/tests/test-traffic-source.mjs",
+    "test:production-health": "node scripts/tests/test-production-health.mjs",
     "deploy:production": "bash scripts/deploy.sh"
   },
   "dependencies": {
