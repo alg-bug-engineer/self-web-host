@@ -49,33 +49,38 @@ export default function ArticleReadingGuide({ headings }: { headings: ArticleHea
         />
       </div>
       {headings.length >= 2 && (
-        <nav aria-label="本文目录" className="mb-10 rounded-2xl border border-border-default bg-bg-secondary p-5 sm:p-6">
-          <div className="flex items-center justify-between gap-4">
+        <details open className="article-guide group mb-8 rounded-2xl border border-border-default bg-bg-secondary lg:mb-0">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 lg:cursor-default lg:p-6">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-tertiary">READING GUIDE</p>
               <h2 className="mt-1 text-lg font-semibold text-text-primary">本文目录</h2>
             </div>
-            <span className="text-xs text-text-tertiary">{headings.length} 个章节</span>
-          </div>
-          <ol className="mt-4 grid gap-x-6 gap-y-1 sm:grid-cols-2">
-            {headings.map((heading, index) => (
-              <li key={heading.id}>
-                <a
-                  href={`#${heading.id}`}
-                  aria-current={activeId === heading.id ? 'location' : undefined}
-                  className={`group flex min-h-10 items-start gap-3 rounded-lg px-2 py-2 text-sm leading-6 transition-colors ${
-                    activeId === heading.id
-                      ? 'bg-accent-primary/10 text-accent-primary'
-                      : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'
-                  }`}
-                >
-                  <span className="mt-0.5 shrink-0 font-mono text-xs text-text-tertiary">{String(index + 1).padStart(2, '0')}</span>
-                  <span>{heading.text}</span>
-                </a>
-              </li>
-            ))}
-          </ol>
-        </nav>
+            <span className="flex items-center gap-2 text-xs text-text-tertiary">
+              {headings.length} 个章节
+              <svg className="h-4 w-4 transition-transform group-open:rotate-180 lg:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="m6 9 6 6 6-6" /></svg>
+            </span>
+          </summary>
+          <nav aria-label="本文目录" className="border-t border-border-muted px-3 py-3 lg:px-4 lg:pb-5">
+            <ol className="grid gap-1 sm:grid-cols-2 lg:grid-cols-1">
+              {headings.map((heading, index) => (
+                <li key={heading.id}>
+                  <a
+                    href={`#${heading.id}`}
+                    aria-current={activeId === heading.id ? 'location' : undefined}
+                    className={`group flex min-h-10 items-start gap-3 rounded-lg px-2 py-2 text-sm leading-6 transition-colors ${
+                      activeId === heading.id
+                        ? 'bg-accent-primary/10 text-accent-primary'
+                        : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'
+                    }`}
+                  >
+                    <span className="mt-0.5 shrink-0 font-mono text-xs text-text-tertiary">{String(index + 1).padStart(2, '0')}</span>
+                    <span>{heading.text}</span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </details>
       )}
     </>
   )

@@ -2,7 +2,7 @@ import crypto from 'node:crypto'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import sharp from 'sharp'
-import { renderCoverSvg } from './lib/article-visuals.mjs'
+import { renderCoverSvg, renderFigureSvg, validateFigureSet } from './lib/article-visuals.mjs'
 import {
   assertContentDiversity,
   inferTopicCluster,
@@ -268,7 +268,9 @@ function buildReviewerPrompt(draft, history) {
 }
 
 function draftSchema() {
-  return `{"title":"12–34字","description":"70–140字摘要","slug":"英文小写短横线","kicker":"简短英文栏目名","deck":"80–180字导语","thesis":"一句中心判断","tags":["3–5个标签"],"metrics":[{"label":"指标名","value":"值","note":"口径或边界"}],"markdown":"完整 Markdown 正文","figures":[{"afterSection":1,"kind":"cards|flow|comparison|matrix|bars","title":"图标题","subtitle":"一句解释","items":[{"label":"短标签","value":"值或关键词","note":"一句说明"}],"caption":"来源或分析边界"}],"sources":[{"name":"机构或作者","title":"资料标题","url":"https://可靠一手来源","note":"资料边界"}]}`
+  return `配图硬规则：严禁文字卡片、金句海报或“几段话加边框”。4 张图至少使用 3 种结构：flow 必须形成有方向箭头的步骤链；comparison 必须在同一指标下给出左右对照；matrix 必须用两个轴与坐标点表达风险边界；bars 只用于有明确口径的量级或分析指数。非实测数值必须在 caption 明确标注“作者分析指数/非实测数据”，研究数据必须写明来源。
+
+{"title":"12–34字","description":"70–140字摘要","slug":"英文小写短横线","kicker":"简短英文栏目名","deck":"80–180字导语","thesis":"一句中心判断","tags":["3–5个标签"],"metrics":[{"label":"指标名","value":"值","note":"口径或边界"}],"markdown":"完整 Markdown 正文","figures":[{"afterSection":1,"kind":"flow|comparison|matrix|bars","title":"图标题","subtitle":"解释图中关系","leftLabel":"comparison 左侧名称","rightLabel":"comparison 右侧名称","axes":{"xLow":"matrix 横轴低端","xHigh":"横轴高端","yLow":"纵轴低端","yHigh":"纵轴高端"},"items":[{"label":"短标签","value":"flow/bars 显示值","note":"说明","left":"comparison 左侧内容","right":"comparison 右侧内容","x":35,"y":70,"magnitude":65}],"caption":"来源，或作者分析框架/非实测数据声明"}],"sources":[{"name":"机构或作者","title":"资料标题","url":"https://可靠一手来源","note":"资料边界"}]}`
 }
 
 function validateDraft(value) {
@@ -284,14 +286,7 @@ function validateDraft(value) {
   const falseDepthPatterns = (value.markdown.match(/(?:不是[^。\n]{0,55}而是|重要的不是[^。\n]{0,55}而是)/g) || []).length
   if (falseDepthPatterns >= 3) throw new Error('正文反复使用“不是 X，而是 Y”的假深刻句式，请改为直接陈述具体判断。')
   if (!Array.isArray(value.metrics) || value.metrics.length !== 3) throw new Error('必须提供 3 个封面指标。')
-  if (!Array.isArray(value.figures) || value.figures.length !== 4) throw new Error('必须提供 4 张信息图。')
-  const positions = new Set()
-  for (const figure of value.figures) {
-    if (!Number.isInteger(figure.afterSection) || figure.afterSection < 1 || figure.afterSection > headings.length) throw new Error('信息图章节位置无效。')
-    if (positions.has(figure.afterSection)) throw new Error('信息图章节位置不能重复。')
-    positions.add(figure.afterSection)
-    if (!Array.isArray(figure.items) || figure.items.length < 3 || figure.items.length > 6) throw new Error('每张信息图需要 3–6 个项目。')
-  }
+  validateFigureSet(value.figures, { headingCount: headings.length })
   if (!Array.isArray(value.sources) || value.sources.length < 4) throw new Error('至少需要 4 个可靠来源。')
   for (const source of value.sources) {
     if (!/^https:\/\//i.test(source.url || '')) throw new Error('来源必须使用 HTTPS 链接。')
@@ -312,28 +307,6 @@ function insertFigures(markdown, figures) {
     }
   }
   return output.join('\n').replace(/\n{3,}/g, '\n\n')
-}
-
-function renderFigureSvg(figure, index) {
-  const items = figure.items.slice(0, 6)
-  const columns = items.length <= 3 ? items.length : 3
-  const rows = Math.ceil(items.length / columns)
-  const gap = 22
-  const startX = 70
-  const startY = 225
-  const width = (1060 - gap * (columns - 1)) / columns
-  const height = rows === 1 ? 300 : 168
-  const cards = items.map((item, itemIndex) => {
-    const col = itemIndex % columns
-    const row = Math.floor(itemIndex / columns)
-    const x = startX + col * (width + gap)
-    const y = startY + row * (height + gap)
-    const label = svgTextLines(cleanLine(item.label), x + 24, y + 38, 16, 16, '#6B7C93', 19)
-    const value = svgTextLines(cleanLine(item.value), x + 24, y + 88, 28, 19, '#102A43', 34, 2, 700)
-    const note = svgTextLines(cleanLine(item.note), x + 24, y + (rows === 1 ? 158 : 126), 17, 23, '#52667F', 32, rows === 1 ? 4 : 2)
-    return `<g><rect x="${x}" y="${y}" width="${width}" height="${height}" rx="12" fill="#F7F9FC" stroke="#DDE5EF"/><rect x="${x}" y="${y}" width="5" height="${height}" rx="2.5" fill="${index % 2 ? '#4D7EA8' : '#2F6FA5'}"/>${label}${value}${note}</g>`
-  }).join('')
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675"><rect width="1200" height="675" fill="#FFFFFF"/><rect x="0" width="1200" height="10" fill="#102A43"/><text x="70" y="70" font-family="Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="2" fill="#2F6FA5">FIGURE ${String(index + 1).padStart(2, '0')} · ${escapeXml(String(figure.kind || 'ANALYSIS').toUpperCase())}</text>${svgTextLines(cleanLine(figure.title),70,123,31,26,'#102A43',42,2,750)}${svgTextLines(cleanLine(figure.subtitle),70,190,17,42,'#687A90',23,2)}${cards}<text x="70" y="647" font-family="Arial,sans-serif" font-size="13" fill="#8291A5">${escapeXml(truncate(cleanLine(figure.caption), 92))}</text></svg>`
 }
 
 function renderWechatHtml(draft, markdown, figures) {
