@@ -44,6 +44,7 @@ jobs:
       - run: npm run test:identity-geo
       - run: npm run test:traffic-source
       - run: npm run test:production-health
+      - run: npm run test:daily-launchd
       - run: npm run lint
       - run: npm run build
       - run: npm run test:identity-geo-build
