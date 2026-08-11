@@ -101,6 +101,7 @@ test('最新日更文章包含完整正文结构和有效封面', async ({ page 
   const cover = page.locator('article img').first()
   if (await cover.count()) {
     await expect.poll(() => cover.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true)
+    await expect(cover).toHaveCSS('object-fit', 'contain')
   }
 
   const markdownLink = page.locator('link[rel="alternate"][type="text/markdown"]')

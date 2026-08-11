@@ -1,4 +1,5 @@
 const { withContentlayer } = require('next-contentlayer2')
+const contentRedirects = require('./ops/content-redirects.json')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -35,6 +36,13 @@ const nextConfig = {
         hostname: 'mmbiz.qlogo.cn',
       },
     ],
+  },
+  async redirects() {
+    return contentRedirects.redirects.map(({ source, destination, permanent }) => ({
+      source,
+      destination,
+      permanent,
+    }))
   },
   async headers() {
     return [{

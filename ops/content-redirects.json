@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "redirects": [
+    {
+      "source": "/blog/daily-2026-08-11-ai-native-generation-learning-ability",
+      "destination": "/blog/daily-2026-08-11-engineering-human-override-design",
+      "permanent": true,
+      "reason": "8 月 11 日旧稿与前一日日更重复，保留旧链接并指向经过差异化质检的替代文章。"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "date": "2026-08-11",
+  "slug": "engineering-human-override-design",
+  "title": "自动化时代，人工接管为何成为系统设计问题",
+  "description": "自动化系统正在进入更多业务流程，能力提升同时带来了新的可靠性挑战。人工接管机制需要从系统设计阶段开始规划，明确触发条件、信息展示、操作权限和责任边界。本文分析自动化环境中的人机协作方式，并讨论风险等级、治理框架与工程实践之间的关系。",
+  "topicId": "engineering-human-override",
+  "topicCluster": "engineering",
+  "postPath": "content/posts/daily-2026-08-11-engineering-human-override-design.mdx",
+  "htmlPath": "content/wechat/daily-2026-08-11-engineering-human-override-design.html",
+  "coverPath": "public/images/articles/2026-08-11-engineering-human-override-design/cover.png",
+  "figurePaths": [
+    "public/images/articles/2026-08-11-engineering-human-override-design/figure-01.png",
+    "public/images/articles/2026-08-11-engineering-human-override-design/figure-02.png",
+    "public/images/articles/2026-08-11-engineering-human-override-design/figure-03.png",
+    "public/images/articles/2026-08-11-engineering-human-override-design/figure-04.png"
+  ],
+  "websiteUrl": "https://ai-knowledgepoints.cn/blog/daily-2026-08-11-engineering-human-override-design"
+}

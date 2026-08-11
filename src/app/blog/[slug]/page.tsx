@@ -208,7 +208,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               src={post.cover}
               alt={post.title}
               fill
-              className="object-cover"
+              className="object-contain bg-bg-secondary"
               priority
             />
           </div>
