@@ -1,68 +1,92 @@
-import React from 'react';
-import Image from 'next/image';
-import { getSettings } from '@/lib/admin-storage';
+import Image from 'next/image'
+import Link from 'next/link'
+import { getSettings } from '@/lib/admin-storage'
+import { AUTHOR_NAME, BRAND_NAME, SITE_URL } from '@/lib/site'
 
-export async function generateMetadata() {
-  const settings = await getSettings();
-  return {
-    title: `知识星球 | ${settings.siteSlogan || '芝士AI吃鱼'}`,
-    description: '加入知识星球，获取深度 AI 技术教程、项目源码及 1对1 答疑，加速你的 AI 商业化之路。',
-    alternates: { canonical: '/planet' },
-  };
+export const metadata = {
+  title: `AI 实践学习社区 | ${BRAND_NAME}`,
+  description: `${AUTHOR_NAME}（${BRAND_NAME}）围绕大模型、RAG、Agent 与 AI 工程实践持续整理的学习社区。可先阅读公开文章，再决定是否加入。`,
+  alternates: { canonical: '/planet' },
+  openGraph: {
+    title: `AI 实践学习社区 | ${BRAND_NAME}`,
+    description: '围绕大模型、RAG、Agent 与 AI 工程实践，整理专题内容、案例和问题讨论。',
+    url: `${SITE_URL}/planet`,
+    type: 'website',
+  },
 }
 
 export default async function PlanetPage() {
-  const settings = await getSettings();
+  const settings = await getSettings()
+  const externalJoinUrl = (() => {
+    if (!settings.planetUrl) return null
+    try {
+      const url = new URL(settings.planetUrl)
+      return url.protocol === 'https:' && url.hostname !== 'ai-knowledgepoints.cn'
+        ? settings.planetUrl
+        : null
+    } catch {
+      return null
+    }
+  })()
+  const hasExternalJoinUrl = Boolean(externalJoinUrl)
+  const joinUrl = externalJoinUrl ?? '/about#wechat'
+  const joinLabel = hasExternalJoinUrl ? '查看学习社区' : '联系作者了解'
+  const communityJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${SITE_URL}/planet#community`,
+    url: `${SITE_URL}/planet`,
+    name: `${BRAND_NAME} AI 实践学习社区`,
+    description: '围绕大模型、RAG、Agent 与 AI 工程实践整理的专题内容、案例和问题讨论。',
+    inLanguage: 'zh-CN',
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    author: { '@id': `${SITE_URL}/#person`, name: AUTHOR_NAME, alternateName: BRAND_NAME },
+  }
+
   return (
     <div className="max-w-4xl mx-auto space-y-16 py-12 px-4">
-      {/* Hero Section */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(communityJsonLd) }} />
       <section className="text-center space-y-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-tertiary/10 text-accent-tertiary text-sm font-medium">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-tertiary opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-tertiary"></span>
-          </span>
-          进阶 AI 开发者必选
+          <span className="h-2 w-2 rounded-full bg-accent-tertiary" />
+          {BRAND_NAME} · AI 实践学习社区
         </div>
         <h1 className="text-4xl md:text-5xl font-bold text-text-primary tracking-tight">
-          从 AI 使用者到 <span className="text-accent-tertiary">AI 创造者</span>
+          把一个 AI 问题，继续做深一点
         </h1>
         <p className="text-lg text-text-secondary max-w-2xl mx-auto">
-          这里不只是搬运新闻，我们只聊硬核实战：大模型微调、RAG 系统架构、Agent 编排，以及如何将 AI 转化为真实的商业产品。
+          我会把大模型、RAG、Agent 和 AI 工程实践中的资料、案例与问题整理在这里。你可以先看公开文章，再判断这种学习方式是否适合自己。
         </p>
         <div className="flex flex-wrap justify-center gap-4">
           <a 
-            href={settings.planetUrl || '#'} 
-            target="_blank" 
-            rel="noopener noreferrer" 
+            href={joinUrl}
+            target={joinUrl.startsWith('http') ? '_blank' : undefined}
+            rel={joinUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
             className="btn-primary px-8 py-3 text-lg"
             data-analytics-event="join_planet"
             data-analytics-target="planet-hero"
           >
-            立即加入星球
+            {joinLabel}
           </a>
-          <button className="btn-secondary px-8 py-3 text-lg">
-            查看课程大纲
-          </button>
+          <Link href="/blog" className="btn-secondary px-8 py-3 text-lg">先读公开文章</Link>
         </div>
       </section>
 
-      {/* Pain Points */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {[
           {
-            title: '拒绝信息过载',
-            desc: '帮你过滤掉 90% 的无效 AI 资讯，只关注真正能落地的技术点。',
+            title: '按问题整理',
+            desc: '不追着每条新闻跑，围绕一个问题补齐背景、方法、证据和边界。',
             icon: '🎯',
           },
           {
-            title: '打破实战瓶颈',
-            desc: '提供完整项目源码与架构图，告别“看懂了但写不出来”的尴尬。',
+            title: '连接原理与实践',
+            desc: '从概念走到案例、代码和系统约束，说明方法在真实工程里怎样落地。',
             icon: '💻',
           },
           {
-            title: '链接高价值圈子',
-            desc: '与 500+ 位 AI 创业者、大厂工程师共同交流，信息差就是生产力。',
+            title: '保留问题讨论',
+            desc: '遇到不确定的地方就继续讨论，不把还没有答案的问题包装成标准结论。',
             icon: '🤝',
           },
         ].map((item, i) => (
@@ -74,15 +98,17 @@ export default async function PlanetPage() {
         ))}
       </section>
 
-      {/* Benefits */}
-      <section className="space-y-8 bg-bg-secondary border border-border-default rounded-3xl p-8 md:p-12">
-        <h2 className="text-3xl font-bold text-text-primary text-center">星球专属特权</h2>
+      <section id="community-content" className="space-y-8 bg-bg-secondary border border-border-default rounded-3xl p-8 md:p-12">
+        <div className="text-center">
+          <p className="eyebrow">WHAT I SHARE</p>
+          <h2 className="mt-2 text-3xl font-bold text-text-primary">这里主要整理什么</h2>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
           {[
-            { title: '硬核实战专栏', detail: '包含《Agent 开发实战》、《RAG 全栈指南》等深度教程。' },
-            { title: '独家源码下载', detail: '本站所有 AI 工具、Demo 的完整前后端源码均可免费下载。' },
-            { title: '私域技术答疑', detail: '在开发过程中遇到的疑难杂症，作者 1对1 亲自指导。' },
-            { title: '前沿工具库', detail: '第一时间获取并测试最新的开源 AI 工具与闭源模型接口。' },
+            { title: '专题内容', detail: '围绕大模型、RAG、Agent 和 AI 工程化，把零散知识整理成可以连续阅读的主题。' },
+            { title: '案例与代码', detail: '在适合公开和复用的范围内，补充项目案例、架构说明与代码线索。' },
+            { title: '实践问题', detail: '记录部署、评测、数据和产品落地中真正会遇到的问题，以及当时可行的处理方式。' },
+            { title: '工具观察', detail: '关注值得动手验证的开源项目与模型能力，说明它解决了什么，也说明还缺什么。' },
           ].map((benefit, i) => (
             <div key={i} className="flex gap-4">
               <div className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-tertiary/20 text-accent-tertiary flex items-center justify-center font-bold text-xs">
@@ -97,28 +123,28 @@ export default async function PlanetPage() {
         </div>
       </section>
 
-      {/* Call to Action */}
       <section className="text-center space-y-8 pb-12">
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-text-primary">扫描下方二维码加入</h2>
-          <p className="text-sm text-text-tertiary">限时优惠进行中，加入即刻开启进阶之路</p>
+          <h2 className="text-2xl font-bold text-text-primary">{hasExternalJoinUrl ? '查看当前社区页面' : '获取当前社区信息'}</h2>
+          <p className="text-sm text-text-tertiary">
+            {hasExternalJoinUrl
+              ? '具体内容、更新频率和加入方式，以知识星球页面展示的信息为准。'
+              : '当前没有配置公开加入链接，可以通过公众号联系作者了解。'}
+          </p>
         </div>
-        <div className="inline-block p-4 bg-white rounded-2xl shadow-xl">
+        <a href={joinUrl} target={joinUrl.startsWith('http') ? '_blank' : undefined} rel={joinUrl.startsWith('http') ? 'noopener noreferrer' : undefined} className="inline-block p-4 bg-white rounded-2xl shadow-xl" aria-label="查看芝士AI吃鱼知识星球">
           {settings.planetQrCode ? (
-            <Image src={settings.planetQrCode} alt="星球二维码" width={192} height={192} className="object-contain" />
+            <Image src={settings.planetQrCode} alt="芝士AI吃鱼知识星球二维码" width={192} height={192} className="object-contain" />
           ) : (
             <div className="w-48 h-48 bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-300 text-gray-400">
               <div className="text-center">
                 <span className="text-4xl block mb-2">🪐</span>
-                <span className="text-xs">星球二维码</span>
+                <span className="text-xs">{hasExternalJoinUrl ? '查看社区页面' : '联系作者了解'}</span>
               </div>
             </div>
           )}
-        </div>
-        <p className="text-xs text-text-tertiary">
-          支持 3 天内无条件退款 · 微信扫码支付
-        </p>
+        </a>
       </section>
     </div>
-  );
+  )
 }

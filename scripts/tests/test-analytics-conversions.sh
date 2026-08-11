@@ -173,7 +173,7 @@ SITE_URL="http://127.0.0.1:${ANALYTICS_TEST_PORT}" \
 node - "$ANALYTICS_TEST_DIR/operator/technical-latest.json" <<'NODE'
 const fs = require('node:fs')
 const report = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
-if (report.version !== 4) throw new Error(`expected technical report version 4, got ${report.version}`)
+if (report.version !== 5) throw new Error(`expected technical report version 5, got ${report.version}`)
 if (report.metrics.analyticsApiReadable !== true) throw new Error('analytics read probe failed')
 if (report.metrics.analyticsBotExclusionOk !== true) throw new Error('analytics bot exclusion probe failed')
 if (report.metrics.analyticsStoreReadable !== true) throw new Error('analytics store was not readable')
