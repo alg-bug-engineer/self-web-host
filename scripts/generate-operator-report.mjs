@@ -465,6 +465,15 @@ if (!technicalAudit) {
     reviewRequired: false,
   })
 }
+if (technicalAudit?.metrics?.analyticsApiReadable
+  && technicalAudit.metrics.analyticsBotExclusionOk
+  && technicalAudit.metrics.analyticsStoreReadable
+  && technicalAudit.metrics.analyticsStorePrivate) {
+  observations.push(`站内隐私统计已核验：API 可读、自动巡检请求被排除、数据文件权限受限；最新数据日为 ${technicalAudit.metrics.analyticsLatestDay || '尚无自然访问'}。`)
+}
+if (technicalAudit?.metrics?.googleAnalyticsConfigured) {
+  observations.push('GA4 客户端配置已在生产构建资源中核验；经营决策仍以可审计的站内隐私统计和 Search Console 数据为准。')
+}
 
 if (!searchConsole || searchConsole.status === 'unconfigured') {
   recommendedActions.push({
@@ -594,7 +603,7 @@ const decision = buildOperatorDecision({
 })
 
 const report = {
-  version: 12,
+  version: 13,
   generatedAt: configuredNow.toISOString(),
   objective: goals.objective,
   status: {

@@ -84,7 +84,7 @@ function requestVisitorHash(request: NextRequest) {
 function shouldIgnoreRequest(request: NextRequest) {
   if (request.headers.get('dnt') === '1') return true
   const userAgent = request.headers.get('user-agent') || ''
-  return /bot\b|crawler|spider|slurp|headless|lighthouse|pagespeed|preview|monitoring/i.test(userAgent)
+  return /bot\b|crawler|spider|slurp|headless|lighthouse|pagespeed|preview|monitoring|ai-knowledgepoints-(?:technical|analytics)-audit/i.test(userAgent)
 }
 
 export async function GET(request: NextRequest) {

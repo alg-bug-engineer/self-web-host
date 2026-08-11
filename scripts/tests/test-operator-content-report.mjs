@@ -42,7 +42,7 @@ try {
     env: { ...process.env, ANALYTICS_DATA_DIR: dataDir },
   })
   const report = JSON.parse(await fs.readFile(path.join(operatorDir, 'latest.json'), 'utf8'))
-  assert.equal(report.version, 12)
+  assert.equal(report.version, 13)
   assert.equal(report.content.status, 'limited')
   assert.ok(report.observations.some((item) => item.includes('近 7 天发布 2 天')))
   assert.ok(report.observations.some((item) => item.includes('微信频率控制')))

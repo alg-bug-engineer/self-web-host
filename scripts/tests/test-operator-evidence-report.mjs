@@ -36,7 +36,7 @@ await fs.writeFile(path.join(operatorDir, 'profile-latest.json'), JSON.stringify
 try {
   await writeAnalytics(1, 9)
   let report = await generateReport()
-  assert.equal(report.version, 12)
+  assert.equal(report.version, 13)
   assert.equal(report.decision.mode, 'observe')
   assert.equal(report.decision.growthReady, false)
   assert.equal(report.status.current28DayVisitors, 9)

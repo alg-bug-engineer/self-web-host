@@ -11,6 +11,7 @@ const siteUrl = new URL(process.env.SITE_URL || 'https://ai-knowledgepoints.cn')
 const dataDir = process.env.ANALYTICS_DATA_DIR || path.join(projectDir, 'data')
 const outputDir = path.join(dataDir, 'operator')
 const outputPath = path.join(outputDir, 'technical-latest.json')
+const analyticsPath = path.join(dataDir, 'analytics.json')
 const issues = []
 const checkedAt = new Date().toISOString()
 const userAgent = 'ai-knowledgepoints-technical-audit/1.0'
@@ -80,6 +81,56 @@ if (!health.response?.ok) {
   } catch {
     addIssue('error', 'health', absolute('/api/health'), '健康接口不是合法 JSON。')
   }
+}
+
+let analyticsApiReadable = false
+let analyticsBotExclusionOk = false
+try {
+  const response = await fetch(`${absolute('/api/analytics/view')}?path=%2F`, {
+    headers: { 'User-Agent': userAgent },
+    signal: AbortSignal.timeout(20_000),
+  })
+  const result = await response.json()
+  analyticsApiReadable = response.ok && result.ok === true && Number.isFinite(result.views)
+  if (!analyticsApiReadable) addIssue('error', 'analytics-api', absolute('/api/analytics/view'), '站内阅读统计接口不可读。')
+} catch (error) {
+  addIssue('error', 'analytics-api', absolute('/api/analytics/view'), error instanceof Error ? error.message : String(error))
+}
+try {
+  const response = await fetch(absolute('/api/analytics/view'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'User-Agent': userAgent },
+    body: JSON.stringify({ path: '/' }),
+    signal: AbortSignal.timeout(20_000),
+  })
+  const result = await response.json()
+  analyticsBotExclusionOk = response.ok && result.ok === true && result.ignored === true
+  if (!analyticsBotExclusionOk) addIssue('error', 'analytics-bot-exclusion', absolute('/api/analytics/view'), '自动巡检请求未被统计系统明确排除。')
+} catch (error) {
+  addIssue('error', 'analytics-bot-exclusion', absolute('/api/analytics/view'), error instanceof Error ? error.message : String(error))
+}
+
+let analyticsStoreReadable = false
+let analyticsStorePrivate = false
+let analyticsStoreVersion = null
+let analyticsLatestDay = null
+let analyticsUpdatedAt = null
+try {
+  const [rawStore, storeStat] = await Promise.all([
+    fs.readFile(analyticsPath, 'utf8'),
+    fs.stat(analyticsPath),
+  ])
+  const store = JSON.parse(rawStore)
+  analyticsStoreReadable = Boolean(store?.days && typeof store.days === 'object' && !Array.isArray(store.days))
+  analyticsStorePrivate = (storeStat.mode & 0o077) === 0
+  analyticsStoreVersion = Number.isFinite(Number(store?.version)) ? Number(store.version) : null
+  analyticsLatestDay = Object.keys(store?.days || {}).sort().at(-1) || null
+  analyticsUpdatedAt = storeStat.mtime.toISOString()
+  if (!analyticsStoreReadable) addIssue('error', 'analytics-store', analyticsPath, '私有统计文件结构不可读。')
+  if (!analyticsStorePrivate) addIssue('error', 'analytics-privacy', analyticsPath, '私有统计文件向 group 或 other 开放了权限。')
+  if (analyticsStoreVersion !== 5) addIssue('error', 'analytics-schema', analyticsPath, `统计文件版本为 ${analyticsStoreVersion ?? '未知'}，预期为 5。`)
+} catch (error) {
+  addIssue('error', 'analytics-store', analyticsPath, error instanceof Error ? error.message : String(error))
 }
 
 const sitemap = await fetchText(absolute('/sitemap.xml'))
@@ -223,8 +274,28 @@ for (const [header, label] of Object.entries(requiredHeaders)) {
   if (!homepageHeaders?.get(header)) addIssue('warning', 'security-header', absolute('/'), `缺少 ${label}。`)
 }
 
+let googleAnalyticsConfigured = false
+let analyticsBundlesChecked = 0
+const analyticsHomepage = homepage?.html ? homepage : await fetchText(absolute('/'))
+if (analyticsHomepage?.text || analyticsHomepage?.html) {
+  const homepageHtml = analyticsHomepage.text || analyticsHomepage.html
+  const scriptSources = [...homepageHtml.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi)]
+    .map((match) => match[1])
+    .filter((source) => source.includes('/_next/static/chunks/') && source.endsWith('.js'))
+    .slice(0, 50)
+  const bundleResults = await mapLimit([...new Set(scriptSources)], 6, (source) => fetchText(absolute(source)))
+  analyticsBundlesChecked = bundleResults.filter((result) => result.response?.ok).length
+  googleAnalyticsConfigured = bundleResults.some((result) =>
+    result.response?.ok
+      && result.text.includes('googletagmanager.com/gtag/js')
+      && /G-[A-Z0-9]{6,20}/.test(result.text))
+}
+if (!googleAnalyticsConfigured) {
+  addIssue('warning', 'google-analytics', absolute('/'), '生产客户端资源中未确认到有效的 GA4 配置。')
+}
+
 const report = {
-  version: 3,
+  version: 4,
   checkedAt,
   target: siteUrl.origin,
   status: issues.some((issue) => issue.severity === 'error') ? 'degraded' : 'healthy',
@@ -238,6 +309,15 @@ const report = {
     identityMarkdownPagesChecked: identityMarkdownResults.length,
     identityMarkdownPagesHealthy: identityMarkdownResults.filter((item) => item.healthy).length,
     indexNowKeyOk,
+    analyticsApiReadable,
+    analyticsBotExclusionOk,
+    analyticsStoreReadable,
+    analyticsStorePrivate,
+    analyticsStoreVersion,
+    analyticsLatestDay,
+    analyticsUpdatedAt,
+    googleAnalyticsConfigured,
+    analyticsBundlesChecked,
     errors: issues.filter((issue) => issue.severity === 'error').length,
     warnings: issues.filter((issue) => issue.severity === 'warning').length,
   },
