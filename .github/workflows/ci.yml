@@ -30,6 +30,7 @@ jobs:
       - run: npm run test:wechat-rss-backoff
       - run: npm run test:fetch-wechat-rss
       - run: npm run test:content-diversity
+      - run: npm run test:content-redirects
       - run: npm run test:content-operations
       - run: npm run test:operator-content-report
       - run: npm run test:active-reading

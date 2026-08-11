@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import fs from 'node:fs/promises'
 import path from 'node:path'
 import {
   TOPIC_CATALOG,
@@ -13,9 +14,13 @@ import {
 const projectDir = path.resolve(import.meta.dirname, '..', '..')
 const history = await loadArticleHistory(path.join(projectDir, 'content', 'posts'), { beforeDate: '2026-08-12' })
 const august10 = history.find((article) => article.filename.startsWith('daily-2026-08-10-'))
-const august11 = history.find((article) => article.filename.startsWith('daily-2026-08-11-'))
+const august11 = parseArticle(
+  await fs.readFile(path.join(projectDir, 'content', 'posts', 'daily-2026-08-11-ai-native-generation-learning-ability.mdx'), 'utf8'),
+  'daily-2026-08-11-ai-native-generation-learning-ability.mdx',
+)
 
 assert.ok(august10 && august11, '缺少用于防重复回归的两篇真实日更文章')
+assert.equal(august11.published, false, '已知重复稿应保留为退役回归样本，不再公开')
 const knownDuplicate = compareArticleCandidate({ ...august11, slug: 'renamed-learning-article', markdown: august11.body }, [august10])
 assert.ok(knownDuplicate.reasons.length > 0, '仅更换 slug 后，已知重复文章仍应被识别')
 assert.match(knownDuplicate.reasons.join('；'), /标题与标签共同相似/)
@@ -35,7 +40,7 @@ const distinctCandidate = {
 assert.doesNotThrow(() => assertContentDiversity(distinctCandidate, [august10, august11]))
 
 const nextTopic = selectTopic('2026-08-12', history)
-assert.notEqual(nextTopic.cluster, 'learning', '连续两篇学习主题之后不应继续选择学习主题')
+assert.ok(!['learning', 'engineering'].includes(nextTopic.cluster), '下一选题应避开最近两篇日更的主题簇')
 
 const simulatedHistory = []
 const selected = []

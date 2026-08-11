@@ -2,10 +2,12 @@ import crypto from 'node:crypto'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import sharp from 'sharp'
+import { renderCoverSvg } from './lib/article-visuals.mjs'
 import {
   assertContentDiversity,
   inferTopicCluster,
   loadArticleHistory,
+  parseArticle,
   selectTopic,
 } from './lib/content-diversity.mjs'
 
@@ -72,7 +74,13 @@ if (!apiKey) throw new Error('未找到 CONTENT_AI_API_KEY 或本机 chatgpt2api
 
 await fs.mkdir(postsDir, { recursive: true })
 const existing = await fs.readdir(postsDir)
-if (existing.some((file) => file.startsWith(`daily-${dateKey}-`) && file.endsWith('.mdx'))) {
+const existingDailyFiles = existing.filter((file) => file.startsWith(`daily-${dateKey}-`) && file.endsWith('.mdx'))
+const existingPublishedDaily = []
+for (const file of existingDailyFiles) {
+  const article = parseArticle(await fs.readFile(path.join(postsDir, file), 'utf8'), file)
+  if (article.published !== false) existingPublishedDaily.push(file)
+}
+if (existingPublishedDaily.length > 0) {
   console.log(`${dateKey} 已有深度文章，跳过重复生成。`)
   process.exit(0)
 }
@@ -326,10 +334,6 @@ function renderFigureSvg(figure, index) {
     return `<g><rect x="${x}" y="${y}" width="${width}" height="${height}" rx="12" fill="#F7F9FC" stroke="#DDE5EF"/><rect x="${x}" y="${y}" width="5" height="${height}" rx="2.5" fill="${index % 2 ? '#4D7EA8' : '#2F6FA5'}"/>${label}${value}${note}</g>`
   }).join('')
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675"><rect width="1200" height="675" fill="#FFFFFF"/><rect x="0" width="1200" height="10" fill="#102A43"/><text x="70" y="70" font-family="Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="2" fill="#2F6FA5">FIGURE ${String(index + 1).padStart(2, '0')} · ${escapeXml(String(figure.kind || 'ANALYSIS').toUpperCase())}</text>${svgTextLines(cleanLine(figure.title),70,123,31,26,'#102A43',42,2,750)}${svgTextLines(cleanLine(figure.subtitle),70,190,17,42,'#687A90',23,2)}${cards}<text x="70" y="647" font-family="Arial,sans-serif" font-size="13" fill="#8291A5">${escapeXml(truncate(cleanLine(figure.caption), 92))}</text></svg>`
-}
-
-function renderCoverSvg(draft) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="383" viewBox="0 0 900 383"><rect width="900" height="383" fill="#102A43"/><circle cx="815" cy="-5" r="210" fill="#1C4565"/><circle cx="815" cy="-5" r="145" fill="none" stroke="#5B88AB" stroke-opacity=".38" stroke-width="2"/><text x="62" y="62" font-family="Arial,sans-serif" font-size="14" font-weight="700" letter-spacing="2" fill="#78A7CC">${escapeXml(cleanLine(draft.kicker || 'AI NATIVE GENERATION'))}</text>${svgTextLines(cleanLine(draft.title),62,132,43,19,'#FFFFFF',55,3,760)}<rect x="62" y="319" width="68" height="5" rx="2.5" fill="#5EA2D4"/><text x="148" y="329" font-family="Arial,sans-serif" font-size="16" fill="#BFD1E0">芝士AI吃鱼 · 深度观察</text></svg>`
 }
 
 function renderWechatHtml(draft, markdown, figures) {

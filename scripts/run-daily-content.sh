@@ -57,7 +57,14 @@ fi
 export CONTENT_DATE="$date_key"
 
 git -c "$GIT_SSH_REWRITE" fetch origin main
-published_path="$(git ls-tree -r --name-only origin/main -- content/posts | grep -E "^content/posts/daily-${date_key}-.*\.mdx$" | head -1 || true)"
+published_path=""
+while IFS= read -r candidate; do
+  [[ -z "$candidate" ]] && continue
+  if ! git show "origin/main:$candidate" | grep -Eq '^published:[[:space:]]*false[[:space:]]*$'; then
+    published_path="$candidate"
+    break
+  fi
+done < <(git ls-tree -r --name-only origin/main -- content/posts | grep -E "^content/posts/daily-${date_key}-.*\.mdx$" || true)
 if [[ -n "$published_path" ]]; then
   echo "$date_key 已在 origin/main 发布深度文章：$published_path"
   exit 0
