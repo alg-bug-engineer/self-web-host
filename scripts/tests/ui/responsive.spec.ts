@@ -54,6 +54,12 @@ test('移动菜单具备对话框语义、滚动锁定和键盘关闭', async ({
   await expect(dialog.getByRole('link', { name: '文章' })).toBeVisible()
   await expect(dialog.getByRole('button', { name: '关闭菜单' })).toBeFocused()
 
+  const navGroups = dialog.locator('details.mobile-nav-accordion')
+  await expect(navGroups).toHaveCount(2)
+  await expect(navGroups.first()).toHaveAttribute('open', '')
+  await navGroups.first().locator('summary').click()
+  await expect(navGroups.first()).not.toHaveAttribute('open', '')
+
   await page.keyboard.press('Escape')
   await expect(dialog).toBeHidden()
   await expect(trigger).toBeFocused()
@@ -76,8 +82,10 @@ test('最新日更文章包含完整正文结构和有效封面', async ({ page 
 
   const progress = page.getByTestId('article-reading-progress')
   const readingGuide = page.getByRole('navigation', { name: '本文目录' })
+  const readingGuideAccordion = page.locator('details.article-guide')
   const guideLinks = readingGuide.locator('a[href^="#"]')
   await expect(progress).toHaveCount(1)
+  await expect(readingGuideAccordion).toHaveAttribute('open', '')
   await expect(readingGuide).toBeVisible()
   await expect(guideLinks).toHaveCount(sectionCount)
 

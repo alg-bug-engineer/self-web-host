@@ -10,6 +10,8 @@
     "draft:daily": "node scripts/generate-daily-draft.mjs",
     "article:daily": "node scripts/generate-deep-article.mjs",
     "article:cover": "node scripts/render-article-cover.mjs",
+    "article:figures:published": "node scripts/regenerate-published-figures.mjs",
+    "test:article-visuals": "node scripts/tests/test-article-visuals.mjs",
     "test:content-diversity": "node scripts/tests/test-content-diversity.mjs",
     "test:content-redirects": "node scripts/tests/test-content-redirects.mjs",
     "test:content-operations": "node scripts/tests/test-content-operations.mjs",

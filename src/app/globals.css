@@ -8,8 +8,8 @@
 @import "../styles/github-theme.css";
 @import "../styles/components.css";
 
-:root { color-scheme: dark; }
-[data-theme="light"] { color-scheme: light; }
+:root { color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 body {
@@ -19,6 +19,12 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   transition: background-color .25s ease, color .25s ease;
+  background-image:
+    radial-gradient(circle at 12% 3%, color-mix(in srgb, var(--accent-primary) 8%, transparent), transparent 27rem),
+    linear-gradient(color-mix(in srgb, var(--border-muted) 36%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--border-muted) 36%, transparent) 1px, transparent 1px);
+  background-size: auto, 48px 48px, 48px 48px;
+  background-attachment: fixed;
 }
 a, button { -webkit-tap-highlight-color: transparent; }
 a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent-secondary); outline-offset: 3px; }
@@ -37,6 +43,18 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
   background-clip: text;
   -webkit-background-clip: text;
 }
+
+.article-reading-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 768px) 260px;
+  justify-content: center;
+  gap: 48px;
+  align-items: start;
+}
+.article-reading-rail { grid-column: 2; position: sticky; top: 136px; max-height: calc(100vh - 160px); overflow: auto; scrollbar-width: thin; }
+.article-reading-layout > div { grid-column: 1; grid-row: 1; }
+.article-guide summary::-webkit-details-marker, .mobile-nav-accordion summary::-webkit-details-marker { display: none; }
+.article-content img { border-radius: 16px; border: 1px solid var(--border-default); background: #f7f7f9; box-shadow: var(--shadow-md); }
 
 /* Header */
 .site-header {
@@ -325,6 +343,9 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
   .featured-insight { min-height: 560px; }
   .book-shelf { grid-template-columns: repeat(3,minmax(0,1fr)); }
   .book-card:nth-child(n+4) { display: none; }
+  .article-reading-layout { display: flex; flex-direction: column; gap: 0; }
+  .article-reading-rail { position: static; width: 100%; max-height: none; overflow: visible; }
+  .article-reading-layout > div { width: 100%; }
 }
 @media (max-width: 640px) {
   .header-announcement { justify-content: flex-start; overflow: hidden; white-space: nowrap; }

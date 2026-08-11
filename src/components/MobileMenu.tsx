@@ -8,14 +8,23 @@ interface MobileMenuProps {
   setIsOpen: (isOpen: boolean) => void
 }
 
-const navItems = [
-  { label: '首页', href: '/' },
-  { label: '文章', href: '/blog' },
-  { label: '著作与作品', href: '/portfolio' },
-  { label: 'AI 漫画', href: 'https://manga.ai-knowledgepoints.cn' },
-  { label: 'AI 工具', href: '/collections/tools' },
-  { label: '知识星球', href: '/planet' },
-  { label: '关于我', href: '/about' },
+const navGroups = [
+  {
+    label: '探索内容',
+    items: [
+      { label: '全部文章', note: '原理、实践与观察', href: '/blog' },
+      { label: 'AI 工具', note: '可直接使用的工具', href: '/collections/tools' },
+      { label: 'AI 漫画', note: '用图像理解概念', href: 'https://manga.ai-knowledgepoints.cn' },
+    ],
+  },
+  {
+    label: '关于作者',
+    items: [
+      { label: '著作与作品', note: '书、产品与项目', href: '/portfolio' },
+      { label: '知识星球', note: '持续交流与讨论', href: '/planet' },
+      { label: '关于我', note: '经历与公开成果', href: '/about' },
+    ],
+  },
 ]
 
 export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
@@ -91,11 +100,26 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeWidth="1.8" d="M6 6l12 12M18 6 6 18" /></svg>
           </button>
         </div>
-        <nav className="mt-6 flex flex-col" aria-label="移动端导航">
-          {navItems.map((item, index) => (
-            <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)} className="flex items-center justify-between border-b border-border-default py-4 text-lg text-text-primary">
-              <span>{item.label}</span><span className="text-sm text-text-tertiary">0{index + 1}</span>
-            </Link>
+        <nav className="mt-6 flex flex-col gap-3" aria-label="移动端导航">
+          <Link href="/" onClick={() => setIsOpen(false)} className="rounded-xl border border-border-default bg-bg-secondary px-4 py-3 text-base font-medium text-text-primary">首页</Link>
+          {navGroups.map((group) => (
+            <details key={group.label} open className="mobile-nav-accordion group rounded-xl border border-border-default bg-bg-secondary">
+              <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-text-primary">
+                {group.label}
+                <svg className="h-4 w-4 text-text-tertiary transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="m6 9 6 6 6-6" /></svg>
+              </summary>
+              <div className="border-t border-border-muted px-2 py-2">
+                {group.items.map((item) => (
+                  <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)} className="flex items-center justify-between rounded-lg px-3 py-3 transition-colors hover:bg-bg-tertiary">
+                    <span>
+                      <strong className="block text-sm font-medium text-text-primary">{item.label}</strong>
+                      <small className="mt-1 block text-xs text-text-tertiary">{item.note}</small>
+                    </span>
+                    <span className="text-accent-primary">→</span>
+                  </Link>
+                ))}
+              </div>
+            </details>
           ))}
         </nav>
         <Link href="/search" onClick={() => setIsOpen(false)} className="mt-auto rounded-full bg-text-primary px-5 py-3 text-center text-sm font-medium text-bg-primary">搜索网站内容</Link>

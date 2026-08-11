@@ -136,7 +136,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className="max-w-3xl mx-auto">
+      <div className="mx-auto max-w-6xl">
         {/* Back link */}
         <Link
           href="/blog"
@@ -149,7 +149,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         </Link>
 
         {/* Header */}
-        <header className="mb-10">
+        <header className="mx-auto mb-10 max-w-3xl">
           {/* Category & Tags */}
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <span className="px-3 py-1 text-sm font-bold rounded-lg bg-bg-tertiary text-text-primary border border-border-default flex items-center gap-1.5">
@@ -203,7 +203,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Cover Image */}
         {post.cover && (
-          <div className="mb-10 rounded-2xl overflow-hidden relative aspect-video">
+          <div className="relative mx-auto mb-10 aspect-video max-w-4xl overflow-hidden rounded-2xl border border-border-default bg-bg-secondary shadow-xl">
             <Image
               src={post.cover}
               alt={post.title}
@@ -214,12 +214,15 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         )}
 
-        <ArticleReadingGuide headings={articleHeadings} />
-
-        {/* Content */}
-        <div data-article-content className="article-content prose prose-lg max-w-none mb-16">
-          <MDXContent code={post.body.code} />
-        </div>
+        <div className="article-reading-layout">
+          <aside className="article-reading-rail">
+            <ArticleReadingGuide headings={articleHeadings} />
+          </aside>
+          <div className="min-w-0 max-w-3xl">
+            {/* Content */}
+            <div data-article-content className="article-content prose prose-lg max-w-none mb-16">
+              <MDXContent code={post.body.code} />
+            </div>
 
         {/* Lead Gen Banner */}
         <div className="mb-8">
@@ -295,7 +298,9 @@ export default async function BlogPostPage({ params }: PageProps) {
               </svg>
             </Link>
           </div>
-        </footer>
+            </footer>
+          </div>
+        </div>
       </div>
     </article>
   )
