@@ -6,6 +6,8 @@ LABEL="cn.ai-knowledgepoints.daily-content"
 PLIST="$HOME/Library/LaunchAgents/$LABEL.plist"
 CONFIG_DIR="$HOME/.config/ai-knowledgepoints"
 LOG_DIR="$HOME/Library/Logs/ai-knowledgepoints"
+PLUTIL_BIN="${PLUTIL_BIN:-plutil}"
+LAUNCHCTL_BIN="${LAUNCHCTL_BIN:-launchctl}"
 
 mkdir -p "$HOME/Library/LaunchAgents" "$CONFIG_DIR" "$LOG_DIR"
 chmod 700 "$CONFIG_DIR"
@@ -22,6 +24,7 @@ cat >"$PLIST" <<PLIST
   <key>Label</key><string>$LABEL</string>
   <key>ProgramArguments</key><array><string>/bin/bash</string><string>$escaped_project/scripts/run-daily-content.sh</string></array>
   <key>WorkingDirectory</key><string>$escaped_project</string>
+  <key>RunAtLoad</key><true/>
   <key>StartCalendarInterval</key><array>
     <dict><key>Hour</key><integer>8</integer><key>Minute</key><integer>30</integer></dict>
     <dict><key>Hour</key><integer>10</integer><key>Minute</key><integer>30</integer></dict>
@@ -37,8 +40,8 @@ cat >"$PLIST" <<PLIST
 </dict></plist>
 PLIST
 
-plutil -lint "$PLIST"
-launchctl bootout "gui/$(id -u)/$LABEL" 2>/dev/null || true
-launchctl bootstrap "gui/$(id -u)" "$PLIST"
-echo "已安装每日 08:30 内容任务，并在 10:30、12:30 幂等补偿重试：$PLIST"
+"$PLUTIL_BIN" -lint "$PLIST"
+"$LAUNCHCTL_BIN" bootout "gui/$(id -u)/$LABEL" 2>/dev/null || true
+"$LAUNCHCTL_BIN" bootstrap "gui/$(id -u)" "$PLIST"
+echo "已安装登录时幂等补跑与每日 08:30 内容任务，并在 10:30、12:30 补偿重试：$PLIST"
 echo "公众号凭据文件：$CONFIG_DIR/publisher.env"
