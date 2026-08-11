@@ -12,6 +12,7 @@ const dataDir = process.env.ANALYTICS_DATA_DIR || path.join(projectDir, 'data')
 const outputDir = path.join(dataDir, 'operator')
 const outputPath = path.join(outputDir, 'technical-latest.json')
 const analyticsPath = path.join(dataDir, 'analytics.json')
+const publicClaimPolicyPath = path.join(projectDir, 'ops', 'public-claim-policy.json')
 const issues = []
 const checkedAt = new Date().toISOString()
 const userAgent = 'ai-knowledgepoints-technical-audit/1.0'
@@ -25,6 +26,16 @@ try {
   indexNowConfig = JSON.parse(await fs.readFile(path.join(projectDir, 'ops', 'indexnow.json'), 'utf8'))
 } catch (error) {
   addIssue('warning', 'indexnow', siteUrl.origin, `无法读取 IndexNow 配置：${error instanceof Error ? error.message : String(error)}`)
+}
+
+let publicClaimPolicy = null
+try {
+  publicClaimPolicy = JSON.parse(await fs.readFile(publicClaimPolicyPath, 'utf8'))
+  if (!Array.isArray(publicClaimPolicy?.routes) || !Array.isArray(publicClaimPolicy?.disallowedClaims)) {
+    throw new Error('公开承诺策略缺少 routes 或 disallowedClaims。')
+  }
+} catch (error) {
+  addIssue('warning', 'public-claims', siteUrl.origin, `无法读取公开承诺策略：${error instanceof Error ? error.message : String(error)}`)
 }
 
 const fetchText = async (target) => {
@@ -173,6 +184,24 @@ const pageResults = await mapLimit([...new Set(sitemapUrls)], 5, async (target) 
   return { target, html: result.text, status: result.response.status }
 })
 
+let publicClaimPagesChecked = 0
+let publicClaimViolations = 0
+if (publicClaimPolicy) {
+  const scopedRoutes = new Set(publicClaimPolicy.routes)
+  const scopedPages = pageResults.filter((page) => scopedRoutes.has(new URL(page.target).pathname))
+  publicClaimPagesChecked = scopedPages.length
+  for (const page of scopedPages) {
+    for (const claim of publicClaimPolicy.disallowedClaims) {
+      if (typeof claim?.fragment !== 'string' || !claim.fragment || !page.html.includes(claim.fragment)) continue
+      publicClaimViolations += 1
+      addIssue('error', 'public-claims', page.target, `${claim.reason || '核心页面包含没有来源的公开承诺。'}（${claim.id || 'unidentified-claim'}）`)
+    }
+  }
+  if (publicClaimPagesChecked !== scopedRoutes.size) {
+    addIssue('warning', 'public-claims', siteUrl.origin, `公开承诺策略计划检查 ${scopedRoutes.size} 个页面，实际检查 ${publicClaimPagesChecked} 个。`)
+  }
+}
+
 const internalLinks = [...new Set(pageResults.flatMap((page) => internalLinksFrom(page.html)))].slice(0, 300)
 await mapLimit(internalLinks, 8, async (target) => {
   const result = await fetchText(target)
@@ -295,7 +324,7 @@ if (!googleAnalyticsConfigured) {
 }
 
 const report = {
-  version: 4,
+  version: 5,
   checkedAt,
   target: siteUrl.origin,
   status: issues.some((issue) => issue.severity === 'error') ? 'degraded' : 'healthy',
@@ -318,6 +347,8 @@ const report = {
     analyticsUpdatedAt,
     googleAnalyticsConfigured,
     analyticsBundlesChecked,
+    publicClaimPagesChecked,
+    publicClaimViolations,
     errors: issues.filter((issue) => issue.severity === 'error').length,
     warnings: issues.filter((issue) => issue.severity === 'warning').length,
   },

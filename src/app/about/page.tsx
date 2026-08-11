@@ -28,13 +28,11 @@ const focusTags = [
 const career = profileData.publicIdentity.career
 const verifiedWorks = profileData.verifiedWorks
 
-const techStack = [
-  { name: '大语言模型', level: 95, color: 'bg-accent-primary' },
-  { name: 'RAG 检索增强', level: 90, color: 'bg-accent-primary' },
-  { name: 'Agent 智能体', level: 85, color: 'bg-accent-secondary' },
-  { name: '模型微调', level: 85, color: 'bg-accent-secondary' },
-  { name: 'Prompt Engineering', level: 90, color: 'bg-accent-primary' },
-  { name: 'Python/算法', level: 95, color: 'bg-accent-primary' },
+const expertiseAreas = [
+  { name: '大语言模型与 RAG', description: '关注检索、知识库、模型微调与生成质量，把方法放回真实数据和系统约束里讨论。', evidence: '著作、知识库项目与公开文章' },
+  { name: 'Agent 与自动化', description: '关注任务分解、工具调用、评测、权限和人工接管，不把一次跑通当成稳定落地。', evidence: '工程项目、专利与工具实践' },
+  { name: 'NLP 与算法工程', description: '长期从事搜索、推荐、NLP 和人工智能研发，重视从实验指标走向生产系统的过程。', evidence: career.sourceLabel },
+  { name: 'AI 内容与 GEO', description: '把复杂概念写成人能读、机器也能核验和引用的文章、漫画与结构化知识。', evidence: '公众号、博客、漫画与本站机器可读内容' },
 ]
 
 const timeline = [
@@ -46,39 +44,26 @@ const timeline = [
     tone: 'label-blue',
   },
   {
-    year: '职业初期',
-    title: '阿里、百度、滴滴、浪潮 AI 研发',
-    description: '持续参与搜索、推荐、NLP 与大模型知识库等工业场景',
+    year: '算法研发',
+    title: '阿里、百度、滴滴、浪潮',
+    description: '从事搜索、推荐、NLP 与人工智能研发。',
     icon: '🚀',
     tone: 'label-purple',
   },
   {
-    year: '深耕算法',
-    title: '算法专家',
-    description: '主导多个核心算法项目，深入搜索、推荐、NLP 等领域',
+    year: '大模型实践',
+    title: '知识库、RAG 与 Agent',
+    description: '参与大模型知识库等工业项目，也持续整理工程方法与边界。',
     icon: '🔬',
     tone: 'label-orange',
   },
   {
-    year: '大模型时代',
-    title: '拥抱 LLM 浪潮',
-    description: '全面转向大模型技术，深入研究 RAG、Agent、微调等方向',
-    icon: '🤖',
+    year: '现在',
+    title: '著作与持续创作',
+    description: '通过著作、公众号、博客、漫画和工具，继续把复杂的 AI 问题讲清楚。',
+    icon: '🎨',
     tone: 'label-green',
   },
-  {
-    year: '现在',
-    title: '技术布道者',
-    description: '创立「芝士AI吃鱼」，用漫画和人话把 AI 知识讲给更多人听',
-    icon: '🎨',
-    tone: 'label-gray',
-  },
-]
-
-const awards = [
-  { title: '算泥社区 MVP', org: '算泥社区', icon: '🏆' },
-  { title: '社区编辑', org: '51CTO', icon: '✨' },
-  { title: '博客专家', org: 'CSDN', icon: '📚' },
 ]
 
 const socialLinks = [
@@ -138,7 +123,7 @@ export default function AboutPage() {
               <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h1 className="text-2xl font-semibold text-text-primary">芝士AI吃鱼</h1>
-                  <span className="label label-green">在线</span>
+                  <span className="label label-green">持续创作</span>
                 </div>
                 <p className="mt-1 text-sm text-text-secondary">
                   天大计算机硕士 · 算法与人工智能研发 · AI 技术写作者
@@ -220,7 +205,7 @@ export default function AboutPage() {
               ))}
             </div>
             <p className="mt-4 text-xs leading-5 text-text-tertiary">
-              GitHub 公开仓库数于 {profileData.githubVerifiedAt} 核对；职业履历与专业成果于 {profileData.publicEvidenceVerifiedAt} 通过公开作者简介和专利文本交叉核验。
+              GitHub 仓库数于 {profileData.githubVerifiedAt} 通过公开 API 核对；职业履历与专业成果于 {profileData.publicEvidenceVerifiedAt} 通过公开作者简介和专利文本交叉核验。著作、CSDN 内容数和公众号读者数来自作者资料。
             </p>
           </div>
 
@@ -263,23 +248,6 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="bg-bg-secondary border border-border-default rounded-2xl p-6">
-            <h2 className="text-lg font-semibold text-text-primary mb-4">社区荣誉</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {awards.map((award) => (
-                <div
-                  key={award.title}
-                  className="flex items-center gap-3 rounded-xl border border-border-default bg-bg-tertiary px-4 py-3"
-                >
-                  <div className="text-xl">{award.icon}</div>
-                  <div>
-                    <div className="text-sm font-semibold text-text-primary">{award.title}</div>
-                    <div className="text-xs text-text-secondary">{award.org}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
 
         <div className="bg-bg-secondary border border-border-default rounded-2xl p-6 space-y-4">
@@ -298,7 +266,7 @@ export default function AboutPage() {
           </p>
 
           <p className="text-sm text-text-secondary">
-            2023 年，ChatGPT 横空出世，大模型时代正式到来。我敏锐地意识到：这一次，AI 真的要改变一切了。
+            大模型开始进入实际应用后，我把更多时间放在 RAG、Agent、模型微调和 AI 工程化上，也开始重新整理这些技术应该怎样讲给人听。
           </p>
 
           <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
@@ -355,21 +323,14 @@ export default function AboutPage() {
 
       <section className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <div className="bg-bg-secondary border border-border-default rounded-2xl p-6">
-          <h2 className="text-lg font-semibold text-text-primary mb-6">技术专长</h2>
-          <div className="space-y-5">
-            {techStack.map((tech) => (
-              <div key={tech.name}>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium text-text-primary">{tech.name}</span>
-                  <span className="text-text-tertiary">{tech.level}%</span>
-                </div>
-                <div className="mt-2 h-2.5 rounded-full bg-bg-tertiary border border-border-default overflow-hidden">
-                  <div
-                    className={`h-full ${tech.color} rounded-full transition-all duration-1000`}
-                    style={{ width: `${tech.level}%` }}
-                  />
-                </div>
-              </div>
+          <h2 className="text-lg font-semibold text-text-primary mb-6">长期关注的问题</h2>
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+            {expertiseAreas.map((area) => (
+              <article key={area.name} className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+                <h3 className="font-medium text-text-primary">{area.name}</h3>
+                <p className="mt-2 text-sm leading-6 text-text-secondary">{area.description}</p>
+                <p className="mt-3 text-xs text-text-tertiary">相关实践：{area.evidence}</p>
+              </article>
             ))}
           </div>
         </div>

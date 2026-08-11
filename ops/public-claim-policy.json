@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "routes": [
+    "/about",
+    "/planet",
+    "/collections/tools"
+  ],
+  "sourceFiles": [
+    "src/app/about/page.tsx",
+    "src/app/planet/page.tsx",
+    "src/app/blog/[slug]/page.tsx",
+    "src/app/collections/tools/ToolsCollectionClient.tsx",
+    "src/components/PlanetBanner.tsx",
+    "src/components/WechatCard.tsx"
+  ],
+  "disallowedClaims": [
+    {
+      "id": "unsupported-filter-rate",
+      "fragment": "过滤掉 90%",
+      "reason": "没有公开口径证明内容筛选比例。"
+    },
+    {
+      "id": "unsupported-community-size",
+      "fragment": "500+ 位 AI",
+      "reason": "没有公开来源证明社区规模与成员构成。"
+    },
+    {
+      "id": "unsupported-all-source-code",
+      "fragment": "所有 AI 工具、Demo 的完整前后端源码均可免费下载",
+      "reason": "不能把未逐项核对的工具权益写成全量保证。"
+    },
+    {
+      "id": "unsupported-one-to-one-service",
+      "fragment": "1对1",
+      "reason": "没有公开服务说明时不承诺一对一支持。"
+    },
+    {
+      "id": "unsupported-refund-policy",
+      "fragment": "无条件退款",
+      "reason": "退款条件必须以实际交易页面和平台规则为准。"
+    },
+    {
+      "id": "unsupported-limited-offer",
+      "fragment": "限时优惠",
+      "reason": "没有可核验的开始、结束时间时不制造稀缺感。"
+    },
+    {
+      "id": "unsupported-follow-reward",
+      "fragment": "关注后可获取",
+      "reason": "没有逐项交付证据时，不把关注动作与资料权益绑定。"
+    }
+  ]
+}

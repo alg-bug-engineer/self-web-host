@@ -224,8 +224,8 @@ export default async function BlogPostPage({ params }: PageProps) {
         {/* Lead Gen Banner */}
         <div className="mb-8">
           <PlanetBanner 
-            title="想要深入学习 AI 实战吗？" 
-            description="加入知识星球，你可以获得本文配套的完整源码、进阶架构图，以及专属的技术答疑服务。" 
+            title="想把本文的问题继续做深一点？"
+            description="知识星球里会继续整理相关案例、工程约束和问题讨论；具体内容以当前社区页面为准。"
             planetUrl={settings.planetUrl}
             planetQrCode={settings.planetQrCode}
           />

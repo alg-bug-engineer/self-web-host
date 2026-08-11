@@ -204,8 +204,8 @@ export default function ToolsCollectionClient({ tools, settings }: { tools: Tool
 
         {/* Lead Gen Banner */}
         <PlanetBanner 
-            title="需要更硬核的 AI 实战工具？" 
-            description="加入知识星球，获取 Pro 版工具完整源码、配套教程，以及作者 1对1 部署支持。" 
+            title="想继续了解这些工具怎样落地？"
+            description="知识星球里会整理部分工具的使用记录、项目案例和部署问题；具体内容以当前社区页面为准。"
             planetUrl={settings.planetUrl}
             planetQrCode={settings.planetQrCode}
         />

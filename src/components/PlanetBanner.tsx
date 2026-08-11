@@ -11,8 +11,8 @@ interface PlanetBannerProps {
 }
 
 export default function PlanetBanner({ 
-    title = "解锁更多硬核 AI 实战技巧", 
-    description = "加入知识星球，获取本文配套源码、深度技术文档及 1对1 技术答疑。",
+    title = "想把这个问题继续做深一点？",
+    description = "知识星球用于整理大模型、RAG、Agent 与 AI 工程实践中的专题内容、案例和问题讨论。",
     planetUrl = "/planet",
     planetQrCode = "/images/zhishixingqiu.jpg"
 }: PlanetBannerProps) {
@@ -21,7 +21,7 @@ export default function PlanetBanner({
             <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
                 <div className="space-y-4 text-center lg:text-left flex-1">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs font-bold uppercase tracking-wider">
-                        🪐 Member Exclusive
+                        🪐 芝士AI吃鱼 · AI 实践
                     </div>
                     <h2 className="text-3xl font-bold tracking-tight">
                         {title}
@@ -36,7 +36,7 @@ export default function PlanetBanner({
                             data-analytics-event="join_planet"
                             data-analytics-target="content-banner"
                         >
-                            立即加入
+                            查看学习社区
                         </Link>
                         <Link 
                             href="/planet" 
@@ -57,7 +57,7 @@ export default function PlanetBanner({
                             <div className="relative w-full h-full">
                                 <Image 
                                     src={planetQrCode} 
-                                    alt="星球二维码" 
+                                    alt="芝士AI吃鱼知识星球二维码"
                                     fill
                                     className="object-cover rounded-xl" 
                                 />
