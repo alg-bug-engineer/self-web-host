@@ -39,6 +39,18 @@ test('首页在桌面和移动端保持可读且无横向溢出', async ({ page 
   expect(errors).toEqual([])
 })
 
+test('首页知识图谱在浅色主题下使用浅色面板', async ({ page }) => {
+  await page.goto('/')
+  await page.evaluate(() => localStorage.setItem('vite-ui-theme', 'light'))
+  await page.reload()
+
+  const consolePanel = page.locator('.knowledge-console')
+  await expect(consolePanel).toBeVisible()
+  await expect(consolePanel).toHaveCSS('background-color', 'rgb(255, 255, 255)')
+  await expect(consolePanel.locator('.satellite').first()).toHaveCSS('background-color', 'rgb(255, 255, 255)')
+  await expect(consolePanel.locator('.console-metrics > div').first()).toHaveCSS('background-color', 'rgb(247, 247, 251)')
+})
+
 test('移动菜单具备对话框语义、滚动锁定和键盘关闭', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile-chromium', '仅移动端显示菜单按钮')
 
