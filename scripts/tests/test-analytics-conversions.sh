@@ -63,7 +63,7 @@ curl --silent --fail "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/health" >/dev/
 node - "$ANALYTICS_TEST_DIR/analytics.json" <<'NODE'
 const fs = require('node:fs')
 const store = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
-const tomorrow = new Date()
+const tomorrow = new Date(store.visitorIdentity.startedAt)
 tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
 if (store.version !== 5) throw new Error('production startup did not migrate analytics to v5')
 if (store.visitorIdentity?.scope !== 'calendar-month') throw new Error('startup migration did not persist identity scope')
@@ -147,7 +147,7 @@ const fs = require('node:fs')
 const analyticsFile = process.argv[2]
 const store = JSON.parse(fs.readFileSync(analyticsFile, 'utf8'))
 const day = new Date().toISOString().slice(0, 10)
-const tomorrow = new Date()
+const tomorrow = new Date(store.visitorIdentity.startedAt)
 tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
 const daily = store.days[day]
 if (store.version !== 5) throw new Error(`expected store version 5, got ${store.version}`)
@@ -180,6 +180,19 @@ if (report.metrics.analyticsStoreReadable !== true) throw new Error('analytics s
 if (report.metrics.analyticsStorePrivate !== true) throw new Error('analytics store permissions were not private')
 if (report.metrics.analyticsStoreVersion !== 5) throw new Error('analytics store schema was not verified')
 if (report.metrics.googleAnalyticsConfigured !== true) throw new Error('GA4 client configuration was not found in built assets')
+NODE
+
+# The integration run can cross UTC midnight while the production audit fetches
+# every page. Keep this report fixture deterministically before its trustworthy
+# monthly boundary; startup behavior was already verified against startedAt.
+node - "$ANALYTICS_TEST_DIR/analytics.json" <<'NODE'
+const fs = require('node:fs')
+const file = process.argv[2]
+const store = JSON.parse(fs.readFileSync(file, 'utf8'))
+const boundary = new Date()
+boundary.setUTCDate(boundary.getUTCDate() + 2)
+store.visitorIdentity.reliableFromDay = boundary.toISOString().slice(0, 10)
+fs.writeFileSync(file, JSON.stringify(store), { mode: 0o600 })
 NODE
 
 ANALYTICS_DATA_DIR="$ANALYTICS_TEST_DIR" npm run operator:learn >/dev/null
