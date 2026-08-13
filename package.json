@@ -25,6 +25,7 @@
     "test:ui": "playwright test",
     "publish:wechat": "node scripts/publish-wechat.mjs",
     "schedule:daily:install": "bash scripts/install-daily-content-launchd.sh",
+    "schedule:search-console:install": "bash scripts/install-search-console-sync-launchd.sh",
     "operator:audit": "node scripts/audit-production.mjs",
     "operator:content": "node scripts/audit-content-operations.mjs",
     "operator:search": "node scripts/fetch-search-console.mjs",
@@ -43,6 +44,7 @@
     "test:traffic-source": "node scripts/tests/test-traffic-source.mjs",
     "test:production-health": "node scripts/tests/test-production-health.mjs",
     "test:daily-launchd": "node scripts/tests/test-daily-launchd-config.mjs",
+    "test:search-console-sync-launchd": "node scripts/tests/test-search-console-sync-launchd.mjs",
     "deploy:production": "bash scripts/deploy.sh"
   },
   "dependencies": {
