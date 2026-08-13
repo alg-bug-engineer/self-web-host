@@ -1,5 +1,17 @@
 [
   {
+    "id": "markdown-formatter",
+    "name": "Markdown 排版工具",
+    "description": "实时预览、一键格式化并复制富文本，适合公众号、知识库与文档编辑器。",
+    "url": "/tools/markdown",
+    "tags": [
+      "Markdown",
+      "排版",
+      "效率"
+    ],
+    "status": "New"
+  },
+  {
     "id": "tool-1770097007291",
     "name": "PPT 模板网站",
     "description": "PPT 模板网站，涵盖课题申请、答辩、AI、人工智能等免费或付费PPT 模板",

@@ -150,7 +150,11 @@ export default function ToolsCollectionClient({ tools, settings }: { tools: Tool
               const CardTag = isPlugin ? 'button' : 'a'
               const props = isPlugin 
                 ? { onClick: () => handleToolClick(tool), type: 'button' as const } 
-                : { href: tool.isPro ? '/planet' : tool.url, target: tool.isPro ? '_self' : '_blank', rel: 'noopener noreferrer' }
+                : {
+                    href: tool.isPro ? '/planet' : tool.url,
+                    target: tool.isPro || tool.url.startsWith('/') ? '_self' : '_blank',
+                    rel: 'noopener noreferrer',
+                  }
 
               return (
                 <CardTag
@@ -186,7 +190,9 @@ export default function ToolsCollectionClient({ tools, settings }: { tools: Tool
                     {tool.status && <span className="label label-gray">{tool.status}</span>}
                   </div>
                   <span className="text-xs text-accent-tertiary font-bold group-hover:underline">
-                      {isPlugin ? (activePluginId === tool.pluginId ? '正在运行...' : '立即试用 →') : (tool.isPro ? '点击解锁会员版 →' : '前往 GitHub →')}
+                      {isPlugin
+                        ? (activePluginId === tool.pluginId ? '正在运行...' : '立即试用 →')
+                        : (tool.isPro ? '点击解锁会员版 →' : (tool.url.startsWith('/') ? '立即使用 →' : '前往 GitHub →'))}
                   </span>
                 </CardTag>
               )
