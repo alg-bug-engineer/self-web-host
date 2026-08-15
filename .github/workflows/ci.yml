@@ -27,6 +27,7 @@ jobs:
       - run: bash scripts/tests/test-daily-content-isolation.sh
       - run: node scripts/tests/test-search-console.mjs
       - run: node scripts/tests/test-import-wechat.mjs
+      - run: node scripts/tests/test-wechat-images.mjs
       - run: npm run test:wechat-rss-backoff
       - run: npm run test:fetch-wechat-rss
       - run: npm run test:content-diversity

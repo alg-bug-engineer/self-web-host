@@ -22,6 +22,7 @@ const runImport = (sourceFile = fixture, overrides = {}) => spawnSync(process.ex
     WECHAT_IMPORT_DAYS: '31',
     WECHAT_MAX_IMPORTS: '12',
     WECHAT_EXPECTED_BIZ: 'MzIxMjY3NzMwNw==',
+    WECHAT_LOCALIZE_IMAGES: 'false',
     WECHAT_NOW: '2026-08-11T00:00:00Z',
     ...overrides,
   },
