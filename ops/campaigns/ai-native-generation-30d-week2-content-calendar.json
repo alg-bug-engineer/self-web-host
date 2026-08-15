@@ -1,0 +1,300 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "period": {
+    "startsOn": "2026-08-19",
+    "endsOn": "2026-08-25",
+    "timezone": "Asia/Shanghai"
+  },
+  "cadenceTargets": {
+    "website": {
+      "minimum": 1,
+      "label": "母文或周复盘"
+    },
+    "wechat": {
+      "minimum": 2,
+      "label": "公众号文章"
+    },
+    "csdn": {
+      "minimum": 1,
+      "maximum": 2,
+      "label": "技术长文"
+    },
+    "x": {
+      "minimum": 5,
+      "label": "工作日观点"
+    },
+    "toutiao": {
+      "minimum": 3,
+      "label": "家长向文章"
+    },
+    "zsxq": {
+      "minimum": 7,
+      "label": "L04—L06 与三天挑战"
+    },
+    "video": {
+      "minimum": 3,
+      "label": "L04—L06 微课"
+    }
+  },
+  "statusDefinitions": {
+    "published": "已在公开平台核验真实 URL",
+    "scheduled": "平台后台已核验定时状态和时间",
+    "draft_ready": "稿件与发布检查已就绪，尚未写入平台",
+    "media_ready": "视频与字幕已就绪，尚未核验平台发布",
+    "blocked": "存在明确阻断项，不能记为就绪"
+  },
+  "entries": [
+    {
+      "id": "w2-website-review",
+      "date": "2026-08-25",
+      "platform": "website",
+      "title": "第二周挑战复盘与第三周调整",
+      "status": "blocked",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-25-week2-review.md"
+      ],
+      "blocker": "生产课程页仍为 404，未获网站部署授权"
+    },
+    {
+      "id": "w2-website-article-01",
+      "date": "2026-08-19",
+      "platform": "website",
+      "title": "孩子的提示词写得很长，为什么任务反而更糊涂？",
+      "status": "draft_ready",
+      "assets": [
+        "content/posts/daily-2026-08-19-child-ai-define-the-problem.mdx",
+        "public/images/courses/ai-native-generation/L04/poster.webp"
+      ]
+    },
+    {
+      "id": "w2-wechat-01",
+      "date": "2026-08-19",
+      "platform": "wechat",
+      "title": "孩子的提示词写得很长，为什么任务反而更糊涂？",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-19-l04-wechat-article.md",
+        "content/campaigns/ai-native-generation-30d/2026-08-19-scheduled-longform-source-audit.md"
+      ]
+    },
+    {
+      "id": "w2-wechat-02",
+      "date": "2026-08-24",
+      "platform": "wechat",
+      "title": "关闭 AI 以后，孩子还能说出自己的结论吗？",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-24-wechat-close-ai-conclusion.md",
+        "content/campaigns/ai-native-generation-30d/2026-08-19-scheduled-longform-source-audit.md"
+      ]
+    },
+    {
+      "id": "w2-csdn-01",
+      "date": "2026-08-19",
+      "platform": "csdn",
+      "title": "提示词工程之前，先做问题定义：把 AI 任务写成一份可验证的接口契约",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-19-csdn-problem-contract.md",
+        "content/campaigns/ai-native-generation-30d/2026-08-19-scheduled-longform-source-audit.md"
+      ]
+    },
+    {
+      "id": "w2-x-01",
+      "date": "2026-08-19",
+      "platform": "x",
+      "title": "背景、目标、限制、检查",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-19-l04-distribution-x-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-19-l04-distribution.md"
+      ]
+    },
+    {
+      "id": "w2-x-02",
+      "date": "2026-08-20",
+      "platform": "x",
+      "title": "三天挑战 Day 1",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-20-x-challenge-day1-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-20-x-challenge-day1.md"
+      ]
+    },
+    {
+      "id": "w2-x-03",
+      "date": "2026-08-21",
+      "platform": "x",
+      "title": "任务拆解不是切成五行",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-21-x-l05-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-21-x-l05.md"
+      ]
+    },
+    {
+      "id": "w2-x-04",
+      "date": "2026-08-24",
+      "platform": "x",
+      "title": "三天挑战 Day 3",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-24-x-challenge-day3-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-24-x-challenge-day3.md"
+      ]
+    },
+    {
+      "id": "w2-x-05",
+      "date": "2026-08-25",
+      "platform": "x",
+      "title": "第二周挑战复盘",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-25-x-week2-review.md"
+      ]
+    },
+    {
+      "id": "w2-toutiao-01",
+      "date": "2026-08-19",
+      "platform": "toutiao",
+      "title": "孩子的提示词写得很长，为什么任务反而更糊涂？",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-19-toutiao-question-definition.md",
+        "content/campaigns/ai-native-generation-30d/2026-08-19-scheduled-longform-source-audit.md"
+      ]
+    },
+    {
+      "id": "w2-toutiao-02",
+      "date": "2026-08-22",
+      "platform": "toutiao",
+      "title": "孩子不是拖延：很多学习任务根本没有“第一步”",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-22-toutiao-first-step.md",
+        "content/campaigns/ai-native-generation-30d/2026-08-19-scheduled-longform-source-audit.md"
+      ]
+    },
+    {
+      "id": "w2-toutiao-03",
+      "date": "2026-08-23",
+      "platform": "toutiao",
+      "title": "AI 会写完整答案以后，孩子最容易交出去的不是作业，而是“责任”",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-23-toutiao-human-ai-responsibility.md",
+        "content/campaigns/ai-native-generation-30d/2026-08-19-scheduled-longform-source-audit.md"
+      ]
+    },
+    {
+      "id": "w2-zsxq-01",
+      "date": "2026-08-19",
+      "platform": "zsxq",
+      "title": "L04｜先别让 AI 回答：把一个模糊任务修理成可检查的问题",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-19-l04-distribution-zsxq-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-19-l04-distribution.md"
+      ]
+    },
+    {
+      "id": "w2-zsxq-02",
+      "date": "2026-08-20",
+      "platform": "zsxq",
+      "title": "三天挑战 Day 1｜打开 AI 前，先让孩子写一句任务说明",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-20-zsxq-challenge-day1-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-20-zsxq-challenge-day1.md"
+      ]
+    },
+    {
+      "id": "w2-zsxq-03",
+      "date": "2026-08-21",
+      "platform": "zsxq",
+      "title": "L05｜任务已经说清楚，孩子为什么还是不知道第一步？",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-21-l05-distribution-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-21-l05-distribution.md"
+      ]
+    },
+    {
+      "id": "w2-zsxq-04",
+      "date": "2026-08-22",
+      "platform": "zsxq",
+      "title": "三天挑战 Day 2｜别急着改提示词，先标出 AI 回答里的三处疑点",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-22-zsxq-challenge-day2-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-22-zsxq-challenge-day2.md"
+      ]
+    },
+    {
+      "id": "w2-zsxq-05",
+      "date": "2026-08-23",
+      "platform": "zsxq",
+      "title": "L06｜AI 能做，不等于该交给它做",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-23-l06-distribution-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-23-l06-distribution.md"
+      ]
+    },
+    {
+      "id": "w2-zsxq-06",
+      "date": "2026-08-24",
+      "platform": "zsxq",
+      "title": "三天挑战 Day 3｜关闭 AI，孩子还能不能说出自己的结论？",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-24-zsxq-challenge-day3-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-24-zsxq-challenge-day3.md"
+      ]
+    },
+    {
+      "id": "w2-zsxq-07",
+      "date": "2026-08-25",
+      "platform": "zsxq",
+      "title": "第二周公开复盘",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-25-week2-review.md"
+      ]
+    },
+    {
+      "id": "w2-video-l04",
+      "date": "2026-08-19",
+      "platform": "video",
+      "title": "L04 把问题说清楚",
+      "status": "media_ready",
+      "assets": [
+        "public/videos/courses/ai-native-generation/L04-define-the-problem-v1.mp4",
+        "public/videos/courses/ai-native-generation/L04-define-the-problem-v1.vtt"
+      ]
+    },
+    {
+      "id": "w2-video-l05",
+      "date": "2026-08-21",
+      "platform": "video",
+      "title": "L05 可检查的任务步骤",
+      "status": "media_ready",
+      "assets": [
+        "public/videos/courses/ai-native-generation/L05-break-work-into-checkable-steps-v1.mp4",
+        "public/videos/courses/ai-native-generation/L05-break-work-into-checkable-steps-v1.vtt"
+      ]
+    },
+    {
+      "id": "w2-video-l06",
+      "date": "2026-08-23",
+      "platform": "video",
+      "title": "L06 人机责任分工",
+      "status": "media_ready",
+      "assets": [
+        "public/videos/courses/ai-native-generation/L06-human-ai-division-of-responsibility-v1.mp4",
+        "public/videos/courses/ai-native-generation/L06-human-ai-division-of-responsibility-v1.vtt"
+      ]
+    }
+  ]
+}

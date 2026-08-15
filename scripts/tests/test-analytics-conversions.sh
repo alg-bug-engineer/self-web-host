@@ -42,6 +42,7 @@ fs.writeFileSync(file, JSON.stringify({
       engagement: {},
       vitals: {},
       sources: {},
+      visitorSources: {},
       landingPaths: {},
       conversions: {},
       conversionCountsByVisitor: {},
@@ -49,7 +50,13 @@ fs.writeFileSync(file, JSON.stringify({
   },
 }))
 NODE
-ANALYTICS_DATA_DIR="$ANALYTICS_TEST_DIR" APP_COMMIT_SHA="analytics-v5-test" PORT="$ANALYTICS_TEST_PORT" npm start >"$ANALYTICS_TEST_DIR/server.log" 2>&1 &
+ANALYTICS_DATA_DIR="$ANALYTICS_TEST_DIR" \
+ADMIN_USERNAME="analytics-test-admin" \
+ADMIN_PASSWORD="analytics-test-password" \
+ADMIN_SESSION_SECRET="analytics-test-session-secret" \
+APP_COMMIT_SHA="analytics-v5-test" \
+PORT="$ANALYTICS_TEST_PORT" \
+  npm start >"$ANALYTICS_TEST_DIR/server.log" 2>&1 &
 ANALYTICS_TEST_PID="$!"
 
 for _ in {1..40}; do
@@ -77,12 +84,24 @@ request_headers=(
   -H 'Accept-Language: zh-CN'
   -H 'X-Forwarded-For: 203.0.113.9'
 )
+campaign_headers=(
+  -H 'Content-Type: application/json'
+  -H 'User-Agent: conversion-test-browser'
+  -H 'Accept-Language: zh-CN'
+  -H 'X-Forwarded-For: 203.0.113.10'
+)
 
 curl --silent --fail -X POST "${request_headers[@]}" \
   --data '{"path":"/portfolio","referrer":""}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
 curl --silent --fail -X POST "${request_headers[@]}" \
   --data '{"path":"/blog","referrer":""}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X POST "${campaign_headers[@]}" \
+  --data '{"path":"/ai-native-generation","referrer":"","utmSource":"CSDN","utmMedium":"Organic","utmCampaign":"AI Native Generation 30D"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X POST "${campaign_headers[@]}" \
+  --data '{"path":"/planet","referrer":""}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
 UNKNOWN_PATH_STATUS="$(curl --silent --output /dev/null --write-out '%{http_code}' -X POST "${request_headers[@]}" \
   --data '{"path":"/operator","referrer":""}' \
@@ -100,6 +119,49 @@ curl --silent --fail -X POST "${request_headers[@]}" \
 curl --silent --fail -X POST "${request_headers[@]}" \
   --data '{"kind":"conversion","path":"/blog","name":"follow_wechat","target":"article-card"}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X POST "${campaign_headers[@]}" \
+  --data '{"kind":"conversion","path":"/ai-native-generation","name":"course_preview_play","target":"l02"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X POST "${campaign_headers[@]}" \
+  --data '{"kind":"conversion","path":"/ai-native-generation","name":"ai_native_generation_interest","target":"course-preview"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X POST "${campaign_headers[@]}" \
+  --data '{"kind":"conversion","path":"/ai-native-generation","name":"course_beta_guardian_interest","target":"course-bottom"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X POST "${campaign_headers[@]}" \
+  --data '{"kind":"conversion","path":"/ai-native-generation","name":"course_beta_guardian_interest","target":"guardian-intake-wechat"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X POST "${campaign_headers[@]}" \
+  --data '{"kind":"conversion","path":"/ai-native-generation","name":"ai_literacy_check_complete","target":"developing"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X POST "${campaign_headers[@]}" \
+  --data '{"kind":"conversion","path":"/planet","name":"join_planet","target":"planet-footer"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+GUARDIAN_SURVEY_PAYLOAD='{"kind":"guardian-survey","path":"/ai-native-generation","guardianConfirmed":true,"answers":{"age_range":"8-10","ai_use":"weekly","primary_scene":"assignment","family_rule":"partial","main_concern":"misinformation","desired_ability":"verification","weekly_time":"30-60","participation":"course-beta"}}'
+GUARDIAN_SURVEY_RESPONSE="$(curl --silent --fail -X POST "${campaign_headers[@]}" \
+  --data "$GUARDIAN_SURVEY_PAYLOAD" \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view")"
+node - "$GUARDIAN_SURVEY_RESPONSE" <<'NODE'
+const result = JSON.parse(process.argv[2])
+if (result.recorded !== true || result.qualified !== true) throw new Error('valid guardian survey was not recorded')
+NODE
+DUPLICATE_SURVEY_RESPONSE="$(curl --silent --fail -X POST "${campaign_headers[@]}" \
+  --data "$GUARDIAN_SURVEY_PAYLOAD" \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view")"
+node - "$DUPLICATE_SURVEY_RESPONSE" <<'NODE'
+const result = JSON.parse(process.argv[2])
+if (result.recorded !== false || result.reason !== 'already-submitted-this-month') {
+  throw new Error('duplicate guardian survey was not rejected')
+}
+NODE
+INVALID_SURVEY_STATUS="$(curl --silent --output /dev/null --write-out '%{http_code}' -X POST "${campaign_headers[@]}" \
+  --data '{"kind":"guardian-survey","path":"/ai-native-generation","guardianConfirmed":true,"answers":{"age_range":"8-10","ai_use":"weekly","primary_scene":"assignment","family_rule":"partial","main_concern":"孩子的具体情况","desired_ability":"verification","weekly_time":"30-60","participation":"course-beta"}}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view")"
+[[ "$INVALID_SURVEY_STATUS" == "400" ]]
+NON_GUARDIAN_SURVEY_STATUS="$(curl --silent --output /dev/null --write-out '%{http_code}' -X POST "${campaign_headers[@]}" \
+  --data '{"kind":"guardian-survey","path":"/ai-native-generation","guardianConfirmed":false,"answers":{"age_range":"8-10","ai_use":"weekly","primary_scene":"assignment","family_rule":"partial","main_concern":"misinformation","desired_ability":"verification","weekly_time":"30-60","participation":"course-beta"}}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view")"
+[[ "$NON_GUARDIAN_SURVEY_STATUS" == "400" ]]
 UNSEEN_CONVERSION_RESPONSE="$(curl --silent --fail -X POST "${request_headers[@]}" \
   --data '{"kind":"conversion","path":"/about","name":"follow_wechat","target":"about-card"}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view")"
@@ -125,6 +187,16 @@ INVALID_TARGET_STATUS="$(curl --silent --output /dev/null --write-out '%{http_co
   --data '{"kind":"conversion","path":"/portfolio","name":"view_book","target":"attacker-controlled-key"}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view")"
 [[ "$INVALID_TARGET_STATUS" == "400" ]]
+
+INVALID_LESSON_STATUS="$(curl --silent --output /dev/null --write-out '%{http_code}' -X POST "${request_headers[@]}" \
+  --data '{"kind":"conversion","path":"/ai-native-generation","name":"course_preview_play","target":"l99"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view")"
+[[ "$INVALID_LESSON_STATUS" == "400" ]]
+
+INVALID_CHECK_LEVEL_STATUS="$(curl --silent --output /dev/null --write-out '%{http_code}' -X POST "${request_headers[@]}" \
+  --data '{"kind":"conversion","path":"/ai-native-generation","name":"ai_literacy_check_complete","target":"grade-3"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view")"
+[[ "$INVALID_CHECK_LEVEL_STATUS" == "400" ]]
 
 curl --silent --fail -X POST "${request_headers[@]}" -H 'DNT: 1' \
   --data '{"kind":"conversion","path":"/portfolio","name":"view_book","target":"book-4"}' \
@@ -153,19 +225,47 @@ const daily = store.days[day]
 if (store.version !== 5) throw new Error(`expected store version 5, got ${store.version}`)
 if (store.visitorIdentity?.scope !== 'calendar-month') throw new Error('monthly visitor identity scope is missing')
 if (store.visitorIdentity?.reliableFromDay !== tomorrow.toISOString().slice(0, 10)) throw new Error('legacy migration day was not excluded')
-if (daily.pageViews !== 2) throw new Error(`expected two page views, got ${daily.pageViews}`)
+if (daily.pageViews !== 4) throw new Error(`expected four page views, got ${daily.pageViews}`)
+const campaignSource = 'campaign:csdn/organic/ai-native-generation-30d'
+const campaignVisitor = daily.conversions.course_preview_play.visitors[0]
+if (daily.sources[campaignSource] !== 1) throw new Error('campaign source visitor was not counted')
+if (daily.visitorSources[campaignVisitor] !== campaignSource) throw new Error('anonymous visitor source attribution was not retained')
 if (daily.conversions.view_book.count !== 1) throw new Error('DNT or invalid event was recorded')
 if (daily.conversions.view_book.visitors.length !== 1) throw new Error('conversion visitor was not de-duplicated')
 if (daily.conversions.view_book.targets['book-3'] !== 1) throw new Error('normalized target was not recorded')
 if (daily.conversions.explore_articles.targets['blog-path-principles'] !== 1) throw new Error('blog learning path was not recorded')
 if (daily.conversions.subscribe_feed.targets.footer !== 1) throw new Error('RSS subscription intent was not recorded')
 if (daily.conversions.follow_wechat.targets['article-card'] !== 1) throw new Error('WeChat follow intent was not recorded')
+if (daily.conversions.course_preview_play.targets.l02 !== 1) throw new Error('course preview play was not recorded')
+if (daily.conversions.ai_native_generation_interest.targets['course-preview'] !== 1) throw new Error('course beta interest was not recorded')
+if (daily.conversions.course_beta_guardian_interest.targets['course-bottom'] !== 1) throw new Error('guardian-only course beta interest was not recorded')
+if (daily.conversions.course_beta_guardian_interest.targets['guardian-intake-wechat'] !== 1) throw new Error('guardian intake handoff was not recorded')
+if (daily.conversions.ai_literacy_check_complete.targets.developing !== 1) throw new Error('family AI literacy check completion was not recorded')
+if (daily.conversions.join_planet.targets['planet-footer'] !== 1) throw new Error('planet join intent was not recorded')
+if (daily.guardianSurvey.submissions !== 1) throw new Error('guardian survey total is wrong')
+if (daily.guardianSurvey.qualifiedSubmissions !== 1) throw new Error('qualified guardian survey total is wrong')
+if (daily.guardianSurvey.visitors.length !== 1) throw new Error('guardian survey visitor was not de-duplicated')
+if (daily.guardianSurvey.answers.age_range['8-10'] !== 1) throw new Error('guardian survey age aggregate is wrong')
+if (daily.guardianSurvey.answers.main_concern.misinformation !== 1) throw new Error('guardian survey concern aggregate is wrong')
+if (JSON.stringify(daily.guardianSurvey).includes('孩子的具体情况')) throw new Error('invalid free text leaked into guardian survey aggregates')
 if (daily.conversions.follow_wechat.paths['/about']) throw new Error('unseen page received a conversion')
 if (daily.conversions.arbitrary_event) throw new Error('arbitrary event name was accepted')
 if (daily.engagement['/about']) throw new Error('engagement was accepted for a path the visitor did not view')
 if (daily.engagement['/portfolio']?.[daily.visitors[0]]?.seconds !== 12) throw new Error('valid active reading was not recorded')
 if ((fs.statSync(analyticsFile).mode & 0o777) !== 0o600) throw new Error('analytics file is not private')
 NODE
+
+ADMIN_COOKIE_JAR="$ANALYTICS_TEST_DIR/admin.cookies"
+curl --silent --fail -c "$ADMIN_COOKIE_JAR" -X POST \
+  -H 'Content-Type: application/json' \
+  --data '{"username":"analytics-test-admin","password":"analytics-test-password"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/admin/login" >/dev/null
+ADMIN_HTML="$(curl --silent --fail -b "$ADMIN_COOKIE_JAR" "http://127.0.0.1:${ANALYTICS_TEST_PORT}/admin")"
+[[ "$ADMIN_HTML" == *"儿童 AI 素养渠道漏斗"* ]]
+[[ "$ADMIN_HTML" == *"活动 · csdn/organic/ai-native-generation-30d"* ]]
+[[ "$ADMIN_HTML" == *"监护人匿名调研汇总"* ]]
+[[ "$ADMIN_HTML" == *"有效样本 1 / 30"* ]]
+[[ "$ADMIN_HTML" != *"203.0.113."* ]]
 
 SITE_URL="http://127.0.0.1:${ANALYTICS_TEST_PORT}" \
   ANALYTICS_DATA_DIR="$ANALYTICS_TEST_DIR" \
@@ -206,9 +306,10 @@ if (report.status.measurement.crossDayDeduplicated !== false) throw new Error('m
 if (report.status.currentMonthVisitors !== null) throw new Error('mixed migration day produced a monthly visitor count')
 if (report.status.currentMonthQualifiedVisitors !== null) throw new Error('mixed migration day produced a qualified monthly visitor count')
 if (report.content !== null) throw new Error('missing content audit should be represented as null')
-if (report.value.conversionVisitors !== 1) throw new Error('report conversion visitor count is wrong')
+if (report.value.conversionVisitors !== 2) throw new Error('report conversion visitor count is wrong')
 if (report.value.conversionRatePercent !== 100) throw new Error('report conversion rate is wrong')
-if (report.value.topConversions[0]?.name !== 'view_book') throw new Error('report top conversion is missing')
+if (report.value.topConversions[0]?.name !== 'course_beta_guardian_interest') throw new Error('guardian intake handoff is not the leading conversion')
+if (!report.value.topConversions.some((item) => item.name === 'view_book')) throw new Error('existing book conversion is missing')
 if (!report.observations.some((item) => item.includes('站内隐私统计已核验'))) throw new Error('private analytics readiness observation is missing')
 if (!report.observations.some((item) => item.includes('GA4 客户端配置已在生产构建资源中核验'))) throw new Error('GA4 readiness observation is missing')
 NODE

@@ -26,10 +26,12 @@ const wechatDir = path.join(projectDir, 'content', 'wechat')
 const imagesRoot = path.join(projectDir, 'public', 'images', 'articles')
 const sourceBanks = {
   learning: [
+    { name: 'UNESCO', title: 'AI competency framework for students', url: 'https://www.unesco.org/en/articles/ai-competency-framework-students', note: '提供以人为本、伦理、技术应用和系统设计四个能力维度，以及理解、应用、创造的递进框架。' },
+    { name: 'UNICEF', title: 'Guidance on AI and children, version 3.0', url: 'https://www.unicef.org/innocenti/reports/policy-guidance-ai-children', note: '用于儿童权利、安全、隐私、公平、透明和身心发展边界，不是课程效果证明。' },
+    { name: '教育部等五部门', title: '“人工智能+教育”行动计划', url: 'https://www.moe.gov.cn/srcsite/A16/s3342/202604/t20260410_1433240.html', note: '提供育人为本、素养为先和中小学人工智能教育的政策方向。' },
+    { name: '教育部基础教育教学指导委员会', title: '中小学人工智能通识教育指南（2025年版）', url: 'https://www.xjbz.gov.cn/xjbz/c101441/202505/b35f5dbccf754a39ba89a9c9774f7d3d.shtml', note: '提供小学、初中、高中分层目标及知识、技能、思维、价值观评价维度。' },
     { name: 'UNESCO', title: 'Guidance for generative AI in education and research', url: 'https://unesdoc.unesco.org/ark:/48223/pf0000386693', note: '教育与研究场景的治理建议，不等同于学习效果实验。' },
-    { name: 'Microsoft Research / CMU', title: 'The Impact of Generative AI on Critical Thinking', url: 'https://www.microsoft.com/en-us/research/publication/the-impact-of-generative-ai-on-critical-thinking-self-reported-reductions-in-cognitive-effort-and-confidence-effects-from-a-survey-of-knowledge-workers/', note: '基于知识工作者自我报告，不能推出永久智力下降。' },
-    { name: 'Noy & Zhang, Science', title: 'Experimental Evidence on the Productivity Effects of Generative Artificial Intelligence', url: 'https://www.science.org/doi/10.1126/science.adh2586', note: '研究对象是特定专业写作任务，结论不应泛化到所有认知活动。' },
-    { name: 'OECD', title: 'OECD Digital Education Outlook 2023', url: 'https://www.oecd.org/en/publications/oecd-digital-education-outlook-2023_c74f03de-en.html', note: '提供数字教育生态与政策背景。' },
+    { name: 'Microsoft Research / CMU', title: 'The Impact of Generative AI on Critical Thinking', url: 'https://www.microsoft.com/en-us/research/publication/the-impact-of-generative-ai-on-critical-thinking-self-reported-reductions-in-cognitive-effort-and-confidence-effects-from-a-survey-of-knowledge-workers/', note: '基于知识工作者自我报告，不能推出儿童的长期认知变化。' },
   ],
   work: [
     { name: 'ILO', title: 'Generative AI and Jobs: A Refined Global Index of Occupational Exposure', url: 'https://www.ilo.org/publications/generative-ai-and-jobs-refined-global-index-occupational-exposure', note: '衡量职业任务暴露，不等于预测岗位会被整体替代。' },

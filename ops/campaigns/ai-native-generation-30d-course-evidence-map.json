@@ -1,0 +1,190 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "verifiedAt": "2026-08-12",
+  "usePolicy": [
+    "权威来源只支持课程原则与风险边界，不证明本课程、卡片或视频已经产生学习效果。",
+    "课程中的四格卡、任务阶梯、红黄绿分工、三层验证卡、证据板和答辩卡均为本次试运行教学支架，不称为官方标准。",
+    "技术、法律、医疗和心理安全内容发布前回到对应官方原文；课程不替代专业意见。",
+    "NotebookLM 摘要只用于定位原文，不作为最终事实来源；即梦素材不作为真实儿童或课程效果证据。"
+  ],
+  "globalDisallowedClaims": [
+    "权威机构认证、推荐或联合开发本课程",
+    "完成课程必然提升成绩、竞赛、升学、智力或心理健康",
+    "12 节视频、任务卡或生成式素材已经被实证为有效",
+    "公开试听播放等于课程开始、课程完成或家庭行为改变",
+    "课程内容构成法律、医疗、心理、财务或人身安全专业意见"
+  ],
+  "sources": [
+    {
+      "id": "S01",
+      "issuer": "OpenAI researchers",
+      "title": "Language Models are Few-Shot Learners",
+      "url": "https://arxiv.org/abs/2005.14165",
+      "supports": "自回归语言模型根据上下文生成后续内容的技术背景；不代表所有 AI 系统都以同一方式工作。"
+    },
+    {
+      "id": "S02",
+      "issuer": "NIST",
+      "title": "Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile (AI 600-1)",
+      "url": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence",
+      "supports": "生成式 AI 风险、测量、验证、人工监督与风险管理原则。"
+    },
+    {
+      "id": "S03",
+      "issuer": "UNESCO",
+      "title": "AI competency framework for students",
+      "url": "https://www.unesco.org/en/articles/ai-competency-framework-students",
+      "supports": "人本、伦理、技术与应用、系统设计四维度，以及理解、应用、创造三个进阶层次。"
+    },
+    {
+      "id": "S04",
+      "issuer": "UNESCO",
+      "title": "Guidance for generative AI in education and research",
+      "url": "https://www.unesco.org/en/articles/guidance-generative-ai-education-and-research",
+      "supports": "以人为本、年龄适宜、数据隐私和教育场景验证原则。"
+    },
+    {
+      "id": "S05",
+      "issuer": "UNICEF",
+      "title": "Guidance on AI and children, Version 3.0",
+      "url": "https://www.unicef.org/innocenti/reports/policy-guidance-ai-children",
+      "supports": "儿童中心 AI 的安全、数据与隐私、透明、问责、福祉和能力准备原则。"
+    },
+    {
+      "id": "S06",
+      "issuer": "全国人民代表大会常务委员会",
+      "title": "中华人民共和国个人信息保护法",
+      "url": "https://www.npc.gov.cn/WZWSREL25wYy9jMi9jMzA4MzQvMjAyMTA4L3QyMDIxMDgyMF8zMTMwODguaHRtbD9yZWY9aW1i",
+      "supports": "不满十四周岁未成年人个人信息的敏感个人信息属性、监护人同意和专门处理规则。"
+    },
+    {
+      "id": "S07",
+      "issuer": "全国人民代表大会常务委员会",
+      "title": "中华人民共和国著作权法",
+      "url": "https://www.npc.gov.cn/c2/c30834/202011/t20201119_308796.html",
+      "supports": "作品、权利、许可和权利限制的法律背景；具体使用仍需按实际作品与场景判断。"
+    },
+    {
+      "id": "S08",
+      "issuer": "国家互联网信息办公室等四部门",
+      "title": "人工智能生成合成内容标识办法",
+      "url": "https://www.cac.gov.cn/2025-03/14/c_1743654684782215.htm",
+      "supports": "生成合成内容的显式、隐式标识和用户主动声明等规则。"
+    },
+    {
+      "id": "S09",
+      "issuer": "国家互联网信息办公室等五部门",
+      "title": "人工智能拟人化互动服务管理暂行办法",
+      "url": "https://www.cac.gov.cn/2026-04/10/c_1777558395078289.htm",
+      "supports": "拟人化情感互动服务的未成年人保护、现实提醒、退出路径、依赖风险和人工智能身份提示规则；自 2026-07-15 施行。"
+    },
+    {
+      "id": "S10",
+      "issuer": "American Psychological Association",
+      "title": "Artificial intelligence and adolescent well-being",
+      "url": "https://www.apa.org/topics/artificial-intelligence-machine-learning/health-advisory-ai-adolescent-well-being",
+      "supports": "青少年可能难以区分模拟共情与真实理解，以及成人示范健康边界的重要性。"
+    },
+    {
+      "id": "S11",
+      "issuer": "American Psychological Association",
+      "title": "Use of generative AI chatbots and wellness applications for mental health",
+      "url": "https://www.apa.org/topics/artificial-intelligence-machine-learning/health-advisory-chatbots-wellness-apps",
+      "supports": "通用聊天机器人不具备替代合格心理健康专业人员所需的完整能力，儿童与脆弱人群需要额外保护。"
+    },
+    {
+      "id": "S12",
+      "issuer": "UNICEF",
+      "title": "When AI becomes a friend: Child rights risks, harms, and regulatory responses to AI chatbots and companions",
+      "url": "https://www.unicef.org/documents/when-ai-becomes-friend-child-rights-risks",
+      "supports": "儿童使用聊天机器人和 AI 伴侣的特定权利、安全与关系风险，以及预防性保护方向。"
+    }
+  ],
+  "lessons": [
+    {
+      "lessonId": "L01",
+      "scriptAsset": "content/courses/ai-native-generation/L01-ai-is-prediction.md",
+      "sourceIds": ["S01", "S03"],
+      "campaignScaffold": "家庭 AI 足迹：场景、输入、输出、可能错误、真人检查者。",
+      "caveat": "把 AI 解释为从数据中寻找模式并预测或生成内容，只是儿童入门起点，不是 AI 的完整定义，也不覆盖所有系统。"
+    },
+    {
+      "lessonId": "L02",
+      "scriptAsset": "content/courses/ai-native-generation/L02-how-generative-ai-answers.md",
+      "sourceIds": ["S01", "S02"],
+      "campaignScaffold": "同一问题三次回答实验，用变化说明生成与查证不同。",
+      "caveat": "课程描述的是生成式语言模型的一般机制；带搜索、知识库或工具调用的系统还包含额外步骤。"
+    },
+    {
+      "lessonId": "L03",
+      "scriptAsset": "content/courses/ai-native-generation/L03-why-ai-makes-things-up.md",
+      "sourceIds": ["S02", "S03"],
+      "campaignScaffold": "AI 错误侦探卡与一次可复现核验。",
+      "caveat": "“幻觉”只作通俗标签；不能把模型拟人化，也不能把本课核验流程称为 NIST 标准。"
+    },
+    {
+      "lessonId": "L04",
+      "scriptAsset": "content/courses/ai-native-generation/L04-define-the-problem.md",
+      "sourceIds": ["S03", "S04"],
+      "campaignScaffold": "背景—目标—限制—检查四格卡。",
+      "caveat": "四格卡是课程设计，不是 UNESCO 原文规定；其效果需要真实家庭任务验证。"
+    },
+    {
+      "lessonId": "L05",
+      "scriptAsset": "content/courses/ai-native-generation/L05-break-work-into-checkable-steps.md",
+      "sourceIds": ["S03", "S04"],
+      "campaignScaffold": "动作—产物—检查—负责人任务阶梯。",
+      "caveat": "任务阶梯是可测试的教学支架，不用于诊断执行功能、学习障碍或儿童能力等级。"
+    },
+    {
+      "lessonId": "L06",
+      "scriptAsset": "content/courses/ai-native-generation/L06-human-ai-division-of-responsibility.md",
+      "sourceIds": ["S02", "S03", "S05"],
+      "campaignScaffold": "红黄绿人机分工卡：AI 协助、人机共做、真人决定。",
+      "caveat": "红黄绿只是家庭低风险决策支架，不是通用风险评级；高影响事项必须转向合适真人与专业渠道。"
+    },
+    {
+      "lessonId": "L07",
+      "scriptAsset": "content/courses/ai-native-generation/L07-source-counterexample-cross-check.md",
+      "sourceIds": ["S02", "S03"],
+      "campaignScaffold": "原文—反例—独立来源三层验证卡。",
+      "caveat": "三层卡不保证事实正确，只让支持程度、冲突和未知更可见；来源数量不能替代来源独立性。"
+    },
+    {
+      "lessonId": "L08",
+      "scriptAsset": "content/courses/ai-native-generation/L08-small-family-research.md",
+      "sourceIds": ["S03", "S04"],
+      "campaignScaffold": "低风险亲子研究日志：问题、方法、原始记录、修改、AI 参与、结论与局限。",
+      "caveat": "家庭纸桥示例只用于学习研究过程，不产生可推广的科学结论，也不代表课程效果。"
+    },
+    {
+      "lessonId": "L09",
+      "scriptAsset": "content/courses/ai-native-generation/L09-family-co-creation-showcase.md",
+      "sourceIds": ["S03", "S05"],
+      "campaignScaffold": "作品证据板与关闭 AI 后的三分钟试讲。",
+      "caveat": "作品可解释和可复查是本课观察指标，不等于标准化素养测评、能力排名或公开案例授权。"
+    },
+    {
+      "lessonId": "L10",
+      "scriptAsset": "content/courses/ai-native-generation/L10-privacy-copyright-synthetic-content.md",
+      "sourceIds": ["S05", "S06", "S07", "S08"],
+      "campaignScaffold": "最小输入—来源与授权—生成标识—事实核验双门巡检。",
+      "caveat": "课程只提供家庭安全教育；个人信息、版权和生成标识义务须按当前法律、平台规则和具体使用场景判断。"
+    },
+    {
+      "lessonId": "L11",
+      "scriptAsset": "content/courses/ai-native-generation/L11-chatbot-is-not-a-relationship.md",
+      "sourceIds": ["S05", "S09", "S10", "S11", "S12"],
+      "campaignScaffold": "保密、排他、阻碍退出、高风险建议四类暂停信号，以及停止—告诉真人—转向帮助。",
+      "caveat": "本课不诊断心理状态、不处理危机，也不要求提交真实聊天；现实危险或严重不适必须转向监护人及当地紧急或专业支持。"
+    },
+    {
+      "lessonId": "L12",
+      "scriptAsset": "content/courses/ai-native-generation/L12-family-ai-agreement-and-defense.md",
+      "sourceIds": ["S03", "S04", "S05"],
+      "campaignScaffold": "家庭 AI 公约、四分钟项目答辩与六维改进量表。",
+      "caveat": "答辩和量表只用于发现下一步，不构成标准化测评、课程效果证明、录取条件或购买压力。"
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "period": {
+    "startsOn": "2026-09-09",
+    "endsOn": "2026-09-10",
+    "timezone": "Asia/Shanghai"
+  },
+  "cadenceTargets": {
+    "website": {
+      "minimum": 1,
+      "label": "月度指标复盘与第二个月路线"
+    },
+    "wechat": {
+      "minimum": 1,
+      "label": "去标识化试运行复盘"
+    },
+    "csdn": {
+      "minimum": 1,
+      "label": "课程流水线技术复盘"
+    },
+    "x": {
+      "minimum": 2,
+      "label": "复盘口径与月度决策"
+    },
+    "toutiao": {
+      "minimum": 1,
+      "label": "家长向继续决策文章"
+    },
+    "zsxq": {
+      "minimum": 2,
+      "label": "最终指标核验与下一轮主题"
+    }
+  },
+  "statusDefinitions": {
+    "published": "已在公开平台核验真实 URL",
+    "scheduled": "平台后台已核验定时状态和时间",
+    "draft_ready": "稿件与发布检查已就绪，尚未写入平台",
+    "blocked": "存在明确阻断项，不能记为就绪"
+  },
+  "entries": [
+    {
+      "id": "w5-website-monthly-review",
+      "date": "2026-09-10",
+      "platform": "website",
+      "title": "AI 原生一代 30 天试运行最终复盘",
+      "status": "blocked",
+      "assets": [
+        "ops/campaigns/ai-native-generation-30d.json",
+        "content/campaigns/ai-native-generation-30d/2026-09-10-website-monthly-review-template.md"
+      ],
+      "blocker": "最终指标尚未到期，生产课程页仍为 404 且未获网站部署授权"
+    },
+    {
+      "id": "w5-wechat-01",
+      "date": "2026-09-09",
+      "platform": "wechat",
+      "title": "儿童 AI 素养试运行一个月：比“新增什么”更重要的是删掉什么",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-09-wechat-trial-review.md"
+      ]
+    },
+    {
+      "id": "w5-csdn-01",
+      "date": "2026-09-09",
+      "platform": "csdn",
+      "title": "从生成作品到可验证学习：儿童 AI 素养课程的四阶段流水线复盘",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-09-csdn-course-pipeline-review.md"
+      ]
+    },
+    {
+      "id": "w5-x-01",
+      "date": "2026-09-09",
+      "platform": "x",
+      "title": "月末复盘口径",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-09-x-review-rule-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-09-09-x-review-rule.md"
+      ]
+    },
+    {
+      "id": "w5-x-02",
+      "date": "2026-09-10",
+      "platform": "x",
+      "title": "第二个月是否继续",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-10-x-monthly-decision-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-09-10-x-monthly-decision.md"
+      ]
+    },
+    {
+      "id": "w5-toutiao-01",
+      "date": "2026-09-10",
+      "platform": "toutiao",
+      "title": "儿童 AI 素养课程值不值得继续，不能只看阅读量",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-10-toutiao-continue-decision.md"
+      ]
+    },
+    {
+      "id": "w5-zsxq-01",
+      "date": "2026-09-09",
+      "platform": "zsxq",
+      "title": "月末指标核验清单",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-09-zsxq-final-metric-check-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-09-09-zsxq-final-metric-check.md"
+      ]
+    },
+    {
+      "id": "w5-zsxq-02",
+      "date": "2026-09-10",
+      "platform": "zsxq",
+      "title": "第二个月唯一主题选择",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-10-zsxq-next-cycle-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-09-10-zsxq-next-cycle.md"
+      ]
+    }
+  ]
+}

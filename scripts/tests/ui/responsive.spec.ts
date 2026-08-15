@@ -224,3 +224,29 @@ test('运维入口保持不可见且分析接口拒绝其路径', async ({ page,
   await page.goto('/')
   await expect(page.getByText(/自动化运维|运营控制台/)).toHaveCount(0)
 })
+
+test('监护人调研只接受固定选项并完成匿名汇总', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', '避免同一测试目录在双项目中重复提交')
+
+  const response = await page.goto('/ai-native-generation')
+  expect(response?.ok()).toBe(true)
+  const survey = page.locator('#guardian-pilot-survey')
+  await expect(survey.getByRole('heading', { name: '监护人匿名调研' })).toBeVisible()
+  await expect(survey.getByText(/没有自由文本/)).toBeVisible()
+  await expect(survey.getByText(/不保存一份可以还原到单个家庭的逐题答卷/)).toBeVisible()
+  await expect(page.locator('#family-ai-check').getByText(/所有答案只在当前页面计算，不保存、不上传/)).toBeVisible()
+
+  const fieldsets = survey.locator('fieldset')
+  await expect(fieldsets).toHaveCount(8)
+  for (const fieldset of await fieldsets.all()) await fieldset.getByRole('button').first().click()
+  await survey.getByRole('checkbox').check()
+
+  const submission = page.waitForResponse((candidate) =>
+    candidate.url().endsWith('/api/analytics/view')
+      && candidate.request().method() === 'POST'
+      && candidate.request().postData()?.includes('guardian-survey') === true)
+  await survey.getByRole('button', { name: '匿名提交调研' }).click()
+  expect((await submission).ok()).toBe(true)
+  await expect(survey.getByText(/已计入试运行汇总|本月已经收到这个浏览器的一份调研/)).toBeVisible()
+  await expectNoHorizontalOverflow(page)
+})

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "productionRuntimePaths": [
+    "content/collections/settings.json",
+    "ops/public-analytics-paths.json",
+    "ops/public-claim-policy.json",
+    "src/app/admin/AdminClient.tsx",
+    "src/app/ai-native-generation/page.tsx",
+    "src/app/api/analytics/view/route.ts",
+    "src/app/planet/page.tsx",
+    "src/app/sitemap.ts",
+    "src/components/CoursePreviewVideo.tsx",
+    "src/components/FamilyAiLiteracyCheck.tsx",
+    "src/components/GuardianPilotSurvey.tsx",
+    "src/components/InternalAnalytics.tsx",
+    "src/lib/analytics-storage.ts",
+    "src/lib/guardian-survey.ts",
+    "src/lib/trackable-analytics-path.ts",
+    "src/lib/traffic-source.mjs"
+  ],
+  "verificationPaths": [
+    "scripts/tests/test-analytics-conversions.sh",
+    "scripts/tests/test-campaign-tracking-links.mjs",
+    "scripts/tests/test-course-video.mjs",
+    "scripts/tests/test-public-claim-policy.mjs",
+    "scripts/tests/test-traffic-source.mjs",
+    "scripts/tests/ui/responsive.spec.ts"
+  ],
+  "assetDiscovery": {
+    "source": "src/app/ai-native-generation/page.tsx",
+    "publicPathPattern": "/images or /videos string literals",
+    "localArchives": {
+      "deriveSrtFromMp4": true,
+      "requiredForProduction": false,
+      "requiredLocally": true
+    }
+  },
+  "neverInclude": [
+    "docs/著作.jpeg",
+    "未被部署清单选中的即梦原始候选图",
+    ".campaign-local/",
+    "浏览器 Cookie、localStorage、密码或会话文件"
+  ],
+  "scopeNote": "只覆盖课程页、知识星球承接页、匿名聚合分析、公开声明策略、sitemap、页面直接引用的媒体和对应验收文件；不代表可以提交或部署。"
+}

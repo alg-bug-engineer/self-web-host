@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "timezone": "Asia/Shanghai",
+  "policy": {
+    "surfaceWindow": "只有达到 askNotBefore 才向作者显示；同一决定未变化时不在每个时段重复催促。",
+    "noImplicitApproval": "沉默、草稿存在、页面已登录、素材就绪或自动任务成功均不代表作者批准。",
+    "resolutionRecord": "作者明确决定后只用受控登记器更新本队列；队列 approved 不代替公众号版本确认、网站部署验收、账号保存证据或课程付款合规门禁。",
+    "safeFallback": "超过 dueAt 仍未确认时执行各项 safeFallback，不扩大发布、部署、账号或付款权限。",
+    "childDataBoundary": "任何决定都不得要求儿童姓名、学校、位置、脸部、声音、账号、聊天、健康资料或原始作业。"
+  },
+  "decisions": [
+    {
+      "id": "wechat-author-preview-2026-08-14",
+      "label": "公众号 8 月 14 日首篇作者预览确认",
+      "status": "pending",
+      "priority": "required",
+      "askNotBefore": "2026-08-13T09:00:00+08:00",
+      "dueAt": "2026-08-14T08:30:00+08:00",
+      "blockingActions": ["公众号首篇群发", "公众号 published 证据登记"],
+      "evidenceAsset": "content/campaigns/ai-native-generation-30d/2026-08-14-wechat-manual-publish-checklist.md",
+      "decisionPrompt": "请在公众号后台向作者本人发送移动端预览并核对标题、正文、参考资料、封面与唯一 CTA；确认是否批准正文 SHA-256 ab6b383ec6bebf7bb2352c1cb4d02a9b99331491b2be8c33370d74bccb3cfd40 进入 8 月 14 日发布。",
+      "safeFallback": "保留已核验草稿，不群发、不登记 published，也不临时改稿替代确认。",
+      "resolutionEffect": "仅关闭本队列提醒；批准后仍必须由公众号专用作者确认登记器绑定正文 SHA-256，且群发后取得公开 URL 才能记 published。",
+      "nextActionIfApproved": "运行公众号作者确认专用登记器并再次核验 releaseGate；不由本队列直接群发。",
+      "resolvedAt": null,
+      "resolution": null
+    },
+    {
+      "id": "website-deployment-authorization",
+      "label": "课程页与活动网站部署授权",
+      "status": "pending",
+      "priority": "required_for_website",
+      "askNotBefore": "2026-08-12T20:00:00+08:00",
+      "dueAt": "2026-08-18T08:30:00+08:00",
+      "blockingActions": ["生产课程页上线", "网站母文公开", "课程页归因链接启用"],
+      "evidenceAsset": "ops/campaigns/ai-native-generation-30d-deployment-readiness-2026-08-12.md",
+      "decisionPrompt": "请确认是否授权按最小部署清单审查、版本化并部署课程页；授权前不会 git add、commit、push 或 deploy。",
+      "safeFallback": "网站条目继续 blocked，母文保持本地 published=false，所有外部渠道继续使用知识星球入口且不声称网站已上线。",
+      "resolutionEffect": "批准后只允许进入最小部署清单审查、版本化与验收流程；本队列不执行 git、推送或部署。",
+      "nextActionIfApproved": "按部署就绪报告逐项审查精确文件范围，另行执行并核验生产 200；未完成前渠道链接仍保持 hold。",
+      "resolvedAt": null,
+      "resolution": null
+    },
+    {
+      "id": "zsxq-public-profile-copy",
+      "label": "知识星球公开简介更新",
+      "status": "pending",
+      "priority": "optional",
+      "askNotBefore": "2026-08-13T20:00:00+08:00",
+      "dueAt": "2026-08-15T20:00:00+08:00",
+      "blockingActions": ["修改知识星球账号简介"],
+      "evidenceAsset": "content/campaigns/ai-native-generation-30d/2026-08-12-zsxq-profile-proposal.md",
+      "decisionPrompt": "请确认是否采用建议名称，并在长版或短版简介中二选一；不改价格、退款、成员权限、历史内容或现有百度网盘置顶。",
+      "safeFallback": "保持现有简介和账号设置不变；不阻断课程内容、任务与指标采集。",
+      "resolutionEffect": "批准后只允许按已选长版或短版在可见 UI 修改；本队列不打开账号设置、不保存修改。",
+      "nextActionIfApproved": "在可见 UI 核对建议名称和所选版本，保存后取得可见证据；遇到验证码、风控或无法确认时停止。",
+      "resolvedAt": null,
+      "resolution": null
+    },
+    {
+      "id": "paid-pilot-offer-and-compliance",
+      "label": "课程内测付费要约与合规门禁",
+      "status": "pending",
+      "priority": "required_for_payment",
+      "askNotBefore": "2026-08-25T20:00:00+08:00",
+      "dueAt": "2026-08-31T12:00:00+08:00",
+      "blockingActions": ["展示正式价格", "开放课程内测付款", "登记 paidPilotFamilies"],
+      "evidenceAsset": "ops/campaigns/ai-native-generation-30d-paid-pilot-offer-decision-2026-08-11.md",
+      "decisionPrompt": "请确认价格、周期、家庭上限、退款、监管支付方式与支持响应，并完成属地经营主体和课程形态合规核验；未齐全前不收款。",
+      "safeFallback": "本月继续免费研究型试学，只登记监护人意向；不使用个人收款码、私下转账或知识星球会费替代课程付款。",
+      "resolutionEffect": "批准队列决定仍不等于付款门禁开启；必须把完整要约与属地合规证据写入专用配置并通过验证后，才能另行启用支付。",
+      "nextActionIfApproved": "更新并验证课程付费专用配置的价格、周期、容量、退款、监管支付、支持与合规字段；本队列不收款。",
+      "resolvedAt": null,
+      "resolution": null
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "date": "2026-08-14",
+  "slug": "child-ai-three-questions",
+  "title": "孩子问 AI 一个问题，得到的真的是“答案”吗？",
+  "description": "生成式 AI 写得像答案，不等于已经查证。用“三个盒子”和一次亲子实验，让孩子看见来源、限制与不确定性。",
+  "sourcePath": "content/campaigns/ai-native-generation-30d/2026-08-12-wechat-article.md",
+  "htmlPath": "content/wechat/2026-08-14-child-ai-three-questions.html",
+  "coverPath": "public/images/campaigns/ai-native-generation-30d/2026-08-14-wechat-cover.png",
+  "websiteUrl": null,
+  "contentSha256": "ab6b383ec6bebf7bb2352c1cb4d02a9b99331491b2be8c33370d74bccb3cfd40",
+  "releaseGate": "draft_only_manual_preview",
+  "authorApproval": {
+    "status": "pending",
+    "approvedAt": null,
+    "approvedContentSha256": null
+  }
+}

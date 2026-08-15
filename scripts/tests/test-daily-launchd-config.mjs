@@ -34,6 +34,7 @@ try {
   assert.match(plist, /<integer>10<\/integer><key>Minute<\/key><integer>30<\/integer>/)
   assert.match(plist, /<integer>12<\/integer><key>Minute<\/key><integer>30<\/integer>/)
   assert.match(plist, new RegExp(`${escapeRegExp(projectDir)}/scripts/run-daily-content\\.sh`))
+  assert.match(plist, /<key>CONTENT_AUTO_PUBLISH<\/key><string>false<\/string>/)
   assert.equal((await fs.stat(publisherEnv)).mode & 0o777, 0o600)
   assert.match(stdout, /登录时幂等补跑/)
 } finally {

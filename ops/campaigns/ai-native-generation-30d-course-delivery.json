@@ -1,0 +1,184 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "deliveryPolicy": {
+    "primaryPlatform": "zsxq",
+    "mediaType": "public_preview",
+    "metricRule": "公开视频播放不计 courseStartedFamilies 或 courseCompletedFamilies；只有正式内测家庭明确开始和完成课程时才计。",
+    "ageScaffoldingGuide": "content/courses/ai-native-generation/age-scaffolding-facilitator-guide.md",
+    "evidenceMap": "ops/campaigns/ai-native-generation-30d-course-evidence-map.json",
+    "mode": "attach_to_companion_topic_if_visible_upload_succeeds",
+    "fallback": "publish_self_contained_text_task_without_video_claim",
+    "worksheetPolicy": "家庭本地练习卡为可选附件；无需提交整张卡，不收集儿童姓名、学校、位置、脸部、声音、聊天或原始作业；附件上传失败不阻断视频或文字任务，只有发布后可见时才对外声称已提供。",
+    "successDisclosure": "本帖所附公开试听含生成式视觉与合成配音，不代表真实儿童或课程效果。",
+    "evidenceRequired": [
+      "可见编辑器显示目标视频上传完成",
+      "发布后目标主题可见且视频可播放",
+      "公开主题 URL 或平台可见主题 ID"
+    ],
+    "stopConditions": [
+      "重新登录、验证码、身份验证或风险控制",
+      "无法确认上传完成或播放状态",
+      "平台要求提交儿童身份、作品或聊天材料"
+    ],
+    "privacyRule": "视频和字幕只包含课程讲解与生成式视觉，不包含儿童姓名、学校、位置、脸部、声音、聊天或原始作业。"
+  },
+  "statusDefinitions": {
+    "local_ready": "本地视频与字幕已验收，尚无平台可见发布证据",
+    "published": "已在对应知识星球主题中核验视频可见可播放",
+    "blocked": "到期上传受登录、风控、平台能力或证据不足阻断"
+  },
+  "worksheetStatusDefinitions": {
+    "local_ready": "家庭练习卡本地文件与发布清单已验收，尚无平台可见附件证据",
+    "published_verified": "已在具体知识星球主题中核验 PDF 附件可见或可下载"
+  },
+  "lessons": [
+    {
+      "lessonId": "L01",
+      "date": "2026-08-13",
+      "title": "AI 到底是什么",
+      "platform": "zsxq",
+      "companionEntryId": "w1-zsxq-01",
+      "videoAsset": "public/videos/courses/ai-native-generation/L01-ai-is-prediction-v1.mp4",
+      "subtitleAsset": "public/videos/courses/ai-native-generation/L01-ai-is-prediction-v1.vtt",
+      "worksheetAsset": "output/pdf/ai-native-generation-l01-family-ai-footprint-card.pdf",
+      "worksheetAttachmentAssetId": "l01-family-ai-footprint-card",
+      "worksheetStatus": "local_ready",
+      "status": "local_ready",
+      "publishedAt": null,
+      "externalUrl": null
+    },
+    {
+      "lessonId": "L02",
+      "date": "2026-08-15",
+      "title": "AI 如何生成回答",
+      "platform": "zsxq",
+      "companionEntryId": "w1-zsxq-03",
+      "videoAsset": "public/videos/courses/ai-native-generation/L02-how-generative-ai-answers-v1.mp4",
+      "subtitleAsset": "public/videos/courses/ai-native-generation/L02-how-generative-ai-answers-v1.vtt",
+      "status": "local_ready",
+      "publishedAt": null,
+      "externalUrl": null
+    },
+    {
+      "lessonId": "L03",
+      "date": "2026-08-17",
+      "title": "AI 为什么会犯错",
+      "platform": "zsxq",
+      "companionEntryId": "w1-zsxq-05",
+      "videoAsset": "public/videos/courses/ai-native-generation/L03-why-ai-makes-things-up-v1.mp4",
+      "subtitleAsset": "public/videos/courses/ai-native-generation/L03-why-ai-makes-things-up-v1.vtt",
+      "status": "local_ready",
+      "publishedAt": null,
+      "externalUrl": null
+    },
+    {
+      "lessonId": "L04",
+      "date": "2026-08-19",
+      "title": "把问题说清楚",
+      "platform": "zsxq",
+      "companionEntryId": "w2-zsxq-01",
+      "videoAsset": "public/videos/courses/ai-native-generation/L04-define-the-problem-v1.mp4",
+      "subtitleAsset": "public/videos/courses/ai-native-generation/L04-define-the-problem-v1.vtt",
+      "status": "local_ready",
+      "publishedAt": null,
+      "externalUrl": null
+    },
+    {
+      "lessonId": "L05",
+      "date": "2026-08-21",
+      "title": "可检查的任务步骤",
+      "platform": "zsxq",
+      "companionEntryId": "w2-zsxq-03",
+      "videoAsset": "public/videos/courses/ai-native-generation/L05-break-work-into-checkable-steps-v1.mp4",
+      "subtitleAsset": "public/videos/courses/ai-native-generation/L05-break-work-into-checkable-steps-v1.vtt",
+      "status": "local_ready",
+      "publishedAt": null,
+      "externalUrl": null
+    },
+    {
+      "lessonId": "L06",
+      "date": "2026-08-23",
+      "title": "人机责任分工",
+      "platform": "zsxq",
+      "companionEntryId": "w2-zsxq-05",
+      "videoAsset": "public/videos/courses/ai-native-generation/L06-human-ai-division-of-responsibility-v1.mp4",
+      "subtitleAsset": "public/videos/courses/ai-native-generation/L06-human-ai-division-of-responsibility-v1.vtt",
+      "status": "local_ready",
+      "publishedAt": null,
+      "externalUrl": null
+    },
+    {
+      "lessonId": "L07",
+      "date": "2026-08-26",
+      "title": "来源、反例与交叉检查",
+      "platform": "zsxq",
+      "companionEntryId": "w3-zsxq-01",
+      "videoAsset": "public/videos/courses/ai-native-generation/L07-source-counterexample-cross-check-v1.mp4",
+      "subtitleAsset": "public/videos/courses/ai-native-generation/L07-source-counterexample-cross-check-v1.vtt",
+      "status": "local_ready",
+      "publishedAt": null,
+      "externalUrl": null
+    },
+    {
+      "lessonId": "L08",
+      "date": "2026-08-28",
+      "title": "小型亲子研究",
+      "platform": "zsxq",
+      "companionEntryId": "w3-zsxq-03",
+      "videoAsset": "public/videos/courses/ai-native-generation/L08-small-family-research-v1.mp4",
+      "subtitleAsset": "public/videos/courses/ai-native-generation/L08-small-family-research-v1.vtt",
+      "status": "local_ready",
+      "publishedAt": null,
+      "externalUrl": null
+    },
+    {
+      "lessonId": "L09",
+      "date": "2026-08-30",
+      "title": "亲子共创展示作品",
+      "platform": "zsxq",
+      "companionEntryId": "w3-zsxq-05",
+      "videoAsset": "public/videos/courses/ai-native-generation/L09-family-co-creation-showcase-v1.mp4",
+      "subtitleAsset": "public/videos/courses/ai-native-generation/L09-family-co-creation-showcase-v1.vtt",
+      "status": "local_ready",
+      "publishedAt": null,
+      "externalUrl": null
+    },
+    {
+      "lessonId": "L10",
+      "date": "2026-09-02",
+      "title": "隐私、版权与虚假内容",
+      "platform": "zsxq",
+      "companionEntryId": "w4-zsxq-01",
+      "videoAsset": "public/videos/courses/ai-native-generation/L10-privacy-copyright-synthetic-content-v1.mp4",
+      "subtitleAsset": "public/videos/courses/ai-native-generation/L10-privacy-copyright-synthetic-content-v1.vtt",
+      "status": "local_ready",
+      "publishedAt": null,
+      "externalUrl": null
+    },
+    {
+      "lessonId": "L11",
+      "date": "2026-09-05",
+      "title": "聊天机器人不是关系",
+      "platform": "zsxq",
+      "companionEntryId": "w4-zsxq-04",
+      "videoAsset": "public/videos/courses/ai-native-generation/L11-chatbot-is-not-a-relationship-v1.mp4",
+      "subtitleAsset": "public/videos/courses/ai-native-generation/L11-chatbot-is-not-a-relationship-v1.vtt",
+      "status": "local_ready",
+      "publishedAt": null,
+      "externalUrl": null
+    },
+    {
+      "lessonId": "L12",
+      "date": "2026-09-06",
+      "title": "家庭 AI 公约与项目答辩",
+      "platform": "zsxq",
+      "companionEntryId": "w4-zsxq-05",
+      "videoAsset": "public/videos/courses/ai-native-generation/L12-family-ai-agreement-and-defense-v1.mp4",
+      "subtitleAsset": "public/videos/courses/ai-native-generation/L12-family-ai-agreement-and-defense-v1.vtt",
+      "status": "local_ready",
+      "publishedAt": null,
+      "externalUrl": null
+    }
+  ]
+}

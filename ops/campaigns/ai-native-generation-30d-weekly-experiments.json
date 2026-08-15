@@ -1,0 +1,391 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "timezone": "Asia/Shanghai",
+  "policy": {
+    "maximumChangedVariablesPerReview": 1,
+    "decisionEvidence": "只使用决策时点前已核验的知识星球结构化快照；跨平台阅读、浏览和展现只作触达旁证，不作为家庭参与或课程转化。",
+    "prelaunchBaseline": "2026-08-12 09:00 前的数据不得计入活动转化，也不得据此提前改动下一周内容。",
+    "incompleteEvidenceAction": "保持 collecting 或 evidence_incomplete，不调整下一周内容。",
+    "safetyStop": "出现儿童隐私、健康、安全、情感依赖或平台风险控制时停止实验动作，只保留去标识化汇总与人工复核。"
+  },
+  "experiments": [
+    {
+      "week": 1,
+      "observationStartsAt": "2026-08-12T09:00:00+08:00",
+      "observationEndsAt": "2026-08-18T20:00:00+08:00",
+      "decisionAt": "2026-08-18T20:00:00+08:00",
+      "status": "collecting",
+      "currentExperiment": {
+        "hypothesis": "一行五格、约十分钟且无需补历史内容的起点，能让至少一个去重家庭明确开始第一周任务。",
+        "changedVariable": "首次任务的提交格式与门槛",
+        "primaryMetric": "startedWeek1Families",
+        "successThreshold": ">= 1",
+        "stopCondition": "入口未公开或不可见时不判定内容失败；出现隐私、安全或平台风险时停止。"
+      },
+      "decisionMetric": "validWeek1Families",
+      "stageMetrics": {
+        "started": "startedWeek1Families",
+        "completed": "validWeek1Families"
+      },
+      "allowedBranches": [
+        {
+          "id": "keep_week2_plan",
+          "role": "keep",
+          "condition": "validWeek1Families >= 3",
+          "changedVariable": null,
+          "nextWeekAction": "保持 L04—L06 原计划，只继续记录参与、完成和课程内测意向。",
+          "primaryMetric": "validWeek1Families",
+          "nextExperiment": {
+            "hypothesis": "保持 L04—L06 结构并继续去标识化反馈，能让至少一个家庭完成三天挑战。",
+            "changedVariable": null,
+            "primaryMetric": "challengeCompletedFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全或平台风险；入口不可见时不判定任务失败。"
+          }
+        },
+        {
+          "id": "fix_entry_visibility",
+          "role": "reach",
+          "condition": "第一周正式主题的可见阅读均为 0",
+          "changedVariable": "任务入口的可见位置与单一跨链入口",
+          "nextWeekAction": "只修入口可见性，不改变 L04 任务要求。",
+          "primaryMetric": "startedWeek1Families",
+          "nextExperiment": {
+            "hypothesis": "只修任务入口的可见位置与单一跨链入口，能让至少一个家庭开始第二周挑战。",
+            "changedVariable": "任务入口的可见位置与单一跨链入口",
+            "primaryMetric": "challengeStartedFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全或平台风险；不同时改任务要求。"
+          }
+        },
+        {
+          "id": "simplify_first_response",
+          "role": "start",
+          "condition": "有可见阅读，但 startedWeek1Families = 0",
+          "changedVariable": "首次回复格式",
+          "nextWeekAction": "L04 首次回复只要求重写一句模糊问题，不要求表格或完整过程。",
+          "primaryMetric": "startedWeek1Families",
+          "nextExperiment": {
+            "hypothesis": "把首次回复降为重写一句模糊问题，能让至少一个家庭开始第二周挑战。",
+            "changedVariable": "首次回复格式",
+            "primaryMetric": "challengeStartedFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全或平台风险；不同时改入口、反馈时限或课程结构。"
+          }
+        },
+        {
+          "id": "repair_one_missing_field",
+          "role": "completion",
+          "condition": "startedWeek1Families > validWeek1Families，或有评论但 validWeek1Families = 0",
+          "changedVariable": "最低完成标准中的一个缺失字段",
+          "nextWeekAction": "只针对最常缺的一格给固定补写提示，不要求重做其他字段。",
+          "primaryMetric": "validWeek1Families",
+          "nextExperiment": {
+            "hypothesis": "只补最常缺的一格，能让至少一个家庭完成第二周挑战。",
+            "changedVariable": "最低完成标准中的一个缺失字段",
+            "primaryMetric": "challengeCompletedFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全或平台风险；不要求重做其他字段。"
+          }
+        },
+        {
+          "id": "keep_and_improve_feedback",
+          "role": "feedback",
+          "condition": "validWeek1Families 为 1—2",
+          "changedVariable": "任务反馈的响应时限",
+          "nextWeekAction": "保持 L04 任务结构，只把有效反馈时限固定为 24 小时内。",
+          "primaryMetric": "validWeek1Families",
+          "nextExperiment": {
+            "hypothesis": "保持任务结构并将有效反馈固定在 24 小时内，能让至少一个家庭完成第二周挑战。",
+            "changedVariable": "任务反馈的响应时限",
+            "primaryMetric": "challengeCompletedFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全或平台风险；不同时改内容结构。"
+          }
+        }
+      ],
+      "selectedBranch": null,
+      "decisionEvidence": null
+    },
+    {
+      "week": 2,
+      "observationStartsAt": "2026-08-19T00:00:00+08:00",
+      "observationEndsAt": "2026-08-25T20:00:00+08:00",
+      "decisionAt": "2026-08-25T20:00:00+08:00",
+      "status": "pending_previous_decision",
+      "currentExperiment": null,
+      "stageMetrics": {
+        "started": "challengeStartedFamilies",
+        "middle": "challengeDay2Families",
+        "completed": "challengeCompletedFamilies"
+      },
+      "allowedBranches": [
+        {
+          "id": "keep_week3_plan",
+          "role": "keep",
+          "condition": "challengeCompletedFamilies >= 3",
+          "changedVariable": null,
+          "nextWeekAction": "保持 L07—L09 小研究原计划。",
+          "primaryMetric": "challengeCompletedFamilies",
+          "nextExperiment": {
+            "hypothesis": "保持小研究结构，能让至少一个家庭完成研究记录与结论复核。",
+            "changedVariable": null,
+            "primaryMetric": "researchProjectCompletedFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全、版权或平台风险。"
+          }
+        },
+        {
+          "id": "fix_week2_entry_visibility",
+          "role": "reach",
+          "condition": "第二周正式主题的可见阅读均为 0",
+          "changedVariable": "小研究入口的可见位置与单一跨链入口",
+          "nextWeekAction": "第三周只修入口可见性，不改小研究要求。",
+          "primaryMetric": "challengeStartedFamilies",
+          "nextExperiment": {
+            "hypothesis": "只修小研究入口可见性，能让至少一个家庭开始研究项目。",
+            "changedVariable": "小研究入口的可见位置与单一跨链入口",
+            "primaryMetric": "researchProjectStartedFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全、版权或平台风险；不同时改任务要求。"
+          }
+        },
+        {
+          "id": "simplify_challenge_start",
+          "role": "start",
+          "condition": "有阅读但 challengeStartedFamilies = 0",
+          "changedVariable": "小研究首次提交格式",
+          "nextWeekAction": "第三周首次提交只保留一个研究问题和一个来源。",
+          "primaryMetric": "challengeStartedFamilies",
+          "nextExperiment": {
+            "hypothesis": "首次只提交一个研究问题和一个来源，能让至少一个家庭开始研究项目。",
+            "changedVariable": "小研究首次提交格式",
+            "primaryMetric": "researchProjectStartedFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全、版权或平台风险；不同时改反馈时限。"
+          }
+        },
+        {
+          "id": "repair_challenge_day2",
+          "role": "middle",
+          "condition": "challengeStartedFamilies > challengeDay2Families",
+          "changedVariable": "挑战第二天的必做步骤数",
+          "nextWeekAction": "第三周研究日志只保留一条证据与一条异常。",
+          "primaryMetric": "challengeDay2Families",
+          "nextExperiment": {
+            "hypothesis": "研究日志只保留一条证据与一条异常，能提高研究日志提交。",
+            "changedVariable": "研究日志的必填步骤数",
+            "primaryMetric": "researchLogFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全、版权或平台风险；不要求原始儿童作品。"
+          }
+        },
+        {
+          "id": "repair_challenge_completion",
+          "role": "completion",
+          "condition": "challengeDay2Families > challengeCompletedFamilies",
+          "changedVariable": "小研究完成证据的最低标准",
+          "nextWeekAction": "第三周完成证据只要求结论、来源和一条局限。",
+          "primaryMetric": "challengeCompletedFamilies",
+          "nextExperiment": {
+            "hypothesis": "完成证据只保留结论、来源和一条局限，能让至少一个家庭完成研究项目。",
+            "changedVariable": "小研究完成证据的最低标准",
+            "primaryMetric": "researchProjectCompletedFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全、版权或平台风险；不要求上传原始作品。"
+          }
+        },
+        {
+          "id": "keep_week2_and_improve_feedback",
+          "role": "feedback",
+          "condition": "challengeCompletedFamilies 为 1—2",
+          "changedVariable": "小研究反馈的响应时限",
+          "nextWeekAction": "保持第三周结构，只把有效反馈固定在 24 小时内。",
+          "primaryMetric": "challengeCompletedFamilies",
+          "nextExperiment": {
+            "hypothesis": "保持小研究结构并在 24 小时内反馈，能让至少一个家庭完成研究项目。",
+            "changedVariable": "小研究反馈的响应时限",
+            "primaryMetric": "researchProjectCompletedFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全、版权或平台风险；不同时改任务结构。"
+          }
+        }
+      ],
+      "selectedBranch": null,
+      "decisionEvidence": null
+    },
+    {
+      "week": 3,
+      "observationStartsAt": "2026-08-26T00:00:00+08:00",
+      "observationEndsAt": "2026-09-01T20:00:00+08:00",
+      "decisionAt": "2026-09-01T20:00:00+08:00",
+      "status": "pending_previous_decision",
+      "currentExperiment": null,
+      "stageMetrics": {
+        "started": "researchProjectStartedFamilies",
+        "middle": "researchLogFamilies",
+        "completed": "researchProjectCompletedFamilies"
+      },
+      "allowedBranches": [
+        {
+          "id": "keep_week4_plan",
+          "role": "keep",
+          "condition": "researchProjectCompletedFamilies >= 3",
+          "changedVariable": null,
+          "nextWeekAction": "保持 L10—L12 安全、公约与答辩原计划。",
+          "primaryMetric": "researchProjectCompletedFamilies",
+          "nextExperiment": {
+            "hypothesis": "保持安全门、公约与答辩结构，能让至少一个家庭完成结课答辩。",
+            "changedVariable": null,
+            "primaryMetric": "defenseCompletedFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全、情感依赖或平台风险。"
+          }
+        },
+        {
+          "id": "fix_week3_entry_visibility",
+          "role": "reach",
+          "condition": "第三周正式主题的可见阅读均为 0",
+          "changedVariable": "安全门入口的可见位置与单一跨链入口",
+          "nextWeekAction": "第四周只修入口可见性，不改安全门要求。",
+          "primaryMetric": "researchProjectStartedFamilies",
+          "nextExperiment": {
+            "hypothesis": "只修安全门入口可见性，能让至少一个家庭开始安全检查。",
+            "changedVariable": "安全门入口的可见位置与单一跨链入口",
+            "primaryMetric": "safetyCheckpointFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全、情感依赖或平台风险；不同时改任务要求。"
+          }
+        },
+        {
+          "id": "simplify_research_start",
+          "role": "start",
+          "condition": "有阅读但 researchProjectStartedFamilies = 0",
+          "changedVariable": "安全检查的首次提交格式",
+          "nextWeekAction": "第四周首次提交只保留一个风险场景和一个暂停动作。",
+          "primaryMetric": "researchProjectStartedFamilies",
+          "nextExperiment": {
+            "hypothesis": "首次只提交一个风险场景和一个暂停动作，能让至少一个家庭开始安全检查。",
+            "changedVariable": "安全检查的首次提交格式",
+            "primaryMetric": "safetyCheckpointFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全、情感依赖或平台风险。"
+          }
+        },
+        {
+          "id": "repair_research_log",
+          "role": "middle",
+          "condition": "researchProjectStartedFamilies > researchLogFamilies",
+          "changedVariable": "家庭公约的必填条款数",
+          "nextWeekAction": "第四周家庭公约只保留触发条件、动作和暂停条件。",
+          "primaryMetric": "researchLogFamilies",
+          "nextExperiment": {
+            "hypothesis": "公约只保留触发、动作和暂停条件，能让至少一个家庭形成可执行公约。",
+            "changedVariable": "家庭公约的必填条款数",
+            "primaryMetric": "familyAgreementFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全、情感依赖或平台风险。"
+          }
+        },
+        {
+          "id": "repair_research_completion",
+          "role": "completion",
+          "condition": "researchLogFamilies > researchProjectCompletedFamilies",
+          "changedVariable": "结课答辩的最低问题数",
+          "nextWeekAction": "第四周答辩只保留三个终课问题。",
+          "primaryMetric": "researchProjectCompletedFamilies",
+          "nextExperiment": {
+            "hypothesis": "答辩只保留三个终课问题，能让至少一个家庭完成答辩。",
+            "changedVariable": "结课答辩的最低问题数",
+            "primaryMetric": "defenseCompletedFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全、情感依赖或平台风险；不以评分推动付费。"
+          }
+        },
+        {
+          "id": "keep_week3_and_improve_feedback",
+          "role": "feedback",
+          "condition": "researchProjectCompletedFamilies 为 1—2",
+          "changedVariable": "第四周反馈的响应时限",
+          "nextWeekAction": "保持第四周结构，只把有效反馈固定在 24 小时内。",
+          "primaryMetric": "researchProjectCompletedFamilies",
+          "nextExperiment": {
+            "hypothesis": "保持结课结构并在 24 小时内反馈，能让至少一个家庭完成答辩。",
+            "changedVariable": "第四周反馈的响应时限",
+            "primaryMetric": "defenseCompletedFamilies",
+            "successThreshold": ">= 1",
+            "stopCondition": "出现隐私、安全、情感依赖或平台风险；不同时改任务结构。"
+          }
+        }
+      ],
+      "selectedBranch": null,
+      "decisionEvidence": null
+    },
+    {
+      "week": 4,
+      "observationStartsAt": "2026-09-02T00:00:00+08:00",
+      "observationEndsAt": "2026-09-08T20:00:00+08:00",
+      "decisionAt": "2026-09-08T20:00:00+08:00",
+      "status": "pending_previous_decision",
+      "currentExperiment": null,
+      "stageMetrics": {
+        "started": "safetyCheckpointFamilies",
+        "middle": "familyAgreementFamilies",
+        "completed": "defenseCompletedFamilies"
+      },
+      "allowedBranches": [
+        {
+          "id": "keep_closing_plan",
+          "role": "keep",
+          "condition": "defenseCompletedFamilies >= 3",
+          "changedVariable": null,
+          "nextWeekAction": "保持月末总结与监护人自愿内测登记，不追加新任务。",
+          "primaryMetric": "defenseCompletedFamilies"
+        },
+        {
+          "id": "fix_week4_entry_visibility",
+          "role": "reach",
+          "condition": "第四周正式主题的可见阅读均为 0",
+          "changedVariable": "结课入口的可见位置",
+          "nextWeekAction": "最后两天只修结课入口可见性，不改任务或付费要约。",
+          "primaryMetric": "safetyCheckpointFamilies"
+        },
+        {
+          "id": "simplify_safety_start",
+          "role": "start",
+          "condition": "有阅读但 safetyCheckpointFamilies = 0",
+          "changedVariable": "安全门首次提交格式",
+          "nextWeekAction": "最后两天只保留一个风险场景和一个暂停动作。",
+          "primaryMetric": "safetyCheckpointFamilies"
+        },
+        {
+          "id": "repair_family_agreement",
+          "role": "middle",
+          "condition": "safetyCheckpointFamilies > familyAgreementFamilies",
+          "changedVariable": "家庭公约的必填条款数",
+          "nextWeekAction": "只补触发、动作和暂停条件，不要求重新包装。",
+          "primaryMetric": "familyAgreementFamilies"
+        },
+        {
+          "id": "repair_defense_completion",
+          "role": "completion",
+          "condition": "familyAgreementFamilies > defenseCompletedFamilies",
+          "changedVariable": "结课答辩的最低问题数",
+          "nextWeekAction": "只保留三个终课问题，不以评分推动付费。",
+          "primaryMetric": "defenseCompletedFamilies"
+        },
+        {
+          "id": "keep_week4_and_improve_feedback",
+          "role": "feedback",
+          "condition": "defenseCompletedFamilies 为 1—2",
+          "changedVariable": "结课反馈的响应时限",
+          "nextWeekAction": "保持结课结构，只把有效反馈固定在 24 小时内。",
+          "primaryMetric": "defenseCompletedFamilies"
+        }
+      ],
+      "selectedBranch": null,
+      "decisionEvidence": null
+    }
+  ]
+}

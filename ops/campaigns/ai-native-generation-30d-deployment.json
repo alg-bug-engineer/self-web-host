@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "mode": "preflight_only",
+  "deploymentAuthorized": false,
+  "productionRoute": "https://ai-knowledgepoints.cn/ai-native-generation",
+  "requiredProductionStatus": 200,
+  "trackingLinksBeforeDeployment": "hold_until_course_page_public",
+  "trackingLinksAfterVerification": "active",
+  "authorizationNote": "只有作者明确授权本轮课程页及静态资产部署后，才能运行发布、合并或 deploy:production。",
+  "latestReadinessReport": "ops/campaigns/ai-native-generation-30d-deployment-readiness-2026-08-12.md",
+  "lastPreflight": {
+    "checkedAt": "2026-08-12T04:00:56+08:00",
+    "state": "blocked",
+    "productionStatus": 404,
+    "localBuildHasRoute": true,
+    "worktreeChanges": 94,
+    "requiredAssets": 37,
+    "untrackedRequiredAssets": 37,
+    "localArchiveAssets": 12,
+    "untrackedRuntimeFiles": 6,
+    "untrackedVerificationFiles": 2,
+    "targetedChecks": [
+      "campaign deployment audit",
+      "content calendar and monthly matrix",
+      "campaign operator pack",
+      "course video",
+      "NotebookLM research queue and recorder",
+      "WeChat release and author approval gates"
+    ]
+  },
+  "postDeploymentChecks": [
+    "课程页返回 200 且 canonical 正确",
+    "L01—L12 视频支持 HTTP Range 206",
+    "L01—L12 WebVTT 字幕返回 200 且 content-type 可用",
+    "12 张 WebP 海报返回 200",
+    "家庭自测与监护人匿名调研可操作",
+    "渠道归因、星球点击和监护人意向事件通过生产探针",
+    "生产健康接口 commit 与部署提交一致",
+    "完成以上核验后才把渠道链接状态改为 active"
+  ]
+}

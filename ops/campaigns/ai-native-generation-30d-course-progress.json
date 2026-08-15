@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "status": "not_started",
+  "storageMode": "aggregate_only",
+  "mode": "free_research_trial",
+  "sourceSurfaces": [
+    "公众号可见私信",
+    "知识星球可见课程任务"
+  ],
+  "participationCard": "content/campaigns/ai-native-generation-30d/course-beta-free-trial-start-and-progress-card.md",
+  "startDefinition": "监护人明确阅读参与与退出边界并选择参加后，家庭完成第一项新的指定课程任务。公开视频播放、阅读、点赞、旧作业或星主示范不计开始。",
+  "completionDefinition": "同一已开始家庭完成理解、协作挑战、家庭小研究、安全与答辩四阶段最低证据，并完成 L12 终课答辩。",
+  "rules": [
+    "只保存人工核验后的聚合数字，不保存昵称、账号、私信或评论原文、联系方式、哈希标识或儿童资料。",
+    "邀请、明确参与、课程开始、课程完成、开始前退出和开始后退出分别计量。",
+    "公开视频播放、练习卡下载、知识星球加入、课程意向、课程付款和公开案例授权不能替代课程开始或完成。",
+    "人工只在平台可见界面判断同一家庭与阶段证据；无法确认时不增加计数。",
+    "退出不追问原因；开始后退出与课程完成互斥。"
+  ],
+  "snapshots": []
+}

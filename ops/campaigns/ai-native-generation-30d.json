@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "id": "ai-native-generation-30d",
+  "name": "AI 原生一代：儿童 AI 素养 30 天试运行",
+  "timezone": "Asia/Shanghai",
+  "launchedOn": "2026-08-11",
+  "startsOn": "2026-08-12",
+  "endsOn": "2026-09-10",
+  "primaryAudience": "8—14 岁孩子的家长，课程任务由家长和孩子共同完成",
+  "productPromise": "帮助家庭建立理解 AI、与 AI 协作、验证输出、保护隐私和保持自主判断的基本方法。",
+  "conversionGoals": [
+    "重新激活“芝士AI吃鱼”知识星球",
+    "招募并完成首期儿童 AI 素养课程内测",
+    "用真实作业、完成率与家长反馈验证课程，而不是只看曝光量"
+  ],
+  "guardrails": [
+    "不公开暂不公开的履历和人设证据",
+    "不收集或公开儿童姓名、学校、住址、精确位置、正脸、私人聊天与账号信息",
+    "不承诺升学、竞赛、智力或学习成绩提升",
+    "不把 AI 作为心理咨询、医疗建议、情感替代或作业答案机器",
+    "儿童作品公开前必须取得监护人明确授权并完成去标识化",
+    "所有重要事实要求至少回到一个可靠来源，课程示范必须保留不确定性"
+  ],
+  "successMetrics": {
+    "validParentSurveys": 30,
+    "challengeFamilies": 20,
+    "qualifiedPaidPageVisitors": 150,
+    "planetJoinClickers": 45,
+    "newPlanetPaidFamilies": 10,
+    "qualifiedGuardianInterests": 20,
+    "paidPilotFamilies": 10,
+    "paidPageJoinClickRate": 0.3,
+    "joinClickPaymentRate": 0.22,
+    "firstWeekAssignmentRate": 0.6,
+    "courseCompletionRate": 0.5,
+    "authorizedFeedbackCount": 5,
+    "planetWeeklyActiveRate": 0.3
+  },
+  "platforms": {
+    "website": { "role": "权威资料、课程总览、长期搜索入口", "cadence": "每周 1 篇母文，持续维护课程页" },
+    "wechat": { "role": "家长认知、信任建立与报名承接", "cadence": "每周 2 篇，先进入既有审核发布流程" },
+    "csdn": { "role": "技术原理、检索流量与专业可信度", "cadence": "每周 1—2 篇技术改写" },
+    "x": { "role": "短观点、研究摘要和英文/双语观察", "cadence": "工作日 1 条，人工审核后发布" },
+    "toutiao": { "role": "家长问题、教育误区和大众案例", "cadence": "每周 3 条，人工审核后发布" },
+    "zsxq": { "role": "课程交付、亲子任务、作品点评和持续服务", "cadence": "工作日更新，周末答疑" },
+    "video": { "role": "12 节微课、每周导学和公开预告", "cadence": "每周 3 节课程视频" }
+  },
+  "courseLessons": [
+    { "id": "L01", "week": 1, "title": "AI 到底是什么：从生活里的预测开始" },
+    { "id": "L02", "week": 1, "title": "AI 为什么会回答问题：数据、模式与生成" },
+    { "id": "L03", "week": 1, "title": "AI 为什么会一本正经地犯错" },
+    { "id": "L04", "week": 2, "title": "把问题说清楚：背景、目标与限制" },
+    { "id": "L05", "week": 2, "title": "把大任务拆成可以检查的小步骤" },
+    { "id": "L06", "week": 2, "title": "人和 AI 分别擅长什么" },
+    { "id": "L07", "week": 3, "title": "验证 AI：来源、反例与交叉检查" },
+    { "id": "L08", "week": 3, "title": "用 AI 完成一次小型研究" },
+    { "id": "L09", "week": 3, "title": "亲子共创：从想法到可展示作品" },
+    { "id": "L10", "week": 4, "title": "隐私、版权与虚假内容" },
+    { "id": "L11", "week": 4, "title": "不把聊天机器人当成答案和情感替代" },
+    { "id": "L12", "week": 4, "title": "制定家庭 AI 使用公约并完成项目答辩" }
+  ],
+  "sourceSeeds": [
+    "https://www.unesco.org/en/articles/ai-competency-framework-students",
+    "https://www.unicef.org/innocenti/reports/policy-guidance-ai-children",
+    "https://www.moe.gov.cn/srcsite/A16/s3342/202604/t20260410_1433240.html",
+    "https://www.xjbz.gov.cn/xjbz/c101441/202505/b35f5dbccf754a39ba89a9c9774f7d3d.shtml"
+  ],
+  "days": [
+    { "date": "2026-08-12", "week": 1, "focus": "发布知识星球十分钟起点并核验两条定时稿", "primaryChannel": "zsxq", "asset": "新成员起点、首帖 24 小时执行卡与定时稿核验", "articleTopic": "儿童会使用生成式 AI，为什么不等于具备 AI 素养？先从一行可验证的家庭 AI 足迹开始。", "cta": "完成场景、输入、输出、错误和检查者五格" },
+    { "date": "2026-08-13", "week": 1, "focus": "课程 L01", "primaryChannel": "zsxq", "asset": "视频脚本、亲子观察任务", "articleTopic": "孩子每天接触的推荐、识图和语音助手，背后哪些属于人工智能？", "cta": "完成家庭 AI 足迹清单" },
+    { "date": "2026-08-14", "week": 1, "focus": "家长认知", "primaryChannel": "wechat", "asset": "母文与头条改写稿", "articleTopic": "孩子会用 ChatGPT，不等于他具备 AI 素养：家长最容易混淆的三件事。", "cta": "领取 AI 素养自测题" },
+    { "date": "2026-08-15", "week": 1, "focus": "课程 L02", "primaryChannel": "video", "asset": "课程视频与图解", "articleTopic": "不用复杂公式，怎样向 8—14 岁孩子解释大模型如何从数据中学习模式？", "cta": "亲子共同画出一次输入到输出" },
+    { "date": "2026-08-16", "week": 1, "focus": "周末答疑", "primaryChannel": "zsxq", "asset": "直播提纲与问题汇总", "articleTopic": "家长应该禁止孩子使用 AI 吗？从年龄、任务和监督方式讨论边界。", "cta": "进入星球参加第一次答疑" },
+    { "date": "2026-08-17", "week": 1, "focus": "课程 L03", "primaryChannel": "video", "asset": "幻觉实验与核验卡", "articleTopic": "生成式 AI 为什么会流畅地说错话，孩子如何做第一次事实核验？", "cta": "提交一条被孩子发现的 AI 错误" },
+    { "date": "2026-08-18", "week": 1, "focus": "周复盘", "primaryChannel": "website", "asset": "数据记录与下一周调整", "articleTopic": "第一周家长问题中，哪些焦虑来自工具，哪些来自家庭使用规则缺失？", "cta": "投票选择第二周案例" },
+
+    { "date": "2026-08-19", "week": 2, "focus": "课程 L04", "primaryChannel": "video", "asset": "问题四要素任务卡", "articleTopic": "好的 AI 提问为什么首先是问题定义，而不是背提示词模板？", "cta": "重写一个模糊问题" },
+    { "date": "2026-08-20", "week": 2, "focus": "三天挑战 Day 1", "primaryChannel": "zsxq", "asset": "亲子挑战任务", "articleTopic": "让孩子先解释自己想解决什么，再打开 AI，会发生什么变化？", "cta": "提交孩子的任务说明" },
+    { "date": "2026-08-21", "week": 2, "focus": "课程 L05", "primaryChannel": "video", "asset": "任务拆解演示", "articleTopic": "孩子如何把一次研究任务拆成搜索、提问、验证和表达四步？", "cta": "完成任务拆解表" },
+    { "date": "2026-08-22", "week": 2, "focus": "三天挑战 Day 2", "primaryChannel": "toutiao", "asset": "大众案例与挑战提醒", "articleTopic": "为什么让孩子找出 AI 答案里的三个疑点，比追求完美提示词更重要？", "cta": "标出三处需要核验的内容" },
+    { "date": "2026-08-23", "week": 2, "focus": "课程 L06", "primaryChannel": "video", "asset": "人机分工卡", "articleTopic": "生成、整理、判断和负责：家庭学习任务应该怎样在人和 AI 之间分工？", "cta": "制作一张家庭人机分工表" },
+    { "date": "2026-08-24", "week": 2, "focus": "三天挑战 Day 3", "primaryChannel": "wechat", "asset": "挑战总结与案例征集", "articleTopic": "关闭 AI 以后，孩子还能不能说出自己的结论？一次亲子挑战的评价方法。", "cta": "提交不依赖 AI 的最终结论" },
+    { "date": "2026-08-25", "week": 2, "focus": "周复盘", "primaryChannel": "website", "asset": "挑战完成率与高频障碍", "articleTopic": "亲子 AI 挑战里最常见的失败，不是孩子不会用工具，而是任务没有评价标准。", "cta": "报名第三周共创项目" },
+
+    { "date": "2026-08-26", "week": 3, "focus": "课程 L07", "primaryChannel": "video", "asset": "三层验证法", "articleTopic": "来源、反例、交叉检查：孩子验证 AI 答案的三个层次。", "cta": "完成一次三层验证" },
+    { "date": "2026-08-27", "week": 3, "focus": "研究项目启动", "primaryChannel": "zsxq", "asset": "四类亲子项目模板", "articleTopic": "什么样的儿童 AI 项目能训练研究能力，而不是只生成一份漂亮作品？", "cta": "选择一个家庭研究问题" },
+    { "date": "2026-08-28", "week": 3, "focus": "课程 L08", "primaryChannel": "video", "asset": "研究过程演示", "articleTopic": "用 AI 做小型研究时，怎样保留问题、证据、修改和结论的完整过程？", "cta": "提交研究日志第一版" },
+    { "date": "2026-08-29", "week": 3, "focus": "项目案例", "primaryChannel": "wechat", "asset": "匿名化过程复盘", "articleTopic": "一份儿童 AI 作品应该展示什么：最终成品之外，更应该保留哪些判断过程？", "cta": "进入星球查看任务模板" },
+    { "date": "2026-08-30", "week": 3, "focus": "课程 L09", "primaryChannel": "video", "asset": "共创项目与作品清单", "articleTopic": "亲子共创中，家长如何帮助又不替孩子完成？", "cta": "完成作品并准备三分钟讲解" },
+    { "date": "2026-08-31", "week": 3, "focus": "内测招募", "primaryChannel": "website", "asset": "课程内测说明与筛选问题", "articleTopic": "首期儿童 AI 素养家庭实践营解决什么问题，又明确不承诺什么？", "cta": "申请课程内测" },
+    { "date": "2026-09-01", "week": 3, "focus": "项目工作坊", "primaryChannel": "zsxq", "asset": "直播与作品点评", "articleTopic": "评价儿童 AI 项目时，为什么过程证据比作品精美度更重要？", "cta": "参加项目工作坊" },
+
+    { "date": "2026-09-02", "week": 4, "focus": "课程 L10", "primaryChannel": "video", "asset": "隐私与版权情境题", "articleTopic": "孩子不能把哪些信息交给 AI？把隐私和版权规则变成家庭情境题。", "cta": "完成家庭隐私检查" },
+    { "date": "2026-09-03", "week": 4, "focus": "安全专题", "primaryChannel": "wechat", "asset": "家长安全清单", "articleTopic": "儿童使用生成式 AI 的五条底线：隐私、错误信息、版权、陌生人和情感依赖。", "cta": "保存并讨论家庭安全清单" },
+    { "date": "2026-09-04", "week": 4, "focus": "发布门检查", "primaryChannel": "zsxq", "asset": "隐私、版权、生成标识与潜在伤害检查", "articleTopic": "儿童 AI 作品为什么可以选择家庭内部使用、修改后分享或不发布？", "cta": "为作品选择发布状态" },
+    { "date": "2026-09-05", "week": 4, "focus": "课程 L11", "primaryChannel": "video", "asset": "情感依赖与求助边界", "articleTopic": "当聊天机器人像朋友一样回应，孩子和家长应该识别哪些风险信号？", "cta": "建立真人求助名单" },
+    { "date": "2026-09-06", "week": 4, "focus": "课程 L12", "primaryChannel": "video", "asset": "公约定稿与项目答辩卡", "articleTopic": "孩子如何解释 AI 哪里错了、自己做了什么以及最终为什么这样判断？", "cta": "完成三分钟项目答辩" },
+    { "date": "2026-09-07", "week": 4, "focus": "终课答辩工作坊", "primaryChannel": "zsxq", "asset": "去标识化答辩摘要与改进量表", "articleTopic": "一次儿童 AI 素养课程应该如何评价：问题、证据、人机取舍、安全和独立解释。", "cta": "提交去标识化答辩摘要" },
+    { "date": "2026-09-08", "week": 4, "focus": "家长访谈", "primaryChannel": "website", "asset": "访谈记录与问题聚类", "articleTopic": "四周以后，哪些家庭 AI 使用行为真的发生了变化，哪些没有？", "cta": "预约十五分钟家长访谈" },
+    { "date": "2026-09-09", "week": 4, "focus": "公开复盘", "primaryChannel": "wechat", "asset": "去标识化复盘稿", "articleTopic": "首期试运行复盘：完成率、常见困难与下一版课程要删掉什么。", "cta": "登记第二期意向" },
+    { "date": "2026-09-10", "week": 4, "focus": "月度决策", "primaryChannel": "website", "asset": "指标复盘与第二个月路线", "articleTopic": "儿童 AI 素养课程是否值得继续：用付费、完成、作品和推荐四类证据判断。", "cta": "公布第二个月学习主题" }
+  ]
+}

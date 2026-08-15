@@ -7,11 +7,13 @@ import {
   normalizeCoreWebVitalName,
   recordConversion,
   recordEngagement,
+  recordGuardianSurvey,
   recordPageView,
   recordWebVital,
 } from '@/lib/analytics-storage'
 import { normalizeTrackableAnalyticsPath } from '@/lib/trackable-analytics-path'
 import { classifyTrafficSource } from '@/lib/traffic-source.mjs'
+import { normalizeGuardianSurveyAnswers } from '@/lib/guardian-survey'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -70,6 +72,15 @@ export async function POST(request: NextRequest) {
     }
     const result = await recordConversion(pathname, requestVisitorHash(request), name, target)
     return NextResponse.json({ ok: true, name, ...result }, { headers: noStoreHeaders })
+  }
+
+  if (body.kind === 'guardian-survey') {
+    const answers = normalizeGuardianSurveyAnswers(body.answers)
+    if (body.guardianConfirmed !== true || !answers) {
+      return NextResponse.json({ ok: false, message: '无效监护人调研' }, { status: 400 })
+    }
+    const result = await recordGuardianSurvey(pathname, requestVisitorHash(request), answers)
+    return NextResponse.json({ ok: true, ...result }, { headers: noStoreHeaders })
   }
 
   const result = await recordPageView(pathname, requestVisitorHash(request), {

@@ -1,0 +1,295 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "period": {
+    "startsOn": "2026-09-02",
+    "endsOn": "2026-09-08",
+    "timezone": "Asia/Shanghai"
+  },
+  "cadenceTargets": {
+    "website": {
+      "minimum": 1,
+      "label": "安全与终课周复盘"
+    },
+    "wechat": {
+      "minimum": 2,
+      "label": "家长安全与终课文章"
+    },
+    "csdn": {
+      "minimum": 1,
+      "maximum": 2,
+      "label": "安全模型技术长文"
+    },
+    "x": {
+      "minimum": 5,
+      "label": "安全、公约与答辩观点"
+    },
+    "toutiao": {
+      "minimum": 3,
+      "label": "家长向安全与终课文章"
+    },
+    "zsxq": {
+      "minimum": 7,
+      "label": "L10—L12、安全门、公约与答辩"
+    },
+    "video": {
+      "minimum": 3,
+      "label": "L10—L12 微课"
+    }
+  },
+  "statusDefinitions": {
+    "published": "已在公开平台核验真实 URL",
+    "scheduled": "平台后台已核验定时状态和时间",
+    "draft_ready": "稿件与发布检查已就绪，尚未写入平台",
+    "media_ready": "视频与字幕已就绪，尚未核验平台发布",
+    "blocked": "存在明确阻断项，不能记为就绪"
+  },
+  "entries": [
+    {
+      "id": "w4-website-review",
+      "date": "2026-09-08",
+      "platform": "website",
+      "title": "第四周安全、公约与终课复盘",
+      "status": "blocked",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-08-week4-review.md"
+      ],
+      "blocker": "生产课程页仍为 404，未获网站部署授权"
+    },
+    {
+      "id": "w4-website-article-01",
+      "date": "2026-09-03",
+      "platform": "website",
+      "title": "孩子使用生成式 AI 的五条家庭底线：别等出事以后才谈安全",
+      "status": "draft_ready",
+      "assets": [
+        "content/posts/daily-2026-09-03-child-ai-family-safety-gates.mdx",
+        "public/images/courses/ai-native-generation/L10/poster.webp"
+      ]
+    },
+    {
+      "id": "w4-wechat-01",
+      "date": "2026-09-03",
+      "platform": "wechat",
+      "title": "孩子使用生成式 AI 的五条家庭底线：别等出事以后才谈安全",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-03-wechat-child-ai-safety-checklist.md"
+      ]
+    },
+    {
+      "id": "w4-wechat-02",
+      "date": "2026-09-07",
+      "platform": "wechat",
+      "title": "孩子学完 AI 课，不要先看作品：请他回答这三个问题",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-07-wechat-course-defense.md"
+      ]
+    },
+    {
+      "id": "w4-csdn-01",
+      "date": "2026-09-02",
+      "platform": "csdn",
+      "title": "为儿童 AI 项目建立双门安全模型：Data Minimization 与 Publication Gate",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-02-csdn-double-gate-safety.md"
+      ]
+    },
+    {
+      "id": "w4-x-01",
+      "date": "2026-09-02",
+      "platform": "x",
+      "title": "输入门与发布门",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-02-l10-distribution-x-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-09-02-l10-distribution.md"
+      ]
+    },
+    {
+      "id": "w4-x-02",
+      "date": "2026-09-03",
+      "platform": "x",
+      "title": "家庭 AI 双门清单",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-03-x-safety-checklist-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-09-03-x-safety-checklist.md"
+      ]
+    },
+    {
+      "id": "w4-x-03",
+      "date": "2026-09-04",
+      "platform": "x",
+      "title": "不发布不是项目失败",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-04-x-do-not-publish-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-09-04-x-do-not-publish.md"
+      ]
+    },
+    {
+      "id": "w4-x-04",
+      "date": "2026-09-05",
+      "platform": "x",
+      "title": "聊天机器人的四个退出信号",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-05-l11-distribution-x-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-09-05-l11-distribution.md"
+      ]
+    },
+    {
+      "id": "w4-x-05",
+      "date": "2026-09-08",
+      "platform": "x",
+      "title": "第四周安全与终课复盘",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-08-x-week4-review-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-09-08-x-week4-review.md"
+      ]
+    },
+    {
+      "id": "w4-toutiao-01",
+      "date": "2026-09-02",
+      "platform": "toutiao",
+      "title": "孩子把作业交给 AI 前，家长最该检查的不是姓名",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-02-toutiao-child-ai-safety.md"
+      ]
+    },
+    {
+      "id": "w4-toutiao-02",
+      "date": "2026-09-05",
+      "platform": "toutiao",
+      "title": "AI 越会安慰孩子，家长越要教会这四个退出信号",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-05-toutiao-chatbot-exit-signals.md"
+      ]
+    },
+    {
+      "id": "w4-toutiao-03",
+      "date": "2026-09-06",
+      "platform": "toutiao",
+      "title": "孩子学完 AI 课，别先看作品：请他做一次四分钟答辩",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-06-toutiao-four-minute-defense.md"
+      ]
+    },
+    {
+      "id": "w4-zsxq-01",
+      "date": "2026-09-02",
+      "platform": "zsxq",
+      "title": "L10｜作业照片删了姓名，为什么仍然不能直接交给 AI？",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-02-l10-distribution-zsxq-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-09-02-l10-distribution.md"
+      ]
+    },
+    {
+      "id": "w4-zsxq-02",
+      "date": "2026-09-03",
+      "platform": "zsxq",
+      "title": "只做一题｜这份材料能不能交给 AI？",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-03-zsxq-safety-scenario-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-09-03-zsxq-safety-scenario.md"
+      ]
+    },
+    {
+      "id": "w4-zsxq-03",
+      "date": "2026-09-04",
+      "platform": "zsxq",
+      "title": "作品准备发布前，请先给它一个状态",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-04-zsxq-publication-gate-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-09-04-zsxq-publication-gate.md"
+      ]
+    },
+    {
+      "id": "w4-zsxq-04",
+      "date": "2026-09-05",
+      "platform": "zsxq",
+      "title": "L11｜当聊天机器人说“只有我懂你”，孩子该做什么？",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-05-l11-distribution-zsxq-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-09-05-l11-distribution.md"
+      ]
+    },
+    {
+      "id": "w4-zsxq-05",
+      "date": "2026-09-06",
+      "platform": "zsxq",
+      "title": "L12 终课｜别交一件完美作品，请孩子回答这三句话",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-06-l12-distribution-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-09-06-l12-distribution.md"
+      ]
+    },
+    {
+      "id": "w4-zsxq-06",
+      "date": "2026-09-07",
+      "platform": "zsxq",
+      "title": "关闭 AI，用四分钟证明判断仍在孩子手里",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-07-zsxq-defense-workshop-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-09-07-zsxq-defense-workshop.md"
+      ]
+    },
+    {
+      "id": "w4-zsxq-07",
+      "date": "2026-09-08",
+      "platform": "zsxq",
+      "title": "第四周安全、公约与终课复盘",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-08-week4-review.md"
+      ]
+    },
+    {
+      "id": "w4-video-l10",
+      "date": "2026-09-02",
+      "platform": "video",
+      "title": "L10 隐私、版权与虚假内容",
+      "status": "media_ready",
+      "assets": [
+        "public/videos/courses/ai-native-generation/L10-privacy-copyright-synthetic-content-v1.mp4",
+        "public/videos/courses/ai-native-generation/L10-privacy-copyright-synthetic-content-v1.vtt"
+      ]
+    },
+    {
+      "id": "w4-video-l11",
+      "date": "2026-09-05",
+      "platform": "video",
+      "title": "L11 聊天机器人不是关系",
+      "status": "media_ready",
+      "assets": [
+        "public/videos/courses/ai-native-generation/L11-chatbot-is-not-a-relationship-v1.mp4",
+        "public/videos/courses/ai-native-generation/L11-chatbot-is-not-a-relationship-v1.vtt"
+      ]
+    },
+    {
+      "id": "w4-video-l12",
+      "date": "2026-09-06",
+      "platform": "video",
+      "title": "L12 家庭 AI 公约与项目答辩",
+      "status": "media_ready",
+      "assets": [
+        "public/videos/courses/ai-native-generation/L12-family-ai-agreement-and-defense-v1.mp4",
+        "public/videos/courses/ai-native-generation/L12-family-ai-agreement-and-defense-v1.vtt"
+      ]
+    }
+  ]
+}

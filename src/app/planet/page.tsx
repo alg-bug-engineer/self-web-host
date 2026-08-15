@@ -4,12 +4,12 @@ import { getSettings } from '@/lib/admin-storage'
 import { AUTHOR_NAME, BRAND_NAME, SITE_URL } from '@/lib/site'
 
 export const metadata = {
-  title: `AI 实践学习社区 | ${BRAND_NAME}`,
-  description: `${AUTHOR_NAME}（${BRAND_NAME}）围绕大模型、RAG、Agent 与 AI 工程实践持续整理的学习社区。可先阅读公开文章，再决定是否加入。`,
+  title: `AI 实践学习社区｜儿童 AI 素养试运行 | ${BRAND_NAME}`,
+  description: `${AUTHOR_NAME}（${BRAND_NAME}）整理大模型、RAG、Agent 与 AI 工程实践；当前主线是“AI 原生一代：儿童 AI 素养”家庭实践课试运行。知识星球共学与课程内测分别登记。`,
   alternates: { canonical: '/planet' },
   openGraph: {
-    title: `AI 实践学习社区 | ${BRAND_NAME}`,
-    description: '围绕大模型、RAG、Agent 与 AI 工程实践，整理专题内容、案例和问题讨论。',
+    title: `AI 实践学习社区｜儿童 AI 素养试运行 | ${BRAND_NAME}`,
+    description: '围绕大模型、RAG、Agent 与 AI 工程实践持续整理；当前主线是“AI 原生一代：儿童 AI 素养”家庭实践课试运行。',
     url: `${SITE_URL}/planet`,
     type: 'website',
   },
@@ -37,7 +37,12 @@ export default async function PlanetPage() {
     '@id': `${SITE_URL}/planet#community`,
     url: `${SITE_URL}/planet`,
     name: `${BRAND_NAME} AI 实践学习社区`,
-    description: '围绕大模型、RAG、Agent 与 AI 工程实践整理的专题内容、案例和问题讨论。',
+    description: '围绕大模型、RAG、Agent 与 AI 工程实践整理专题内容；当前开展“AI 原生一代：儿童 AI 素养”家庭实践课试运行。',
+    about: [
+      { '@type': 'Thing', name: 'AI 工程实践' },
+      { '@type': 'Thing', name: '儿童 AI 素养' },
+      { '@type': 'Thing', name: '家庭 AI 教育' },
+    ],
     inLanguage: 'zh-CN',
     isPartOf: { '@id': `${SITE_URL}/#website` },
     author: { '@id': `${SITE_URL}/#person`, name: AUTHOR_NAME, alternateName: BRAND_NAME },
@@ -69,6 +74,41 @@ export default async function PlanetPage() {
             {joinLabel}
           </a>
           <Link href="/blog" className="btn-secondary px-8 py-3 text-lg">先读公开文章</Link>
+        </div>
+      </section>
+
+      <section className="rounded-3xl border border-accent-tertiary/30 bg-accent-tertiary/5 p-8 md:p-10">
+        <div className="grid gap-6 md:grid-cols-[1.4fr_auto] md:items-center">
+          <div>
+            <p className="eyebrow">CURRENT PILOT</p>
+            <h2 className="mt-2 text-2xl font-bold text-text-primary">AI 原生一代：儿童 AI 素养家庭实践课</h2>
+            <p className="mt-3 leading-7 text-text-secondary">
+              当前用四周时间试运行一套面向 8—14 岁孩子和家长的课程：理解 AI、与 AI 协作、验证答案、保护隐私，并完成一个亲子项目。
+            </p>
+            <p className="mt-3 text-sm leading-6 text-text-tertiary">
+              知识星球共学和课程内测是两个不同选择。加入星球不自动获得课程内测名额，孩子的自测、作业和答辩也不决定是否可以付费。
+            </p>
+          </div>
+          <Link
+            href="/ai-native-generation"
+            className="btn-primary whitespace-nowrap px-6 py-3"
+            data-analytics-event="ai_native_generation_interest"
+            data-analytics-target="planet-pilot"
+          >
+            查看试运行计划
+          </Link>
+        </div>
+        <div className="mt-6 border-t border-border-default pt-5 text-sm leading-6 text-text-secondary">
+          只想登记课程内测意向的监护人，可以先查看
+          <Link
+            href="/ai-native-generation#guardian-beta-intake"
+            className="ml-1 font-medium text-accent-primary hover:underline"
+            data-analytics-event="ai_native_generation_interest"
+            data-analytics-target="planet-pilot"
+          >
+            监护人登记步骤
+          </Link>
+          ；当前只登记意向，不收取课程内测费用。
         </div>
       </section>
 
@@ -132,7 +172,15 @@ export default async function PlanetPage() {
               : '当前没有配置公开加入链接，可以通过公众号联系作者了解。'}
           </p>
         </div>
-        <a href={joinUrl} target={joinUrl.startsWith('http') ? '_blank' : undefined} rel={joinUrl.startsWith('http') ? 'noopener noreferrer' : undefined} className="inline-block p-4 bg-white rounded-2xl shadow-xl" aria-label="查看芝士AI吃鱼知识星球">
+        <a
+          href={joinUrl}
+          target={joinUrl.startsWith('http') ? '_blank' : undefined}
+          rel={joinUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+          className="inline-block p-4 bg-white rounded-2xl shadow-xl"
+          aria-label="查看芝士AI吃鱼知识星球"
+          data-analytics-event="join_planet"
+          data-analytics-target="planet-footer"
+        >
           {settings.planetQrCode ? (
             <Image src={settings.planetQrCode} alt="芝士AI吃鱼知识星球二维码" width={192} height={192} className="object-contain" />
           ) : (

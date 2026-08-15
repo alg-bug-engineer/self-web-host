@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "date": "2026-08-13",
+  "generatedAt": "2026-08-12T05:45:00+08:00",
+  "assets": [
+    {
+      "id": "zsxq-l01-text-fallback",
+      "platform": "zsxq",
+      "role": "text_fallback_payload",
+      "file": "content/campaigns/ai-native-generation-30d/2026-08-13-zsxq-l01-activation-publish.txt",
+      "sha256": "4fd0141b48cdfe524ebb57e50a07f568b6af0c650b598f5d3f6cdb62d0526946",
+      "condition": "视频上传、处理或发布后可播放状态失败或无法确认；只发布自包含文字任务，不声明视频上线"
+    },
+    {
+      "id": "zsxq-l01-video-success",
+      "platform": "zsxq",
+      "role": "video_success_payload",
+      "file": "content/campaigns/ai-native-generation-30d/2026-08-13-zsxq-l01-activation-video-publish.txt",
+      "sha256": "de1d1ad3597c04f7488f97b50bf5824446dd289f8960eeb2c2533b6c8f474183",
+      "condition": "同一知识星球编辑器中 L01 视频上传完成，正文末尾包含生成式视觉与合成配音披露"
+    },
+    {
+      "id": "x-l01",
+      "platform": "x",
+      "role": "distribution_payload",
+      "file": "content/campaigns/ai-native-generation-30d/2026-08-13-x-l01-publish.txt",
+      "sha256": "06e4e4568697d678f7a126beca1af49cfb6d55039d66ea2632738afe644f1dcc",
+      "condition": "知识星球 L01 主题取得公开证据后发布；不得改用未公开课程页链接"
+    },
+    {
+      "id": "l01-video",
+      "platform": "video",
+      "role": "media_attachment",
+      "file": "public/videos/courses/ai-native-generation/L01-ai-is-prediction-v1.mp4",
+      "sha256": "4b2aa1c87f9f45f897407f5419e37abe94aaa20d9e25120a0352252f1d7c25c7",
+      "condition": "仅附加到 w1-zsxq-01；上传完成且发布后可播放时才登记课程视频交付证据"
+    },
+    {
+      "id": "l01-family-ai-footprint-card",
+      "platform": "worksheet",
+      "role": "optional_worksheet_attachment",
+      "file": "output/pdf/ai-native-generation-l01-family-ai-footprint-card.pdf",
+      "sha256": "cc7926d028bd2cb5812a8444f451a9e80e37c3464d640d6e3c03c87b1419f356",
+      "condition": "仅作为 w1-zsxq-01 的可选家庭本地练习附件；上传失败不阻断视频或文字任务，发布后不可见时不得声称已提供，且无需提交整张卡"
+    }
+  ],
+  "externalWritesPerformed": false
+}

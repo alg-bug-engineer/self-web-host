@@ -2,16 +2,21 @@
   "version": 1,
   "routes": [
     "/about",
+    "/ai-native-generation",
     "/planet",
     "/collections/tools"
   ],
   "sourceFiles": [
     "src/app/about/page.tsx",
+    "src/app/ai-native-generation/page.tsx",
     "src/app/planet/page.tsx",
     "src/app/blog/[slug]/page.tsx",
     "src/app/collections/tools/ToolsCollectionClient.tsx",
+    "src/components/FamilyAiLiteracyCheck.tsx",
+    "src/components/GuardianPilotSurvey.tsx",
     "src/components/PlanetBanner.tsx",
-    "src/components/WechatCard.tsx"
+    "src/components/WechatCard.tsx",
+    "content/campaigns/ai-native-generation-30d/2026-08-12-zsxq-profile-proposal.md"
   ],
   "disallowedClaims": [
     {

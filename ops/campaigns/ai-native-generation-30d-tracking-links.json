@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "status": "hold_until_course_page_public",
+  "destination": "https://ai-knowledgepoints.cn/ai-native-generation",
+  "guardrail": "课程页公开返回 200 且转化测试通过后才可把这些链接放入外部平台；当前不使用本地地址或占位链接。",
+  "links": {
+    "wechat": "https://ai-knowledgepoints.cn/ai-native-generation?utm_source=wechat&utm_medium=owned&utm_campaign=ai-native-generation-30d",
+    "csdn": "https://ai-knowledgepoints.cn/ai-native-generation?utm_source=csdn&utm_medium=organic&utm_campaign=ai-native-generation-30d",
+    "x": "https://ai-knowledgepoints.cn/ai-native-generation?utm_source=x&utm_medium=social&utm_campaign=ai-native-generation-30d",
+    "toutiao": "https://ai-knowledgepoints.cn/ai-native-generation?utm_source=toutiao&utm_medium=organic&utm_campaign=ai-native-generation-30d",
+    "zsxq": "https://ai-knowledgepoints.cn/ai-native-generation?utm_source=zsxq&utm_medium=community&utm_campaign=ai-native-generation-30d",
+    "direct_qr": "https://ai-knowledgepoints.cn/ai-native-generation?utm_source=offline&utm_medium=qr&utm_campaign=ai-native-generation-30d"
+  },
+  "measurement": {
+    "entry": "带渠道参数进入课程页的匿名按日去重访客",
+    "courseInterest": "ai_native_generation_interest",
+    "preview": "course_preview_play",
+    "planetJoin": "join_planet",
+    "guardianInterest": "course_beta_guardian_interest"
+  },
+  "privacy": [
+    "只保存规范化渠道、媒介和活动代号，不保存原始查询字符串。",
+    "访客哈希按自然月变化，不保存原始 IP，也不跨月建立身份。",
+    "不把儿童自测答案、作业、姓名、学校、账号或联系方式写入归因数据。"
+  ]
+}

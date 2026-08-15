@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "capturedAt": "2026-08-12T06:10:00+08:00",
+  "timezone": "Asia/Shanghai",
+  "phase": "pre_09_launch_baseline",
+  "source": "authenticated_browser_visible_ui",
+  "countingPolicy": {
+    "countsAsCampaignConversion": false,
+    "reason": "这些内容均在 2026-08-12 09:00 正式起点前公开；只作为后续增量对照，不回填活动转化。",
+    "unknownMetric": "公开页没有明确标签或不可见时记录 null，不以 0 代替未知。"
+  },
+  "privacy": {
+    "containsMemberIdentity": false,
+    "containsChildData": false,
+    "credentialsAccessed": false
+  },
+  "platforms": {
+    "zsxq": {
+      "groupUrl": "https://wx.zsxq.com/group/88888881284242",
+      "items": [
+        {
+          "title": "AI 原生一代｜四周儿童 AI 素养试运行",
+          "publishedAt": "2026-08-11T13:45:00+08:00",
+          "reads": 1,
+          "comments": null,
+          "likes": null
+        },
+        {
+          "title": "L02 + L03｜今晚只做两个实验：三次提问与错误侦探",
+          "publishedAt": "2026-08-11T16:41:00+08:00",
+          "reads": 1,
+          "comments": null,
+          "likes": null
+        }
+      ],
+      "note": "可见页面明确标注阅读人数；评论与点赞按钮没有明确数字，因此保持 null。"
+    },
+    "x": {
+      "url": "https://x.com/QilaiZ13578/status/2087098576925327746",
+      "publishedAt": "2026-08-11T16:47:00+08:00",
+      "views": 1,
+      "replies": 0,
+      "reposts": 0,
+      "likes": 0,
+      "bookmarks": 0,
+      "note": "公开状态页逐项显示 1 View、0 Replies、0 reposts、0 Likes、0 Bookmarks。"
+    },
+    "toutiao": {
+      "url": "https://www.toutiao.com/article/7672651397225054760/",
+      "publishedAt": "2026-08-11T14:08:00+08:00",
+      "impressions": 8,
+      "reads": 0,
+      "likes": 0,
+      "comments": 0,
+      "syntheticContentDisclosureVisible": true,
+      "evidence": "authenticated_creator_center_work_management",
+      "observedAt": "2026-08-12T06:10:00+08:00",
+      "note": "公开页明确显示点赞 0、评论 0 和‘内容由AI生成’；头条号作品管理以语义标签显示展现 8、阅读 0、点赞 0、评论 0。"
+    },
+    "csdn": {
+      "url": "https://blog.csdn.net/wwlsm_zql/article/details/163666250",
+      "publishedAt": "2026-08-11T13:57:30+08:00",
+      "publicStatusVisible": true,
+      "reads": 73,
+      "likes": 2,
+      "comments": 0,
+      "favorites": 4,
+      "evidence": "authenticated_creator_center_content_management",
+      "observedAt": "2026-08-12T06:09:00+08:00",
+      "note": "公开页标题、发布时间与公开状态可见；CSDN 创作中心内容管理以表头和同行数据显示阅读 73、点赞 2、评论 0、收藏 4。"
+    }
+  },
+  "scheduledPreflight": [
+    {
+      "platform": "csdn",
+      "title": "别只教孩子写提示词：把 AI 回答拆成一条可验证的流水线",
+      "scheduledFor": "2026-08-12T10:15:00+08:00",
+      "status": "scheduled_visible",
+      "creatorContentId": "163672964",
+      "publicUrlCandidate": "https://blog.csdn.net/wwlsm_zql/article/details/163672964",
+      "verification": "CSDN 创作中心内容管理可见‘预计于北京时间 2026-08-12 10:15 发布’。"
+    },
+    {
+      "platform": "toutiao",
+      "title": "同一问题问AI三次，差别比提示词更重要",
+      "scheduledFor": "2026-08-12T19:40:00+08:00",
+      "status": "scheduled_visible",
+      "creatorContentId": "7672708790810165812",
+      "previewUrl": "https://mp.toutiao.com/profile_v4/graphic/preview?pgc_id=7672708790810165812",
+      "verification": "头条号作品管理可见‘将于 08-12 19:40 发布’与‘定时发布中’。"
+    }
+  ],
+  "nextComparison": {
+    "at": "2026-08-12T20:00:00+08:00",
+    "rule": "只比较同一公开 URL 的新增可见值；知识星球正式起点使用独立主题证据和有效家庭口径。"
+  }
+}

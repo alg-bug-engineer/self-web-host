@@ -64,7 +64,10 @@ function safeCampaignToken(value) {
 export function classifyTrafficSource(body) {
   const campaign = safeCampaignToken(body.utmSource)
   const medium = safeCampaignToken(body.utmMedium)
-  if (campaign) return `campaign:${campaign}${medium ? `/${medium}` : ''}`
+  const campaignName = safeCampaignToken(body.utmCampaign)
+  if (campaign) {
+    return `campaign:${campaign}${medium ? `/${medium}` : ''}${campaignName ? `/${campaignName}` : ''}`
+  }
 
   const rawReferrer = String(body.referrer || '').slice(0, 500)
   if (!rawReferrer) return 'direct'

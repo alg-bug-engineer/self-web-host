@@ -1,0 +1,343 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "period": {
+    "startsOn": "2026-08-12",
+    "endsOn": "2026-08-18",
+    "timezone": "Asia/Shanghai"
+  },
+  "cadenceTargets": {
+    "website": {
+      "minimum": 1,
+      "label": "母文或课程承接页"
+    },
+    "wechat": {
+      "minimum": 2,
+      "label": "公众号文章"
+    },
+    "csdn": {
+      "minimum": 1,
+      "maximum": 2,
+      "label": "技术长文"
+    },
+    "x": {
+      "minimum": 5,
+      "label": "工作日观点"
+    },
+    "toutiao": {
+      "minimum": 3,
+      "label": "家长向文章"
+    },
+    "zsxq": {
+      "minimum": 7,
+      "label": "新成员起点、任务、问题收集与答疑"
+    },
+    "video": {
+      "minimum": 3,
+      "label": "L01—L03 微课"
+    }
+  },
+  "statusDefinitions": {
+    "published": "已在公开平台核验真实 URL",
+    "scheduled": "平台后台已核验定时状态和时间",
+    "draft_ready": "稿件与发布检查已就绪，尚未写入平台",
+    "media_ready": "视频与字幕已就绪，尚未核验平台发布",
+    "blocked": "存在明确阻断项，不能记为就绪"
+  },
+  "entries": [
+    {
+      "id": "w1-website-course",
+      "date": "2026-08-12",
+      "platform": "website",
+      "title": "AI 原生一代：儿童 AI 素养课程页",
+      "status": "blocked",
+      "assets": [
+        "src/app/ai-native-generation/page.tsx"
+      ],
+      "blocker": "生产课程页仍为 404，未获部署授权"
+    },
+    {
+      "id": "w1-website-article-01",
+      "date": "2026-08-12",
+      "platform": "website",
+      "title": "孩子问 AI 一个问题，得到的真的是答案吗？",
+      "status": "draft_ready",
+      "assets": [
+        "content/posts/daily-2026-08-12-child-ai-three-questions.mdx",
+        "public/images/campaigns/ai-native-generation-30d/ai-native-generation-family-ai-hero.webp"
+      ]
+    },
+    {
+      "id": "w1-wechat-01",
+      "date": "2026-08-14",
+      "platform": "wechat",
+      "title": "孩子问 AI 一个问题，得到的真的是“答案”吗？",
+      "status": "draft_ready",
+      "externalDraftId": "svjAwXb2AemC76kYyUJ4uW6fKSLihac2SCbF4IPFt3NFz2Lla5Omd_m9WBrrvIDP",
+      "draftCreatedAt": "2026-08-12T02:50:00+08:00",
+      "draftVerifiedAt": "2026-08-12T02:53:00+08:00",
+      "draftContentCharacters": 11376,
+      "requiresAuthorPreview": true,
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-12-wechat-article.md",
+        "content/campaigns/ai-native-generation-30d/2026-08-14-wechat-manual-publish-checklist.md",
+        "content/wechat/2026-08-14-child-ai-three-questions.json",
+        "content/wechat/2026-08-14-child-ai-three-questions.html",
+        "public/images/campaigns/ai-native-generation-30d/2026-08-14-wechat-cover.png"
+      ]
+    },
+    {
+      "id": "w1-wechat-02",
+      "date": "2026-08-18",
+      "platform": "wechat",
+      "title": "别只对孩子说“不要依赖 AI”，家庭规则需要写清这四件事",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-18-wechat-family-ai-boundaries.md"
+      ]
+    },
+    {
+      "id": "w1-csdn-01",
+      "date": "2026-08-12",
+      "platform": "csdn",
+      "title": "别只教孩子写提示词：把 AI 回答拆成一条可验证的流水线",
+      "status": "scheduled",
+      "scheduledFor": "2026-08-12T10:15:00+08:00",
+      "externalId": "163672964",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-12-csdn-verification-pipeline.md",
+        "content/campaigns/ai-native-generation-30d/2026-08-12-scheduled-longform-source-audit.md"
+      ]
+    },
+    {
+      "id": "w1-x-01",
+      "date": "2026-08-12",
+      "platform": "x",
+      "title": "一行家庭 AI 足迹：输入、输出、错误和检查责任",
+      "status": "published",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-12-x-post-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-12-x-post-video-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-12-x-post.md",
+        "content/campaigns/ai-native-generation-30d/2026-08-12-x-teaser-media-check.md",
+        "public/videos/campaigns/ai-native-generation-30d/2026-08-12-l01-x-teaser.mp4"
+      ],
+      "mediaAttachment": {
+        "status": "local_ready",
+        "mediaType": "public_preview_teaser",
+        "topicMarker": "一行家庭 AI 足迹",
+        "videoAsset": "public/videos/campaigns/ai-native-generation-30d/2026-08-12-l01-x-teaser.mp4",
+        "successPublishAsset": "content/campaigns/ai-native-generation-30d/2026-08-12-x-post-video-publish.txt",
+        "fallbackPublishAsset": "content/campaigns/ai-native-generation-30d/2026-08-12-x-post-publish.txt",
+        "durationSeconds": 58,
+        "width": 1920,
+        "height": 1080,
+        "subtitleTrack": "mov_text:zho",
+        "subtitleAvailability": "verify_after_platform_upload",
+        "hardSubtitles": false,
+        "muteFallbackStatus": "key_points_only",
+        "altText": "蓝紫色生成式亲子插画与信息卡动画。画面依次提出“今天谁替你做了预测？”，展示推荐、相册分类、输入法联想，以及“输入→模式→输出”模型；结尾提醒不输入姓名、学校、位置和聊天，并写着“先理解，再使用；先核验，再相信”。",
+        "altTextSha256": "ff289ea6a4fe3a3ba1ba0cf08ab51748d8937e22a1d6aad6b0a7eef10bec94d6",
+        "altTextAvailability": "verify_after_platform_upload",
+        "accessibilityCheckAsset": "content/campaigns/ai-native-generation-30d/2026-08-12-x-teaser-media-check.md",
+        "fallback": "publish_text_without_video_claim"
+      },
+      "externalUrl": "https://x.com/QilaiZ13578/status/2087345410553847822",
+      "publishedAt": "2026-08-12T09:08:00+08:00"
+    },
+    {
+      "id": "w1-x-02",
+      "date": "2026-08-13",
+      "platform": "x",
+      "title": "L01 家庭 AI 足迹",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-13-x-l01-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-13-x-l01.md"
+      ]
+    },
+    {
+      "id": "w1-x-03",
+      "date": "2026-08-14",
+      "platform": "x",
+      "title": "家长四情境问题收集",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-14-x-parent-question-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-14-x-parent-question.md"
+      ]
+    },
+    {
+      "id": "w1-x-04",
+      "date": "2026-08-17",
+      "platform": "x",
+      "title": "L03 AI 错误侦探",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-17-x-l03-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-17-x-l03.md"
+      ]
+    },
+    {
+      "id": "w1-x-05",
+      "date": "2026-08-18",
+      "platform": "x",
+      "title": "第一周复盘",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-18-x-week1-review.md"
+      ]
+    },
+    {
+      "id": "w1-toutiao-01",
+      "date": "2026-08-12",
+      "platform": "toutiao",
+      "title": "同一问题问AI三次，差别比提示词更重要",
+      "status": "scheduled",
+      "scheduledFor": "2026-08-12T19:40:00+08:00",
+      "externalId": "7672708790810165812",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-12-toutiao-three-prompts.md",
+        "content/campaigns/ai-native-generation-30d/2026-08-12-scheduled-longform-source-audit.md"
+      ]
+    },
+    {
+      "id": "w1-toutiao-02",
+      "date": "2026-08-16",
+      "platform": "toutiao",
+      "title": "家长该禁止孩子使用 AI 吗？先别急着回答，分清这四种情境",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-16-toutiao-family-boundaries.md"
+      ]
+    },
+    {
+      "id": "w1-toutiao-03",
+      "date": "2026-08-17",
+      "platform": "toutiao",
+      "title": "AI 回答越完整，孩子越容易相信？第一次核验只做这三步",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-17-toutiao-fluent-errors.md"
+      ]
+    },
+    {
+      "id": "w1-zsxq-start",
+      "date": "2026-08-12",
+      "platform": "zsxq",
+      "title": "从这里开始｜10 分钟完成第一步，不需要补历史内容",
+      "status": "published",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-12-zsxq-start-here-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-12-zsxq-start-here.md",
+        "content/campaigns/ai-native-generation-30d/2026-08-12-zsxq-first-24h-playbook.md",
+        "content/campaigns/ai-native-generation-30d/2026-08-12-zsxq-course-intake-bridge.md"
+      ],
+      "externalUrl": "https://wx.zsxq.com/group/88888881284242",
+      "publishedAt": "2026-08-12T09:04:00+08:00"
+    },
+    {
+      "id": "w1-zsxq-01",
+      "date": "2026-08-13",
+      "platform": "zsxq",
+      "title": "L01｜先不学提示词：找出今天替你做预测的 3 个 AI",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-13-zsxq-l01-activation-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-13-zsxq-l01-activation-video-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-13-zsxq-l01-activation.md",
+        "content/campaigns/ai-native-generation-30d/2026-08-13-zsxq-course-intake-bridge.md",
+        "output/pdf/ai-native-generation-l01-family-ai-footprint-card.pdf"
+      ]
+    },
+    {
+      "id": "w1-zsxq-02",
+      "date": "2026-08-14",
+      "platform": "zsxq",
+      "title": "第一周只问家长一个问题：你最想先解决哪种家庭 AI 情境？",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-14-zsxq-parent-question-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-14-zsxq-parent-question.md"
+      ]
+    },
+    {
+      "id": "w1-zsxq-03",
+      "date": "2026-08-15",
+      "platform": "zsxq",
+      "title": "L02｜不用贴完整对话，只交 AI 三次回答里的一处变化",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-15-zsxq-l02-activation-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-15-zsxq-l02-activation.md"
+      ]
+    },
+    {
+      "id": "w1-zsxq-04",
+      "date": "2026-08-16",
+      "platform": "zsxq",
+      "title": "第一周答疑｜家长应该禁止孩子使用 AI 吗？先分四种情境",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-16-zsxq-week1-office-hours-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-16-zsxq-week1-office-hours.md"
+      ]
+    },
+    {
+      "id": "w1-zsxq-05",
+      "date": "2026-08-17",
+      "platform": "zsxq",
+      "title": "L03｜AI 错误侦探：今天只核验一条，不追求完整报告",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-17-zsxq-l03-activation-publish.txt",
+        "content/campaigns/ai-native-generation-30d/2026-08-17-zsxq-l03-activation.md"
+      ]
+    },
+    {
+      "id": "w1-zsxq-06",
+      "date": "2026-08-18",
+      "platform": "zsxq",
+      "title": "第一周公开复盘",
+      "status": "draft_ready",
+      "assets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-18-week1-review.md",
+        "content/campaigns/ai-native-generation-30d/2026-08-11-research-data-literacy-survey.md"
+      ]
+    },
+    {
+      "id": "w1-video-l01",
+      "date": "2026-08-13",
+      "platform": "video",
+      "title": "L01 AI 到底是什么",
+      "status": "media_ready",
+      "assets": [
+        "public/videos/courses/ai-native-generation/L01-ai-is-prediction-v1.mp4",
+        "public/videos/courses/ai-native-generation/L01-ai-is-prediction-v1.vtt",
+        "output/pdf/ai-native-generation-l01-family-ai-footprint-card.pdf"
+      ]
+    },
+    {
+      "id": "w1-video-l02",
+      "date": "2026-08-15",
+      "platform": "video",
+      "title": "L02 AI 如何生成回答",
+      "status": "media_ready",
+      "assets": [
+        "public/videos/courses/ai-native-generation/L02-how-generative-ai-answers-v1.mp4",
+        "public/videos/courses/ai-native-generation/L02-how-generative-ai-answers-v1.vtt"
+      ]
+    },
+    {
+      "id": "w1-video-l03",
+      "date": "2026-08-17",
+      "platform": "video",
+      "title": "L03 AI 为什么会犯错",
+      "status": "media_ready",
+      "assets": [
+        "public/videos/courses/ai-native-generation/L03-why-ai-makes-things-up-v1.mp4",
+        "public/videos/courses/ai-native-generation/L03-why-ai-makes-things-up-v1.vtt"
+      ]
+    }
+  ]
+}

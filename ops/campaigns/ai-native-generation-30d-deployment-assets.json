@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "posterPolicy": {
+    "format": "webp",
+    "maximumWidth": 1280,
+    "quality": 82,
+    "keepOriginalLocally": true,
+    "trackOriginalPng": false
+  },
+  "sharedImages": [
+    {
+      "name": "family-ai-hero",
+      "source": "public/images/campaigns/ai-native-generation-30d/refined/jimeng-image-20260811T050834Z-04.png",
+      "output": "public/images/campaigns/ai-native-generation-30d/ai-native-generation-family-ai-hero.webp"
+    },
+    {
+      "name": "course-beta-family-review",
+      "source": "public/images/campaigns/ai-native-generation-30d/course-beta-refined/jimeng-image-20260811T192926Z-02.png",
+      "output": "public/images/campaigns/ai-native-generation-30d/course-beta-family-review.webp",
+      "purpose": "course_beta_intake",
+      "disclosure": "即梦生成式插画；图中不是真实儿童，也不代表真实学员或课程效果。",
+      "variants": [
+        {
+          "name": "wide",
+          "output": "public/images/campaigns/ai-native-generation-30d/course-beta-family-review-wide.webp",
+          "width": 1200,
+          "height": 675,
+          "platforms": ["website", "x"]
+        },
+        {
+          "name": "wechat-cover",
+          "output": "public/images/campaigns/ai-native-generation-30d/course-beta-family-review-wechat.webp",
+          "width": 900,
+          "height": 383,
+          "platforms": ["wechat"]
+        }
+      ]
+    }
+  ],
+  "posters": [
+    {
+      "lesson": "L01",
+      "source": "public/images/campaigns/ai-native-generation-30d/refined/jimeng-image-20260811T050834Z-04.png",
+      "output": "public/images/courses/ai-native-generation/L01/poster.webp"
+    },
+    {
+      "lesson": "L02",
+      "source": "public/images/courses/ai-native-generation/L02/refined/jimeng-image-20260811T061508Z-03.png",
+      "output": "public/images/courses/ai-native-generation/L02/poster.webp"
+    },
+    {
+      "lesson": "L03",
+      "source": "public/images/courses/ai-native-generation/L03/refined/jimeng-image-20260811T072959Z-03.png",
+      "output": "public/images/courses/ai-native-generation/L03/poster.webp"
+    },
+    {
+      "lesson": "L04",
+      "source": "public/images/courses/ai-native-generation/L04/jimeng-image-20260811T100304Z-01.png",
+      "output": "public/images/courses/ai-native-generation/L04/poster.webp"
+    },
+    {
+      "lesson": "L05",
+      "source": "public/images/courses/ai-native-generation/L05/refined/jimeng-image-20260811T101653Z-02.png",
+      "output": "public/images/courses/ai-native-generation/L05/poster.webp"
+    },
+    {
+      "lesson": "L06",
+      "source": "public/images/courses/ai-native-generation/L06/abstract/jimeng-image-20260811T103316Z-02.png",
+      "output": "public/images/courses/ai-native-generation/L06/poster.webp"
+    },
+    {
+      "lesson": "L07",
+      "source": "public/images/courses/ai-native-generation/L07/jimeng-image-20260811T104750Z-04.png",
+      "output": "public/images/courses/ai-native-generation/L07/poster.webp"
+    },
+    {
+      "lesson": "L08",
+      "source": "public/images/courses/ai-native-generation/L08/abstract/jimeng-image-20260811T110510Z-02.png",
+      "output": "public/images/courses/ai-native-generation/L08/poster.webp"
+    },
+    {
+      "lesson": "L09",
+      "source": "public/images/courses/ai-native-generation/L09/jimeng-image-20260811T111904Z-03.png",
+      "output": "public/images/courses/ai-native-generation/L09/poster.webp"
+    },
+    {
+      "lesson": "L10",
+      "source": "public/images/courses/ai-native-generation/L10/abstract/jimeng-image-20260811T113831Z-03.png",
+      "output": "public/images/courses/ai-native-generation/L10/poster.webp"
+    },
+    {
+      "lesson": "L11",
+      "source": "public/images/courses/ai-native-generation/L11/abstract/jimeng-image-20260811T115413Z-01.png",
+      "output": "public/images/courses/ai-native-generation/L11/poster.webp"
+    },
+    {
+      "lesson": "L12",
+      "source": "public/images/courses/ai-native-generation/L12/pure/jimeng-image-20260811T120728Z-01.png",
+      "output": "public/images/courses/ai-native-generation/L12/poster.webp"
+    }
+  ]
+}

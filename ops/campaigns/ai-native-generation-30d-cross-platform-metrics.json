@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "timezone": "Asia/Shanghai",
+  "countingPolicy": {
+    "publicationEvidenceRequired": true,
+    "sameUrlComparisonOnly": true,
+    "unknownMetric": "使用 null；不得用 0 代替未显示、无标签或无法确认的数字。",
+    "deltaRule": "同一 calendarEntryId、同一公开 URL 的首末快照均为数字时才计算差值。",
+    "aggregationRule": "不同平台和不同内容的阅读、浏览或展现不相加为独立人数，也不作为知识星球或课程转化。"
+  },
+  "metricFields": {
+    "x": ["views", "replies", "reposts", "likes", "bookmarks", "linkClicks"],
+    "csdn": ["reads", "likes", "comments", "favorites"],
+    "toutiao": ["impressions", "reads", "likes", "comments"],
+    "zsxq": ["reads", "comments", "likes"]
+  },
+  "snapshots": [],
+  "notes": [
+    "X linkClicks 只有在当前账号可见分析界面明确展示时填写数字；公共状态页不可见或分析不可用时写 unknown，不用访问量、点赞或知识星球阅读反推。",
+    "平台原生 linkClicks 只证明从该 X 内容发生的出站点击，不等于知识星球付费页访问、加入点击、付费或课程内测意向。"
+  ]
+}

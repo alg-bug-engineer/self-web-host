@@ -3,6 +3,12 @@ import 'server-only'
 import crypto from 'crypto'
 import fs from 'fs/promises'
 import path from 'path'
+import {
+  GUARDIAN_SURVEY_QUESTIONS,
+  GUARDIAN_SURVEY_TARGET,
+  isQualifiedGuardianSurvey,
+  normalizeGuardianSurveyAnswers,
+} from './guardian-survey'
 
 export const CORE_WEB_VITAL_NAMES = ['LCP', 'INP', 'CLS'] as const
 export type CoreWebVitalName = (typeof CORE_WEB_VITAL_NAMES)[number]
@@ -16,6 +22,10 @@ export const CONVERSION_EVENT_NAMES = [
   'visit_github',
   'view_planet',
   'join_planet',
+  'ai_native_generation_interest',
+  'course_beta_guardian_interest',
+  'ai_literacy_check_complete',
+  'course_preview_play',
   'open_tool',
   'subscribe_feed',
   'follow_wechat',
@@ -37,9 +47,11 @@ type DailyAnalytics = {
   engagement: Record<string, Record<string, EngagementSignal>>
   vitals: DailyWebVitals
   sources: Record<string, number>
+  visitorSources: Record<string, string>
   landingPaths: Record<string, number>
   conversions: Record<string, DailyConversionEvent>
   conversionCountsByVisitor: Record<string, number>
+  guardianSurvey: DailyGuardianSurvey
 }
 
 type DailyConversionEvent = {
@@ -52,6 +64,13 @@ type DailyConversionEvent = {
 type EngagementSignal = {
   seconds: number
   depth: number
+}
+
+type DailyGuardianSurvey = {
+  submissions: number
+  qualifiedSubmissions: number
+  visitors: string[]
+  answers: Record<string, Record<string, number>>
 }
 
 type AnalyticsStore = {
@@ -101,6 +120,30 @@ export type AnalyticsOverview = {
     averageEngagedSeconds: number
   }>
   topSources: Array<{ source: string; visitors: number }>
+  campaignFunnels: Array<{
+    source: string
+    visitors: number
+    coursePageVisitors: number
+    courseInterestVisitors: number
+    coursePreviewVisitors: number
+    planetJoinVisitors: number
+    guardianInterestVisitors: number
+    coursePageRate: number
+    coursePreviewRate: number
+    planetJoinRate: number
+    guardianInterestRate: number
+  }>
+  guardianSurvey: {
+    target: number
+    submissions: number
+    qualifiedSubmissions: number
+    progressRate: number
+    questions: Array<{
+      id: string
+      label: string
+      options: Array<{ id: string; label: string; count: number }>
+    }>
+  }
   topLandingPaths: Array<{ pathname: string; visitors: number }>
   timeline: Array<{ date: string; pageViews: number; visitors: number }>
 }
@@ -138,9 +181,16 @@ const emptyDay = (): DailyAnalytics => ({
   engagement: {},
   vitals: {},
   sources: {},
+  visitorSources: {},
   landingPaths: {},
   conversions: {},
   conversionCountsByVisitor: {},
+  guardianSurvey: {
+    submissions: 0,
+    qualifiedSubmissions: 0,
+    visitors: [],
+    answers: {},
+  },
 })
 
 const analyticsDataDir =
@@ -166,6 +216,16 @@ function visitorRecord(value: unknown) {
       key,
       Array.isArray(visitors) ? visitors.filter((item): item is string => typeof item === 'string') : [],
     ]),
+  )
+}
+
+function visitorSourceRecord(value: unknown) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+  return Object.fromEntries(
+    Object.entries(value).flatMap(([visitor, source]) => {
+      if (typeof source !== 'string' || !source.trim()) return []
+      return [[visitor, source.trim().slice(0, 120)]]
+    }),
   )
 }
 
@@ -249,6 +309,38 @@ function conversionRecord(value: unknown): Record<string, DailyConversionEvent> 
   )
 }
 
+function guardianSurveyRecord(value: unknown): DailyGuardianSurvey {
+  const empty: DailyGuardianSurvey = {
+    submissions: 0,
+    qualifiedSubmissions: 0,
+    visitors: [],
+    answers: {},
+  }
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return empty
+  const candidate = value as Partial<DailyGuardianSurvey>
+  const answers = Object.fromEntries(GUARDIAN_SURVEY_QUESTIONS.map((question) => {
+    const rawCounts = candidate.answers?.[question.id]
+    const counts = Object.fromEntries(question.options.map((option) => {
+      const value = rawCounts?.[option.id]
+      return [option.id, Number.isFinite(value) ? Math.max(0, Number(value)) : 0]
+    }))
+    return [question.id, counts]
+  }))
+  const submissions = Number.isFinite(candidate.submissions)
+    ? Math.max(0, Number(candidate.submissions))
+    : 0
+  return {
+    submissions,
+    qualifiedSubmissions: Number.isFinite(candidate.qualifiedSubmissions)
+      ? Math.min(submissions, Math.max(0, Number(candidate.qualifiedSubmissions)))
+      : 0,
+    visitors: Array.isArray(candidate.visitors)
+      ? candidate.visitors.filter((item): item is string => typeof item === 'string').slice(0, 5_000)
+      : [],
+    answers,
+  }
+}
+
 function normalizeDay(value: unknown): DailyAnalytics {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return emptyDay()
   const candidate = value as Partial<DailyAnalytics>
@@ -266,9 +358,11 @@ function normalizeDay(value: unknown): DailyAnalytics {
     engagement: engagementRecord(candidate.engagement),
     vitals: webVitalRecord(candidate.vitals),
     sources: numberRecord(candidate.sources),
+    visitorSources: visitorSourceRecord(candidate.visitorSources),
     landingPaths: numberRecord(candidate.landingPaths),
     conversions: conversionRecord(candidate.conversions),
     conversionCountsByVisitor: numberRecord(candidate.conversionCountsByVisitor),
+    guardianSurvey: guardianSurveyRecord(candidate.guardianSurvey),
   }
 }
 
@@ -401,7 +495,11 @@ export function normalizeConversionTarget(eventName: ConversionEventName, value:
     visit_project: /^project-[1-9][0-9]{0,2}$/,
     visit_github: /^(?:project-[1-9][0-9]{0,2}|footer-profile|about-profile)$/,
     view_planet: /^(?:footer|content-banner|tool-[0-9]{6,20})$/,
-    join_planet: /^(?:planet-hero|content-banner)$/,
+    join_planet: /^(?:planet-hero|planet-footer|content-banner)$/,
+    ai_native_generation_interest: /^(?:course-hero|course-preview|course-bottom|planet-pilot|self-check-result)$/,
+    course_beta_guardian_interest: /^(?:course-bottom|guardian-intake-wechat|l12-complete)$/,
+    ai_literacy_check_complete: /^(?:boundary|developing|ready)$/,
+    course_preview_play: /^(?:l0[1-9]|l1[0-2])$/,
     open_tool: /^(?:tool-[0-9]{6,20}|plugin-[a-z0-9._-]{1,40})$/,
     subscribe_feed: /^(?:footer|article-card)$/,
     follow_wechat: /^(?:footer-qr|about-card|article-card)$/,
@@ -448,6 +546,7 @@ export async function recordPageView(
     if (isNewVisitor) {
       daily.visitors.push(visitorHash)
       daily.sources[source] = (daily.sources[source] || 0) + 1
+      daily.visitorSources[visitorHash] = source
       daily.landingPaths[normalizedPath] = (daily.landingPaths[normalizedPath] || 0) + 1
     }
     if (context.returningReader && !daily.returningVisitors.includes(visitorHash)) {
@@ -550,6 +649,62 @@ export async function recordConversion(
     store.days[day] = daily
     await writeStore(store)
     return { recorded: true }
+  })
+
+  writeQueue = task.catch(() => undefined)
+  return task
+}
+
+export async function recordGuardianSurvey(
+  pathname: string,
+  visitorHash: string,
+  rawAnswers: unknown,
+) {
+  const normalizedPath = normalizeAnalyticsPath(pathname)
+  const answers = normalizeGuardianSurveyAnswers(rawAnswers)
+  if (normalizedPath !== '/ai-native-generation' || !answers) {
+    throw new Error('Invalid guardian survey')
+  }
+
+  const task = writeQueue.then(async () => {
+    const store = await readStore()
+    const day = new Date().toISOString().slice(0, 10)
+    const month = day.slice(0, 7)
+    const daily = store.days[day] || emptyDay()
+    if (!daily.visitors.includes(visitorHash)
+      || !daily.pathVisitors[normalizedPath]?.includes(visitorHash)) {
+      return { recorded: false, reason: 'missing-page-view' as const }
+    }
+
+    const alreadySubmitted = Object.entries(store.days).some(([storedDay, analytics]) =>
+      storedDay.startsWith(month) && analytics.guardianSurvey.visitors.includes(visitorHash))
+    if (alreadySubmitted) {
+      return { recorded: false, reason: 'already-submitted-this-month' as const }
+    }
+    const monthSubmissions = Object.entries(store.days)
+      .filter(([storedDay]) => storedDay.startsWith(month))
+      .reduce((total, [, analytics]) => total + analytics.guardianSurvey.submissions, 0)
+    if (monthSubmissions >= 5_000) {
+      return { recorded: false, reason: 'rate-limit' as const }
+    }
+
+    const survey = daily.guardianSurvey
+    survey.submissions += 1
+    if (isQualifiedGuardianSurvey(answers)) survey.qualifiedSubmissions += 1
+    survey.visitors.push(visitorHash)
+    for (const question of GUARDIAN_SURVEY_QUESTIONS) {
+      const optionId = answers[question.id]
+      const counts = survey.answers[question.id] || {}
+      counts[optionId] = (counts[optionId] || 0) + 1
+      survey.answers[question.id] = counts
+    }
+    daily.guardianSurvey = survey
+    store.days[day] = daily
+    await writeStore(store)
+    return {
+      recorded: true,
+      qualified: isQualifiedGuardianSurvey(answers),
+    }
   })
 
   writeQueue = task.catch(() => undefined)
@@ -702,6 +857,22 @@ export async function getAnalyticsOverview(days = 30): Promise<AnalyticsOverview
     engagedSeconds: number
   }> = {}
   const sourceTotals: Record<string, number> = {}
+  const campaignFunnelTotals: Record<string, {
+    visitors: number
+    coursePageVisitors: number
+    courseInterestVisitors: number
+    coursePreviewVisitors: number
+    planetJoinVisitors: number
+    guardianInterestVisitors: number
+  }> = {}
+  const guardianSurveyTotals: DailyGuardianSurvey = {
+    submissions: 0,
+    qualifiedSubmissions: 0,
+    visitors: [],
+    answers: Object.fromEntries(
+      GUARDIAN_SURVEY_QUESTIONS.map((question) => [question.id, {}]),
+    ),
+  }
   const landingTotals: Record<string, number> = {}
   const webVitalValues = Object.fromEntries(
     CORE_WEB_VITAL_NAMES.map((name) => [name, [] as number[]]),
@@ -741,6 +912,43 @@ export async function getAnalyticsOverview(days = 30): Promise<AnalyticsOverview
     }
     for (const [source, visitors] of Object.entries(daily.sources)) {
       sourceTotals[source] = (sourceTotals[source] || 0) + visitors
+    }
+    const funnelFor = (source: string) => {
+      campaignFunnelTotals[source] ||= {
+        visitors: 0,
+        coursePageVisitors: 0,
+        courseInterestVisitors: 0,
+        coursePreviewVisitors: 0,
+        planetJoinVisitors: 0,
+        guardianInterestVisitors: 0,
+      }
+      return campaignFunnelTotals[source]
+    }
+    for (const source of Object.values(daily.visitorSources)) {
+      funnelFor(source).visitors += 1
+    }
+    const addStageVisitors = (
+      visitors: string[] | undefined,
+      field: 'coursePageVisitors' | 'courseInterestVisitors' | 'coursePreviewVisitors' | 'planetJoinVisitors' | 'guardianInterestVisitors',
+    ) => {
+      for (const visitor of visitors || []) {
+        const source = daily.visitorSources[visitor]
+        if (source) funnelFor(source)[field] += 1
+      }
+    }
+    addStageVisitors(daily.pathVisitors['/ai-native-generation'], 'coursePageVisitors')
+    addStageVisitors(daily.conversions.ai_native_generation_interest?.visitors, 'courseInterestVisitors')
+    addStageVisitors(daily.conversions.course_preview_play?.visitors, 'coursePreviewVisitors')
+    addStageVisitors(daily.conversions.join_planet?.visitors, 'planetJoinVisitors')
+    addStageVisitors(daily.conversions.course_beta_guardian_interest?.visitors, 'guardianInterestVisitors')
+    guardianSurveyTotals.submissions += daily.guardianSurvey.submissions
+    guardianSurveyTotals.qualifiedSubmissions += daily.guardianSurvey.qualifiedSubmissions
+    for (const question of GUARDIAN_SURVEY_QUESTIONS) {
+      const totals = guardianSurveyTotals.answers[question.id]
+      for (const option of question.options) {
+        totals[option.id] = (totals[option.id] || 0)
+          + (daily.guardianSurvey.answers[question.id]?.[option.id] || 0)
+      }
     }
     for (const [pathname, visitors] of Object.entries(daily.landingPaths)) {
       landingTotals[pathname] = (landingTotals[pathname] || 0) + visitors
@@ -789,6 +997,40 @@ export async function getAnalyticsOverview(days = 30): Promise<AnalyticsOverview
     .sort(([, left], [, right]) => right - left)
     .slice(0, 10)
     .map(([source, visitors]) => ({ source, visitors }))
+  const campaignFunnels = Object.entries(campaignFunnelTotals)
+    .sort(([, left], [, right]) => right.visitors - left.visitors)
+    .slice(0, 12)
+    .map(([source, metrics]) => {
+      const rate = (value: number) => metrics.visitors
+        ? Math.min(100, Math.round((value / metrics.visitors) * 1000) / 10)
+        : 0
+      return {
+        source,
+        ...metrics,
+        coursePageRate: rate(metrics.coursePageVisitors),
+        coursePreviewRate: rate(metrics.coursePreviewVisitors),
+        planetJoinRate: rate(metrics.planetJoinVisitors),
+        guardianInterestRate: rate(metrics.guardianInterestVisitors),
+      }
+    })
+  const guardianSurvey = {
+    target: GUARDIAN_SURVEY_TARGET,
+    submissions: guardianSurveyTotals.submissions,
+    qualifiedSubmissions: guardianSurveyTotals.qualifiedSubmissions,
+    progressRate: Math.min(
+      100,
+      Math.round((guardianSurveyTotals.qualifiedSubmissions / GUARDIAN_SURVEY_TARGET) * 1000) / 10,
+    ),
+    questions: GUARDIAN_SURVEY_QUESTIONS.map((question) => ({
+      id: question.id,
+      label: question.label,
+      options: question.options.map((option) => ({
+        id: option.id,
+        label: option.label,
+        count: guardianSurveyTotals.answers[question.id]?.[option.id] || 0,
+      })),
+    })),
+  }
   const topLandingPaths = Object.entries(landingTotals)
     .sort(([, left], [, right]) => right - left)
     .slice(0, 10)
@@ -850,6 +1092,8 @@ export async function getAnalyticsOverview(days = 30): Promise<AnalyticsOverview
     webVitals,
     topPaths,
     topSources,
+    campaignFunnels,
+    guardianSurvey,
     topLandingPaths,
     timeline,
   }

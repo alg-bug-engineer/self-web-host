@@ -50,3 +50,8 @@ next-env.d.ts
 # PM2
 logs/
 *.log
+/.campaign-local/
+/public/images/campaigns/ai-native-generation-30d/jimeng-image-*.png
+/public/images/campaigns/ai-native-generation-30d/refined/jimeng-image-*.png
+!/public/images/campaigns/ai-native-generation-30d/refined/jimeng-image-20260811T050834Z-04.png
+/public/images/courses/ai-native-generation/**/jimeng-image-*.png

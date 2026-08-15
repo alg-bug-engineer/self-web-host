@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "date": "2026-08-12",
+  "generatedAt": "2026-08-12T04:58:00+08:00",
+  "assets": [
+    {
+      "id": "zsxq-start",
+      "platform": "zsxq",
+      "role": "primary_start_payload",
+      "file": "content/campaigns/ai-native-generation-30d/2026-08-12-zsxq-start-here-publish.txt",
+      "sha256": "86f5f533145f854ce9e5bd667d7596b3e63ef73bbf8826d9d31932f4bd1fe7f0",
+      "condition": "09:00 第一项，只使用第一行标题与其余正文"
+    },
+    {
+      "id": "x-text-fallback",
+      "platform": "x",
+      "role": "text_fallback_payload",
+      "file": "content/campaigns/ai-native-generation-30d/2026-08-12-x-post-publish.txt",
+      "sha256": "6c3002901d83c27478460ba142e2f058312bac9630e25b0003f339f6f6e4f49e",
+      "condition": "视频上传、处理或可播放状态失败或无法确认"
+    },
+    {
+      "id": "x-video-success",
+      "platform": "x",
+      "role": "video_success_payload",
+      "file": "content/campaigns/ai-native-generation-30d/2026-08-12-x-post-video-publish.txt",
+      "sha256": "67bd1660e86dc9d334d7e65ca7c487b36abb7e2c14cc465a44184a4c804065d0",
+      "condition": "同一 X 编辑器中视频上传完成、正文复核通过"
+    },
+    {
+      "id": "x-teaser-video",
+      "platform": "video",
+      "role": "media_attachment",
+      "file": "public/videos/campaigns/ai-native-generation-30d/2026-08-12-l01-x-teaser.mp4",
+      "sha256": "9aead46a0c35daf8fa01411609e90c6934ce123d92d4033472497a52218b34d9",
+      "condition": "仅与 x-video-success 同帖上传；上传失败或可播放状态无法确认时使用文字回退版且不补发第二帖",
+      "expectedMedia": {
+        "durationSeconds": 57.9,
+        "durationToleranceSeconds": 0.1,
+        "width": 1920,
+        "height": 1080,
+        "videoCodec": "h264",
+        "audioCodec": "aac",
+        "subtitleCodec": "mov_text",
+        "subtitleLanguage": "zho"
+      }
+    }
+  ],
+  "runtimeDerivative": {
+    "script": "scripts/prepare-campaign-crosslink-payload.mjs",
+    "shareQrDecoderScript": "scripts/decode-zsxq-share-qr.mjs",
+    "shareQrDecoderCommandTemplate": "npm run campaign:zsxq:share-qr -- --input <TEMP_SHARE_QR_PNG> --json",
+    "shareQrRequiredOutputFields": ["destination", "destinationType", "imageSha256", "decoder", "writesPerformed"],
+    "allowedPlatforms": ["x"],
+    "allowedSourceAssetIds": ["x-text-fallback", "x-video-success"],
+    "requiredOutputFields": ["sourceSha256", "contentSha256", "destination", "destinationType", "payload", "writesPerformed"],
+    "guardrail": "只有可见分享面板生成的 t.zsxq.com 主题短链，或已核验 topic_detail URL，才生成直链派生正文；派生正文不写文件，发布证据记录最终 contentSha256。"
+  },
+  "externalWritesPerformed": false
+}

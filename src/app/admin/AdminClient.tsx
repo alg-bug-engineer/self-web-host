@@ -17,6 +17,7 @@ const sourceLabel = (source: string) => {
   const [kind, value] = source.split(':', 2)
   const labels: Record<string, string> = {
     campaign: '活动',
+    ai: 'AI 引荐',
     search: '搜索',
     social: '社交',
     referral: '引荐',
@@ -63,6 +64,10 @@ const conversionLabel = (name: string) => ({
   visit_github: '前往 GitHub',
   view_planet: '了解知识星球',
   join_planet: '加入知识星球',
+  ai_native_generation_interest: '儿童 AI 素养课程意向',
+  course_beta_guardian_interest: '监护人课程内测意向',
+  ai_literacy_check_complete: '完成家庭 AI 素养自测',
+  course_preview_play: '播放儿童 AI 课程试听',
   open_tool: '打开工具',
   subscribe_feed: '订阅 RSS',
   follow_wechat: '关注公众号',
@@ -278,7 +283,7 @@ export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {
             <p className="text-xs text-text-tertiary">访客哈希按月轮换；不保存原始 IP</p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-7">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-8">
             <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
               <p className="text-xs text-text-tertiary">页面浏览 PV</p>
               <strong className="mt-2 block text-2xl text-text-primary">{analytics.pageViews.toLocaleString('zh-CN')}</strong>
@@ -313,6 +318,11 @@ export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {
               <p className="text-xs text-text-tertiary">有效来源数</p>
               <strong className="mt-2 block text-2xl text-text-primary">{analytics.topSources.length}</strong>
               <span className="mt-1 block text-xs text-text-secondary">搜索、社交、引荐与活动</span>
+            </div>
+            <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+              <p className="text-xs text-text-tertiary">有效家长调研</p>
+              <strong className="mt-2 block text-2xl text-text-primary">{analytics.guardianSurvey.qualifiedSubmissions}</strong>
+              <span className="mt-1 block text-xs text-text-secondary">目标 {analytics.guardianSurvey.target} · {analytics.guardianSurvey.progressRate}%</span>
             </div>
           </div>
 
@@ -428,6 +438,75 @@ export default function AdminClient({ isAuthed, analytics }: AdminClientProps) {
                 ))}
               </div>
             ) : <p className="text-sm text-text-tertiary">新版本部署后开始记录价值转化。</p>}
+          </div>
+
+          <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+            <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-text-primary">监护人匿名调研汇总</h3>
+                <p className="mt-1 text-xs text-text-tertiary">只保存选项计数，不保存可还原单个家庭的逐题答卷</p>
+              </div>
+              <span className="text-xs text-text-tertiary">
+                有效样本 {analytics.guardianSurvey.qualifiedSubmissions} / {analytics.guardianSurvey.target} · 全部提交 {analytics.guardianSurvey.submissions}
+              </span>
+            </div>
+            {analytics.guardianSurvey.submissions ? (
+              <div className="grid gap-4 md:grid-cols-2">
+                {analytics.guardianSurvey.questions.map((question) => (
+                  <div key={question.id} className="rounded-lg border border-border-default bg-bg-secondary p-4">
+                    <strong className="text-sm text-text-primary">{question.label}</strong>
+                    <div className="mt-3 space-y-1.5">
+                      {question.options.map((option) => (
+                        <div key={option.id} className="flex items-center justify-between gap-3 text-xs">
+                          <span className="text-text-secondary">{option.label}</span>
+                          <span className="font-medium text-text-primary">{option.count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : <p className="text-sm text-text-tertiary">课程页公开后开始收集监护人明确同意的匿名固定选项。</p>}
+          </div>
+
+          <div className="rounded-xl border border-border-default bg-bg-tertiary p-4">
+            <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-text-primary">儿童 AI 素养渠道漏斗</h3>
+                <p className="mt-1 text-xs text-text-tertiary">匿名、按日去重：来源访客 → 课程页 → 课程意向/试听 → 星球点击 → 监护人内测意向</p>
+              </div>
+              <span className="text-xs text-text-tertiary">不记录姓名、联系方式或儿童作业</span>
+            </div>
+            {analytics.campaignFunnels.length ? (
+              <div className="overflow-x-auto">
+                <table className="min-w-[760px] w-full text-left text-sm">
+                  <thead className="text-xs text-text-tertiary">
+                    <tr className="border-b border-border-default">
+                      <th className="px-2 py-2 font-medium">来源</th>
+                      <th className="px-2 py-2 text-right font-medium">访客</th>
+                      <th className="px-2 py-2 text-right font-medium">课程页</th>
+                      <th className="px-2 py-2 text-right font-medium">课程意向</th>
+                      <th className="px-2 py-2 text-right font-medium">试听</th>
+                      <th className="px-2 py-2 text-right font-medium">星球点击</th>
+                      <th className="px-2 py-2 text-right font-medium">监护人意向</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {analytics.campaignFunnels.map((item) => (
+                      <tr key={item.source} className="border-b border-border-default/70 last:border-0">
+                        <td className="px-2 py-2 text-text-secondary" title={item.source}>{sourceLabel(item.source)}</td>
+                        <td className="px-2 py-2 text-right text-text-primary">{item.visitors}</td>
+                        <td className="px-2 py-2 text-right text-text-primary">{item.coursePageVisitors} <span className="text-xs text-text-tertiary">({item.coursePageRate}%)</span></td>
+                        <td className="px-2 py-2 text-right text-text-primary">{item.courseInterestVisitors}</td>
+                        <td className="px-2 py-2 text-right text-text-primary">{item.coursePreviewVisitors} <span className="text-xs text-text-tertiary">({item.coursePreviewRate}%)</span></td>
+                        <td className="px-2 py-2 text-right text-text-primary">{item.planetJoinVisitors} <span className="text-xs text-text-tertiary">({item.planetJoinRate}%)</span></td>
+                        <td className="px-2 py-2 text-right text-text-primary">{item.guardianInterestVisitors} <span className="text-xs text-text-tertiary">({item.guardianInterestRate}%)</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : <p className="text-sm text-text-tertiary">部署带渠道参数的课程入口后开始形成归因漏斗。</p>}
           </div>
         </section>
       )}

@@ -46,6 +46,7 @@ export default function InternalAnalytics() {
             returningReader,
             utmSource: new URLSearchParams(window.location.search).get('utm_source'),
             utmMedium: new URLSearchParams(window.location.search).get('utm_medium'),
+            utmCampaign: new URLSearchParams(window.location.search).get('utm_campaign'),
           }),
           keepalive: true,
         })
@@ -74,15 +75,7 @@ export default function InternalAnalytics() {
       }
     }
 
-    const sendConversion = (event: MouseEvent) => {
-      const element = event.target instanceof Element
-        ? event.target.closest<HTMLElement>('[data-analytics-event]')
-        : null
-      if (!element) return
-      const name = element.dataset.analyticsEvent
-      if (!name) return
-      const target = element.dataset.analyticsTarget || 'unspecified'
-
+    const sendConversionPayload = (name: string, target: string) => {
       void pageViewReady.then((pageViewRecorded) => {
         if (!pageViewRecorded) return
         return fetch('/api/analytics/view', {
@@ -103,6 +96,24 @@ export default function InternalAnalytics() {
         item_id: target,
         page_path: pathname,
       })
+    }
+
+    const sendConversion = (event: MouseEvent) => {
+      const element = event.target instanceof Element
+        ? event.target.closest<HTMLElement>('[data-analytics-event]')
+        : null
+      if (!element) return
+      const name = element.dataset.analyticsEvent
+      if (!name) return
+      sendConversionPayload(name, element.dataset.analyticsTarget || 'unspecified')
+    }
+
+    const sendCustomConversion = (event: Event) => {
+      if (!(event instanceof CustomEvent)) return
+      const detail = event.detail as { name?: unknown; target?: unknown } | null
+      const name = typeof detail?.name === 'string' ? detail.name : ''
+      const target = typeof detail?.target === 'string' ? detail.target : 'unspecified'
+      if (name) sendConversionPayload(name, target)
     }
 
     const readerIsActive = () => document.visibilityState === 'visible' && document.hasFocus()
@@ -133,6 +144,7 @@ export default function InternalAnalytics() {
     window.addEventListener('blur', syncReadingState)
     document.addEventListener('visibilitychange', syncReadingState)
     document.addEventListener('click', sendConversion)
+    window.addEventListener('site:conversion', sendCustomConversion)
     window.addEventListener('pagehide', sendEngagement)
     const interval = window.setInterval(sendEngagement, 30_000)
 
@@ -144,6 +156,7 @@ export default function InternalAnalytics() {
       window.removeEventListener('blur', syncReadingState)
       document.removeEventListener('visibilitychange', syncReadingState)
       document.removeEventListener('click', sendConversion)
+      window.removeEventListener('site:conversion', sendCustomConversion)
       window.removeEventListener('pagehide', sendEngagement)
     }
   }, [pathname])

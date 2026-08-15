@@ -24,6 +24,7 @@ const cases = [
   [{ referrer: 'https://example.com/article' }, 'referral:example.com'],
   [{ referrer: 'https://chatgpt.com.example.org/' }, 'referral:chatgpt.com.example.org'],
   [{ referrer: 'https://gemini.google.com/', utmSource: 'AI Newsletter', utmMedium: 'E-mail' }, 'campaign:ai-newsletter/e-mail'],
+  [{ referrer: '', utmSource: 'CSDN', utmMedium: 'Organic', utmCampaign: 'AI Native Generation 30D' }, 'campaign:csdn/organic/ai-native-generation-30d'],
 ]
 
 for (const [input, expected] of cases) {

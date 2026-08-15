@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "timezone": "Asia/Shanghai",
+  "notes": [
+    "所有数字来自知识星球管理后台可见页面或人工确认，不读取 cookies、localStorage 或其他登录凭证。",
+    "近 30 日付费页指标是滚动窗口，相邻快照差值只能表示窗口变化，不能直接归因于本周。",
+    "campaignPaidPageVisitors 与 campaignJoinClickers 只记录能通过活动链接或人工核对归因到本活动的增量；不能确认来源时保持 0，不用滚动窗口累计值代替。",
+    "newPaidFamilies 专指活动期间新增的知识星球付费家庭；paidPilotFamilies 专指课程内测付费家庭，两者不合并。",
+    "儿童任务只记录去重家庭数与完成状态，不记录姓名、学校、账号、正脸、声音、聊天或原始作品。",
+    "week1MissingFieldCounts 只记录首帖五格中被人工确认缺失的累计次数，不保存回复原文或家庭标识。",
+    "startedWeek1Families 在去重家庭首次补齐场景、输入、输出、错误、检查者五格时增加；该首次提交可以来自 8 月 12 日起点或 8 月 13 日 L01。",
+    "validWeek1Families 只记录 L01 及后续第一周的有效新证据：新家庭的 L01 完整五格，或已完成起点家庭提交不同场景/把错误与检查责任改成可观察可承担版本；不得复用昨天旧回复或复制同一行。",
+    "2026-08-12 09:00 后的正式活动主题必须通过 calendarEntryId 绑定运营日志中的知识星球发布证据，并继承 publishedAt 与 publicUrl；启动前旧帖不得补写正式活动标识。",
+    "zsxqCourseInquiryFamilies 只累计在知识星球可见页面明确主动询问课程、内测、报名或参与方式的去重监护人；不保存账号或原文，不把普通作业、点赞或关键词曝光计入。",
+    "zsxqCourseRedirectedFamilies 是已按唯一回复引导到公众号私信的去重监护人子集，不能大于 zsxqCourseInquiryFamilies；它不等于有效意向、录取或付款。"
+  ],
+  "snapshots": [
+    {
+      "capturedAt": "2026-08-11T20:22:00+08:00",
+      "source": "知识星球管理后台可见报表",
+      "members": 21,
+      "unexpiredMembers": 1,
+      "sevenDayActiveMembers": 0,
+      "monthlyActiveMembers": 0,
+      "totalTopics": 128,
+      "totalComments": 0,
+      "totalLikes": 0,
+      "cumulativeRevenueCny": 917.04,
+      "thirtyDayPreviewVisitors": 15,
+      "thirtyDayJoinClickers": 1,
+      "thirtyDayPaidJoins": 0,
+      "campaignPaidPageVisitors": 0,
+      "campaignJoinClickers": 0,
+      "newPaidFamilies": 0,
+      "startedWeek1Families": 0,
+      "validWeek1Families": 0,
+      "week1MissingFieldCounts": {
+        "scene": 0,
+        "input": 0,
+        "output": 0,
+        "error": 0,
+        "checker": 0
+      },
+      "challengeStartedFamilies": 0,
+      "challengeDay2Families": 0,
+      "challengeCompletedFamilies": 0,
+      "researchProjectStartedFamilies": 0,
+      "researchLogFamilies": 0,
+      "researchProjectCompletedFamilies": 0,
+      "safetyCheckpointFamilies": 0,
+      "familyAgreementFamilies": 0,
+      "defenseCompletedFamilies": 0,
+      "zsxqCourseInquiryFamilies": 0,
+      "zsxqCourseRedirectedFamilies": 0,
+      "qualifiedGuardianInterests": 0,
+      "paidPilotFamilies": 0,
+      "courseStartedFamilies": 0,
+      "courseCompletedFamilies": 0,
+      "authorizedFeedbackCount": 0,
+      "content": [
+        {
+          "contentId": "2026-08-11T13:45:00+08:00",
+          "label": "四周儿童 AI 素养试运行",
+          "reads": 1,
+          "comments": 0,
+          "likes": 0,
+          "validAssignments": 0
+        },
+        {
+          "contentId": "2026-08-11T16:41:00+08:00",
+          "label": "L02 + L03 三次提问与错误侦探",
+          "reads": 1,
+          "comments": 0,
+          "likes": 0,
+          "validAssignments": 0
+        }
+      ]
+    }
+  ]
+}

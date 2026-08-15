@@ -3,6 +3,7 @@
   "staticPaths": [
     "/",
     "/about",
+    "/ai-native-generation",
     "/blog",
     "/chat",
     "/collections/articles",

@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "status": "intake_only",
+  "paymentEnabled": false,
+  "intakeDisclosureAsset": "content/campaigns/ai-native-generation-30d/2026-08-31-course-beta-participation-boundaries.md",
+  "contactPath": {
+    "channel": "公众号私信",
+    "keyword": "儿童AI内测",
+    "websiteCollectsContact": false,
+    "minimumFields": [
+      "年龄段",
+      "每周可共同投入时间",
+      "参与偏好"
+    ],
+    "forbiddenFields": [
+      "儿童姓名",
+      "学校",
+      "账号",
+      "正脸或声音",
+      "私人聊天",
+      "健康情况",
+      "原始作品"
+    ]
+  },
+  "offer": {
+    "priceCny": null,
+    "startsOn": null,
+    "endsOn": null,
+    "maxFamilies": null,
+    "refundPolicy": null,
+    "paymentMethod": null,
+    "supportResponseWindow": null
+  },
+  "proposedOffer": {
+    "status": "pending_owner_approval_and_compliance",
+    "priceCny": 299,
+    "startsOn": "2026-09-14",
+    "endsOn": "2026-10-11",
+    "maxFamilies": 10,
+    "refundPolicy": "开营前全额退款；开营后按尚未开始的周数退还对应服务费；未按约交付的服务另行全额退还；公开视频不单独计费。",
+    "paymentMethod": "仅使用属地主管部门认可的监管平台或培训收费专用账户，并提供正式订单或票据；不得使用个人收款码。",
+    "supportResponseWindow": "工作日 48 小时内完成一次异步反馈；每周日形成一次集中答疑总结。",
+    "decisionFile": "ops/campaigns/ai-native-generation-30d-paid-pilot-offer-decision-2026-08-11.md"
+  },
+  "confirmedDelivery": [
+    "12 节短视频与中文字幕",
+    "4 周家庭任务模板",
+    "每周一次集中答疑或异步点评",
+    "一个小型亲子研究项目",
+    "家庭 AI 公约与项目答辩"
+  ],
+  "requiredBeforePayment": [
+    "priceCny",
+    "startsOn",
+    "endsOn",
+    "maxFamilies",
+    "refundPolicy",
+    "paymentMethod",
+    "supportResponseWindow"
+  ],
+  "complianceGate": {
+    "jurisdiction": null,
+    "providerLegalName": null,
+    "trainingEligibilityVerified": false,
+    "nationalPlatformOrLocalChannelVerified": false,
+    "regulatedPrepaymentAccountVerified": false,
+    "modelContractReady": false,
+    "invoiceCapabilityVerified": false,
+    "advertisingComplianceReviewed": false,
+    "reviewedAt": null
+  },
+  "requiredComplianceBeforePayment": [
+    "jurisdiction",
+    "providerLegalName",
+    "trainingEligibilityVerified",
+    "nationalPlatformOrLocalChannelVerified",
+    "regulatedPrepaymentAccountVerified",
+    "modelContractReady",
+    "invoiceCapabilityVerified",
+    "advertisingComplianceReviewed"
+  ],
+  "separationRules": [
+    "知识星球共学、课程内测意向与课程付费分别表达，不默认捆绑。",
+    "监护人联系账号与儿童作业、自测、答辩及作品记录分开处理。",
+    "不以孩子分数、焦虑、作业表现或是否公开授权决定付费资格。",
+    "任何付款前向监护人明确展示价格、周期、交付、退款和支持边界。"
+  ]
+}

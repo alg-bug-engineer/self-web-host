@@ -17,6 +17,17 @@ if (!dryRun && (!appId || !appSecret)) throw new Error('公众号主动发布需
 
 const manifestPath = path.resolve(projectDir, manifestFile)
 const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'))
+const html = await fs.readFile(path.resolve(projectDir, manifest.htmlPath), 'utf8')
+const article = html.match(/<article>([\s\S]*?)<\/article>/i)?.[1]
+if (!article) throw new Error('公众号 HTML 中没有找到 article 正文。')
+const sourceContentSha256 = crypto.createHash('sha256').update(article).digest('hex')
+const guardedRelease = Object.hasOwn(manifest, 'releaseGate')
+  || Object.hasOwn(manifest, 'authorApproval')
+  || Object.hasOwn(manifest, 'contentSha256')
+if (guardedRelease && manifest.contentSha256 !== sourceContentSha256) {
+  throw new Error('公众号正文哈希与清单不一致；必须重新生成草稿并重新预览。')
+}
+if (autoPublish && guardedRelease) validateAuthorApproval(manifest, sourceContentSha256)
 const stateKey = manifest.date ? `${manifest.date}:${manifest.slug}` : manifest.slug
 const state = await readJson(stateFile, {})
 if (['published', 'draft'].includes(state[stateKey]?.status)) {
@@ -24,9 +35,6 @@ if (['published', 'draft'].includes(state[stateKey]?.status)) {
   process.exit(0)
 }
 
-const html = await fs.readFile(path.resolve(projectDir, manifest.htmlPath), 'utf8')
-const article = html.match(/<article>([\s\S]*?)<\/article>/i)?.[1]
-if (!article) throw new Error('公众号 HTML 中没有找到 article 正文。')
 const token = dryRun ? '' : await getAccessToken()
 if (!dryRun && state[stateKey]?.status === 'publishing' && state[stateKey]?.publishId) {
   const result = await waitForPublish(token, state[stateKey].publishId)
@@ -65,7 +73,7 @@ const draftResponse = await wechatJson(`https://api.weixin.qq.com/cgi-bin/draft/
     author: author.slice(0, 16),
     digest: manifest.description.slice(0, 120),
     content,
-    content_source_url: manifest.websiteUrl,
+    ...(manifest.websiteUrl ? { content_source_url: manifest.websiteUrl } : {}),
     thumb_media_id: thumbMediaId,
     need_open_comment: 1,
     only_fans_can_comment: 0,
@@ -79,6 +87,7 @@ const record = {
   manifestSlug: manifest.slug,
   websiteUrl: manifest.websiteUrl,
   contentHash: crypto.createHash('sha256').update(content).digest('hex'),
+  sourceContentSha256,
   updatedAt: new Date().toISOString(),
 }
 
@@ -180,6 +189,19 @@ async function readJson(file, fallback) {
 
 function wechatError(data) { return `${data?.errcode ?? 'HTTP'} ${data?.errmsg || data?.message || '未知错误'}` }
 function escapeHtml(value) { return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }
+
+function validateAuthorApproval(manifest, sourceContentSha256) {
+  if (manifest.releaseGate !== 'author_approved_for_publish') {
+    throw new Error('公众号自动发布被阻止：作者尚未完成移动端预览并明确确认。')
+  }
+  const approval = manifest.authorApproval || {}
+  if (approval.status !== 'approved' || Number.isNaN(Date.parse(approval.approvedAt || ''))) {
+    throw new Error('公众号自动发布被阻止：缺少有效的作者确认时间。')
+  }
+  if (approval.approvedContentSha256 !== sourceContentSha256) {
+    throw new Error('公众号自动发布被阻止：作者确认的正文版本与当前正文不一致。')
+  }
+}
 
 function inlineWechatStyles(value) {
   return value

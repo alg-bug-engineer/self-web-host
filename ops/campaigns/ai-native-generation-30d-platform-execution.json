@@ -1,0 +1,135 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "credentialPolicy": [
+    "只使用官方接口、现有发布脚本或浏览器可见交互状态。",
+    "不读取、导出或复用 cookies、localStorage、密码、浏览器配置文件或会话数据库。",
+    "遇到重新登录、验证码、身份验证、风险控制或权限变化时停止外部写入并保留草稿。"
+  ],
+  "globalStopConditions": [
+    "要求重新登录、扫码、验证码或身份验证",
+    "涉及付费、退款、改价、优惠券或账号设置",
+    "涉及删除、覆盖或无法恢复的外部内容",
+    "需要提交儿童姓名、学校、位置、正脸、声音、聊天、账号或原始作品",
+    "平台出现风险控制、反自动化提示或无法确认发布结果"
+  ],
+  "platforms": {
+    "website": {
+      "role": "课程总览、匿名调研、长期搜索入口与渠道归因",
+      "executionMode": "git_and_deploy_script",
+      "authenticatedState": "not_applicable",
+      "externalWriteStatus": "blocked_pending_deployment_authorization",
+      "allowedActions": ["本地构建", "只读生产探针", "部署预检"],
+      "prohibitedActions": ["未授权提交", "未授权推送", "未授权部署", "课程页 200 前启用 UTM"],
+      "confirmationEvidence": ["课程页 HTTP 200", "健康接口 commit 与部署提交一致", "生产转化探针通过"],
+      "metricsCapture": ["匿名渠道访客", "课程兴趣", "试听播放", "星球点击", "监护人内测意向", "匿名调研汇总"],
+      "currentBlocker": "生产课程页 404，deploymentAuthorized=false，运行时源码与媒体尚未完整版本化"
+    },
+    "wechat": {
+      "role": "家长认知、信任建立与课程内测私信承接",
+      "executionMode": "official_api_draft_then_manual_preview",
+      "authenticatedState": "api_or_manual_session_required_at_execution",
+      "externalWriteStatus": "draft_only_manual_preview",
+      "allowedActions": ["生成公众号清单", "官方接口创建草稿", "作者后台预览后人工确认"],
+      "prohibitedActions": ["绕过 freepublish 权限", "未经预览群发", "自动读取私信或联系人"],
+      "confirmationEvidence": ["草稿 media_id 或后台草稿可见", "作者移动端预览", "发布后公开 URL"],
+      "metricsCapture": ["公开 URL", "发布时间", "阅读", "在看", "点赞", "留言", "监护人最小字段意向人工去重"],
+      "currentBlocker": "后台域名曾被浏览器安全策略阻止；最终发布需作者后台预览确认"
+    },
+    "csdn": {
+      "role": "技术原理、专业可信度与检索流量",
+      "executionMode": "browser_visible_ui",
+      "authenticatedState": "browser_session_observed_2026-08-11",
+      "externalWriteStatus": "scheduled_flow_verified",
+      "allowedActions": ["在可见编辑器写入草稿", "设置定时发布", "到期后核验公开页"],
+      "prohibitedActions": ["导出登录凭证", "绕过封面上传限制", "批量删除或修改旧文"],
+      "confirmationEvidence": ["内容管理页显示定时状态", "公开文章 URL", "标题、正文、时间与可见性一致"],
+      "metricsCapture": ["文章 ID", "公开 URL", "阅读", "点赞", "评论", "收藏"],
+      "currentBlocker": "封面 file URL 权限受限；正文和定时发布流程不受影响"
+    },
+    "x": {
+      "role": "短观点、研究摘要与知识星球入口",
+      "executionMode": "browser_visible_ui",
+      "authenticatedState": "browser_session_observed_2026-08-11",
+      "externalWriteStatus": "browser_publish_verified",
+      "allowedActions": ["在可见发布框写入单条帖子", "在同一帖子附加已验收的本地公开试听短片", "发布后核验状态 URL"],
+      "prohibitedActions": ["导出登录凭证", "自动私信", "批量关注", "视频失败后重复发布第二条帖子", "删除或修改旧帖"],
+      "confirmationEvidence": ["页面提示帖子已发送", "时间线出现完整正文", "附加视频可播放（如使用视频版）", "状态 URL 可打开"],
+      "metricsCapture": ["状态 ID", "公开 URL", "浏览", "回复", "转发", "点赞"],
+      "mediaUploadCapability": {
+        "status": "blocked_extension_file_url_permission",
+        "observedAt": "2026-08-12T09:06:00+08:00",
+        "evidence": "Chrome 扩展文件选择器对已锁定本地 MP4 返回 Not allowed",
+        "requiredOwnerAction": "在 Chrome 扩展详情中开启“允许访问文件网址”，之后先用非发布编辑器做一次本地文件上传探针",
+        "defaultUntilVerified": "text_fallback_only",
+        "settingChangeAuthorized": false
+      },
+      "currentBlocker": "未接入官方 API；Chrome 扩展尚未允许本地文件上传，当前只能逐条发布文字并核验"
+    },
+    "toutiao": {
+      "role": "家长问题、教育误区与大众案例",
+      "executionMode": "browser_visible_ui",
+      "authenticatedState": "browser_session_observed_2026-08-11",
+      "externalWriteStatus": "scheduled_flow_verified",
+      "allowedActions": ["在可见编辑器创建草稿", "设置定时发布", "选择真实生成内容声明", "到期核验作品"],
+      "prohibitedActions": ["导出登录凭证", "隐藏生成内容声明", "批量删除或修改旧作品"],
+      "confirmationEvidence": ["作品管理页显示定时或已发布", "公开作品 URL", "标题、正文、作者、时间和声明一致"],
+      "metricsCapture": ["作品 ID", "公开 URL", "展现", "阅读", "点赞", "评论", "生成内容声明"],
+      "currentBlocker": "未接入稳定官方发布接口；依赖浏览器可见交互和发布后核验"
+    },
+    "zsxq": {
+      "role": "课程交付、亲子任务、答疑、活跃和付费承接",
+      "executionMode": "browser_visible_ui",
+      "authenticatedState": "browser_session_observed_2026-08-11",
+      "externalWriteStatus": "browser_publish_verified",
+      "allowedActions": ["发布去标识化任务", "在同一任务编辑器中附加已验收的本地课程视频", "设置或人工维护置顶入口", "读取后台可见聚合指标"],
+      "prohibitedActions": ["导出登录凭证", "自动私信历史成员", "自动替换或取消现有重要置顶", "擅自改价或发券", "抓取成员身份和儿童资料"],
+      "confirmationEvidence": ["星球最新动态出现完整正文", "发布时间与阅读数可见", "主题分享面板生成的 t.zsxq.com 短链，或页面直接提供的主题详情链接", "起点主题的置顶标记可见（如执行置顶）", "后台聚合指标可见"],
+      "metricsCapture": ["主题阅读、评论、点赞和有效任务", "成员与活跃", "付费页滚动指标", "活动归因访问点击", "新增星球付费家庭"],
+      "mediaUploadCapability": {
+        "status": "blocked_extension_file_url_permission",
+        "observedAt": "2026-08-12T09:06:00+08:00",
+        "evidence": "知识星球与 X 共用当前 Chrome 扩展文件传输能力；X 的本地 MP4 文件选择器已返回 Not allowed",
+        "requiredOwnerAction": "在 Chrome 扩展详情中开启“允许访问文件网址”，之后先在不提交的知识星球编辑器中验证本地文件可选择",
+        "defaultUntilVerified": "text_fallback_only",
+        "settingChangeAuthorized": false
+      },
+      "pinPolicy": {
+        "observedAt": "2026-08-12T04:35:00+08:00",
+        "existingPinnedTopicVisible": true,
+        "existingPinnedTopicSummary": "百度网盘学习资料入口",
+        "defaultAction": "skip_existing_pinned_topic",
+        "overrideCondition": "只有可见界面明确证明支持多置顶且不会替换、取消或隐藏现有入口时，才由作者重新决定。"
+      },
+      "publicProfileReview": {
+        "observedAt": "2026-08-12T04:35:00+08:00",
+        "status": "legacy_persona_claims_visible_pending_owner_review",
+        "proposalAsset": "content/campaigns/ai-native-generation-30d/2026-08-12-zsxq-profile-proposal.md",
+        "action": "账号简介设置不自动修改；等待作者确认建议名称与长版或短版简介。"
+      },
+      "currentBlocker": "无稳定发布 API；当前 Chrome 扩展本地文件上传权限未开启，课程主题默认使用自包含文字回退"
+    },
+    "notebooklm": {
+      "role": "权威资料研究、问题聚类与内容选题",
+      "executionMode": "browser_visible_ui_with_cli_pending",
+      "authenticatedState": "web_operational_cli_unauthenticated",
+      "externalWriteStatus": "research_notes_only",
+      "allowedActions": ["在现有 notebook 生成研究笔记", "保存不含隐私的选题摘要", "CLI 只读认证探针"],
+      "prohibitedActions": ["导出 Chrome cookies", "重复创建 notebook", "把自动摘要当成最终事实来源"],
+      "confirmationEvidence": ["现有 notebook ID", "有效来源数量", "保存笔记数量"],
+      "metricsCapture": ["有效来源", "失败来源", "保存研究笔记", "证据缺口"],
+      "currentBlocker": "网页端可用；CLI 独立认证未完成"
+    },
+    "jimeng": {
+      "role": "课程主视觉、信息图与视频素材生产",
+      "executionMode": "local_api_5100",
+      "authenticatedState": "local_api_operational",
+      "externalWriteStatus": "local_media_generation_only",
+      "allowedActions": ["文本生成图片", "图片或视频变换", "保存本地候选", "人工筛选无人物无文字素材"],
+      "prohibitedActions": ["自动公开生成素材", "把生成儿童形象当作真实学员", "使用含错误文字或可识别儿童的候选"],
+      "confirmationEvidence": ["本地输出文件", "人工视觉筛选记录", "课程媒体测试"],
+      "metricsCapture": ["候选数量", "采用素材", "拒绝原因", "最终媒体文件"],
+      "currentBlocker": "无发布阻断；只作为本地生产链路，不直接操作外部平台"
+    }
+  }
+}

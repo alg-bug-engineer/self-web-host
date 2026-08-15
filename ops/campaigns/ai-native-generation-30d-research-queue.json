@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "timezone": "Asia/Shanghai",
+  "evidenceMap": "ops/campaigns/ai-native-generation-30d-course-evidence-map.json",
+  "policy": {
+    "notebookRole": "NotebookLM 只做限定来源检索、问题聚类和带引用研究笔记，不直接生成可发布事实。",
+    "factGate": "公开断言必须回到 evidenceMap 中的官方或一手原文；NotebookLM 回答、搜索摘要和网页摘要不能单独作为证据。",
+    "refreshGate": "涉及现行法律、平台规则、心理健康或未成年人安全时，发布前必须在线重验官方原文和生效状态。",
+    "privacyGate": "不得导入或保存 Chrome Cookie、localStorage、密码、儿童身份、学校、位置、脸部、声音、聊天、健康资料或原始作品。",
+    "outputGate": "研究笔记必须区分来源支持、课程教学假设、仍未知和建议验证动作。"
+  },
+  "tasks": [
+    {
+      "id": "R00",
+      "dueOn": "2026-08-11",
+      "topic": "课程主线与第一周家长问题基线",
+      "query": "仅依据已导入来源，区分儿童 AI 素养的权威原则、家长可能问题、课程自研支架和仍缺少的真实家庭证据。",
+      "sourceIds": ["S03", "S04", "S05"],
+      "mustReverifyOnline": false,
+      "outputAssets": [
+        "content/campaigns/ai-native-generation-30d/notebooklm-course-brief.md",
+        "content/campaigns/ai-native-generation-30d/notebooklm-week1-parent-question-backlog.md"
+      ],
+      "editorialTargets": ["课程主线", "第一周知识星球答疑", "公众号家长问题"],
+      "status": "completed_verified"
+    },
+    {
+      "id": "R01",
+      "dueOn": "2026-08-13",
+      "topic": "第一周理解与核验：监护人最可能卡在哪里",
+      "query": "只使用指定来源，整理输入输出、生成与查证、流畅错误三个主题中监护人可能提出的问题；每个问题标注来源支持、课程假设和需要真实任务验证的部分。不得生成虚构家长引语。",
+      "sourceIds": ["S02", "S03", "S04", "S05"],
+      "mustReverifyOnline": false,
+      "executionPack": "content/campaigns/ai-native-generation-30d/2026-08-13-notebooklm-r01-execution-pack.md",
+      "outputAssets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-13-notebooklm-week1-objection-review.md"
+      ],
+      "editorialTargets": ["8 月 16 日知识星球答疑", "8 月 18 日公众号", "第一周复盘"],
+      "status": "planned"
+    },
+    {
+      "id": "R02",
+      "dueOn": "2026-08-18",
+      "topic": "第二周问题定义、人机分工与三天挑战",
+      "query": "围绕问题定义、任务拆解、人机责任和可检查产物，提取来源支持的原则；明确哪些卡片是课程设计，不能写成权威标准或效果结论。",
+      "sourceIds": ["S02", "S03", "S04", "S05"],
+      "mustReverifyOnline": false,
+      "outputAssets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-18-notebooklm-week2-question-research.md"
+      ],
+      "editorialTargets": ["L04—L06", "三天挑战", "第二周公众号/CSDN/今日头条"],
+      "status": "planned"
+    },
+    {
+      "id": "R03",
+      "dueOn": "2026-08-25",
+      "topic": "第三周证据链、家庭研究与作品主体性",
+      "query": "只依据指定来源，整理学生批判判断、负责任共同创造、儿童隐私和透明原则；把来源原则与课程三层验证卡、研究日志、作品证据板严格分开。",
+      "sourceIds": ["S02", "S03", "S04", "S05"],
+      "mustReverifyOnline": false,
+      "outputAssets": [
+        "content/campaigns/ai-native-generation-30d/2026-08-25-notebooklm-week3-project-research.md"
+      ],
+      "editorialTargets": ["L07—L09", "家庭小研究", "课程内测价值说明"],
+      "status": "planned"
+    },
+    {
+      "id": "R04",
+      "dueOn": "2026-09-01",
+      "topic": "第四周儿童隐私、生成标识与聊天机器人退出",
+      "query": "逐条核对未成年人个人信息、著作权、生成合成标识、拟人化互动、模拟共情和心理安全边界；只输出官方原文支持到什么程度、当前生效状态和家庭教育可安全转述的范围。",
+      "sourceIds": ["S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12"],
+      "mustReverifyOnline": true,
+      "outputAssets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-01-notebooklm-safety-source-refresh.md"
+      ],
+      "editorialTargets": ["L10—L12", "第四周公众号/CSDN/今日头条", "家庭 AI 公约"],
+      "status": "planned"
+    },
+    {
+      "id": "R05",
+      "dueOn": "2026-09-08",
+      "topic": "月末复盘中的来源边界与下一轮研究问题",
+      "query": "依据课程权威来源，列出月末复盘可以讨论的原则、不能由内容供给或播放量推出的效果结论，以及下一轮仍需要真实家庭数据验证的问题。不得补造案例或转化数字。",
+      "sourceIds": ["S02", "S03", "S04", "S05"],
+      "mustReverifyOnline": false,
+      "outputAssets": [
+        "content/campaigns/ai-native-generation-30d/2026-09-08-notebooklm-final-review-evidence.md"
+      ],
+      "editorialTargets": ["月末复盘", "下一轮课程假设", "知识星球续期说明"],
+      "status": "planned"
+    }
+  ]
+}

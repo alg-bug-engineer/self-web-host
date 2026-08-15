@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "campaignId": "ai-native-generation-30d",
+  "status": "not_started",
+  "storageMode": "aggregate_only",
+  "channels": ["wechat"],
+  "collectionChannel": "公众号可见私信人工核验",
+  "referralCodes": {
+    "儿童AI内测-星球": "zsxq",
+    "儿童AI内测-公众号": "wechat",
+    "儿童AI内测-X": "x",
+    "儿童AI内测-CSDN": "csdn",
+    "儿童AI内测-头条": "toutiao",
+    "儿童AI内测-网站": "website",
+    "儿童AI内测": "unattributed"
+  },
+  "minimumFields": ["ageBand", "weeklyTime", "participationPreference"],
+  "fieldOptions": {
+    "ageBand": ["8—10", "11—12", "13—14"],
+    "weeklyTime": ["少于 30 分钟", "30—60 分钟", "60—90 分钟"],
+    "participationPreference": ["异步任务", "集中答疑", "两者都可"]
+  },
+  "forbiddenData": [
+    "儿童姓名",
+    "学校",
+    "住址或精确位置",
+    "账号或联系方式",
+    "正脸或声音",
+    "私人聊天",
+    "健康情况",
+    "原始作品"
+  ],
+  "rules": [
+    "只记录人工核验后的聚合计数，不保存公众号昵称、账号、消息原文或哈希标识。",
+    "同一监护人的重复私信只在平台可见页面人工判断，不复制到本地；重复项不增加 activeQualifiedInterests。",
+    "三个最小字段齐全才计 newQualified；缺字段只追问缺失项。",
+    "来源码只用于无身份聚合归因，不保存监护人昵称、账号或消息原文；无法确认来源时记 unattributed，不猜测。",
+    "课程意向、知识星球加入、课程付款和公开案例授权分别计量。",
+    "出现儿童隐私内容时不复制、不截图、不计数，停止自动处理并由作者在平台界面处置。"
+  ],
+  "snapshots": []
+}
