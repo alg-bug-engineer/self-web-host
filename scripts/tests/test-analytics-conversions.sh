@@ -7,6 +7,19 @@ ANALYTICS_TEST_PORT="$((33000 + RANDOM % 1000))"
 ANALYTICS_TEST_PID=""
 CORRUPT_TEST_PID=""
 
+report_failure() {
+  local status="$1"
+  local line="$2"
+  local command="$3"
+  echo "analytics conversion test failed at line $line: $command" >&2
+  if [[ -n "${ANALYTICS_TEST_DIR:-}" && -f "$ANALYTICS_TEST_DIR/server.log" ]]; then
+    echo "--- analytics server log ---" >&2
+    tail -n 80 "$ANALYTICS_TEST_DIR/server.log" >&2
+  fi
+  exit "$status"
+}
+trap 'report_failure "$?" "$LINENO" "$BASH_COMMAND"' ERR
+
 cleanup() {
   if [[ -n "$ANALYTICS_TEST_PID" ]]; then
     kill "$ANALYTICS_TEST_PID" >/dev/null 2>&1 || true
