@@ -6,8 +6,24 @@ FEED_URL="${WECHAT_RSS_URL:-http://127.0.0.1:8001/feed/MP_WXS_3212677307.rss?lim
 FEED_ID="${WECHAT_EXPECTED_FEED_ID:-MP_WXS_3212677307}"
 LOCK_DIR="${WECHAT_SITE_SYNC_LOCK_DIR:-/tmp/ai-knowledgepoints-wechat-site-sync.lockdir}"
 HEALTH_URL="${WECHAT_SITE_HEALTH_URL:-https://ai-knowledgepoints.cn/api/health}"
+GIT_SSH_REWRITE="url.ssh://git@ssh.github.com:443/.insteadOf=https://github.com/"
 WORKTREE_ROOT=""
 WORKTREE_DIR=""
+
+run_with_retries() {
+  local attempts="${WECHAT_SITE_SYNC_NETWORK_ATTEMPTS:-4}"
+  local attempt
+  for ((attempt = 1; attempt <= attempts; attempt += 1)); do
+    if "$@"; then
+      return 0
+    fi
+    if ((attempt < attempts)); then
+      echo "网络操作失败（$attempt/$attempts），5 秒后重试。" >&2
+      sleep 5
+    fi
+  done
+  return 1
+}
 
 if ! mkdir "$LOCK_DIR" 2>/dev/null; then
   echo "已有公众号网站同步任务在运行。"
@@ -34,7 +50,7 @@ if [[ ! -d node_modules ]]; then
   exit 1
 fi
 
-git fetch origin main
+run_with_retries git -c "$GIT_SSH_REWRITE" fetch origin main
 WORKTREE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/ai-knowledgepoints-wechat-sync.XXXXXX")"
 WORKTREE_DIR="$WORKTREE_ROOT/repo"
 git worktree add --detach "$WORKTREE_DIR" origin/main
@@ -74,7 +90,7 @@ git -C "$WORKTREE_DIR" add content/posts
 git -C "$WORKTREE_DIR" -c user.name="ai-knowledgepoints-bot" \
   -c user.email="actions@users.noreply.github.com" \
   commit -m "同步公众号最新文章"
-git -C "$WORKTREE_DIR" push origin "$branch"
+run_with_retries git -C "$WORKTREE_DIR" -c "$GIT_SSH_REWRITE" push origin "$branch"
 
 pr_number="$(github_create_or_find_pr main "$branch" "同步公众号最新文章" "从本机私有 We-MP-RSS 自动同步本人公众号最近 31 天已公开文章；已校验 Feed 身份、正文长度并通过生产构建。")"
 github_wait_for_pr_checks "$pr_number"
