@@ -1,0 +1,521 @@
+---
+title: "DeepSeek 开源 Harness：模型不能再被单独评价"
+description: "DEEPSEEK × AGENT RUNTIME DeepSeek 开源 Harness：模型正在失去“单独被评价”的意义 Agent 时代，最终能力不再只由模型决定。上下文、工具、记忆、验证器、沙箱与执行循环，正在把模型能力转化为真实任务结果。 CORE DATA · 01 52.8% 最初成绩是 52..."
+date: 2026-08-15T03:21:41.000Z
+author: 芝士AI吃鱼
+tags:
+  - 公众号同步
+  - AI
+icon: robot
+published: true
+sourceUrl: "https://mp.weixin.qq.com/s/l5-Qvgtuiz4VQ2ltNzR0VQ"
+sourceName: 芝士AI吃鱼公众号
+---
+
+> 本文同步自「芝士AI吃鱼」公众号，原文链接见文章信息。
+
+DEEPSEEK × AGENT RUNTIME
+
+# DeepSeek 开源 Harness：模型正在失去“单独被评价”的意义
+
+Agent 时代，最终能力不再只由模型决定。上下文、工具、记忆、验证器、沙箱与执行循环，正在把模型能力转化为真实任务结果。
+
+CORE DATA · 01
+
+52.8%
+
+最初成绩是 52.8% 。
+
+CORE DATA · 02
+
+66.5%
+
+经过 Harness Engineering 之后，变成了 66.5% 。
+
+CORE DATA · 03
+
+13.7 个百分点
+
+整整提高 13.7 个百分点 。
+
+昨晚，DeepSeek 做了两件很容易被放在一起报道的事。
+
+一件是 DeepSeek V4 Pro 正式版上线，强调 Agent 能力提升；另一件，是发布 DeepSeek Harness v0.1 Developer Preview，并以 MIT License 开源。后者目前仍处于非常早期的开发者预览阶段，DeepSeek 自己也明确警告，接下来可能出现破坏兼容性的修改。
+
+如果只是看产品形态，很容易把它概括成：
+
+> DeepSeek 终于也做了一个类似 Claude Code 的东西。
+
+但我觉得这反而低估了这次发布。
+
+真正值得注意的，是 DeepSeek 在 V4 Pro 发布公告下面留下的一行小字：
+
+DeepSeek-V4-Pro-0813 的公开 Code Agent 基准测试，使用的是 **DeepSeek Harness Minimal Mode** ；在其他框架下，结果可能不同。
+
+这句话看上去只是 benchmark 的实验说明。
+
+但如果把它展开，背后其实是一个正在发生的变化：
+
+**进入 Agent 时代以后，我们越来越难脱离 Harness，单独讨论一个模型到底有多强。**
+
+模型能力正在变成一种“条件能力”。
+
+* * *
+
+## 一、先说清楚，Harness 到底是什么
+
+过去我们谈大模型，习惯看的是模型本身。
+
+给一道数学题，看能不能做对；给一段代码，看能不能补全；给一篇文章，看推理是否合理。
+
+整个过程非常接近：
+
+用户输入 → 模型 → 输出。
+
+但 Agent 完全不是这么工作的。
+
+让一个 Agent 去修复 GitHub Issue，它可能先读目录，再搜索代码，打开几个文件，运行测试，形成假设，修改代码，重新运行测试，发现报错，再回退，然后继续搜索。
+
+几十步甚至上百步以后，才能得到最终结果。
+
+这时候决定结果的，已经不只是模型参数。
+
+系统要决定什么时候给模型什么上下文；哪些工具可以调用；工具返回多少内容；历史记录什么时候压缩；失败以后是否重试；重复修改多少次以后提醒模型换思路；模型说“完成了”以后是否真的运行测试；子 Agent 怎么创建；shell 能访问什么目录；权限怎么审批；一次运行中断以后如何恢复。
+
+这些东西加在一起，就是我们现在越来越频繁听到的 **Agent Harness** 。
+
+DeepSeek 对它的定义很直接：
+
+**Agent = Model + Harness。**
+
+DeepSeek Harness 官方页面甚至写道，模型是 Agent 的“灵魂”，Harness 则负责让 Agent 理解环境、使用工具，并能够持续在真实环境中工作。
+
+这里真正重要的，不是这个定义本身。
+
+而是其中隐含的工程事实：
+
+**当任务从一次回答变成长链路执行以后，模型不再独自决定最终效果。**
+
+FIGURE · 01
+
+### 图 1｜Agent 时代：模型能力通过 Harness 转化为任务执行能力
+
+![](https://mmbiz.qpic.cn/sz_mmbiz_png/w3SGv7JDTqNVSQNnBWt89QmwqKDdB3XKKZf1fLruZ40HqUMaicvdfT1hEicswFCwJzXZGWzKdOMQDyO3lAMd49gm9JH7NQI9eXK1BHgsKDjV4/640?from=appmsg&watermark=1&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=0)
+
+图 1｜Agent 时代：模型能力通过 Harness 转化为任务执行能力
+
+* * *
+
+## 二、同一个模型，换一套 Harness，成绩真的会变
+
+这不是概念讨论。
+
+今年 LangChain 做过一个很有意思的实验。
+
+他们固定底层模型为 GPT-5.2-Codex，不重新训练模型，只调整 Agent 外面的 Harness，然后在 Terminal-Bench 2.0 上测试。
+
+最初成绩是 **52.8%** 。
+
+经过 Harness Engineering 之后，变成了 **66.5%** 。
+
+整整提高 **13.7 个百分点** 。
+
+模型一个参数都没改。
+
+他们干了什么？
+
+主要是一些看起来并没有那么“AI”的事情。
+
+例如要求 Agent 完成代码后必须真正运行测试，而不是读一遍自己的代码以后宣布“看起来没问题”；在 Agent 开始工作时主动注入目录结构和环境信息；检测模型是不是对同一个文件反复修改，陷入所谓的 doom loop；在任务结束前触发一次检查；根据任务阶段调整 reasoning budget。
+
+这些改变看起来很工程。
+
+但结果是 13.7 个百分点。
+
+另一个 2026 年的研究 PMCoder，则在保持 Harness 基线可比较的情况下，把规划和 episodic memory 联动起来，在 SWE-bench Verified 上平均多解决 25 个任务，也就是提高约 5 个百分点；作者又在 Claude Haiku 4.5、DeepSeek-V4-Flash 和 OpenHands 等环境下进行了额外测试，仍观察到至少 2.8 个百分点的提升。
+
+这些数据并不能推出“Harness 比模型重要”。
+
+这种结论太早了。
+
+它们能说明一件更确定的事情：
+
+**我们最终测到的 Agent 能力，本来就是模型能力和运行系统共同作用的结果。**
+
+于是，一个过去并不尖锐的问题开始变得越来越重要：
+
+我们排行榜上比较的，究竟是 Model，还是 Model + Harness？
+
+FIGURE · 02
+
+### 图 2｜同一个模型的 Agent 表现，会对执行环境高度敏感
+
+![](https://mmbiz.qpic.cn/mmbiz_jpg/w3SGv7JDTqMcpLjflDeR9yQ6EMuQN1VibOg1Smr9GYmxemBASZGrGh30IUGZfPXv7t2mjQeA6ZkG6iaSRvDGCcWicz93v3cvWPyLklIzF2uiaDc/640?from=appmsg&watermark=1&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=1)
+
+图 2｜同一个模型的 Agent 表现，会对执行环境高度敏感
+
+* * *
+
+## 三、所以我反而觉得，DeepSeek 那行 benchmark 注释很重要
+
+DeepSeek V4 Pro 这次发布时，特意声明 Code Agent 测试运行在自己 Harness 的 Minimal Mode 下。
+
+Minimal Mode 很有意思。
+
+按照官方文档，它几乎故意把 Harness 削到了很薄：模型面前主要只有 persistent bash 和 `str_replace_editor` 两个工具，关闭 context compaction，也去掉大量额外的 skills、task tools 和其他 model-facing plugins。
+
+为什么要做一个这么简单的模式？
+
+一个合理的解释是：
+
+**尽量减少 Harness 自身对模型 benchmark 的干扰。**
+
+这本身就很有意思。
+
+因为如果 Harness 完全不重要，根本没有必要控制它。
+
+DeepSeek 在官方公告里进一步提醒“其他框架下结果可能略有不同”，实际上等于公开承认：Agent benchmark 对执行环境敏感。
+
+这也意味着，以后我们看所谓“某模型 SWE-bench 又提升几个点”，最好多看几行实验设置。
+
+*   它调用了哪些工具，给了多长时间？
+
+*   是否允许并行 Agent，有没有自动重试？
+
+*   有没有 verifier，是否主动补充上下文？
+
+*   Reasoning effort 开到了哪一档？
+
+*   Harness 是否针对这个模型专门调过？
+
+这些条件不交代清楚，单独一个数字的信息量正在下降。
+
+模型 Benchmark 不会消失。
+
+但 Agent Benchmark 很可能会越来越像系统 Benchmark。
+
+* * *
+
+## 四、DeepSeek 这次真正激进的地方，是“Everything is a Plugin”
+
+如果 DeepSeek Harness 只是把 DeepSeek 模型接上 shell、文件编辑和网页搜索，我不会觉得这件事有多重要。
+
+类似的开源项目早就存在。
+
+OpenHands 从 OpenDevin 时代开始就在做开放的软件 Agent 平台，其论文在 ICLR 2025 发表；后续 Software Agent SDK 同样强调可组合、可扩展和模型无关。
+
+所以，“DeepSeek 开源了一个 Agent”并不新鲜。
+
+这次比较值得看的，是它选择了一个相当彻底的架构：
+
+**Everything is a Plugin。**
+
+Model 是插件。
+
+Tool 是插件。
+
+Skill 是插件。
+
+Session 是插件。
+
+Sandbox、Storage、Loop、Scheduling、UI，全都是插件。
+
+尤其是 **Loop 也是插件** 。
+
+这一点值得注意。
+
+因为很多早期 Agent Framework 虽然允许你添加工具、更换模型，但最核心的执行逻辑其实是框架预先设计好的。
+
+DeepSeek 的想法更接近：
+
+连“Agent 应该怎样运转”这件事本身，都应该可以替换。
+
+它底层使用的是 Cordis。DeepSeek 同一天放出的 Cordis 论文草稿，把重点放在所谓的“时空可组合性”上：组件可以声明依赖，同时运行时跟踪其副作用，使组件在动态挂载、卸载时能够处理状态恢复和依赖变化。
+
+对普通用户来说，这些术语没有必要深究。
+
+工程上的意思倒比较清楚：
+
+DeepSeek 想把 Harness 做成一个 **Agent Runtime** ，而不是某一个固定 Agent 产品。
+
+FIGURE · 03
+
+### 图 3｜Everything is a Plugin：从固定 Agent 产品走向可组合 Runtime
+
+![](https://mmbiz.qpic.cn/mmbiz_jpg/w3SGv7JDTqMibZyoyxQa1jwFKpcenWtRF0ick45WRdY7ePwpw3qSuiaEXjcUUZrVaKGJhrUmoMXQou1snkAzrHQDiaTAnWBZQyosu3YdEAI3mto/640?from=appmsg&watermark=1&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=2)
+
+图 3｜Everything is a Plugin：从固定 Agent 产品走向可组合 Runtime
+
+这也是为什么它同时提供 Standard、Code、Minimal 和 Creator 等不同运行模式。
+
+Standard 是完整 Agent；Code Mode 允许模型生成 TypeScript 来组合多轮工具调用；Minimal 用来尽可能干净地测试模型；Creator 则允许开发者检查运行环境、测试插件，再组合新的 Agent preset。
+
+更有意思的是，它并不强制使用 DeepSeek 模型。
+
+官方文档已经支持添加 Anthropic、OpenAI 等 provider，也允许接企业内部 gateway、自部署模型和 OpenAI-compatible endpoint。
+
+对于一家模型公司来说，这个选择并不是理所当然的。
+
+* * *
+
+## 五、为什么一家模型公司，要做一个可以运行别人模型的 Harness？
+
+这可能才是这次发布最值得琢磨的问题。
+
+如果未来模型之间的差距长期维持巨大，那么最合理的战略当然是：
+
+把用户牢牢绑定到自己的模型。
+
+但如果模型能力继续快速追赶，越来越多任务出现“几个主流模型都能完成，只是价格、速度和稳定性不同”的情况，那么价值自然会向模型之外移动。
+
+用户真正每天接触的是什么？
+
+不是 checkpoint。
+
+而是工作环境。
+
+*   代码、GitHub 和数据库在哪里；
+
+*   系统拥有哪些 Skills，Agent 以前做过什么；
+
+*   失败以后怎么办，哪些操作需要批准；
+
+*   安全策略是什么，输出怎样检查；
+
+*   任务如何定时运行，执行轨迹如何审计。
+
+这些东西一旦沉淀下来，换模型反而可能只是配置文件里改一行。
+
+DeepSeek Harness 已经允许用户在模型配置中切换不同 provider，并把 session、工具、运行模式与模型层相对分离。
+
+所以我更倾向于把这次发布理解成 DeepSeek 在尝试占据一个新的位置：
+
+**从提供“智能”，向提供“智能运行环境”延伸。**
+
+甚至可以再往前推一步。
+
+未来比较有价值的资产，可能不只是 Model，也不只是 Harness 的源码，而是长期运行过程中积累下来的：
+
+真实任务 trajectory、失败样本、verifier、skills、组织流程、权限体系以及针对这些数据不断优化出来的执行策略。
+
+模型可以换。
+
+但一家公司花两年时间形成的“怎么让 Agent 在我的业务里可靠工作”，不太容易复制。
+
+* * *
+
+## 六、Harness 还有可能反过来改变模型训练
+
+这也是我认为未来两年很值得关注的一条线。
+
+今天的大多数模型训练和 Agent 部署之间，其实存在一定程度的断裂。
+
+模型训练时学习 tool use、reasoning 和代码能力。
+
+部署以后，模型却被放进 Claude Code、Codex、OpenHands 或者企业自己写的 Agent Framework。
+
+不同 Harness 给模型的工具结构不同、上下文结构不同、错误反馈不同、状态表达不同。
+
+于是会出现一个问题：
+
+模型到底应该学习抽象的 Agent 能力，还是学习在某一种运行环境里高效行动？
+
+今年 7 月的 OpenForgeRL 已经开始研究这个方向：让模型直接在真实 Harness 中产生 rollout，再进行强化学习。论文覆盖了包括 Codex、OpenClaw 等不同 Harness，并观察到不同 Harness 的学习难度存在明显差异；强化学习能够改善 self-verification、tool coverage 和多步骤任务完成能力，但 error recovery 依然是明显短板。
+
+这件事如果继续发展下去，Model 和 Harness 的关系可能会非常像一个共同优化问题。
+
+不是先把一个“万能模型”训练完，再随便套一个 Agent。
+
+而是：
+
+模型在某种工具体系、状态结构和反馈机制里学习行动；Harness 又根据模型的失败轨迹继续调整。
+
+DeepSeek 同时拥有模型和 Harness，真正值得观察的也许正是这里。
+
+今天 DeepSeek Harness 可以运行很多模型。
+
+但未来 DeepSeek 的模型，会不会针对 DeepSeek Harness 的工具协议、context 组织、Code Mode、验证方式做更深的训练？
+
+如果会，模型和 Harness 之间就可能出现一种新的协同优势。
+
+这比做一个“中国版 Claude Code”有意思得多。
+
+FIGURE · 04
+
+### 图 4｜Model 与 Harness 共同优化，能力边界从模型扩展到运行系统
+
+![](https://mmbiz.qpic.cn/mmbiz_jpg/w3SGv7JDTqMaln6KI8vzAfGiaJsWrWbKuPhzEJPxiaiaxvkcyMOsjusZ15Pp0PyQordRh6hA217d7OFUTZc9icwNibdkibC5LKqrbnQSicVcK4fjjQ/640?from=appmsg&watermark=1&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=3)
+
+图 4｜Model 与 Harness 共同优化，能力边界从模型扩展到运行系统
+
+* * *
+
+## 七、不过，现在就说 DeepSeek 找到了 Agent 的答案，也明显太早
+
+截至我查询时，DeepSeek Harness GitHub 已经显示约 **3.69 万 Star、2800 Fork** 。考虑到项目刚刚公开，这个传播速度很快，但 GitHub Star 衡量的是注意力，不是生产可靠性。
+
+DeepSeek 自己对此也很克制。
+
+项目首页直接写着：
+
+> Developer Preview。快速迭代。未来会出现 compatibility-breaking changes。
+
+更现实的问题还有很多。
+
+例如安全。
+
+Harness 会记录非常完整的 Agent trajectory。DeepSeek 官方介绍称，system prompt、reasoning、tool calls、tool results、subagent scheduling 和 context injection 都会进入 append-only session log，并支持 resume、fork、search 和 replay。
+
+这对调试 Agent 非常好。
+
+对企业数据治理来说，却同时意味着：
+
+这个日志里可能包含大量敏感信息。
+
+源码、数据库查询结果、内部文档、prompt、工具返回值、模型推理过程，都可能被记录。
+
+于是日志保存周期、访问权限、脱敏、加密和审计就必须成为生产环境设计的一部分。
+
+官方 Python SDK 的 Minimal 示例甚至明确使用 `danger-full-access` ，文档要求只在 disposable checkout 或 container 中运行，因为 bash 和 editor 可以修改运行进程能够访问的任意路径。
+
+这很正常。
+
+它毕竟还是 v0.1。
+
+但这也提醒我们，不要因为架构漂亮，就把 Developer Preview 和 Production Ready 混在一起。
+
+* * *
+
+## 八、还有一个容易被忽略的细节：Harness 发布和 API 调价发生在同一天
+
+8 月 13 日，DeepSeek 同时宣布 V4 Pro 正式版、原生 Responses API、Codex 适配，以及新的 API 峰谷定价方案。
+
+新价格将在北京时间 8 月 17 日生效，闲时价格是高峰价格的一半。
+
+单独看，这是价格策略。
+
+和 Harness 放在一起看，就有一点意思了。
+
+Agent 天生比聊天更消耗推理资源。
+
+一次聊天通常完成一次生成。
+
+一个 Agent 任务可能经历几十轮模型调用，还有 verifier、subagent、重新规划和失败重试。
+
+也就是说，当 AI 从“回答问题”走向“执行任务”，模型厂商面对的不只是更多用户，还有更长、更持续、甚至可以被调度到夜间执行的计算负载。
+
+DeepSeek 此时推出 Harness，同时采用峰谷定价，我更愿意把它看作一种值得观察的产品组合，而不是直接断言两者存在明确的商业因果关系。
+
+但至少方向是一致的：
+
+**DeepSeek 希望模型进入更长时间、更复杂、更自动化的工作负载。**
+
+如果这个判断成立，那么 Agent Runtime 对模型公司的价值就很好理解了。
+
+它会直接决定模型每天被调用多少次，以及这些调用发生在什么类型的任务里。
+
+* * *
+
+## 九、我觉得 Agent 时代真正发生的变化，是“智能”的边界正在扩大
+
+过去两年，我们习惯了一种评价 AI 的方式：
+
+GPT-5.6 比上一代高多少分。
+
+DeepSeek 又追到了哪里。
+
+Claude 编程是不是第一。
+
+上下文是不是又从 200K 增加到 1M。
+
+这些当然依然重要。
+
+模型决定了系统能够达到的能力上限。
+
+但 Agent 出现以后，另外一些问题开始不断影响真实结果：
+
+*   模型有没有拿到正确的信息、选对工具？
+
+*   有没有记住前面发生的事情？
+
+*   失败以后能不能意识到失败，避免重复兜圈？
+
+*   说“任务完成”之前有没有验证？
+
+*   执行过程能不能被安全限制，错误以后能不能恢复？
+
+这些问题，很多并不通过增加模型参数直接解决。
+
+有研究甚至发现，把大量代码一次性塞进更长上下文，并不能自动解决复杂的软件工程问题。在一项针对 SWE-bench Verified 的研究中，Agent 化、分步骤的执行方式明显优于直接进行 64K—128K 长上下文的单次 patch 生成；论文据此认为，当前 Agent 成功的一部分来源恰恰是把复杂问题拆解为一系列较短的交互步骤，而不是模型真正获得了等比例增强的超长上下文推理能力。
+
+这也是 Harness 真正存在的理由。
+
+它处理的是模型之外那些看起来琐碎，却决定一个 Agent 能不能连续工作几个小时的问题。
+
+* * *
+
+## 十、所以，我对 DeepSeek Harness 的判断并不是“Agent 框架大战开始了”
+
+这种说法太简单。
+
+开源 Agent Framework 已经存在很久。
+
+DeepSeek Harness v0.1 也远没有证明自己会成为标准。
+
+它今天甚至还不应该被视为成熟的生产系统。
+
+但这次发布给出了一个很明确的信号：
+
+**模型公司正在把 Harness 当作一等公民。**
+
+以前我们优化模型，然后给模型套一层应用。
+
+现在越来越多团队开始分别优化：
+
+Model、Context、Tool、Memory、Skill、Verifier、Sandbox、Agent Loop、Trajectory、Evaluation。
+
+这些东西最终共同决定一个 Agent 到底能不能工作。
+
+所以未来再看到一个模型在 Agent Benchmark 上突然涨了十几个点，我大概不会第一时间问：
+
+“模型又用了什么新架构？”
+
+我会先往实验设置下面多看几行。
+
+**它到底运行在什么 Harness 里？**
+
+因为 AI 发展到今天，我们可能正在进入一个新的阶段：
+
+我们仍然在训练更聪明的模型。
+
+但与此同时，我们也终于开始认真研究——
+
+**怎样让这些已经足够聪明、却仍然不稳定的模型，真正把一件事情做完。**
+
+DeepSeek Harness 值得关注的地方，就在这里。
+
+* * *
+
+### 参考资料
+
+2.  DeepSeek，《DeepSeek-V4-Pro 正式版上线》，2026 年 8 月 13 日。
+
+4.  DeepSeek Harness 官方网站及 GitHub Repository。
+
+6.  DeepSeek Harness Developer Docs，Model Providers / Python SDK。
+
+8.  Cordis，《A Programming Paradigm for Spatiotemporal Composability》，2026 年 8 月 13 日预印本。
+
+10.  LangChain，《Improving Deep Agents with harness engineering》，2026。
+
+12.  Zhang et al.，《Coupling Planning with Episodic Memory in LLM Agents for Software Issue Resolution》，2026。
+
+14.  Yu et al.，《OpenForgeRL: Train Harness-native Agents in Any Environment》，2026。
+
+16.  Raju et al.，《The Limits of Long-Context Reasoning in Automated Bug Fixing》，2026。
+
+18.  Wang et al.，《OpenHands: An Open Platform for AI Software Developers as Generalist Agents》，ICLR 2025。
+
+未来评价一个 Agent，不能只问“它用了什么模型”。
+
+还要问：它运行在什么 Harness 里？
