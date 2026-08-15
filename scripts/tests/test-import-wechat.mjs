@@ -11,7 +11,7 @@ const temporaryDir = await fs.mkdtemp(path.join(os.tmpdir(), 'wechat-import-test
 const postsDir = path.join(temporaryDir, 'posts')
 const fixture = path.join(projectDir, 'scripts/tests/fixtures/wechat-feed.xml')
 
-const runImport = (sourceFile = fixture) => spawnSync(process.execPath, ['scripts/import-wechat.mjs'], {
+const runImport = (sourceFile = fixture, overrides = {}) => spawnSync(process.execPath, ['scripts/import-wechat.mjs'], {
   cwd: projectDir,
   encoding: 'utf8',
   env: {
@@ -23,6 +23,7 @@ const runImport = (sourceFile = fixture) => spawnSync(process.execPath, ['script
     WECHAT_MAX_IMPORTS: '12',
     WECHAT_EXPECTED_BIZ: 'MzIxMjY3NzMwNw==',
     WECHAT_NOW: '2026-08-11T00:00:00Z',
+    ...overrides,
   },
 })
 
@@ -38,6 +39,36 @@ try {
   assert.match(content, /https:\/\/mp\.weixin\.qq\.com\/s\?__biz=/)
   assert.match(content, /https:\/\/mmbiz\.qpic\.cn\/test-image\.jpg/)
   assert.doesNotMatch(content, /其他公众号文章|超过时间范围的旧文章|正文过短的文章/)
+
+  const shortFeed = path.join(temporaryDir, 'short-url-feed.xml')
+  const shortPostsDir = path.join(temporaryDir, 'short-posts')
+  await fs.writeFile(shortFeed, `<?xml version="1.0"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel><title>芝士AI吃鱼</title><item>
+    <id>3212677307-3212677307_exampleToken</id>
+    <title>微信短链接文章</title>
+    <guid>https://mp.weixin.qq.com/s/exampleToken</guid>
+    <pubDate>Mon, 10 Aug 2026 08:00:00 +0800</pubDate>
+    <description>用于验证 We-MP-RSS 当前输出格式。</description>
+    <content:encoded><![CDATA[<article><h2>短链接校验</h2><p>${'这是来自指定公众号 Feed 的完整正文。'.repeat(20)}</p></article>]]></content:encoded>
+  </item></channel>
+</rss>`)
+  const short = runImport(shortFeed, {
+    WECHAT_POSTS_DIR: shortPostsDir,
+    WECHAT_EXPECTED_FEED_ID: 'MP_WXS_3212677307',
+  })
+  assert.equal(short.status, 0, short.stderr)
+  assert.match(short.stdout, /新增 1 篇已发布文章/)
+  const shortContent = await fs.readFile(path.join(shortPostsDir, (await fs.readdir(shortPostsDir))[0]), 'utf8')
+  assert.match(shortContent, /https:\/\/mp\.weixin\.qq\.com\/s\/exampleToken/)
+
+  const rejectedShortPostsDir = path.join(temporaryDir, 'rejected-short-posts')
+  const rejectedShort = runImport(shortFeed, {
+    WECHAT_POSTS_DIR: rejectedShortPostsDir,
+    WECHAT_EXPECTED_FEED_ID: 'MP_WXS_9999999999',
+  })
+  assert.equal(rejectedShort.status, 0, rejectedShort.stderr)
+  assert.match(rejectedShort.stdout, /新增 0 篇已发布文章/)
 
   const second = runImport()
   assert.equal(second.status, 0, second.stderr)

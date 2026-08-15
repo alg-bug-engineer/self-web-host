@@ -1,8 +1,6 @@
 name: Sync WeChat articles
 
 on:
-  schedule:
-    - cron: '15 1 * * *'
   workflow_dispatch:
 
 permissions:
@@ -65,7 +63,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if git diff --quiet -- content/posts; then
+          if [[ -z "$(git status --porcelain -- content/posts)" ]]; then
             echo "没有新文章。"
             exit 0
           fi

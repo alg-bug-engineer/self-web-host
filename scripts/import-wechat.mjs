@@ -10,6 +10,7 @@ const htmlFile = process.env.WECHAT_HTML_FILE?.trim()
 const autoPublish = process.env.WECHAT_AUTO_PUBLISH === 'true'
 const postsDir = path.resolve(process.cwd(), process.env.WECHAT_POSTS_DIR?.trim() || path.join('content', 'posts'))
 const expectedBiz = process.env.WECHAT_EXPECTED_BIZ?.trim() || 'MzIxMjY3NzMwNw=='
+const expectedFeedId = process.env.WECHAT_EXPECTED_FEED_ID?.trim() || ''
 const importDays = Math.min(90, Math.max(1, Number.parseInt(process.env.WECHAT_IMPORT_DAYS || '31', 10) || 31))
 const maxImports = Math.min(20, Math.max(1, Number.parseInt(process.env.WECHAT_MAX_IMPORTS || '12', 10) || 12))
 const now = new Date(process.env.WECHAT_NOW || Date.now())
@@ -53,7 +54,7 @@ let created = 0
 for (const item of items) {
   const title = textValue(item.title).trim()
   const rawSourceUrl = linkValue(item.link) || textValue(item.guid) || textValue(item.id)
-  const sourceUrl = normalizeWechatUrl(rawSourceUrl)
+  const sourceUrl = normalizeWechatUrl(rawSourceUrl, textValue(item.id))
   const articleKey = wechatArticleKey(sourceUrl)
   if (!title || !sourceUrl || !articleKey || existingArticleKeys.has(articleKey)) {
     continue
@@ -214,11 +215,19 @@ function normalizeWechatImages(value) {
   })
 }
 
-function normalizeWechatUrl(value) {
+function normalizeWechatUrl(value, itemId = '') {
   try {
     const url = new URL(String(value || '').trim())
     if (url.hostname.toLowerCase() !== 'mp.weixin.qq.com') return ''
-    if (expectedBiz && url.searchParams.get('__biz') !== expectedBiz) return ''
+    const biz = url.searchParams.get('__biz')
+    if (biz) {
+      if (expectedBiz && biz !== expectedBiz) return ''
+    } else {
+      const expectedNumericId = expectedFeedId.match(/^MP_WXS_(\d+)$/)?.[1]
+      const isShortArticleUrl = /^\/s\/[A-Za-z0-9_-]+\/?$/.test(url.pathname)
+      const isExpectedFeedItem = expectedNumericId && itemId.startsWith(`${expectedNumericId}-`)
+      if (!isShortArticleUrl || !isExpectedFeedItem) return ''
+    }
     url.protocol = 'https:'
     url.hash = ''
     return url.toString()
