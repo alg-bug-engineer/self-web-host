@@ -7,6 +7,19 @@ ANALYTICS_TEST_PORT="$((33000 + RANDOM % 1000))"
 ANALYTICS_TEST_PID=""
 CORRUPT_TEST_PID=""
 
+report_failure() {
+  local status="$1"
+  local line="$2"
+  local command="$3"
+  echo "analytics conversion test failed at line $line: $command" >&2
+  if [[ -n "${ANALYTICS_TEST_DIR:-}" && -f "$ANALYTICS_TEST_DIR/server.log" ]]; then
+    echo "--- analytics server log ---" >&2
+    tail -n 80 "$ANALYTICS_TEST_DIR/server.log" >&2
+  fi
+  exit "$status"
+}
+trap 'report_failure "$?" "$LINENO" "$BASH_COMMAND"' ERR
+
 cleanup() {
   if [[ -n "$ANALYTICS_TEST_PID" ]]; then
     kill "$ANALYTICS_TEST_PID" >/dev/null 2>&1 || true
@@ -261,11 +274,12 @@ curl --silent --fail -c "$ADMIN_COOKIE_JAR" -X POST \
   --data '{"username":"analytics-test-admin","password":"analytics-test-password"}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/admin/login" >/dev/null
 ADMIN_HTML="$(curl --silent --fail -b "$ADMIN_COOKIE_JAR" "http://127.0.0.1:${ANALYTICS_TEST_PORT}/admin")"
-[[ "$ADMIN_HTML" == *"儿童 AI 素养渠道漏斗"* ]]
-[[ "$ADMIN_HTML" == *"活动 · csdn/organic/ai-native-generation-30d"* ]]
-[[ "$ADMIN_HTML" == *"监护人匿名调研汇总"* ]]
-[[ "$ADMIN_HTML" == *"有效样本 1 / 30"* ]]
-[[ "$ADMIN_HTML" != *"203.0.113."* ]]
+ADMIN_HTML_NORMALIZED="${ADMIN_HTML//<!-- -->/}"
+[[ "$ADMIN_HTML_NORMALIZED" == *"儿童 AI 素养渠道漏斗"* ]]
+[[ "$ADMIN_HTML_NORMALIZED" == *"活动 · csdn/organic/ai-native-generation-30d"* ]]
+[[ "$ADMIN_HTML_NORMALIZED" == *"监护人匿名调研汇总"* ]]
+[[ "$ADMIN_HTML_NORMALIZED" == *"有效样本 1 / 30"* ]]
+[[ "$ADMIN_HTML_NORMALIZED" != *"203.0.113."* ]]
 
 SITE_URL="http://127.0.0.1:${ANALYTICS_TEST_PORT}" \
   ANALYTICS_DATA_DIR="$ANALYTICS_TEST_DIR" \
