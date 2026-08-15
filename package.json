@@ -131,6 +131,8 @@
     "operator:health": "node scripts/check-production-health.mjs",
     "seo:indexnow": "node scripts/submit-indexnow.mjs",
     "sync:wechat": "node scripts/import-wechat.mjs",
+    "sync:wechat:local": "bash scripts/run-wechat-site-sync.sh",
+    "schedule:wechat-sync:install": "bash scripts/install-wechat-sync-launchd.sh",
     "test:indexnow": "node scripts/tests/test-indexnow.mjs",
     "test:llms-markdown": "node scripts/tests/test-llms-markdown.mjs",
     "test:profile-audit": "node scripts/tests/test-profile-audit.mjs",
@@ -142,6 +144,7 @@
     "test:production-health": "node scripts/tests/test-production-health.mjs",
     "test:daily-launchd": "node scripts/tests/test-daily-launchd-config.mjs",
     "test:search-console-sync-launchd": "node scripts/tests/test-search-console-sync-launchd.mjs",
+    "test:wechat-sync-launchd": "node scripts/tests/test-wechat-sync-launchd.mjs",
     "deploy:production": "bash scripts/deploy.sh"
   },
   "dependencies": {
