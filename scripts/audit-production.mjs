@@ -242,8 +242,8 @@ const markdownResults = await mapLimit(articleUrls, 5, async (articleUrl) => {
   return { markdownUrl, healthy }
 })
 const identityMarkdownTargets = [
-  { pathname: '/about/index.html.md', canonical: '/about', required: ['张其来', '芝士AI吃鱼', 'CN118861081B', '公开来源'] },
-  { pathname: '/portfolio/index.html.md', canonical: '/portfolio', required: ['著作与作品', '9787115668981', '9787115689856'] },
+  { pathname: '/about/index.html.md', canonical: '/about', required: ['芝士AI吃鱼', 'CN118861081B', '核验说明'] },
+  { pathname: '/portfolio/index.html.md', canonical: '/portfolio', required: ['著作与作品', 'RAG 极简入门', '这就是 GEO：在 AI 流量红利中抢占先机'] },
 ]
 const identityMarkdownResults = await mapLimit(identityMarkdownTargets, 2, async (target) => {
   const markdownUrl = absolute(target.pathname)

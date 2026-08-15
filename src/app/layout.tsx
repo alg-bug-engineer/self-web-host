@@ -4,7 +4,7 @@ import GoogleAnalytics from '@/components/GoogleAnalytics'
 import InternalAnalytics from '@/components/InternalAnalytics'
 import WebVitalsReporter from '@/components/WebVitalsReporter'
 import SiteStructuredData from '@/components/SiteStructuredData'
-import { AUTHOR_NAME, BRAND_NAME, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site'
+import { BRAND_NAME, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site'
 
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import LayoutWrapper from '@/components/LayoutWrapper'
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   keywords: ['AI', '人工智能', '漫画', 'Transformer', '大模型', 'LLM', 'NLP', 'RAG', 'AI Agent', '效率工具'],
-  authors: [{ name: AUTHOR_NAME, url: `${SITE_URL}/about` }],
-  creator: AUTHOR_NAME,
+  authors: [{ name: BRAND_NAME, url: `${SITE_URL}/about` }],
+  creator: BRAND_NAME,
   publisher: BRAND_NAME,
   alternates: {
     types: { 'application/rss+xml': `${SITE_URL}/feed.xml` },

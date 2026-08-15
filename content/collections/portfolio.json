@@ -1,51 +1,23 @@
 [
   {
     "title": "AI 时代的财富密码：人工智能的11个底层认知",
-    "type": "book",
-    "authors": ["樊中恺", "魏思理", "张其来"],
-    "description": "从技术演进、产业变化与个人选择出发，用 11 个底层认知理解人工智能时代的机会与边界。",
-    "tags": ["人工智能", "产业认知", "科技商业"]
+    "type": "book"
   },
   {
     "title": "大模型是怎样跑起来的（轻科技）",
-    "type": "book",
-    "authors": ["张其来"],
-    "description": "面向非专业读者的大模型入门读物，从数据、训练到推理，把复杂的运行机制讲清楚。",
-    "tags": ["大模型", "技术科普", "轻科技"]
+    "type": "book"
   },
   {
     "title": "半小时读懂 Token 经济学（轻经济）",
-    "type": "book",
-    "date": "2026-04-28",
-    "authors": ["张其来"],
-    "description": "从计量、成本与定价出发，理解 Token 如何连接模型能力、算力供给与 AI 产业的商业逻辑。",
-    "image": "/images/portfolio/token.jpg",
-    "link": "https://weread.qq.com/book-detail?type=1&senderVid=72792937&v=eee326b0813abb5dbg017b48",
-    "tags": ["Token", "AI 经济", "轻经济"]
+    "type": "book"
   },
   {
     "title": "这就是 GEO：在 AI 流量红利中抢占先机",
-    "type": "book",
-    "date": "2026-03-01",
-    "authors": ["张其来", "武寒波"],
-    "description": "系统介绍生成引擎优化的基本原理、内容策略与实践方法，帮助读者理解 AI 搜索时代的新流量入口。",
-    "image": "/images/portfolio/geo.png",
-    "link": "https://mp.weixin.qq.com/s/bGAFmbRQWgXun2jCD9dd0Q",
-    "isbn": "9787115689856",
-    "publisher": "人民邮电出版社",
-    "tags": ["GEO", "生成引擎优化", "内容策略"]
+    "type": "book"
   },
   {
     "title": "RAG 极简入门",
-    "type": "book",
-    "date": "2025-05-01",
-    "authors": ["张其来", "徐思琪"],
-    "description": "从检索、切分、向量化到生成，循序梳理 RAG 的核心概念与工程实践。",
-    "image": "/images/portfolio/rag.png",
-    "link": "https://www.ptpress.com.cn/",
-    "isbn": "9787115668981",
-    "publisher": "人民邮电出版社",
-    "tags": ["RAG", "检索增强生成", "工程实践"]
+    "type": "book"
   },
   {
     "title": "CogniFlow：AI 智能工作流与效率笔记平台",

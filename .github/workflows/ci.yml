@@ -41,6 +41,7 @@ jobs:
       - run: npm run test:llms-markdown
       - run: npm run test:profile-audit
       - run: npm run test:public-claims
+      - run: npm run test:privacy
       - run: npm run test:identity-geo
       - run: npm run test:traffic-source
       - run: npm run test:production-health

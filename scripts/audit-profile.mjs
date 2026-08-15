@@ -20,7 +20,7 @@ const verifiedWorks = Array.isArray(profile?.verifiedWorks) ? profile.verifiedWo
 if (!expected?.login || !expected?.profileUrl || !Number.isInteger(expected?.expectedPublicRepositories)) {
   throw new Error('src/data/profile.json 缺少有效的 GitHub 核对配置。')
 }
-if (!profile?.publicEvidenceVerifiedAt || !publicIdentity?.career?.sourceUrl || !verifiedWorks.length) {
+if (!profile?.publicEvidenceVerifiedAt || !publicIdentity?.career?.sourceLabel || !verifiedWorks.length) {
   throw new Error('src/data/profile.json 缺少公开身份或专业成果的核验来源。')
 }
 for (const work of verifiedWorks) {
@@ -107,7 +107,6 @@ const report = {
     verifiedAt: profile.publicEvidenceVerifiedAt,
     careerSource: {
       label: publicIdentity.career.sourceLabel,
-      url: publicIdentity.career.sourceUrl,
     },
     verifiedWorks: verifiedWorks.map((work) => ({
       type: work.type,
@@ -118,7 +117,6 @@ const report = {
     })),
   },
   manualClaims: [
-    { key: 'books', source: profile.sourceNotes?.books || 'author-provided' },
     { key: 'csdnArticles', source: profile.sourceNotes?.csdnArticles || 'public-profile' },
     { key: 'wechatReaders', source: profile.sourceNotes?.wechatReaders || 'author-provided' },
     { key: 'career', source: profile.sourceNotes?.career || 'public-author-bio' },

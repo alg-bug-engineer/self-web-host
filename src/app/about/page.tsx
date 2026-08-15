@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import WechatCard from '@/components/WechatCard'
-import { AUTHOR_NAME, AUTHOR_PROFILES, BRAND_NAME, SITE_URL } from '@/lib/site'
+import { AUTHOR_PROFILES, BRAND_NAME, SITE_URL } from '@/lib/site'
 import profileData from '@/data/profile.json'
 
 export const metadata = {
   title: '关于我 | 芝士AI吃鱼',
-  description: '张其来（芝士AI吃鱼）：天津大学计算机硕士，先后在阿里、百度、滴滴、浪潮从事算法与人工智能研发，持续创作大模型、RAG、Agent 与 GEO 内容。',
+  description: '芝士AI吃鱼：持续整理大模型、RAG、Agent 与 GEO 内容。',
   alternates: {
     canonical: '/about',
     types: { 'text/markdown': '/about/index.html.md' },
@@ -13,7 +13,6 @@ export const metadata = {
 }
 
 const stats = [
-  { number: profileData.stats.books, label: '本个人著作', icon: '📚' },
   { number: profileData.stats.csdnArticles, label: '篇 CSDN 内容', icon: '📝' },
   { number: profileData.stats.githubRepositories, label: '个 GitHub 仓库', icon: '⌘' },
   { number: profileData.stats.wechatReaders, label: '公众号读者', icon: '👥' },
@@ -29,7 +28,7 @@ const career = profileData.publicIdentity.career
 const verifiedWorks = profileData.verifiedWorks
 
 const expertiseAreas = [
-  { name: '大语言模型与 RAG', description: '关注检索、知识库、模型微调与生成质量，把方法放回真实数据和系统约束里讨论。', evidence: '著作、知识库项目与公开文章' },
+  { name: '大语言模型与 RAG', description: '关注检索、知识库、模型微调与生成质量，把方法放回真实数据和系统约束里讨论。', evidence: '知识库项目与公开文章' },
   { name: 'Agent 与自动化', description: '关注任务分解、工具调用、评测、权限和人工接管，不把一次跑通当成稳定落地。', evidence: '工程项目、专利与工具实践' },
   { name: 'NLP 与算法工程', description: '长期从事搜索、推荐、NLP 和人工智能研发，重视从实验指标走向生产系统的过程。', evidence: career.sourceLabel },
   { name: 'AI 内容与 GEO', description: '把复杂概念写成人能读、机器也能核验和引用的文章、漫画与结构化知识。', evidence: '公众号、博客、漫画与本站机器可读内容' },
@@ -82,14 +81,13 @@ export default function AboutPage() {
         '@type': 'ProfilePage',
         '@id': `${SITE_URL}/about#profile`,
         url: `${SITE_URL}/about`,
-        name: `${AUTHOR_NAME}（${BRAND_NAME}）`,
+        name: BRAND_NAME,
         mainEntity: { '@id': `${SITE_URL}/#person` },
       },
       {
         '@type': 'Person',
         '@id': `${SITE_URL}/#person`,
-        name: AUTHOR_NAME,
-        alternateName: BRAND_NAME,
+        name: BRAND_NAME,
         url: `${SITE_URL}/about`,
         sameAs: AUTHOR_PROFILES,
         jobTitle: '算法工程师与 AI 内容创作者',
@@ -205,7 +203,7 @@ export default function AboutPage() {
               ))}
             </div>
             <p className="mt-4 text-xs leading-5 text-text-tertiary">
-              GitHub 仓库数于 {profileData.githubVerifiedAt} 通过公开 API 核对；职业履历与专业成果于 {profileData.publicEvidenceVerifiedAt} 通过公开作者简介和专利文本交叉核验。著作、CSDN 内容数和公众号读者数来自作者资料。
+              GitHub 仓库数于 {profileData.githubVerifiedAt} 通过公开 API 核对；职业履历与专业成果于 {profileData.publicEvidenceVerifiedAt} 通过公开资料和专利文本交叉核验。CSDN 内容数和公众号读者数来自既有资料。
             </p>
           </div>
 
@@ -218,14 +216,7 @@ export default function AboutPage() {
               <span className="label label-green">已核验</span>
             </div>
             <p className="mt-4 text-sm leading-7 text-text-secondary">{career.summary}</p>
-            <a
-              href={career.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-2 inline-flex text-xs text-accent-tertiary hover:underline"
-            >
-              来源：{career.sourceLabel} ↗
-            </a>
+            <p className="mt-2 text-xs text-text-tertiary">来源：{career.sourceLabel}</p>
             <div className="mt-5 space-y-3">
               {verifiedWorks.map((work) => (
                 <article key={work.identifier} className="rounded-xl border border-border-default bg-bg-tertiary p-4">

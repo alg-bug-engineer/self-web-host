@@ -2,12 +2,11 @@ import { allPosts } from 'contentlayer/generated'
 import { compareDesc } from 'date-fns'
 import BlogClient from './BlogClient'
 import { Suspense } from 'react'
-import portfolioData from 'content/collections/portfolio.json'
-import { AUTHOR_NAME, BRAND_NAME, SITE_URL, absoluteUrl } from '@/lib/site'
+import { BRAND_NAME, SITE_URL, absoluteUrl } from '@/lib/site'
 
 export const metadata = {
   title: 'AI 深度文章与学习路径',
-  description: '张其来的 AI 深度文章与学习路径：从大模型、GPT、RAG 到 Agent 工程，以及 AI 对学习、工作与社会的影响。',
+  description: '芝士AI吃鱼的 AI 深度文章与学习路径：从大模型、GPT、RAG 到 Agent 工程，以及 AI 对学习、工作与社会的影响。',
   alternates: { canonical: '/blog' },
   openGraph: {
     title: 'AI 深度文章与学习路径 | 芝士AI吃鱼',
@@ -21,7 +20,6 @@ export default function BlogPage() {
   const posts = allPosts
     .filter((post) => post.published)
     .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
-  const bookCount = portfolioData.filter((item) => item.type === 'book').length
   const description = '从模型原理、Agent 实践到 AI 与人的长期变化，按清晰路径阅读芝士AI吃鱼的深度文章。'
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -34,7 +32,7 @@ export default function BlogPage() {
         description,
         inLanguage: 'zh-CN',
         isPartOf: { '@id': `${SITE_URL}/#website` },
-        author: { '@id': `${SITE_URL}/#person`, name: AUTHOR_NAME, alternateName: BRAND_NAME },
+        author: { '@id': `${SITE_URL}/#person`, name: BRAND_NAME },
         mainEntity: { '@id': `${SITE_URL}/blog#articles` },
       },
       {
@@ -69,7 +67,7 @@ export default function BlogPage() {
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent-primary"></div>
         </div>
       }>
-        <BlogClient posts={posts} bookCount={bookCount} />
+        <BlogClient posts={posts} />
       </Suspense>
     </>
   )

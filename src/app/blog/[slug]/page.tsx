@@ -11,7 +11,7 @@ import { getSettings } from '@/lib/admin-storage'
 import { compareDesc } from 'date-fns'
 import ArticleViewCounter from '@/components/ArticleViewCounter'
 import ArticleReadingGuide from '@/components/ArticleReadingGuide'
-import { AUTHOR_NAME, BRAND_NAME, SITE_URL, absoluteUrl } from '@/lib/site'
+import { BRAND_NAME, SITE_URL, absoluteUrl } from '@/lib/site'
 import { extractArticleHeadings } from '@/lib/article-headings.mjs'
 
 interface PageProps {
@@ -114,7 +114,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         articleSection: post.category === 'tech' ? 'AI 技术科普' : 'AI 与社会观察',
         keywords: post.tags?.join(', '),
         citation: post.sourceUrl || undefined,
-        author: { '@id': `${SITE_URL}/#person`, name: AUTHOR_NAME, alternateName: post.author || BRAND_NAME },
+        author: { '@id': `${SITE_URL}/#person`, name: post.author || BRAND_NAME },
         publisher: { '@id': `${SITE_URL}/#person` },
       },
       {

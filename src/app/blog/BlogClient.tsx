@@ -7,7 +7,6 @@ import Link from 'next/link'
 
 interface BlogClientProps {
   posts: Post[]
-  bookCount: number
 }
 
 const CATEGORIES = [
@@ -53,7 +52,7 @@ const categoryMatches = (post: Post, categoryId: string) => {
   ) || false
 }
 
-export default function BlogClient({ posts, bookCount }: BlogClientProps) {
+export default function BlogClient({ posts }: BlogClientProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState('all')
   const [activeTag, setActiveTag] = useState<string | null>(null)
@@ -112,9 +111,7 @@ export default function BlogClient({ posts, bookCount }: BlogClientProps) {
           <div className="relative mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-text-tertiary">
             <span><strong className="text-text-primary">{posts.length}</strong> 篇深度文章</span>
             <span aria-hidden="true">·</span>
-            <Link href="/portfolio" className="transition-colors hover:text-accent-primary" data-analytics-event="view_portfolio" data-analytics-target="blog-proof">
-              <strong className="text-text-primary">{bookCount}</strong> 本著作
-            </Link>
+            <Link href="/portfolio" className="transition-colors hover:text-accent-primary" data-analytics-event="view_portfolio" data-analytics-target="blog-proof">查看著作与作品</Link>
             <span aria-hidden="true">·</span>
             <Link href="/about" className="transition-colors hover:text-accent-primary">8 年算法实践</Link>
           </div>

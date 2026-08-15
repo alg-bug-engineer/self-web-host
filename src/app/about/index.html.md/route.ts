@@ -1,7 +1,7 @@
 import portfolioData from 'content/collections/portfolio.json'
 import profileData from '@/data/profile.json'
 import { renderAboutMarkdown } from '@/lib/identity-markdown.mjs'
-import { AUTHOR_NAME, AUTHOR_PROFILES, BRAND_NAME, SITE_URL } from '@/lib/site'
+import { AUTHOR_PROFILES, BRAND_NAME, SITE_URL } from '@/lib/site'
 
 export const dynamic = 'force-static'
 
@@ -9,7 +9,6 @@ export async function GET() {
   const canonical = `${SITE_URL}/about`
   const markdownUrl = `${canonical}/index.html.md`
   const body = renderAboutMarkdown(profileData, portfolioData, {
-    authorName: AUTHOR_NAME,
     brandName: BRAND_NAME,
     canonical,
     markdownUrl,

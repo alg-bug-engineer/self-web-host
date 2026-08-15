@@ -1,7 +1,6 @@
 import { allPosts } from 'contentlayer/generated'
 import { compareDesc } from 'date-fns'
 import Link from 'next/link'
-import Image from 'next/image'
 import { getTopPaths } from '@/lib/analytics-storage'
 import portfolioData from 'content/collections/portfolio.json'
 
@@ -14,10 +13,6 @@ export const dynamic = 'force-dynamic'
 type Book = {
   title: string
   type: string
-  authors?: string[]
-  description?: string
-  image?: string
-  link?: string
 }
 
 const knowledgeTracks = [
@@ -70,7 +65,7 @@ export default async function Home() {
             </div>
             <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-text-tertiary">
               <span className="hero-proof"><i />{posts.length} 篇深度内容</span>
-              <span className="hero-proof"><i />{books.length} 本著作</span>
+              <span className="hero-proof"><i />持续整理 AI 知识</span>
               <span className="hero-proof"><i />8500+ 同行读者</span>
             </div>
           </div>
@@ -188,21 +183,15 @@ export default async function Home() {
               const content = (
                 <>
                   <div className="book-cover">
-                    {book.image ? (
-                      <Image src={book.image} alt={`${book.title}封面`} fill className="object-contain" sizes="(max-width: 768px) 50vw, 190px" />
-                    ) : (
-                      <div className={`generated-cover cover-${index % 3}`}>
-                        <span>芝士AI吃鱼 · 著作</span>
-                        <strong>{book.title}</strong>
-                        <small>{book.authors?.join(' · ')}</small>
-                      </div>
-                    )}
+                    <div className={`generated-cover cover-${index % 3}`}>
+                      <span>著作</span>
+                      <strong>{book.title}</strong>
+                    </div>
                   </div>
                   <h3>《{book.title}》</h3>
-                  <p>{book.authors?.join('、')}</p>
                 </>
               )
-              return book.link ? <Link key={book.title} href={book.link} target="_blank" rel="noopener noreferrer" className="book-card" data-analytics-event="view_book" data-analytics-target={`home-book-${index + 1}`}>{content}</Link> : <article key={book.title} className="book-card">{content}</article>
+              return <article key={book.title} className="book-card">{content}</article>
             })}
           </div>
         </div>

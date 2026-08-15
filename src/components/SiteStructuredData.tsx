@@ -1,4 +1,4 @@
-import { AUTHOR_NAME, AUTHOR_PROFILES, BRAND_NAME, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site'
+import { AUTHOR_PROFILES, BRAND_NAME, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site'
 
 export default function SiteStructuredData() {
   const graph = {
@@ -7,8 +7,7 @@ export default function SiteStructuredData() {
       {
         '@type': 'Person',
         '@id': `${SITE_URL}/#person`,
-        name: AUTHOR_NAME,
-        alternateName: BRAND_NAME,
+        name: BRAND_NAME,
         url: `${SITE_URL}/about`,
         sameAs: AUTHOR_PROFILES,
         jobTitle: '算法工程师与 AI 内容创作者',

@@ -1,11 +1,11 @@
 import portfolioData from 'content/collections/portfolio.json'
 import Link from 'next/link'
 import Image from 'next/image'
-import { AUTHOR_NAME, BRAND_NAME, SITE_URL } from '@/lib/site'
+import { BRAND_NAME, SITE_URL } from '@/lib/site'
 
 export const metadata = {
   title: '著作与作品 | 芝士AI吃鱼',
-  description: '张其来的著作、AI 产品与开源项目，覆盖大模型、RAG、GEO、Token 经济、Agent 与 Vibe Coding。',
+  description: '芝士AI吃鱼的著作书名、AI 产品与开源项目。著作仅展示书名。',
   alternates: {
     canonical: '/portfolio',
     types: { 'text/markdown': '/portfolio/index.html.md' },
@@ -16,14 +16,11 @@ type PortfolioItem = {
   title: string
   type: 'book' | 'website' | 'opensource'
   date?: string
-  authors?: string[]
-  description: string
+  description?: string
   image?: string
   link?: string
   github?: string
   tags?: string[]
-  isbn?: string
-  publisher?: string
 }
 
 const items = portfolioData as PortfolioItem[]
@@ -31,21 +28,12 @@ const books = items.filter((item) => item.type === 'book')
 const projects = items.filter((item) => item.type !== 'book')
 
 function BookCover({ item, index }: { item: PortfolioItem; index: number }) {
-  if (item.image) {
-    return (
-      <div className="relative aspect-[3/4.25] w-full overflow-hidden rounded-[1.35rem] bg-white shadow-[0_22px_45px_rgba(15,23,42,0.18)]">
-        <Image src={item.image} alt={`${item.title}封面`} fill className="object-contain" sizes="(max-width: 768px) 70vw, 260px" />
-      </div>
-    )
-  }
-
   const tones = ['from-[#153d57] to-[#28748a]', 'from-[#382566] to-[#81519b]']
   return (
     <div className={`aspect-[3/4.25] w-full rounded-[1.35rem] bg-gradient-to-br ${tones[index % tones.length]} p-7 text-white shadow-[0_22px_45px_rgba(15,23,42,0.2)]`}>
       <div className="flex h-full flex-col border border-white/25 p-5">
-        <span className="text-xs tracking-[0.25em] text-white/65">芝士AI吃鱼 · 著作</span>
+        <span className="text-xs tracking-[0.25em] text-white/65">著作</span>
         <h3 className="mt-auto text-2xl font-semibold leading-snug">{item.title}</h3>
-        <p className="mt-5 text-sm text-white/70">{item.authors?.join(' · ')}</p>
       </div>
     </div>
   )
@@ -57,20 +45,23 @@ export default function PortfolioPage() {
     '@type': 'CollectionPage',
     '@id': `${SITE_URL}/portfolio#collection`,
     url: `${SITE_URL}/portfolio`,
-    name: `${AUTHOR_NAME}（${BRAND_NAME}）的著作与作品`,
+    name: `${BRAND_NAME}的著作与作品`,
     about: { '@id': `${SITE_URL}/#person` },
-    hasPart: items.map((item) => ({
-      '@type': item.type === 'book' ? 'Book' : 'CreativeWork',
-      name: item.title,
-      description: item.description,
-      url: item.link || `${SITE_URL}/portfolio`,
-      author: item.authors?.map((name) => ({ '@type': 'Person', name })) || { '@id': `${SITE_URL}/#person` },
-      keywords: item.tags?.join(', '),
-      datePublished: item.date,
-      isbn: item.isbn,
-      publisher: item.publisher ? { '@type': 'Organization', name: item.publisher } : undefined,
-      image: item.image ? `${SITE_URL}${item.image}` : undefined,
-    })),
+    hasPart: items.map((item) => item.type === 'book'
+      ? {
+          '@type': 'Book',
+          name: item.title,
+          url: `${SITE_URL}/portfolio`,
+        }
+      : {
+          '@type': 'CreativeWork',
+          name: item.title,
+          description: item.description,
+          url: item.link || `${SITE_URL}/portfolio`,
+          keywords: item.tags?.join(', '),
+          datePublished: item.date,
+          image: item.image ? `${SITE_URL}${item.image}` : undefined,
+        }),
   }
 
   return (
@@ -84,7 +75,7 @@ export default function PortfolioPage() {
           </h1>
         </div>
         <p className="max-w-xl text-base leading-8 text-text-secondary">
-          张其来的著作与代表作品，覆盖大模型、RAG、GEO、Token 经济，以及持续迭代的 AI 内容与知识工具。
+          著作区域仅保留书名；产品与开源项目继续展示公开说明。
         </p>
       </header>
 
@@ -94,27 +85,13 @@ export default function PortfolioPage() {
             <p className="eyebrow">Publications</p>
             <h2 className="mt-2 text-3xl font-semibold text-text-primary">已出版与即将出版</h2>
           </div>
-          <span className="text-sm text-text-tertiary">共 {books.length} 本</span>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
           {books.map((book, index) => (
             <article key={book.title} className="group min-w-0">
-              {book.link ? (
-                <Link href={book.link} target="_blank" rel="noopener noreferrer" aria-label={`查看《${book.title}》`} data-analytics-event="view_book" data-analytics-target={`book-${index + 1}`}>
-                  <BookCover item={book} index={index} />
-                </Link>
-              ) : (
-                <BookCover item={book} index={index} />
-              )}
+              <BookCover item={book} index={index} />
               <div className="px-1 pt-5">
                 <h3 className="text-base font-semibold leading-6 text-text-primary">《{book.title}》</h3>
-                <p className="mt-2 text-sm text-text-tertiary">{book.authors?.join('、')}</p>
-                {(book.publisher || book.isbn) && (
-                  <p className="mt-2 text-xs leading-5 text-text-tertiary">
-                    {[book.publisher, book.isbn ? `ISBN ${book.isbn}` : null].filter(Boolean).join(' · ')}
-                  </p>
-                )}
-                <p className="mt-3 text-sm leading-6 text-text-secondary">{book.description}</p>
               </div>
             </article>
           ))}

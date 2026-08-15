@@ -1,11 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { getSettings } from '@/lib/admin-storage'
-import { AUTHOR_NAME, BRAND_NAME, SITE_URL } from '@/lib/site'
+import { BRAND_NAME, SITE_URL } from '@/lib/site'
 
 export const metadata = {
   title: `AI 实践学习社区｜儿童 AI 素养试运行 | ${BRAND_NAME}`,
-  description: `${AUTHOR_NAME}（${BRAND_NAME}）整理大模型、RAG、Agent 与 AI 工程实践；当前主线是“AI 原生一代：儿童 AI 素养”家庭实践课试运行。知识星球共学与课程内测分别登记。`,
+  description: `${BRAND_NAME}整理大模型、RAG、Agent 与 AI 工程实践；当前主线是“AI 原生一代：儿童 AI 素养”家庭实践课试运行。知识星球共学与课程内测分别登记。`,
   alternates: { canonical: '/planet' },
   openGraph: {
     title: `AI 实践学习社区｜儿童 AI 素养试运行 | ${BRAND_NAME}`,
@@ -45,7 +45,7 @@ export default async function PlanetPage() {
     ],
     inLanguage: 'zh-CN',
     isPartOf: { '@id': `${SITE_URL}/#website` },
-    author: { '@id': `${SITE_URL}/#person`, name: AUTHOR_NAME, alternateName: BRAND_NAME },
+    author: { '@id': `${SITE_URL}/#person`, name: BRAND_NAME },
   }
 
   return (

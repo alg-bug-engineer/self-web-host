@@ -10,7 +10,7 @@ const html = await fs.readFile(blogHtmlPath, 'utf8')
 if (!html.includes('<title>AI 深度文章与学习路径 | 芝士AI吃鱼</title>')) {
   throw new Error('文章索引页标题缺失或重复品牌名')
 }
-if (!html.includes('张其来的 AI 深度文章与学习路径')) {
+if (!html.includes('芝士AI吃鱼的 AI 深度文章与学习路径')) {
   throw new Error('文章索引页缺少面向搜索与读者的描述')
 }
 

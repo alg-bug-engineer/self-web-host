@@ -148,9 +148,9 @@ test('旧长文保留阅读进度但不伪造目录结构', async ({ page }) => 
 test('作品页公开作品并保持外链安全属性', async ({ page }) => {
   await page.goto('/portfolio')
   await expect(page.locator('h1')).toBeVisible()
-  await expect(page.getByText('共 5 本')).toBeVisible()
-  await expect(page.getByText('ISBN 9787115668981')).toBeVisible()
-  await expect(page.getByText('ISBN 9787115689856')).toBeVisible()
+  await expect(page.getByText('《RAG 极简入门》')).toBeVisible()
+  await expect(page.getByText('《这就是 GEO：在 AI 流量红利中抢占先机》')).toBeVisible()
+  await expect(page.getByText(/ISBN/)).toHaveCount(0)
   await expectNoHorizontalOverflow(page)
 
   await expect(page.locator('link[rel="alternate"][type="text/markdown"]')).toHaveAttribute(
@@ -161,7 +161,9 @@ test('作品页公开作品并保持外链安全属性', async ({ page }) => {
   expect(markdown.status()).toBe(200)
   expect(markdown.headers()['content-type']).toContain('text/markdown')
   expect(markdown.headers().link).toContain('<https://ai-knowledgepoints.cn/portfolio>; rel="canonical"')
-  expect(await markdown.text()).toContain('ISBN：9787115668981')
+  const markdownText = await markdown.text()
+  expect(markdownText).toContain('- 《RAG 极简入门》')
+  expect(markdownText).not.toContain('ISBN')
 
   const externalLinks = page.locator('main a[target="_blank"]')
   expect(await externalLinks.count()).toBeGreaterThan(0)
@@ -177,7 +179,7 @@ test('关于页展示经公开来源核对的 GitHub 信息', async ({ page }) =
   await expect(page.getByText('33', { exact: true })).toBeVisible()
   await expect(page.getByText('个 GitHub 仓库', { exact: true })).toBeVisible()
   await expect(page.getByText(/GitHub 仓库数于 2026-08-11 通过公开 API 核对/)).toBeVisible()
-  await expect(page.getByText(/著作、CSDN 内容数和公众号读者数来自作者资料/)).toBeVisible()
+  await expect(page.getByText(/CSDN 内容数和公众号读者数来自既有资料/)).toBeVisible()
   await expect(page.getByRole('link', { name: 'GitHub', exact: true })).toBeVisible()
   await expect(page.getByRole('heading', { name: '公开可核验的专业成果' })).toBeVisible()
   await expect(page.getByText('CN118861081B', { exact: false })).toBeVisible()
