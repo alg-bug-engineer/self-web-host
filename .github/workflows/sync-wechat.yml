@@ -63,7 +63,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [[ -z "$(git status --porcelain -- content/posts)" ]]; then
+          if [[ -z "$(git status --porcelain -- content/posts public/images/wechat)" ]]; then
             echo "没有新文章。"
             exit 0
           fi
@@ -71,7 +71,7 @@ jobs:
           git config user.name "ai-knowledgepoints-bot"
           git config user.email "actions@users.noreply.github.com"
           git checkout -b "$branch"
-          git add content/posts
+          git add content/posts public/images/wechat
           git commit -m "同步公众号最近文章"
           git push origin "$branch"
           source scripts/lib/github-pr-recovery.sh

@@ -3,12 +3,15 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { XMLParser } from 'fast-xml-parser'
 import TurndownService from 'turndown'
+import { localizeWechatHtmlImages, normalizeWechatImages } from './lib/wechat-images.mjs'
 
 const feedUrl = process.env.WECHAT_RSS_URL?.trim()
 const feedFile = process.env.WECHAT_RSS_FILE?.trim()
 const htmlFile = process.env.WECHAT_HTML_FILE?.trim()
 const autoPublish = process.env.WECHAT_AUTO_PUBLISH === 'true'
 const postsDir = path.resolve(process.cwd(), process.env.WECHAT_POSTS_DIR?.trim() || path.join('content', 'posts'))
+const publicDir = path.resolve(process.cwd(), process.env.WECHAT_PUBLIC_DIR?.trim() || 'public')
+const localizeImages = process.env.WECHAT_LOCALIZE_IMAGES !== 'false'
 const expectedBiz = process.env.WECHAT_EXPECTED_BIZ?.trim() || 'MzIxMjY3NzMwNw=='
 const expectedFeedId = process.env.WECHAT_EXPECTED_FEED_ID?.trim() || ''
 const importDays = Math.min(90, Math.max(1, Number.parseInt(process.env.WECHAT_IMPORT_DAYS || '31', 10) || 31))
@@ -76,13 +79,13 @@ for (const item of items) {
     .update(articleKey)
     .digest('hex')
     .slice(0, 8)}`
-  const markdown = turndown
-    .turndown(normalizeWechatImages(rawHtml))
-    .replace(/\{/g, '&#123;')
-    .replace(/\}/g, '&#125;')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim()
-  if (markdown.length < 200) continue
+  const normalizedHtml = normalizeWechatImages(rawHtml)
+  const candidateMarkdown = markdownFromHtml(normalizedHtml)
+  if (candidateMarkdown.length < 200) continue
+  const articleHtml = localizeImages
+    ? await localizeWechatHtmlImages(normalizedHtml, { slug, publicDir })
+    : normalizedHtml
+  const markdown = markdownFromHtml(articleHtml)
 
   const frontmatter = [
     '---',
@@ -205,14 +208,13 @@ function stripHtml(value) {
     .replace(/\s+/g, ' ')
 }
 
-function normalizeWechatImages(value) {
-  return value.replace(/<img\b[^>]*>/gi, (tag) => {
-    const dataSrc = tag.match(/\sdata-src=(['"])(.*?)\1/i)?.[2]
-    if (!dataSrc) return tag
-    return tag
-      .replace(/\ssrc=(['"])(.*?)\1/i, '')
-      .replace(/\sdata-src=(['"])(.*?)\1/i, ` src="${dataSrc}"`)
-  })
+function markdownFromHtml(value) {
+  return turndown
+    .turndown(value)
+    .replace(/\{/g, '&#123;')
+    .replace(/\}/g, '&#125;')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
 }
 
 function normalizeWechatUrl(value, itemId = '') {

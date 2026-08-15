@@ -65,7 +65,7 @@ git worktree add --detach "$WORKTREE_DIR" origin/main
     node "$PROJECT_DIR/scripts/import-wechat.mjs"
 )
 
-if [[ -z "$(git -C "$WORKTREE_DIR" status --porcelain -- content/posts)" ]]; then
+if [[ -z "$(git -C "$WORKTREE_DIR" status --porcelain -- content/posts public/images/wechat)" ]]; then
   echo "公众号 RSS 没有尚未进入网站的新文章。"
   exit 0
 fi
@@ -86,7 +86,7 @@ source "$PROJECT_DIR/scripts/lib/github-pr-recovery.sh"
 timestamp="$(TZ=Asia/Shanghai date +%Y%m%d-%H%M%S)"
 branch="codex/wechat-sync-local-$timestamp"
 git -C "$WORKTREE_DIR" switch -c "$branch"
-git -C "$WORKTREE_DIR" add content/posts
+git -C "$WORKTREE_DIR" add content/posts public/images/wechat
 git -C "$WORKTREE_DIR" -c user.name="ai-knowledgepoints-bot" \
   -c user.email="actions@users.noreply.github.com" \
   commit -m "同步公众号最新文章"

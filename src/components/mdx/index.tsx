@@ -185,6 +185,7 @@ function MdxImage(props: ComponentPropsWithoutRef<'img'>) {
         {...props}
         alt={props.alt || ''}
         className="rounded-xl max-w-full h-auto"
+        referrerPolicy={props.referrerPolicy || 'no-referrer'}
       />
       {props.alt && (
         <figcaption className="mt-2 text-center text-sm text-text-tertiary">
