@@ -2,13 +2,20 @@ import type { Metadata } from 'next'
 import MarkdownStudio from './MarkdownStudio'
 
 export const metadata: Metadata = {
-  title: 'Markdown 排版工具',
-  description: '在线编写、格式化并预览 Markdown，一键复制富文本到公众号、知识库或文档编辑器。',
+  title: '微信公众号排版器',
+  description: '面向微信公众号的 Markdown 排版器：结构化保留代码换行与缩进，一键复制富文本或导出兼容 HTML。',
   alternates: { canonical: '/tools/markdown' },
   openGraph: {
-    title: 'Markdown 排版工具 | 芝士AI吃鱼',
-    description: '在线编写、实时预览、一键格式化并复制 Markdown 富文本。',
+    title: '微信公众号排版器 | 芝士AI吃鱼',
+    description: '代码不再挤成一行。写 Markdown，复制微信兼容富文本。',
     url: '/tools/markdown',
+    images: [{ url: '/images/tools/wechat-markdown-formatter-og.png', width: 1200, height: 630, alt: '从 Markdown 到公众号排版' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '微信公众号排版器 | 芝士AI吃鱼',
+    description: '代码不再挤成一行。写 Markdown，复制微信兼容富文本。',
+    images: ['/images/tools/wechat-markdown-formatter-og.png'],
   },
 }
 

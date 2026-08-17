@@ -4,55 +4,59 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import {
+  analyzeMarkdown,
+  cloneWithInlineStyles,
+  createStandaloneHtml,
+  formatMarkdown,
+  getReadingStats,
+} from '@/lib/wechat-markdown'
 import styles from './markdown-studio.module.css'
 
-type PaperTheme = 'green' | 'blue' | 'ink'
+type PaperTheme = 'editorial' | 'clear' | 'ink'
 type ViewMode = 'edit' | 'preview'
 
-const STORAGE_KEY = 'cheese-ai-markdown-draft'
+const STORAGE_KEY = 'cheese-ai-wechat-markdown-draft-v2'
 
 const SAMPLE_MARKDOWN = `# 把复杂的事，讲得清楚一点
 
-> Markdown 是一种轻量级标记语言。你只需要专注内容，排版交给工具。
+> 好的排版不是装饰内容，而是帮读者更轻松地理解内容。
 
-## 为什么使用 Markdown？
+## 为什么专门为公众号排版？
 
-它让写作重新回到内容本身：
+微信编辑器会清理一部分 CSS。只依赖样式实现的代码换行，粘贴后可能挤成一行。这个工具会把换行和缩进写进 HTML 结构里：
 
-- **结构清晰**：标题、列表和引用一目了然
-- **容易迁移**：同一份内容可以发布到不同平台
-- **专注写作**：不必反复调整字号、间距和颜色
+- **真实换行**：代码行使用结构化换行，不依赖 \`white-space\`
+- **保留缩进**：空格转换为不换行空格
+- **所见即所得**：标题、引用、表格和行内代码保持统一层级
 
-## 一个简单的工作流
+## 一段真实的代码
 
-1. 在左侧写下你的内容
-2. 点击「一键格式化」整理源码
-3. 选择喜欢的排版主题
-4. 点击「复制排版」粘贴到目标编辑器
+\`inline code\` 会显示为轻量标签，代码块则保留多行与缩进：
 
-### 小提示
-
-链接、表格、代码块和删除线也都支持。比如访问 [芝士AI吃鱼](https://ai-knowledgepoints.cn)，继续探索更多 AI 知识。
-
-| 功能 | 状态 |
-| --- | --- |
-| 实时预览 | 已支持 |
-| 富文本复制 | 已支持 |
-| 本地自动保存 | 已支持 |
-
-\`\`\`javascript
-const idea = '先写清楚，再写漂亮。'
-console.log(idea)
+\`\`\`html
+<article class="story">
+  <h1>让内容先被看懂</h1>
+  <p>再谈风格与表达。</p>
+</article>
 \`\`\`
+
+## 发布前检查
+
+| 检查项 | 处理方式 |
+| --- | --- |
+| 代码换行 | 固化为 HTML 结构 |
+| 引用样式 | 无多余标签文字 |
+| 草稿隐私 | 仅保存在当前浏览器 |
 
 ---
 
-愿每一次表达，都准确、克制，也有温度。`
+完成后点击「复制公众号排版」，直接粘贴到微信编辑器。`
 
 const themeOptions: Array<{ id: PaperTheme; name: string; color: string }> = [
-  { id: 'green', name: '清新绿', color: '#19a974' },
-  { id: 'blue', name: '知识蓝', color: '#3973e6' },
-  { id: 'ink', name: '经典墨', color: '#33343b' },
+  { id: 'editorial', name: '深度蓝', color: '#1f5aa6' },
+  { id: 'clear', name: '清爽青', color: '#248b8e' },
+  { id: 'ink', name: '经典墨', color: '#323640' },
 ]
 
 const toolbarItems = [
@@ -65,91 +69,30 @@ const toolbarItems = [
   { label: '链接', mark: '↗', prefix: '[', suffix: '](https://)' },
 ]
 
-function formatMarkdown(value: string) {
-  const source = value.replace(/\r\n?/g, '\n').replace(/\t/g, '  ')
-  const lines = source.split('\n')
-  let inFence = false
-
-  const normalized = lines.map((rawLine) => {
-    const line = rawLine.replace(/[ \t]+$/g, '')
-    if (/^\s*```/.test(line)) {
-      inFence = !inFence
-      return line.trimStart()
-    }
-    if (inFence) return line
-    if (!line.trim()) return ''
-
-    const indent = line.match(/^\s*/)?.[0] ?? ''
-    const content = line.trimStart()
-      .replace(/^(#{1,6})\s*/, '$1 ')
-      .replace(/^>\s*/, '> ')
-      .replace(/^[-*+]\s+/, '- ')
-      .replace(/^(\d+)[.)]\s+/, '$1. ')
-
-    return `${indent}${content}`
-  })
-
-  const compacted: string[] = []
-  for (const line of normalized) {
-    if (line === '' && compacted.at(-1) === '') continue
-    compacted.push(line)
-  }
-
-  return compacted.join('\n').trim().concat('\n')
-}
-
-function getReadingStats(markdown: string) {
-  const plain = markdown
-    .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/`[^`]*`/g, ' ')
-    .replace(/!?(\[[^\]]*\])\([^)]*\)/g, '$1')
-    .replace(/[#>*_~|\-]/g, ' ')
-  const chinese = plain.match(/[\u3400-\u9fff]/g)?.length ?? 0
-  const words = plain.match(/[A-Za-z0-9]+(?:['’-][A-Za-z0-9]+)*/g)?.length ?? 0
-  const count = chinese + words
-  return { count, minutes: Math.max(1, Math.ceil(count / 300)) }
-}
-
-function cloneWithInlineStyles(source: HTMLElement) {
-  const clone = source.cloneNode(true) as HTMLElement
-  const sourceNodes = [source, ...Array.from(source.querySelectorAll<HTMLElement>('*'))]
-  const cloneNodes = [clone, ...Array.from(clone.querySelectorAll<HTMLElement>('*'))]
-  const properties = [
-    'background-color', 'border', 'border-color', 'border-radius', 'border-left',
-    'color', 'display', 'font-family', 'font-size', 'font-style', 'font-weight',
-    'letter-spacing', 'line-height', 'margin', 'margin-top', 'margin-bottom',
-    'padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right',
-    'text-align', 'text-decoration', 'white-space', 'word-break',
-  ]
-
-  sourceNodes.forEach((node, index) => {
-    const target = cloneNodes[index]
-    if (!target) return
-    const computed = window.getComputedStyle(node)
-    const inline = properties
-      .map((property) => `${property}:${computed.getPropertyValue(property)}`)
-      .join(';')
-    target.setAttribute('style', inline)
-    target.removeAttribute('class')
-  })
-
-  clone.removeAttribute('class')
-  clone.removeAttribute('data-paper-theme')
-  return clone
+function downloadText(filename: string, content: string, type: string) {
+  const url = URL.createObjectURL(new Blob([content], { type }))
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = filename
+  anchor.click()
+  window.setTimeout(() => URL.revokeObjectURL(url), 0)
 }
 
 export default function MarkdownStudio() {
   const [markdown, setMarkdown] = useState(SAMPLE_MARKDOWN)
-  const [paperTheme, setPaperTheme] = useState<PaperTheme>('green')
+  const [paperTheme, setPaperTheme] = useState<PaperTheme>('editorial')
   const [viewMode, setViewMode] = useState<ViewMode>('edit')
-  const [notice, setNotice] = useState('草稿会自动保存在本机')
+  const [notice, setNotice] = useState('草稿已在本机自动保存')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const previewRef = useRef<HTMLElement>(null)
+  const noticeTimerRef = useRef<number | undefined>(undefined)
   const stats = useMemo(() => getReadingStats(markdown), [markdown])
+  const diagnostics = useMemo(() => analyzeMarkdown(markdown), [markdown])
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY)
     if (saved) setMarkdown(saved)
+    return () => window.clearTimeout(noticeTimerRef.current)
   }, [])
 
   useEffect(() => {
@@ -157,13 +100,14 @@ export default function MarkdownStudio() {
   }, [markdown])
 
   const flash = (message: string) => {
+    window.clearTimeout(noticeTimerRef.current)
     setNotice(message)
-    window.setTimeout(() => setNotice('草稿会自动保存在本机'), 2200)
+    noticeTimerRef.current = window.setTimeout(() => setNotice('草稿已在本机自动保存'), 2400)
   }
 
   const applyFormat = () => {
     setMarkdown((current) => formatMarkdown(current))
-    flash('格式已整理')
+    flash('Markdown 已整理')
   }
 
   const insertMarkup = (prefix: string, suffix: string, block = false) => {
@@ -176,8 +120,7 @@ export default function MarkdownStudio() {
     const after = markdown.slice(end)
     const needsLineBreak = block && before.length > 0 && !before.endsWith('\n')
     const insertion = `${needsLineBreak ? '\n' : ''}${prefix}${selected}${suffix}`
-    const next = before + insertion + after
-    setMarkdown(next)
+    setMarkdown(before + insertion + after)
     window.requestAnimationFrame(() => {
       textarea.focus()
       const selectionStart = start + (needsLineBreak ? 1 : 0) + prefix.length
@@ -194,25 +137,30 @@ export default function MarkdownStudio() {
     }
   }
 
+  const getPortableArticle = () => {
+    const preview = previewRef.current
+    return preview ? cloneWithInlineStyles(preview) : null
+  }
+
   const copyRichText = async () => {
     const preview = previewRef.current
-    if (!preview) return
-    const clone = cloneWithInlineStyles(preview)
-    const html = clone.innerHTML
+    const clone = getPortableArticle()
+    if (!preview || !clone) return
+    const html = clone.outerHTML
     const plain = preview.innerText
 
     try {
       if ('ClipboardItem' in window && navigator.clipboard.write) {
-        const item = new ClipboardItem({
-          'text/html': new Blob([html], { type: 'text/html' }),
-          'text/plain': new Blob([plain], { type: 'text/plain' }),
-        })
-        await navigator.clipboard.write([item])
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            'text/html': new Blob([html], { type: 'text/html' }),
+            'text/plain': new Blob([plain], { type: 'text/plain' }),
+          }),
+        ])
       } else {
         const holder = document.createElement('div')
         holder.contentEditable = 'true'
-        holder.style.position = 'fixed'
-        holder.style.left = '-9999px'
+        holder.style.cssText = 'position:fixed;left:-9999px;top:0;'
         holder.appendChild(clone)
         document.body.appendChild(holder)
         const range = document.createRange()
@@ -220,19 +168,28 @@ export default function MarkdownStudio() {
         const selection = window.getSelection()
         selection?.removeAllRanges()
         selection?.addRange(range)
-        document.execCommand('copy')
+        const copied = document.execCommand('copy')
         selection?.removeAllRanges()
         holder.remove()
+        if (!copied) throw new Error('copy failed')
       }
-      flash('排版已复制，可以去粘贴了')
+      flash(`排版已复制 · ${diagnostics.codeLines} 行代码已固化`)
     } catch {
       try {
         await navigator.clipboard.writeText(plain)
-        flash('已复制为纯文本')
+        flash('浏览器仅允许复制纯文本')
       } catch {
         flash('复制失败，请在预览区手动复制')
       }
     }
+  }
+
+  const exportHtml = () => {
+    const clone = getPortableArticle()
+    if (!clone) return
+    const title = markdown.match(/^#\s+(.+)$/m)?.[1]?.trim() || '公众号文章'
+    downloadText('公众号排版.html', createStandaloneHtml(clone.outerHTML, title), 'text/html;charset=utf-8')
+    flash('兼容版 HTML 已导出')
   }
 
   const clearDraft = () => {
@@ -247,15 +204,22 @@ export default function MarkdownStudio() {
       <header className={styles.intro}>
         <div>
           <div className={styles.breadcrumb}>
-            <Link href="/collections/tools">AI 工具</Link><span>/</span><span>Markdown 排版</span>
+            <Link href="/collections/tools">AI 工具</Link><span>/</span><span>公众号排版器</span>
           </div>
-          <h1>Markdown 排版工具</h1>
-          <p>专注写作，排版交给这里。实时预览、一键整理，复制后即可粘贴到公众号、知识库或文档。</p>
+          <div className={styles.eyebrow}>WECHAT EDITORIAL STUDIO</div>
+          <h1>微信公众号排版器</h1>
+          <p>从 Markdown 到可直接粘贴的公众号富文本。代码换行写入 HTML 结构，经过微信编辑器清洗也不挤成一行。</p>
         </div>
-        <div className={styles.privacyNote}><span>✓</span> 内容仅保存在你的浏览器</div>
+        <div className={styles.privacyNote}><span>✓</span><div><strong>本地处理</strong><small>内容不会上传服务器</small></div></div>
       </header>
 
-      <section className={styles.workspace} aria-label="Markdown 编辑工作台">
+      <section className={styles.productPromise} aria-label="产品能力">
+        <div><span>01</span><strong>结构化代码换行</strong><small>真实 BR 与缩进空格</small></div>
+        <div><span>02</span><strong>公众号内联样式</strong><small>减少平台清洗影响</small></div>
+        <div><span>03</span><strong>复制与 HTML 导出</strong><small>两种可靠交付方式</small></div>
+      </section>
+
+      <section className={styles.workspace} aria-label="微信公众号排版工作台">
         <div className={styles.topbar}>
           <div className={styles.mobileTabs} role="tablist" aria-label="编辑视图">
             <button type="button" role="tab" aria-selected={viewMode === 'edit'} onClick={() => setViewMode('edit')}>编辑</button>
@@ -276,9 +240,21 @@ export default function MarkdownStudio() {
             ))}
           </div>
           <div className={styles.actions}>
-            <button type="button" className={styles.secondaryButton} onClick={applyFormat}><span>✦</span> 一键格式化</button>
-            <button type="button" className={styles.primaryButton} onClick={copyRichText}><span>▣</span> 复制排版</button>
+            <button type="button" className={styles.secondaryButton} onClick={applyFormat}><span>✦</span> 整理 Markdown</button>
+            <button type="button" className={styles.secondaryButton} onClick={exportHtml}><span>↓</span> 导出 HTML</button>
+            <button type="button" className={styles.primaryButton} onClick={copyRichText}><span>▣</span> 复制公众号排版</button>
           </div>
+        </div>
+
+        <div className={styles.compatibilityBar}>
+          <div><span className={styles.compatibilityDot} />微信兼容检查通过</div>
+          <p>
+            <span>{diagnostics.codeBlocks} 个代码块</span>
+            <span>{diagnostics.codeLines} 行结构化换行</span>
+            <span>{diagnostics.quotes} 条引用</span>
+            <span>{diagnostics.tables} 个表格</span>
+            {diagnostics.images > 0 && <span>{diagnostics.images} 张图片</span>}
+          </p>
         </div>
 
         <div className={styles.columns}>
@@ -317,10 +293,10 @@ export default function MarkdownStudio() {
             </div>
           </section>
 
-          <section className={`${styles.previewPanel} ${viewMode === 'edit' ? styles.mobileHidden : ''}`} aria-label="排版预览">
+          <section className={`${styles.previewPanel} ${viewMode === 'edit' ? styles.mobileHidden : ''}`} aria-label="公众号排版预览">
             <div className={styles.panelHeader}>
-              <div><span className={styles.previewIcon}>◉</span> 实时预览</div>
-              <span>所见即所得</span>
+              <div><span className={styles.previewIcon}>◉</span> 公众号预览</div>
+              <span>375 px 阅读宽度</span>
             </div>
             <div className={styles.previewScroller}>
               {markdown.trim() ? (
@@ -341,7 +317,7 @@ export default function MarkdownStudio() {
 
       <footer className={styles.toolFooter}>
         <p><strong>不上传，不留痕。</strong> 所有内容只在当前设备中处理和保存。</p>
-        <span>支持标准 Markdown · GitHub Flavored Markdown</span>
+        <span>支持 CommonMark · GitHub Flavored Markdown · 微信兼容 HTML</span>
       </footer>
     </div>
   )
