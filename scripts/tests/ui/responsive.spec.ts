@@ -160,10 +160,15 @@ test('AI 实践公开预览只在锁定区弹窗一次，并保留正确外链',
     'href',
     'https://wx.zsxq.com/group/28882182852411/topic/45548821411144448',
   )
-  await expect(dialog.getByRole('link', { name: '加入 AI 实践' })).toHaveAttribute(
+  await expect(dialog.getByRole('link', { name: '加入 AI 实践', exact: true })).toHaveAttribute(
     'href',
-    'https://wx.zsxq.com/group/28882182852411',
+    'https://t.zsxq.com/WtjvX',
   )
+  await expect(dialog.getByTestId('planet-gate-poster')).toHaveAttribute('href', 'https://t.zsxq.com/WtjvX')
+  const poster = dialog.getByRole('img', { name: 'AI 实践知识星球加入海报，包含可扫描二维码' })
+  await expect(poster).toBeVisible()
+  await expect(poster).toHaveAttribute('src', /ai-practice-poster\.png/)
+  await expect.poll(() => poster.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth === 750 && image.naturalHeight === 412)).toBe(true)
 
   await page.keyboard.press('Escape')
   await expect(dialog).toBeHidden()

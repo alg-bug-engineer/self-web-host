@@ -142,11 +142,11 @@ export default async function PlanetPage() {
           data-analytics-target="planet-footer"
         >
           <Image
-            src={settings.planetQrCode || '/images/zhishixingqiu.jpg'}
-            alt="AI 实践知识星球二维码"
-            width={208}
-            height={208}
-            className="object-contain"
+            src={settings.planetQrCode || '/images/ai-practice-poster.png'}
+            alt="AI 实践知识星球加入海报，包含可扫描二维码"
+            width={375}
+            height={206}
+            className="h-auto w-full max-w-[375px] object-contain"
           />
         </a>
       </section>

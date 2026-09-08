@@ -15,7 +15,8 @@ export type SystemSettings = {
 export const getSettings = async (): Promise<SystemSettings> => {
   return readJsonFile<SystemSettings>(settingsDataPath, {
     siteSlogan: '芝士AI吃鱼',
-    planetUrl: '/planet',
+    planetUrl: 'https://t.zsxq.com/WtjvX',
+    planetQrCode: '/images/ai-practice-poster.png',
   })
 }
 

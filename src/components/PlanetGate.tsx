@@ -27,7 +27,7 @@ export default function PlanetGate({
   items,
   topicUrl,
   planetUrl,
-  planetQrCode = '/images/zhishixingqiu.jpg',
+  planetQrCode = '/images/ai-practice-poster.png',
 }: PlanetGateProps) {
   const checkpointRef = useRef<HTMLDivElement>(null)
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -76,7 +76,7 @@ export default function PlanetGate({
   const checkpoint = (target: 'article-gate-modal' | 'article-gate-inline') => (
     <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
       <div>
-        <p className="text-sm font-semibold text-accent-tertiary">公开预览到这里</p>
+        <p className="text-sm font-semibold text-accent-tertiary">{target === 'article-gate-modal' ? '完整教程包含' : '公开预览到这里'}</p>
         <h2 className="mt-2 text-2xl font-semibold text-text-primary">{title}</h2>
         <p className="mt-3 leading-7 text-text-secondary">{description}</p>
         <ol className="mt-5 border-y border-border-muted text-sm text-text-secondary">
@@ -146,13 +146,28 @@ export default function PlanetGate({
           >
             ×
           </button>
-          <div className="mb-5 flex items-center gap-3 pr-12">
-            <Image src={planetQrCode} alt="AI 实践知识星球二维码" width={64} height={64} className="rounded border border-border-default bg-white p-1" />
-            <div>
-              <p className="text-sm font-medium text-accent-tertiary">公开部分到这里</p>
-              <p className="text-sm text-text-secondary">剩下的是可以照着做的实操部分</p>
-            </div>
+          <div className="mb-5 pr-12">
+            <p className="text-sm font-medium text-accent-tertiary">公开部分到这里</p>
+            <p className="mt-1 text-sm text-text-secondary">扫码加入 AI 实践，或者在手机上直接点击海报。</p>
           </div>
+          <a
+            href={planetUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mb-7 block overflow-hidden rounded border border-border-default bg-white p-1"
+            aria-label="扫码或点击海报加入 AI 实践"
+            data-testid="planet-gate-poster"
+            {...analyticsAttributes('join_planet', 'article-gate-modal')}
+          >
+            <Image
+              src={planetQrCode}
+              alt="AI 实践知识星球加入海报，包含可扫描二维码"
+              width={750}
+              height={412}
+              className="h-auto w-full"
+              priority
+            />
+          </a>
           {checkpoint('article-gate-modal')}
         </div>
       </dialog>

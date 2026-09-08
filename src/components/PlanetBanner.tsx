@@ -14,7 +14,7 @@ export default function PlanetBanner({
   title = '想把这个问题继续做深一点？',
   description = '知识星球用于整理大模型、RAG、Agent 与 AI 工程实践中的专题内容、案例和问题讨论。',
   planetUrl = '/planet',
-  planetQrCode = '/images/zhishixingqiu.jpg',
+  planetQrCode = '/images/ai-practice-poster.png',
 }: PlanetBannerProps) {
   return (
     <section className="grid gap-7 rounded-lg border border-border-default border-l-[3px] border-l-accent-tertiary bg-bg-secondary p-6 sm:grid-cols-[1fr_auto] sm:items-center sm:p-8">
@@ -50,7 +50,7 @@ export default function PlanetBanner({
           data-analytics-event="join_planet"
           data-analytics-target="content-banner-qr"
         >
-          <Image src={planetQrCode} alt="AI 实践知识星球二维码" width={144} height={144} className="object-contain" />
+          <Image src={planetQrCode} alt="AI 实践知识星球加入海报，包含可扫描二维码" width={360} height={198} className="h-auto w-full max-w-[360px] object-contain" />
         </Link>
       )}
     </section>

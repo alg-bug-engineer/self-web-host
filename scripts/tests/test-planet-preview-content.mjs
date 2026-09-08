@@ -7,6 +7,7 @@ import path from 'node:path'
 const projectDir = path.resolve(import.meta.dirname, '..', '..')
 const postsDir = path.join(projectDir, 'content', 'posts')
 const groupUrl = 'https://wx.zsxq.com/group/28882182852411'
+const joinUrl = 'https://t.zsxq.com/WtjvX'
 const expected = new Map([
   ['proton-mail-claude-tutorial', '45548821411144448'],
   ['claude2api-ide-tutorial', '82258841852128112'],
@@ -65,7 +66,8 @@ for (const post of previews) {
 }
 
 const settings = JSON.parse(await fs.readFile(path.join(projectDir, 'content', 'collections', 'settings.json'), 'utf8'))
-assert.equal(settings.planetUrl, groupUrl)
-assert.equal(settings.planetQrCode, '/images/zhishixingqiu.jpg')
+assert.equal(settings.planetUrl, joinUrl)
+assert.equal(settings.planetQrCode, '/images/ai-practice-poster.png')
+assert.ok((await fs.stat(path.join(projectDir, 'public', 'images', 'ai-practice-poster.png'))).isFile(), 'AI 实践海报不存在')
 
 console.log('AI 实践公开预览校验通过：8 个 slug、topic 映射、封面与敏感信息均符合约束。')

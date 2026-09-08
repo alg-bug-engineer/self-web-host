@@ -234,7 +234,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               description={post.gateDescription || '命令、配置与排错记录继续放在 AI 实践原帖。'}
               items={post.gateItems}
               topicUrl={post.planetTopicUrl}
-              planetUrl={settings.planetUrl || 'https://wx.zsxq.com/group/28882182852411'}
+              planetUrl={settings.planetUrl || 'https://t.zsxq.com/WtjvX'}
               planetQrCode={settings.planetQrCode}
             />
           ) : (
