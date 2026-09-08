@@ -21,15 +21,15 @@ export default function Header({ isMobileMenuOpen, setIsMobileMenuOpen }: Header
     <header className="site-header">
       <div className="header-announcement">
         <span className="announcement-pulse" />
-        <span>新内容</span>
-        <Link href="/blog">AI 原理、Agent 实践与行业观察持续更新中 <b>→</b></Link>
+        <span>最近更新</span>
+        <Link href="/planet">AI 实践：从账号、接口到内容生产的 8 篇连续教程 <b>→</b></Link>
       </div>
       <div className="header-main">
         <Link href="/" className="brand-lockup" aria-label="芝士AI吃鱼首页">
-          <span className="brand-mark" aria-hidden="true"><i>AI</i></span>
+          <span className="brand-mark" aria-hidden="true"><i>芝</i></span>
           <span>
             <strong>芝士AI吃鱼</strong>
-            <small>AI, EXPLAINED CLEARLY</small>
+            <small>AI 技术笔记</small>
           </span>
         </Link>
 
@@ -42,7 +42,7 @@ export default function Header({ isMobileMenuOpen, setIsMobileMenuOpen }: Header
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <Link href="/search" className="header-search hidden sm:inline-flex">搜索内容 <span>⌕</span></Link>
-          <Link href="/blog" className="header-cta hidden md:inline-flex" data-analytics-event="explore_articles" data-analytics-target="header">进入知识库 <span>↗</span></Link>
+          <Link href="/blog" className="header-cta hidden md:inline-flex" data-analytics-event="explore_articles" data-analytics-target="header">浏览文章 <span>→</span></Link>
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

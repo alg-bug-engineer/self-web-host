@@ -107,7 +107,7 @@ interface HighlightBoxProps {
 
 function HighlightBox({ children }: HighlightBoxProps) {
   return (
-    <div className="my-6 p-6 rounded-xl bg-gradient-to-br from-accent-primary/5 to-accent-secondary/5 border border-accent-primary/20">
+    <div className="my-6 rounded-lg border border-accent-primary/20 border-l-[3px] border-l-accent-primary bg-bg-secondary p-6">
       {children}
     </div>
   )

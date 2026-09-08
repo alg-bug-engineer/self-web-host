@@ -54,18 +54,13 @@ export default async function PlanetPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl space-y-20 px-4 py-12">
+    <div className="mx-auto max-w-5xl space-y-20 py-10 sm:py-16">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(communityJsonLd) }} />
 
-      <section className="relative overflow-hidden rounded-[2rem] border border-accent-primary/25 bg-bg-secondary px-6 py-12 shadow-xl md:px-12 md:py-16">
-        <div aria-hidden="true" className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-accent-primary/15 blur-3xl" />
-        <div aria-hidden="true" className="absolute -bottom-24 left-1/3 h-64 w-64 rounded-full bg-accent-tertiary/10 blur-3xl" />
-        <div className="relative max-w-4xl">
-          <div className="inline-flex items-center gap-2 rounded-full bg-accent-tertiary/10 px-3 py-1 text-sm font-medium text-accent-tertiary">
-            <span className="h-2 w-2 rounded-full bg-accent-tertiary" />
-            {BRAND_NAME} · AI 实践
-          </div>
-          <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight text-text-primary md:text-6xl">
+      <section className="grid gap-10 border-b border-border-default pb-14 lg:grid-cols-[1fr_260px] lg:items-end">
+        <div className="max-w-4xl">
+          <p className="eyebrow">{BRAND_NAME} · AI 实践</p>
+          <h1 className="mt-5 text-4xl font-bold leading-tight tracking-[-0.04em] text-text-primary md:text-5xl">
             把 Claude Code、国产模型、账号管理和本地生图接成一套工作流
           </h1>
           <p className="mt-6 max-w-3xl text-lg leading-8 text-text-secondary">
@@ -76,50 +71,52 @@ export default async function PlanetPage() {
               href={joinUrl}
               target={joinUrl.startsWith('http') ? '_blank' : undefined}
               rel={joinUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
-              className="btn-primary px-8 py-3 text-lg"
+              className="planet-primary px-7 py-3"
               data-analytics-event="join_planet"
               data-analytics-target="planet-hero"
             >
               进入 AI 实践
             </a>
-            <a href="#practice-route" className="btn-secondary px-8 py-3 text-lg">先看完整路线</a>
+            <a href="#practice-route" className="btn-secondary px-7 py-3">先看完整路线</a>
           </div>
         </div>
+        <dl className="border-t-2 border-text-primary text-sm">
+          <div className="flex justify-between border-b border-border-default py-3"><dt className="text-text-secondary">公开预览</dt><dd className="font-mono text-text-primary">{previewPosts.length} 篇</dd></div>
+          <div className="flex justify-between border-b border-border-default py-3"><dt className="text-text-secondary">路线范围</dt><dd className="text-text-primary">账号 → 内容</dd></div>
+          <div className="flex justify-between border-b border-border-default py-3"><dt className="text-text-secondary">完整实操</dt><dd className="text-accent-tertiary">知识星球原帖</dd></div>
+        </dl>
       </section>
 
       <section id="practice-route" className="scroll-mt-24 space-y-8">
         <div className="max-w-3xl">
-          <p className="eyebrow">THE TOOLCHAIN</p>
-          <h2 className="mt-2 text-3xl font-bold text-text-primary">8 个节点，不再收藏 8 篇互不相干的教程</h2>
+          <p className="eyebrow">实践路线</p>
+          <h2 className="mt-3 text-3xl font-bold text-text-primary">8 个节点，不再收藏 8 篇互不相干的教程</h2>
           <p className="mt-3 leading-7 text-text-secondary">
             这条路线从账号入口开始，经过接口与配置，再走到多账号调度、国产模型和图像生产。每一篇都开放关键判断，具体命令和排错留在对应星球原帖。
           </p>
         </div>
-        <div className="grid gap-5 md:grid-cols-2">
+        <ol className="relative ml-3 border-l border-border-default sm:ml-5">
           {previewPosts.map((post, index) => (
-            <Link
-              key={post.slug}
-              href={post.url}
-              className="group relative overflow-hidden rounded-2xl border border-border-default bg-bg-secondary p-6 transition hover:-translate-y-1 hover:border-accent-primary/50 hover:shadow-xl motion-reduce:transform-none"
-            >
-              <div className="flex items-start gap-4">
-                <span className="font-mono text-2xl font-bold text-accent-primary/60">{String(index + 1).padStart(2, '0')}</span>
+            <li key={post.slug} className="relative pl-9 sm:pl-12">
+              <span className="absolute -left-3 top-7 flex h-6 w-6 items-center justify-center rounded-full border border-border-default bg-bg-primary font-mono text-[10px] text-text-tertiary">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <Link href={post.url} className="group grid gap-4 border-b border-border-default py-6 sm:grid-cols-[1fr_220px_auto] sm:items-center">
                 <div className="min-w-0">
-                  <h3 className="text-lg font-bold leading-7 text-text-primary group-hover:text-accent-primary">{post.title}</h3>
-                  <p className="mt-2 line-clamp-2 text-sm leading-6 text-text-secondary">{post.description}</p>
-                  <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent-tertiary">
-                    阅读公开预览 <span aria-hidden="true">→</span>
-                  </span>
+                  <h3 className="text-lg font-semibold leading-7 text-text-primary group-hover:text-accent-primary">{post.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-text-secondary">{post.description}</p>
                 </div>
-              </div>
-            </Link>
+                <span className="text-sm text-text-tertiary">{post.gateItems?.slice(0, 2).join('、')}</span>
+                <span className="whitespace-nowrap text-sm font-medium text-accent-primary">阅读预览 →</span>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ol>
       </section>
 
-      <section className="grid gap-8 rounded-3xl border border-accent-primary/25 bg-accent-primary/5 p-8 md:grid-cols-[1fr_auto] md:items-center md:p-12">
+      <section className="grid gap-8 rounded-lg border border-border-default border-l-[3px] border-l-accent-tertiary bg-bg-secondary p-7 md:grid-cols-[1fr_auto] md:items-center md:p-10">
         <div>
-          <p className="eyebrow">AI PRACTICE</p>
+          <p className="text-sm font-semibold text-accent-tertiary">AI 实践</p>
           <h2 className="mt-2 text-3xl font-bold text-text-primary">公开文章负责讲清楚，星球原帖负责让你照着做</h2>
           <p className="mt-4 max-w-2xl leading-7 text-text-secondary">
             完整命令、配置位置、操作截图和踩坑记录都保留在 AI 实践。加入前可以先把上面的公开预览逐篇看完，内容和加入方式以知识星球页面为准。
@@ -128,7 +125,7 @@ export default async function PlanetPage() {
             href={joinUrl}
             target={joinUrl.startsWith('http') ? '_blank' : undefined}
             rel={joinUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
-            className="btn-primary mt-6 inline-flex px-7 py-3"
+            className="planet-primary mt-6 inline-flex px-7 py-3"
             data-analytics-event="join_planet"
             data-analytics-target="planet-footer"
           >
@@ -139,7 +136,7 @@ export default async function PlanetPage() {
           href={joinUrl}
           target={joinUrl.startsWith('http') ? '_blank' : undefined}
           rel={joinUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
-          className="justify-self-center rounded-2xl bg-white p-3 shadow-xl"
+          className="justify-self-center rounded border border-border-default bg-white p-2"
           aria-label="打开 AI 实践知识星球"
           data-analytics-event="join_planet"
           data-analytics-target="planet-footer"
@@ -154,10 +151,10 @@ export default async function PlanetPage() {
         </a>
       </section>
 
-      <section className="rounded-3xl border border-border-default bg-bg-secondary p-8 md:p-10">
+      <section className="border-t border-border-default pt-10">
         <div className="grid gap-6 md:grid-cols-[1.4fr_auto] md:items-center">
           <div>
-            <p className="eyebrow">ANOTHER PRACTICE LINE</p>
+            <p className="eyebrow">另一条独立项目线</p>
             <h2 className="mt-2 text-2xl font-bold text-text-primary">另一条实践线：AI 原生一代</h2>
             <p className="mt-3 leading-7 text-text-secondary">
               除了开发者工具链，我还在试运行一套面向 8—14 岁孩子和家长的 AI 素养家庭实践课：理解 AI、验证答案、保护隐私，并完成一个亲子项目。

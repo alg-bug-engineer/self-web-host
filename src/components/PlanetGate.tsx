@@ -74,20 +74,20 @@ export default function PlanetGate({
   }, [])
 
   const checkpoint = (target: 'article-gate-modal' | 'article-gate-inline') => (
-    <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
+    <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
       <div>
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent-primary">Workflow checkpoint</p>
-        <h2 className="mt-2 text-2xl font-bold text-text-primary">{title}</h2>
+        <p className="text-sm font-semibold text-accent-tertiary">公开预览到这里</p>
+        <h2 className="mt-2 text-2xl font-semibold text-text-primary">{title}</h2>
         <p className="mt-3 leading-7 text-text-secondary">{description}</p>
-        <ol className="mt-5 grid gap-3 text-sm text-text-secondary">
-          <li className="flex gap-3"><span className="font-mono text-accent-tertiary">01</span><span>公开预览：先确认这套方法是不是你要解决的问题</span></li>
-          <li className="flex gap-3"><span className="font-mono text-accent-primary">02</span><span>完整实操：命令、配置、截图和排错都放在原帖</span></li>
-          <li className="flex gap-3"><span className="font-mono text-accent-tertiary">03</span><span>AI 实践：把单点工具继续接进完整工作流</span></li>
+        <ol className="mt-5 border-y border-border-muted text-sm text-text-secondary">
+          <li className="flex gap-3 border-b border-border-muted py-3"><span className="font-mono text-text-tertiary">01</span><span>先用公开部分判断，这篇是不是你正需要的</span></li>
+          <li className="flex gap-3 border-b border-border-muted py-3"><span className="font-mono text-text-tertiary">02</span><span>原帖提供完整命令、配置、截图和排错记录</span></li>
+          <li className="flex gap-3 py-3"><span className="font-mono text-text-tertiary">03</span><span>再把这个工具接进后续的完整工作流</span></li>
         </ol>
         <ul className="mt-5 grid gap-2 sm:grid-cols-2">
           {items.map((item) => (
             <li key={item} className="flex gap-2 text-sm text-text-primary">
-              <span aria-hidden="true" className="text-accent-tertiary">✓</span>{item}
+              <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-tertiary" />{item}
             </li>
           ))}
         </ul>
@@ -98,7 +98,7 @@ export default function PlanetGate({
           href={topicUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="btn-primary px-5 py-3 text-center"
+          className="planet-primary px-5 py-3 text-center"
           {...analyticsAttributes('open_planet_topic', target)}
         >
           打开完整教程
@@ -113,7 +113,7 @@ export default function PlanetGate({
           加入 AI 实践
         </a>
         {target === 'article-gate-modal' && (
-          <button type="button" onClick={closeDialog} className="px-5 py-2 text-sm text-text-secondary hover:text-text-primary">
+          <button type="button" onClick={closeDialog} className="px-5 py-2 text-sm text-text-secondary underline-offset-4 hover:text-text-primary hover:underline">
             继续阅读公开内容
           </button>
         )}
@@ -126,9 +126,8 @@ export default function PlanetGate({
       <div
         ref={checkpointRef}
         data-testid="planet-gate-inline"
-        className="relative overflow-hidden rounded-3xl border border-accent-primary/30 bg-bg-secondary p-6 shadow-xl sm:p-8"
+        className="relative overflow-hidden rounded-lg border border-border-default border-l-[3px] border-l-accent-tertiary bg-bg-secondary p-6 sm:p-8"
       >
-        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-accent-primary via-accent-tertiary to-accent-primary" />
         {checkpoint('article-gate-inline')}
       </div>
 
@@ -136,19 +135,19 @@ export default function PlanetGate({
         ref={dialogRef}
         aria-label="完整教程解锁"
         data-testid="planet-gate-dialog"
-        className="m-auto max-h-[90vh] w-[min(92vw,760px)] overflow-y-auto rounded-3xl border border-accent-primary/30 bg-bg-secondary p-0 text-text-primary shadow-2xl backdrop:bg-black/60 open:animate-none"
+        className="m-auto max-h-[90vh] w-[min(92vw,760px)] overflow-y-auto rounded-lg border border-border-default bg-bg-secondary p-0 text-text-primary shadow-xl backdrop:bg-black/55 open:animate-none"
       >
         <div className="relative p-6 sm:p-8">
           <button
             type="button"
             onClick={closeDialog}
             aria-label="关闭解锁窗口"
-            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-border-default bg-bg-tertiary text-xl text-text-secondary hover:text-text-primary"
+            className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded border border-border-default bg-bg-secondary text-xl text-text-secondary hover:bg-bg-tertiary hover:text-text-primary"
           >
             ×
           </button>
           <div className="mb-5 flex items-center gap-3 pr-12">
-            <Image src={planetQrCode} alt="AI 实践知识星球二维码" width={64} height={64} className="rounded-xl bg-white p-1" />
+            <Image src={planetQrCode} alt="AI 实践知识星球二维码" width={64} height={64} className="rounded border border-border-default bg-white p-1" />
             <div>
               <p className="text-sm font-medium text-accent-tertiary">公开部分到这里</p>
               <p className="text-sm text-text-secondary">剩下的是可以照着做的实操部分</p>

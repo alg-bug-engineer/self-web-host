@@ -2,7 +2,7 @@ import Image from 'next/image'
 
 export default function WechatCard({ analyticsTarget }: { analyticsTarget: 'about-card' | 'article-card' }) {
   return (
-    <div className="bg-bg-secondary border border-border-default rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-sm hover:shadow-md transition-shadow">
+    <div className="flex flex-col items-center gap-6 rounded-lg border border-border-default bg-bg-secondary p-6 md:flex-row">
       <a
         href="/images/qrcode.jpg"
         target="_blank"

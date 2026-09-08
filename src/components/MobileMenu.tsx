@@ -92,25 +92,25 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
         role="dialog"
         aria-modal="true"
         aria-label="网站导航"
-        className="absolute right-0 top-0 flex h-full w-[min(88vw,360px)] flex-col border-l border-border-default bg-bg-primary p-6 shadow-2xl"
+        className="absolute right-0 top-0 flex h-full w-[min(88vw,360px)] flex-col border-l border-border-default bg-bg-secondary p-5 shadow-xl"
       >
         <div className="flex items-center justify-between border-b border-border-default pb-5">
           <Link href="/" className="font-semibold text-text-primary" onClick={() => setIsOpen(false)}>芝士AI吃鱼</Link>
-          <button ref={closeButtonRef} type="button" onClick={() => setIsOpen(false)} className="rounded-full p-2 hover:bg-bg-tertiary" aria-label="关闭菜单">
+          <button ref={closeButtonRef} type="button" onClick={() => setIsOpen(false)} className="rounded-md p-2 hover:bg-bg-tertiary" aria-label="关闭菜单">
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeWidth="1.8" d="M6 6l12 12M18 6 6 18" /></svg>
           </button>
         </div>
         <nav className="mt-6 flex flex-col gap-3" aria-label="移动端导航">
-          <Link href="/" onClick={() => setIsOpen(false)} className="rounded-xl border border-border-default bg-bg-secondary px-4 py-3 text-base font-medium text-text-primary">首页</Link>
+          <Link href="/" onClick={() => setIsOpen(false)} className="rounded-md border border-border-default bg-bg-primary px-4 py-3 text-base font-medium text-text-primary">首页</Link>
           {navGroups.map((group) => (
-            <details key={group.label} open className="mobile-nav-accordion group rounded-xl border border-border-default bg-bg-secondary">
+            <details key={group.label} open className="mobile-nav-accordion group rounded-md border border-border-default bg-bg-primary">
               <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-text-primary">
                 {group.label}
                 <svg className="h-4 w-4 text-text-tertiary transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="m6 9 6 6 6-6" /></svg>
               </summary>
               <div className="border-t border-border-muted px-2 py-2">
                 {group.items.map((item) => (
-                  <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)} className="flex items-center justify-between rounded-lg px-3 py-3 transition-colors hover:bg-bg-tertiary">
+                  <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)} className="flex items-center justify-between rounded px-3 py-3 transition-colors hover:bg-bg-tertiary">
                     <span>
                       <strong className="block text-sm font-medium text-text-primary">{item.label}</strong>
                       <small className="mt-1 block text-xs text-text-tertiary">{item.note}</small>
@@ -122,7 +122,7 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
             </details>
           ))}
         </nav>
-        <Link href="/search" onClick={() => setIsOpen(false)} className="mt-auto rounded-full bg-text-primary px-5 py-3 text-center text-sm font-medium text-bg-primary">搜索网站内容</Link>
+        <Link href="/search" onClick={() => setIsOpen(false)} className="mt-auto rounded-md bg-text-primary px-5 py-3 text-center text-sm font-medium text-bg-primary">搜索网站内容</Link>
       </aside>
     </div>
   )

@@ -65,11 +65,7 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
     const topics: string[] = (isPost ? repository.tags : (repository as any).topics) || [];
     const latest_version = isPost ? undefined : (repository as any).latest_version;
     const lastUpdated = timeAgo(isPost ? repository.date : ((repository as any).latest_release_date || (repository as any).github_updated_at));
-    const fullName = isPost ? `By ${repository.author}` : (repository as any).full_name;
-
-    const postIcon = isPost
-        ? ((repository as Post).icon === 'cat' ? '🐱' : '🤖')
-        : null;
+    const fullName = isPost ? repository.author : (repository as any).full_name;
 
     const handleAvatarError = () => {
         setImgSrc('https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png');
@@ -77,13 +73,13 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
 
     return (
         <div
-            className={`group relative overflow-hidden rounded-[1.15rem] border border-border-default bg-bg-secondary p-5 transition-all duration-300 hover:-translate-y-1 hover:border-accent-primary/50 hover:shadow-xl cursor-pointer before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-accent-primary/35 before:to-transparent before:opacity-0 before:transition-opacity hover:before:opacity-100 ${variant === 'shelf' ? 'w-64 shrink-0' : 'w-full'}`}
+            className={`group relative overflow-hidden rounded-lg border border-border-default bg-bg-secondary p-5 transition-colors hover:border-card-hover-border ${variant === 'shelf' ? 'w-64 shrink-0' : 'w-full'}`}
         >
             <Link href={url}>
                 <div className="flex items-start gap-3">
                     {isPost ? (
-                        <div className="w-12 h-12 rounded-[.85rem] flex-shrink-0 bg-gradient-to-br from-accent-primary/20 to-accent-secondary/10 border border-accent-primary/20 flex items-center justify-center text-xl">
-                            {postIcon}
+                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded border border-border-default bg-bg-tertiary font-mono text-xs font-semibold text-text-secondary">
+                            文章
                         </div>
                     ) : (
                         <div className="relative w-12 h-12 flex-shrink-0 overflow-hidden rounded-xl">
@@ -116,7 +112,7 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
                             )}
                         </div>
                         <p className="mt-3 text-sm leading-6 text-text-secondary line-clamp-2" title={description}>
-                            {description || 'No description provided.'}
+                            {description || '暂无说明。'}
                         </p>
                     </div>
                 </div>
@@ -146,7 +142,7 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
                             {latest_version}
                         </span>
                     ) : (
-                         <span className="px-2 py-1 rounded-md bg-accent-primary/10 border border-accent-primary/15 text-accent-tertiary">{isPost ? "深度文章" : "开源项目"}</span>
+                         <span className="rounded border border-border-default bg-bg-tertiary px-2 py-1 text-text-secondary">{isPost ? "深度文章" : "开源项目"}</span>
                     )}
                     {lastUpdated && <span className="capitalize">{lastUpdated}</span>}
                 </div>

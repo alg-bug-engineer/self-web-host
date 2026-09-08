@@ -28,9 +28,9 @@ const books = items.filter((item) => item.type === 'book')
 const projects = items.filter((item) => item.type !== 'book')
 
 function BookCover({ item, index }: { item: PortfolioItem; index: number }) {
-  const tones = ['from-[#153d57] to-[#28748a]', 'from-[#382566] to-[#81519b]']
+  const tones = ['#234e70', '#5b3f75', '#2f6f68']
   return (
-    <div className={`aspect-[3/4.25] w-full rounded-[1.35rem] bg-gradient-to-br ${tones[index % tones.length]} p-7 text-white shadow-[0_22px_45px_rgba(15,23,42,0.2)]`}>
+    <div className="aspect-[3/4.25] w-full rounded-md p-6 text-white shadow-md" style={{ backgroundColor: tones[index % tones.length] }}>
       <div className="flex h-full flex-col border border-white/25 p-5">
         <span className="text-xs tracking-[0.25em] text-white/65">著作</span>
         <h3 className="mt-auto text-2xl font-semibold leading-snug">{item.title}</h3>
@@ -69,8 +69,8 @@ export default function PortfolioPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }} />
       <header className="grid gap-8 border-b border-border-default pb-12 lg:grid-cols-[1.25fr_.75fr] lg:items-end">
         <div>
-          <p className="eyebrow">Books & Selected Work</p>
-          <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-[-0.04em] text-text-primary sm:text-6xl">
+          <p className="eyebrow">著作与作品</p>
+          <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-[-0.04em] text-text-primary sm:text-5xl">
             把复杂技术写成书，<br className="hidden sm:block" />也把想法做成产品。
           </h1>
         </div>
@@ -82,7 +82,7 @@ export default function PortfolioPage() {
       <section>
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>
-            <p className="eyebrow">Publications</p>
+            <p className="eyebrow">著作</p>
             <h2 className="mt-2 text-3xl font-semibold text-text-primary">已出版与即将出版</h2>
           </div>
         </div>
@@ -100,20 +100,19 @@ export default function PortfolioPage() {
 
       <section>
         <div className="mb-8">
-          <p className="eyebrow">Projects</p>
+          <p className="eyebrow">项目</p>
           <h2 className="mt-2 text-3xl font-semibold text-text-primary">产品与开源项目</h2>
         </div>
         <div className="grid gap-6 lg:grid-cols-3">
           {projects.map((item, index) => (
-            <article key={item.title} className="overflow-hidden rounded-[1.75rem] border border-border-default bg-bg-secondary">
+            <article key={item.title} className="overflow-hidden rounded-lg border border-border-default bg-bg-secondary">
               <div className="relative aspect-[16/9] overflow-hidden bg-bg-tertiary">
                 {item.image ? (
-                  <Image src={item.image} alt={item.title} fill className="object-cover transition-transform duration-500 hover:scale-[1.03]" sizes="(max-width: 1024px) 100vw, 33vw" />
+                  <Image src={item.image} alt={item.title} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 33vw" />
                 ) : (
-                  <div className="absolute inset-0 flex items-end overflow-hidden bg-[radial-gradient(circle_at_78%_18%,rgba(82,190,255,.25),transparent_28%),linear-gradient(145deg,#102a43,#1b4965)] p-6 text-white">
-                    <span className="absolute -right-8 -top-12 text-[9rem] font-semibold leading-none text-white/[.06]" aria-hidden="true">AI</span>
+                  <div className="absolute inset-0 flex items-end overflow-hidden bg-[#234e70] p-6 text-white">
                     <div className="relative">
-                      <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/55">Open-source work</span>
+                      <span className="text-xs font-medium text-white/65">公开项目</span>
                       <strong className="mt-2 block max-w-sm text-xl leading-7">{item.title}</strong>
                     </div>
                   </div>

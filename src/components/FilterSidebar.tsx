@@ -74,7 +74,7 @@ export default function FilterSidebar({ onFilterChange, initialTopics = [], init
             </div>
 
             <div className="space-y-2">
-                <p className="text-xs uppercase tracking-widest text-text-tertiary">类型</p>
+                <p className="text-xs font-medium text-text-tertiary">类型</p>
                 <div className="space-y-1.5">
                     {typeOptions.map(option => (
                         <label key={option.type} className="flex items-center justify-between text-sm">
@@ -102,7 +102,7 @@ export default function FilterSidebar({ onFilterChange, initialTopics = [], init
             </div>
 
             <div className="space-y-2">
-                <p className="text-xs uppercase tracking-widest text-text-tertiary">话题</p>
+                <p className="text-xs font-medium text-text-tertiary">话题</p>
                 <div className="max-h-48 overflow-y-auto space-y-1.5">
                     {topicOptions.map(option => (
                          <label key={option.topic} className="flex items-center justify-between text-sm">

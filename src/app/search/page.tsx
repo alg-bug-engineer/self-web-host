@@ -134,16 +134,16 @@ function SearchContent() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-bg-secondary border border-border-default rounded-2xl p-4">
-                    <p className="text-xs uppercase tracking-widest text-text-tertiary">文章总数</p>
+                <div className="rounded-md border border-border-default bg-bg-secondary p-4">
+                    <p className="text-xs text-text-tertiary">文章总数</p>
                     <p className="mt-2 text-2xl font-semibold text-text-primary">{posts.length}</p>
                 </div>
-                <div className="bg-bg-secondary border border-border-default rounded-2xl p-4">
-                    <p className="text-xs uppercase tracking-widest text-text-tertiary">话题数量</p>
+                <div className="rounded-md border border-border-default bg-bg-secondary p-4">
+                    <p className="text-xs text-text-tertiary">话题数量</p>
                     <p className="mt-2 text-2xl font-semibold text-text-primary">{totalTopics}</p>
                 </div>
-                <div className="bg-bg-secondary border border-border-default rounded-2xl p-4">
-                    <p className="text-xs uppercase tracking-widest text-text-tertiary">最近更新</p>
+                <div className="rounded-md border border-border-default bg-bg-secondary p-4">
+                    <p className="text-xs text-text-tertiary">最近更新</p>
                     <p className="mt-2 text-2xl font-semibold text-text-primary">{latestLabel}</p>
                 </div>
             </div>
@@ -229,7 +229,7 @@ function SearchLoading() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[1, 2, 3].map((i) => (
-                    <div key={i} className="bg-bg-secondary border border-border-default rounded-2xl p-4 animate-pulse">
+                    <div key={i} className="rounded-md border border-border-default bg-bg-secondary p-4 animate-pulse">
                         <div className="h-3 w-16 bg-bg-tertiary rounded mb-2" />
                         <div className="h-8 w-12 bg-bg-tertiary rounded" />
                     </div>

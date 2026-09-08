@@ -113,9 +113,9 @@ export default function AboutPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(profileJsonLd) }} />
       <section className="grid grid-cols-1 xl:grid-cols-[1.1fr_1.6fr] gap-6">
         <div className="space-y-6">
-          <div className="bg-bg-secondary border border-border-default rounded-2xl p-6">
+          <div className="rounded-lg border border-border-default bg-bg-secondary p-6">
             <div className="flex items-start gap-4">
-              <div className="w-20 h-20 rounded-2xl bg-bg-tertiary border border-border-default flex items-center justify-center text-3xl">
+              <div className="flex h-20 w-20 items-center justify-center rounded-lg border border-border-default bg-bg-tertiary text-3xl">
                 🐱🤖
               </div>
               <div className="flex-1">
@@ -186,7 +186,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="bg-bg-secondary border border-border-default rounded-2xl p-6">
+          <div className="rounded-lg border border-border-default bg-bg-secondary p-6">
             <h2 className="text-lg font-semibold text-text-primary mb-4">数据一览</h2>
             <div className="grid grid-cols-2 gap-4">
               {stats.map((stat) => (
@@ -207,10 +207,10 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="bg-bg-secondary border border-border-default rounded-2xl p-6">
+          <div className="rounded-lg border border-border-default bg-bg-secondary p-6">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="eyebrow">Public Evidence</p>
+                <p className="eyebrow">公开核验</p>
                 <h2 className="mt-2 text-lg font-semibold text-text-primary">公开可核验的专业成果</h2>
               </div>
               <span className="label label-green">已核验</span>
@@ -241,7 +241,7 @@ export default function AboutPage() {
 
         </div>
 
-        <div className="bg-bg-secondary border border-border-default rounded-2xl p-6 space-y-4">
+        <div className="space-y-4 rounded-lg border border-border-default bg-bg-secondary p-6">
           <div>
             <h2 className="text-lg font-semibold text-text-primary">我的故事</h2>
             <p className="mt-1 text-sm text-text-secondary">把复杂的 AI 知识讲清楚、讲有趣，是我一直在做的事。</p>
@@ -313,7 +313,7 @@ export default function AboutPage() {
       </section>
 
       <section className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <div className="bg-bg-secondary border border-border-default rounded-2xl p-6">
+        <div className="rounded-lg border border-border-default bg-bg-secondary p-6">
           <h2 className="text-lg font-semibold text-text-primary mb-6">长期关注的问题</h2>
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
             {expertiseAreas.map((area) => (
@@ -326,7 +326,7 @@ export default function AboutPage() {
           </div>
         </div>
 
-        <div className="bg-bg-secondary border border-border-default rounded-2xl p-6">
+        <div className="rounded-lg border border-border-default bg-bg-secondary p-6">
           <h2 className="text-lg font-semibold text-text-primary mb-6">成长轨迹</h2>
           <div className="space-y-4">
             {timeline.map((item) => (
@@ -348,7 +348,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-bg-secondary border border-border-default rounded-2xl p-6 space-y-6">
+      <section className="space-y-6 rounded-lg border border-border-default bg-bg-secondary p-6">
         <div>
           <h2 className="text-lg font-semibold text-text-primary">关于这对 CP</h2>
           <p className="mt-2 text-sm text-text-secondary">一个负责提问，一个负责解答。他们的对话，就是这个网站的灵魂。</p>
@@ -373,7 +373,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-bg-secondary border border-border-default rounded-2xl p-6 text-center space-y-4">
+      <section className="space-y-4 rounded-lg border border-border-default bg-bg-secondary p-6 text-center">
         <h2 className="text-xl font-semibold text-text-primary">一起探索 AI 的世界</h2>
         <p className="text-sm text-text-secondary max-w-xl mx-auto">
           无论你是 AI 小白还是资深开发者，这里都有适合你的内容。让我们用有趣的方式，一起学习和成长。

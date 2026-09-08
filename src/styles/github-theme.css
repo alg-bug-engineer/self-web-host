@@ -50,6 +50,25 @@
   cursor: not-allowed;
 }
 
+.planet-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--accent-planet);
+  border-radius: 6px;
+  color: #ffffff;
+  background: var(--accent-planet);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.planet-primary:hover {
+  border-color: var(--accent-planet-hover);
+  background: var(--accent-planet-hover);
+}
+
 /* Secondary button */
 .btn-secondary {
   color: var(--btn-secondary-text, #c9d1d9);

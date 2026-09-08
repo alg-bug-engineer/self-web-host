@@ -39,16 +39,18 @@ test('首页在桌面和移动端保持可读且无横向溢出', async ({ page 
   expect(errors).toEqual([])
 })
 
-test('首页知识图谱在浅色主题下使用浅色面板', async ({ page }) => {
+test('首页在浅色主题下使用技术博客式编辑布局', async ({ page }) => {
   await page.goto('/')
   await page.evaluate(() => localStorage.setItem('vite-ui-theme', 'light'))
   await page.reload()
 
-  const consolePanel = page.locator('.knowledge-console')
-  await expect(consolePanel).toBeVisible()
-  await expect(consolePanel).toHaveCSS('background-color', 'rgb(255, 255, 255)')
-  await expect(consolePanel.locator('.satellite').first()).toHaveCSS('background-color', 'rgb(255, 255, 255)')
-  await expect(consolePanel.locator('.console-metrics > div').first()).toHaveCSS('background-color', 'rgb(247, 247, 251)')
+  const hero = page.locator('.editorial-hero')
+  const index = page.locator('.home-index')
+  await expect(hero).toBeVisible()
+  await expect(index).toBeVisible()
+  await expect(index.getByRole('link')).toHaveCount(3)
+  await expect(page.locator('.knowledge-console')).toHaveCount(0)
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(245, 247, 250)')
 })
 
 test('移动菜单具备对话框语义、滚动锁定和键盘关闭', async ({ page }, testInfo) => {
@@ -189,7 +191,7 @@ test('AI 实践解锁窗口支持暗色主题和关闭按钮', async ({ page }) 
 
   const dialog = page.getByRole('dialog', { name: '完整教程解锁' })
   await expect(dialog).toBeVisible()
-  await expect(dialog).toHaveCSS('background-color', 'rgb(24, 26, 33)')
+  await expect(dialog).toHaveCSS('background-color', 'rgb(22, 27, 34)')
   await dialog.getByRole('button', { name: '关闭解锁窗口' }).click()
   await expect(dialog).toBeHidden()
   await expectNoHorizontalOverflow(page)

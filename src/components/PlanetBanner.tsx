@@ -4,79 +4,55 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 interface PlanetBannerProps {
-    title?: string;
-    description?: string;
-    planetUrl?: string;
-    planetQrCode?: string;
+  title?: string
+  description?: string
+  planetUrl?: string
+  planetQrCode?: string
 }
 
-export default function PlanetBanner({ 
-    title = "想把这个问题继续做深一点？",
-    description = "知识星球用于整理大模型、RAG、Agent 与 AI 工程实践中的专题内容、案例和问题讨论。",
-    planetUrl = "/planet",
-    planetQrCode = "/images/zhishixingqiu.jpg"
+export default function PlanetBanner({
+  title = '想把这个问题继续做深一点？',
+  description = '知识星球用于整理大模型、RAG、Agent 与 AI 工程实践中的专题内容、案例和问题讨论。',
+  planetUrl = '/planet',
+  planetQrCode = '/images/zhishixingqiu.jpg',
 }: PlanetBannerProps) {
-    return (
-        <div className="relative overflow-hidden bg-gradient-to-br from-accent-tertiary to-accent-primary rounded-3xl p-8 text-white shadow-xl">
-            <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
-                <div className="space-y-4 text-center lg:text-left flex-1">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs font-bold uppercase tracking-wider">
-                        🪐 芝士AI吃鱼 · AI 实践
-                    </div>
-                    <h2 className="text-3xl font-bold tracking-tight">
-                        {title}
-                    </h2>
-                    <p className="text-white/80 max-w-xl leading-relaxed">
-                        {description}
-                    </p>
-                    <div className="flex flex-wrap gap-4 pt-2 justify-center lg:justify-start">
-                        <Link 
-                            href={planetUrl} 
-                            className="px-6 py-2.5 bg-white text-accent-tertiary font-bold rounded-xl hover:bg-opacity-90 transition-colors"
-                            data-analytics-event="join_planet"
-                            data-analytics-target="content-banner"
-                        >
-                            查看学习社区
-                        </Link>
-                        <Link 
-                            href="/planet" 
-                            className="px-6 py-2.5 bg-accent-tertiary/20 backdrop-blur-md border border-white/30 text-white font-bold rounded-xl hover:bg-white/10 transition-colors"
-                            data-analytics-event="view_planet"
-                            data-analytics-target="content-banner"
-                        >
-                            了解更多
-                        </Link>
-                    </div>
-                </div>
-
-                <div className="flex-shrink-0 relative group w-full lg:w-auto">
-                    <div className="absolute -inset-4 bg-white/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all opacity-50"></div>
-                    {/* 长方形卡片容器，比例约 2:1 */}
-                    <div className="relative w-full max-w-[320px] mx-auto aspect-[2/1] lg:w-80 lg:h-40 bg-white rounded-2xl p-1 shadow-2xl overflow-hidden">
-                        {planetQrCode ? (
-                            <div className="relative w-full h-full">
-                                <Image 
-                                    src={planetQrCode} 
-                                    alt="芝士AI吃鱼知识星球二维码"
-                                    fill
-                                    className="object-cover rounded-xl" 
-                                />
-                            </div>
-                        ) : (
-                            <div className="w-full h-full bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-300 text-gray-400 rounded-xl">
-                                <div className="text-center">
-                                    <span className="text-2xl block mb-1">🪐</span>
-                                    <span className="text-[10px] font-bold">星球二维码</span>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            {/* Background Decorative Elements */}
-            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-black/10 rounded-full blur-3xl"></div>
+  return (
+    <section className="grid gap-7 rounded-lg border border-border-default border-l-[3px] border-l-accent-tertiary bg-bg-secondary p-6 sm:grid-cols-[1fr_auto] sm:items-center sm:p-8">
+      <div>
+        <p className="text-sm font-semibold text-accent-tertiary">AI 实践</p>
+        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-text-primary">{title}</h2>
+        <p className="mt-3 max-w-2xl leading-7 text-text-secondary">{description}</p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link
+            href={planetUrl}
+            className="planet-primary px-5 py-2.5"
+            data-analytics-event="join_planet"
+            data-analytics-target="content-banner"
+          >
+            查看学习社区
+          </Link>
+          <Link
+            href="/planet"
+            className="btn-secondary px-5 py-2.5"
+            data-analytics-event="view_planet"
+            data-analytics-target="content-banner"
+          >
+            先看实践路线
+          </Link>
         </div>
-    )
+      </div>
+
+      {planetQrCode && (
+        <Link
+          href={planetUrl}
+          className="justify-self-start rounded border border-border-default bg-white p-1 sm:justify-self-end"
+          aria-label="打开 AI 实践知识星球"
+          data-analytics-event="join_planet"
+          data-analytics-target="content-banner-qr"
+        >
+          <Image src={planetQrCode} alt="AI 实践知识星球二维码" width={144} height={144} className="object-contain" />
+        </Link>
+      )}
+    </section>
+  )
 }

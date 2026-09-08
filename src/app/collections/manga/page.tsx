@@ -40,7 +40,7 @@ export default async function MangaCollectionPage() {
       {mangaGallery.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {mangaGallery.map((item) => (
-            <div key={item.id} className="bg-bg-secondary border border-border-default rounded-2xl overflow-hidden">
+            <div key={item.id} className="overflow-hidden rounded-lg border border-border-default bg-bg-secondary">
               <div className="aspect-[4/3] bg-bg-tertiary relative">
                 <Image
                   src={item.image}

@@ -49,11 +49,11 @@ export default function ArticleReadingGuide({ headings }: { headings: ArticleHea
         />
       </div>
       {headings.length >= 2 && (
-        <details open className="article-guide group mb-8 rounded-2xl border border-border-default bg-bg-secondary lg:mb-0">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 lg:cursor-default lg:p-6">
+        <details open className="article-guide group mb-8 rounded-lg border border-border-default bg-bg-secondary lg:mb-0">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-4 lg:cursor-default">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-tertiary">READING GUIDE</p>
-              <h2 className="mt-1 text-lg font-semibold text-text-primary">本文目录</h2>
+              <p className="text-xs font-medium text-text-tertiary">阅读位置</p>
+              <h2 className="mt-1 text-base font-semibold text-text-primary">本文目录</h2>
             </div>
             <span className="flex items-center gap-2 text-xs text-text-tertiary">
               {headings.length} 个章节
