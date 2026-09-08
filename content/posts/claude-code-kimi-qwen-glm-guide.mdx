@@ -1,0 +1,45 @@
+---
+title: "Claude Code 只能调用 Claude？把框架和模型拆开，选择突然多了"
+description: "保留 Claude Code 的 CLI 工作方式，接入 Kimi、Qwen 或智谱 GLM 的兼容接口。先讲原理、选择与边界。"
+date: 2026-09-08T12:19:10+08:00
+author: 芝士AI吃鱼
+tags:
+  - Claude Code
+  - Kimi
+  - Qwen
+  - GLM
+cover: /images/blog/claude-code-kimi-qwen-glm-guide/claude-code.webp
+topicId: "45548821885852448"
+topicCluster: ai-practice-toolchain
+access: planet-preview
+planetTopicUrl: https://wx.zsxq.com/group/28882182852411/topic/45548821885852448
+gateTitle: "选完模型还不算接通，环境变量和模型名才是高频出错点"
+gateDescription: "完整原帖分别整理 Kimi、Qwen、智谱 GLM 的配置位置、环境变量和最小验证方法。"
+gateItems:
+  - 三家服务的配置对照
+  - 环境变量与模型名示例
+  - Claude Code 启动和请求验证
+category: tech
+icon: robot
+published: true
+---
+
+很多人喜欢 Claude Code，不只是因为 Claude 模型，而是喜欢它在终端里读项目、改文件、跑命令的工作方式。问题是，模型额度、网络和任务类型都在变，把整个工作流绑死在一家模型上，很容易停摆。
+
+Claude Code 的 CLI 框架和上游模型可以在一定条件下拆开。只要模型服务提供它能识别的兼容入口，你就能尝试接入 Kimi、Qwen 或智谱 GLM。
+
+![Claude Code 终端界面](/images/blog/claude-code-kimi-qwen-glm-guide/claude-code.webp)
+
+## 三家怎么选
+
+别先问哪家“最强”，先看你的任务。长上下文、代码修改、中文理解、价格和速率限制，都会影响实际体验。同一个模型在网页端和 API 端也可能采用不同套餐，配置前要以各家控制台的当前说明为准。
+
+我的做法是先选一个最常用的项目跑最小测试：让它读一个真实文件，做一处小修改，再执行一次本地检查。只有对话成功，却不能正确调用工具，不能算接入完成。
+
+![Kimi 与 Claude Code 的配置示例页面](/images/blog/claude-code-kimi-qwen-glm-guide/kimi.webp)
+
+## 拆开以后，cc-switch 才真正有用
+
+当三个模型都能跑，手动改环境变量马上会变成新的麻烦。上一篇介绍的 cc-switch 正好接在这里，负责保管和切换供应商配置。模型负责生成，Claude Code 负责执行，配置管理工具负责切换，三者不要混成一件事。
+
+兼容接口也不代表行为完全相同。工具调用、上下文长度、模型名和限流策略都可能有差异。完整的三家配置和验证命令放在星球原帖，先跑通一家，再逐个增加。

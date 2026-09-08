@@ -1,0 +1,44 @@
+---
+title: "所谓本地画图，模型其实不在你电脑里：先别被四个字带偏"
+description: "jimeng-api 在本地提供接口，但图像仍由上游服务生成。公开部分说明能力、适用场景和边界。"
+date: 2026-09-08T12:37:13+08:00
+author: 芝士AI吃鱼
+tags:
+  - jimeng-api
+  - AI 绘图
+  - 本地服务
+cover: /images/blog/jimeng-api-local-image-generation-guide/project.webp
+topicId: "22258841882454481"
+topicCluster: ai-practice-toolchain
+access: planet-preview
+planetTopicUrl: https://wx.zsxq.com/group/28882182852411/topic/22258841882454481
+gateTitle: "服务能打开只是起点，Session、请求参数和结果保存才是实操"
+gateDescription: "完整原帖保留部署、Session ID 配置、接口调用和图片结果验证；凭证只在你本机使用。"
+gateItems:
+  - 本地服务启动与状态检查
+  - Session ID 的获取与安全保存
+  - 文生图请求和结果验证
+category: tech
+icon: robot
+published: true
+---
+
+“本地画图”很容易让人误会成模型下载到电脑，断网也能跑。jimeng-api 不是这回事。它在你的电脑上启动一个接口服务，请求仍然需要访问上游平台，图片也由上游能力生成。
+
+把这点说清楚，反而更容易判断它有没有用。你获得的是一个适合脚本调用的本地入口，不是一套本地大模型。
+
+![jimeng-api 项目页](/images/blog/jimeng-api-local-image-generation-guide/project.webp)
+
+## 它解决的是重复操作
+
+网页生图适合偶尔点几张。做文章配图时，提示词、尺寸、保存路径和后续处理会重复很多次。本地接口可以被脚本、内容工具或 Claude Code 调用，于是“生成一张图”能变成整条写作流程中的一个步骤。
+
+这正好接上前面的工具链：Claude Code 负责整理文章和发起任务，国产模型或 Claude 负责文字，jimeng-api 负责图像入口。各层单独替换，不用把全部逻辑塞进一段脚本。
+
+## 先接受它的边界
+
+项目依赖有效会话，Session ID 需要像密码一样保存。上游接口一旦变化，本地服务也可能需要更新。生成内容还要遵守平台规则，并自行检查版权、隐私和发布风险。
+
+![jimeng-api 本地服务运行界面](/images/blog/jimeng-api-local-image-generation-guide/service.webp)
+
+如果你要的是完全离线、模型文件就在硬盘里的画图方案，这个项目不合适。如果你想把网页能力接进自己的自动化流程，它才值得继续。完整部署、Session 配置和接口调用都在星球原帖。

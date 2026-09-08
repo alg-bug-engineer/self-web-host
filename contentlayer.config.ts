@@ -64,6 +64,28 @@ export const Post = defineDocumentType(() => ({
       options: ['cat', 'robot'],
       default: 'robot',
     },
+    access: {
+      type: 'enum',
+      options: ['public', 'planet-preview'],
+      default: 'public',
+    },
+    planetTopicUrl: {
+      type: 'string',
+      required: false,
+    },
+    gateTitle: {
+      type: 'string',
+      required: false,
+    },
+    gateDescription: {
+      type: 'string',
+      required: false,
+    },
+    gateItems: {
+      type: 'list',
+      of: { type: 'string' },
+      default: [],
+    },
   },
   computedFields: {
     slug: {

@@ -79,8 +79,8 @@ test('移动菜单具备对话框语义、滚动锁定和键盘关闭', async ({
   await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden')
 })
 
-test('最新日更文章包含完整正文结构和有效封面', async ({ page }) => {
-  await page.goto('/')
+test('已发布日更文章包含完整正文结构和有效封面', async ({ page }) => {
+  await page.goto('/blog')
   const latestDaily = page.locator('a[href^="/blog/daily-"]').first()
   await expect(latestDaily).toBeVisible()
   const href = await latestDaily.getAttribute('href')
@@ -142,6 +142,56 @@ test('旧长文保留阅读进度但不伪造目录结构', async ({ page }) => 
   expect(response?.ok()).toBe(true)
   await expect(page.getByTestId('article-reading-progress')).toHaveCount(1)
   await expect(page.getByRole('navigation', { name: '本文目录' })).toHaveCount(0)
+  await expectNoHorizontalOverflow(page)
+})
+
+test('AI 实践公开预览只在锁定区弹窗一次，并保留正确外链', async ({ page }) => {
+  await page.goto('/blog/proton-mail-claude-tutorial')
+  await expect(page.getByText('AI 实践公开预览')).toBeVisible()
+  const dialog = page.getByRole('dialog', { name: '完整教程解锁' })
+  await expect(dialog).toBeHidden()
+
+  const inlineGate = page.getByTestId('planet-gate-inline')
+  await inlineGate.scrollIntoViewIfNeeded()
+  await expect(dialog).toBeVisible()
+  await expect(dialog.getByRole('link', { name: '打开完整教程' })).toHaveAttribute(
+    'href',
+    'https://wx.zsxq.com/group/28882182852411/topic/45548821411144448',
+  )
+  await expect(dialog.getByRole('link', { name: '加入 AI 实践' })).toHaveAttribute(
+    'href',
+    'https://wx.zsxq.com/group/28882182852411',
+  )
+
+  await page.keyboard.press('Escape')
+  await expect(dialog).toBeHidden()
+  await expect(inlineGate.getByRole('link', { name: '打开完整教程' })).toBeFocused()
+  await expect(inlineGate).toBeVisible()
+
+  await page.reload()
+  await page.getByTestId('planet-gate-inline').scrollIntoViewIfNeeded()
+  await expect(dialog).toBeHidden()
+
+  const markdown = await page.request.get('/blog/proton-mail-claude-tutorial/index.html.md')
+  expect(markdown.status()).toBe(200)
+  const markdownBody = await markdown.text()
+  expect(markdownBody).toContain('访问范围：AI 实践公开预览')
+  expect(markdownBody).toContain('https://wx.zsxq.com/group/28882182852411/topic/45548821411144448')
+  expect(markdownBody).not.toMatch(/^##\s+(?:完整部署|Cookie 获取|curl 测试)/m)
+  await expectNoHorizontalOverflow(page)
+})
+
+test('AI 实践解锁窗口支持暗色主题和关闭按钮', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('vite-ui-theme', 'dark'))
+  await page.goto('/blog/claude2api-ide-tutorial')
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await page.getByTestId('planet-gate-inline').scrollIntoViewIfNeeded()
+
+  const dialog = page.getByRole('dialog', { name: '完整教程解锁' })
+  await expect(dialog).toBeVisible()
+  await expect(dialog).toHaveCSS('background-color', 'rgb(24, 26, 33)')
+  await dialog.getByRole('button', { name: '关闭解锁窗口' }).click()
+  await expect(dialog).toBeHidden()
   await expectNoHorizontalOverflow(page)
 })
 

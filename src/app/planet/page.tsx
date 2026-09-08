@@ -1,15 +1,17 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { allPosts } from 'contentlayer/generated'
+import { compareAsc } from 'date-fns'
 import { getSettings } from '@/lib/admin-storage'
 import { BRAND_NAME, SITE_URL } from '@/lib/site'
 
 export const metadata = {
-  title: `AI 实践学习社区｜儿童 AI 素养试运行 | ${BRAND_NAME}`,
-  description: `${BRAND_NAME}整理大模型、RAG、Agent 与 AI 工程实践；当前主线是“AI 原生一代：儿童 AI 素养”家庭实践课试运行。知识星球共学与课程内测分别登记。`,
+  title: `AI 实践｜把零散工具接成一套工作流 | ${BRAND_NAME}`,
+  description: '从 Claude 注册、接口转换、配置切换、账号管理，到国产模型与本地生图：先读公开预览，再进入 AI 实践查看完整步骤。',
   alternates: { canonical: '/planet' },
   openGraph: {
-    title: `AI 实践学习社区｜儿童 AI 素养试运行 | ${BRAND_NAME}`,
-    description: '围绕大模型、RAG、Agent 与 AI 工程实践持续整理；当前主线是“AI 原生一代：儿童 AI 素养”家庭实践课试运行。',
+    title: `AI 实践｜把零散工具接成一套工作流 | ${BRAND_NAME}`,
+    description: '把 Claude Code、国产模型、账号管理和本地生图接成一套可以动手验证的工作流。',
     url: `${SITE_URL}/planet`,
     type: 'website',
   },
@@ -28,20 +30,23 @@ export default async function PlanetPage() {
       return null
     }
   })()
-  const hasExternalJoinUrl = Boolean(externalJoinUrl)
   const joinUrl = externalJoinUrl ?? '/about#wechat'
-  const joinLabel = hasExternalJoinUrl ? '查看学习社区' : '联系作者了解'
+  const previewPosts = allPosts
+    .filter((post) => post.published && post.access === 'planet-preview')
+    .sort((a, b) => compareAsc(new Date(a.date), new Date(b.date)))
+
   const communityJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     '@id': `${SITE_URL}/planet#community`,
     url: `${SITE_URL}/planet`,
-    name: `${BRAND_NAME} AI 实践学习社区`,
-    description: '围绕大模型、RAG、Agent 与 AI 工程实践整理专题内容；当前开展“AI 原生一代：儿童 AI 素养”家庭实践课试运行。',
+    name: `${BRAND_NAME} AI 实践`,
+    description: '围绕 Claude Code、国产模型、账号管理和本地生图整理连续的技术实践路线。',
     about: [
       { '@type': 'Thing', name: 'AI 工程实践' },
+      { '@type': 'Thing', name: 'Claude Code' },
+      { '@type': 'Thing', name: '国产大模型' },
       { '@type': 'Thing', name: '儿童 AI 素养' },
-      { '@type': 'Thing', name: '家庭 AI 教育' },
     ],
     inLanguage: 'zh-CN',
     isPartOf: { '@id': `${SITE_URL}/#website` },
@@ -49,149 +54,127 @@ export default async function PlanetPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-16 py-12 px-4">
+    <div className="mx-auto max-w-6xl space-y-20 px-4 py-12">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(communityJsonLd) }} />
-      <section className="text-center space-y-6">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-tertiary/10 text-accent-tertiary text-sm font-medium">
-          <span className="h-2 w-2 rounded-full bg-accent-tertiary" />
-          {BRAND_NAME} · AI 实践学习社区
-        </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-text-primary tracking-tight">
-          把一个 AI 问题，继续做深一点
-        </h1>
-        <p className="text-lg text-text-secondary max-w-2xl mx-auto">
-          我会把大模型、RAG、Agent 和 AI 工程实践中的资料、案例与问题整理在这里。你可以先看公开文章，再判断这种学习方式是否适合自己。
-        </p>
-        <div className="flex flex-wrap justify-center gap-4">
-          <a 
-            href={joinUrl}
-            target={joinUrl.startsWith('http') ? '_blank' : undefined}
-            rel={joinUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
-            className="btn-primary px-8 py-3 text-lg"
-            data-analytics-event="join_planet"
-            data-analytics-target="planet-hero"
-          >
-            {joinLabel}
-          </a>
-          <Link href="/blog" className="btn-secondary px-8 py-3 text-lg">先读公开文章</Link>
-        </div>
-      </section>
 
-      <section className="rounded-3xl border border-accent-tertiary/30 bg-accent-tertiary/5 p-8 md:p-10">
-        <div className="grid gap-6 md:grid-cols-[1.4fr_auto] md:items-center">
-          <div>
-            <p className="eyebrow">CURRENT PILOT</p>
-            <h2 className="mt-2 text-2xl font-bold text-text-primary">AI 原生一代：儿童 AI 素养家庭实践课</h2>
-            <p className="mt-3 leading-7 text-text-secondary">
-              当前用四周时间试运行一套面向 8—14 岁孩子和家长的课程：理解 AI、与 AI 协作、验证答案、保护隐私，并完成一个亲子项目。
-            </p>
-            <p className="mt-3 text-sm leading-6 text-text-tertiary">
-              知识星球共学和课程内测是两个不同选择。加入星球不自动获得课程内测名额，孩子的自测、作业和答辩也不决定是否可以付费。
-            </p>
+      <section className="relative overflow-hidden rounded-[2rem] border border-accent-primary/25 bg-bg-secondary px-6 py-12 shadow-xl md:px-12 md:py-16">
+        <div aria-hidden="true" className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-accent-primary/15 blur-3xl" />
+        <div aria-hidden="true" className="absolute -bottom-24 left-1/3 h-64 w-64 rounded-full bg-accent-tertiary/10 blur-3xl" />
+        <div className="relative max-w-4xl">
+          <div className="inline-flex items-center gap-2 rounded-full bg-accent-tertiary/10 px-3 py-1 text-sm font-medium text-accent-tertiary">
+            <span className="h-2 w-2 rounded-full bg-accent-tertiary" />
+            {BRAND_NAME} · AI 实践
           </div>
-          <Link
-            href="/ai-native-generation"
-            className="btn-primary whitespace-nowrap px-6 py-3"
-            data-analytics-event="ai_native_generation_interest"
-            data-analytics-target="planet-pilot"
-          >
-            查看试运行计划
-          </Link>
-        </div>
-        <div className="mt-6 border-t border-border-default pt-5 text-sm leading-6 text-text-secondary">
-          只想登记课程内测意向的监护人，可以先查看
-          <Link
-            href="/ai-native-generation#guardian-beta-intake"
-            className="ml-1 font-medium text-accent-primary hover:underline"
-            data-analytics-event="ai_native_generation_interest"
-            data-analytics-target="planet-pilot"
-          >
-            监护人登记步骤
-          </Link>
-          ；当前只登记意向，不收取课程内测费用。
-        </div>
-      </section>
-
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {[
-          {
-            title: '按问题整理',
-            desc: '不追着每条新闻跑，围绕一个问题补齐背景、方法、证据和边界。',
-            icon: '🎯',
-          },
-          {
-            title: '连接原理与实践',
-            desc: '从概念走到案例、代码和系统约束，说明方法在真实工程里怎样落地。',
-            icon: '💻',
-          },
-          {
-            title: '保留问题讨论',
-            desc: '遇到不确定的地方就继续讨论，不把还没有答案的问题包装成标准结论。',
-            icon: '🤝',
-          },
-        ].map((item, i) => (
-          <div key={i} className="bg-bg-secondary border border-border-default rounded-2xl p-6 space-y-3">
-            <div className="text-3xl">{item.icon}</div>
-            <h3 className="text-lg font-semibold text-text-primary">{item.title}</h3>
-            <p className="text-sm text-text-secondary leading-relaxed">{item.desc}</p>
+          <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight text-text-primary md:text-6xl">
+            把 Claude Code、国产模型、账号管理和本地生图接成一套工作流
+          </h1>
+          <p className="mt-6 max-w-3xl text-lg leading-8 text-text-secondary">
+            真正浪费时间的，往往不是某个工具不会装，而是账号、接口、配置和内容生产各自为战。这里把它们按真实使用顺序串起来：先看公开预览，确认值得做，再去完整教程里动手。
+          </p>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <a
+              href={joinUrl}
+              target={joinUrl.startsWith('http') ? '_blank' : undefined}
+              rel={joinUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+              className="btn-primary px-8 py-3 text-lg"
+              data-analytics-event="join_planet"
+              data-analytics-target="planet-hero"
+            >
+              进入 AI 实践
+            </a>
+            <a href="#practice-route" className="btn-secondary px-8 py-3 text-lg">先看完整路线</a>
           </div>
-        ))}
+        </div>
       </section>
 
-      <section id="community-content" className="space-y-8 bg-bg-secondary border border-border-default rounded-3xl p-8 md:p-12">
-        <div className="text-center">
-          <p className="eyebrow">WHAT I SHARE</p>
-          <h2 className="mt-2 text-3xl font-bold text-text-primary">这里主要整理什么</h2>
+      <section id="practice-route" className="scroll-mt-24 space-y-8">
+        <div className="max-w-3xl">
+          <p className="eyebrow">THE TOOLCHAIN</p>
+          <h2 className="mt-2 text-3xl font-bold text-text-primary">8 个节点，不再收藏 8 篇互不相干的教程</h2>
+          <p className="mt-3 leading-7 text-text-secondary">
+            这条路线从账号入口开始，经过接口与配置，再走到多账号调度、国产模型和图像生产。每一篇都开放关键判断，具体命令和排错留在对应星球原帖。
+          </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-          {[
-            { title: '专题内容', detail: '围绕大模型、RAG、Agent 和 AI 工程化，把零散知识整理成可以连续阅读的主题。' },
-            { title: '案例与代码', detail: '在适合公开和复用的范围内，补充项目案例、架构说明与代码线索。' },
-            { title: '实践问题', detail: '记录部署、评测、数据和产品落地中真正会遇到的问题，以及当时可行的处理方式。' },
-            { title: '工具观察', detail: '关注值得动手验证的开源项目与模型能力，说明它解决了什么，也说明还缺什么。' },
-          ].map((benefit, i) => (
-            <div key={i} className="flex gap-4">
-              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-tertiary/20 text-accent-tertiary flex items-center justify-center font-bold text-xs">
-                ✓
+        <div className="grid gap-5 md:grid-cols-2">
+          {previewPosts.map((post, index) => (
+            <Link
+              key={post.slug}
+              href={post.url}
+              className="group relative overflow-hidden rounded-2xl border border-border-default bg-bg-secondary p-6 transition hover:-translate-y-1 hover:border-accent-primary/50 hover:shadow-xl motion-reduce:transform-none"
+            >
+              <div className="flex items-start gap-4">
+                <span className="font-mono text-2xl font-bold text-accent-primary/60">{String(index + 1).padStart(2, '0')}</span>
+                <div className="min-w-0">
+                  <h3 className="text-lg font-bold leading-7 text-text-primary group-hover:text-accent-primary">{post.title}</h3>
+                  <p className="mt-2 line-clamp-2 text-sm leading-6 text-text-secondary">{post.description}</p>
+                  <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent-tertiary">
+                    阅读公开预览 <span aria-hidden="true">→</span>
+                  </span>
+                </div>
               </div>
-              <div className="space-y-1">
-                <h4 className="font-semibold text-text-primary">{benefit.title}</h4>
-                <p className="text-sm text-text-secondary">{benefit.detail}</p>
-              </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
 
-      <section className="text-center space-y-8 pb-12">
-        <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-text-primary">{hasExternalJoinUrl ? '查看当前社区页面' : '获取当前社区信息'}</h2>
-          <p className="text-sm text-text-tertiary">
-            {hasExternalJoinUrl
-              ? '具体内容、更新频率和加入方式，以知识星球页面展示的信息为准。'
-              : '当前没有配置公开加入链接，可以通过公众号联系作者了解。'}
+      <section className="grid gap-8 rounded-3xl border border-accent-primary/25 bg-accent-primary/5 p-8 md:grid-cols-[1fr_auto] md:items-center md:p-12">
+        <div>
+          <p className="eyebrow">AI PRACTICE</p>
+          <h2 className="mt-2 text-3xl font-bold text-text-primary">公开文章负责讲清楚，星球原帖负责让你照着做</h2>
+          <p className="mt-4 max-w-2xl leading-7 text-text-secondary">
+            完整命令、配置位置、操作截图和踩坑记录都保留在 AI 实践。加入前可以先把上面的公开预览逐篇看完，内容和加入方式以知识星球页面为准。
           </p>
+          <a
+            href={joinUrl}
+            target={joinUrl.startsWith('http') ? '_blank' : undefined}
+            rel={joinUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+            className="btn-primary mt-6 inline-flex px-7 py-3"
+            data-analytics-event="join_planet"
+            data-analytics-target="planet-footer"
+          >
+            打开 AI 实践
+          </a>
         </div>
         <a
           href={joinUrl}
           target={joinUrl.startsWith('http') ? '_blank' : undefined}
           rel={joinUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
-          className="inline-block p-4 bg-white rounded-2xl shadow-xl"
-          aria-label="查看芝士AI吃鱼知识星球"
+          className="justify-self-center rounded-2xl bg-white p-3 shadow-xl"
+          aria-label="打开 AI 实践知识星球"
           data-analytics-event="join_planet"
           data-analytics-target="planet-footer"
         >
-          {settings.planetQrCode ? (
-            <Image src={settings.planetQrCode} alt="芝士AI吃鱼知识星球二维码" width={192} height={192} className="object-contain" />
-          ) : (
-            <div className="w-48 h-48 bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-300 text-gray-400">
-              <div className="text-center">
-                <span className="text-4xl block mb-2">🪐</span>
-                <span className="text-xs">{hasExternalJoinUrl ? '查看社区页面' : '联系作者了解'}</span>
-              </div>
-            </div>
-          )}
+          <Image
+            src={settings.planetQrCode || '/images/zhishixingqiu.jpg'}
+            alt="AI 实践知识星球二维码"
+            width={208}
+            height={208}
+            className="object-contain"
+          />
         </a>
+      </section>
+
+      <section className="rounded-3xl border border-border-default bg-bg-secondary p-8 md:p-10">
+        <div className="grid gap-6 md:grid-cols-[1.4fr_auto] md:items-center">
+          <div>
+            <p className="eyebrow">ANOTHER PRACTICE LINE</p>
+            <h2 className="mt-2 text-2xl font-bold text-text-primary">另一条实践线：AI 原生一代</h2>
+            <p className="mt-3 leading-7 text-text-secondary">
+              除了开发者工具链，我还在试运行一套面向 8—14 岁孩子和家长的 AI 素养家庭实践课：理解 AI、验证答案、保护隐私，并完成一个亲子项目。
+            </p>
+            <p className="mt-3 text-sm leading-6 text-text-tertiary">
+              这是独立项目线。知识星球共学和课程内测是两个不同选择，加入星球不自动获得课程内测名额；当前课程页面只登记意向，不收取内测费用。
+            </p>
+          </div>
+          <Link
+            href="/ai-native-generation"
+            className="btn-secondary whitespace-nowrap px-6 py-3"
+            data-analytics-event="ai_native_generation_interest"
+            data-analytics-target="planet-pilot"
+          >
+            查看儿童 AI 素养计划
+          </Link>
+        </div>
       </section>
     </div>
   )

@@ -60,6 +60,10 @@ export function renderPostMarkdown(post, siteUrl) {
     tags.length ? `- 主题：${tags.join('、')}` : null,
     `- HTML 正文：[${canonical}](${canonical})`,
     `- Markdown 永久链接：[${markdownUrl}](${markdownUrl})`,
+    post.access === 'planet-preview' ? '- 访问范围：AI 实践公开预览' : null,
+    post.access === 'planet-preview' && post.planetTopicUrl
+      ? `- 完整教程：[知识星球原帖](${post.planetTopicUrl})`
+      : null,
     post.sourceUrl ? `- 原始来源：[${oneLine(post.sourceName || post.sourceUrl)}](${post.sourceUrl})` : null,
   ].filter(Boolean)
 
@@ -73,6 +77,10 @@ ${metadata.join('\n')}
 
 ## 正文
 
-${cleanMdxForLlms(post.body?.raw, siteUrl)}
+${cleanMdxForLlms(post.body?.raw, siteUrl)}${post.access === 'planet-preview' && post.planetTopicUrl ? `
+
+## 继续阅读
+
+本文只提供公开预览。命令、配置、截图与排错请查看 [AI 实践完整教程](${post.planetTopicUrl})。` : ''}
 `
 }

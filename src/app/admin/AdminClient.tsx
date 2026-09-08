@@ -63,6 +63,8 @@ const conversionLabel = (name: string) => ({
   visit_project: '访问项目',
   visit_github: '前往 GitHub',
   view_planet: '了解知识星球',
+  planet_gate_view: '文章解锁弹窗曝光',
+  open_planet_topic: '打开星球完整教程',
   join_planet: '加入知识星球',
   ai_native_generation_interest: '儿童 AI 素养课程意向',
   course_beta_guardian_interest: '监护人课程内测意向',

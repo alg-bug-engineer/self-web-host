@@ -1,0 +1,51 @@
+---
+title: "Claude 网页额度只在浏览器里用？这层接口把 IDE 接上了"
+description: "Claude2api 把 Claude 网页会话转换成 OpenAI 兼容接口，让本地 IDE 可以接入。先看架构、前提和风险边界。"
+date: 2026-09-08T10:37:59+08:00
+author: 芝士AI吃鱼
+tags:
+  - Claude
+  - OpenAI API
+  - IDE
+cover: /images/blog/claude2api-ide-tutorial/project.webp
+topicId: "82258841852128112"
+topicCluster: ai-practice-toolchain
+access: planet-preview
+planetTopicUrl: https://wx.zsxq.com/group/28882182852411/topic/82258841852128112
+gateTitle: "看懂架构只占两成，真正费时间的是 Cookie、启动和 IDE 对接"
+gateDescription: "完整原帖保留 Docker 与非 Docker 两种启动方式、浏览器 Cookie 处理、curl 验证和 IDE 配置。"
+gateItems:
+  - Docker 与本地二进制两种启动法
+  - 完整浏览器 Cookie 的安全配置
+  - curl 成功验证与 IDE 接入位置
+  - 常见认证失败排查
+category: tech
+icon: robot
+published: true
+---
+
+Claude 网页版能聊，Claude Code 和本地 IDE 却用不上同一条账号链路，这是很多人折腾到最后才发现的断点。你有可用账号，不等于手里有标准 API。
+
+[Claude2api](https://github.com/aurora-develop/Claude2api) 做的事情很明确：接收 OpenAI 兼容格式的请求，再转给 Claude 网页会话。对支持自定义接口地址的工具来说，它就像一层翻译器。
+
+![Claude2api 项目页](/images/blog/claude2api-ide-tutorial/project.webp)
+
+## 这层接口接在什么位置
+
+浏览器会话在最上游，Claude2api 在中间，本地 IDE 在下游。IDE 只需要认识常见的接口格式，不必理解 Claude 网页端怎么通信。这样一来，Claude Code、Trae、Kimi、Zcode、Codex 或 cc-switch 这类工具，就有机会走同一个本地地址。
+
+“有机会”三个字很重要。不同客户端支持的接口字段、流式返回和模型名并不完全一致，项目本身也可能随上游页面变化。它更适合个人本地研究，不适合拿来承诺稳定的生产服务。
+
+## 启动前要准备什么
+
+你需要一台能运行 Docker 或 Go 程序的电脑、一个当前可正常使用的 Claude 网页账号，以及对浏览器 Cookie 基本的安全意识。Cookie 等同于登录凭证，不能发到群里，不能提交到 Git，也不要放在公网可读的配置文件中。
+
+项目既能用 Docker 启动，也可以编译后直接运行。Docker 省去一部分环境差异，非 Docker 方式更方便看日志和改代码。选哪种取决于你的机器，不必为了教程标题强行装 Docker。
+
+## 最后的判断标准只有一个
+
+服务启动不代表接入成功。真正的成功标准，是向本地兼容接口发出请求后收到合法响应，并且 IDE 能完成一次真实对话。
+
+![Claude2api 本地接口返回成功](/images/blog/claude2api-ide-tutorial/curl-success.webp)
+
+公开部分先把结构和边界说明白。Cookie 从哪里取、两种启动方式怎么选、curl 怎样验证、各类 IDE 填哪个地址，这些容易抄错的内容都在完整原帖。

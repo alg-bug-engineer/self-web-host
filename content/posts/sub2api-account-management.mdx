@@ -1,0 +1,45 @@
+---
+title: "账号一多，额度没用完就先乱了：真正的损耗发生在管理层"
+description: "sub2api 处理多平台账号、调度、密钥和权限问题。公开部分先看它为什么比继续堆配置更值得做。"
+date: 2026-09-08T12:00:06+08:00
+author: 芝士AI吃鱼
+tags:
+  - sub2api
+  - 账号管理
+  - API 网关
+cover: /images/blog/sub2api-account-management/accounts-redacted.webp
+topicId: "22258841888158251"
+topicCluster: ai-practice-toolchain
+access: planet-preview
+planetTopicUrl: https://wx.zsxq.com/group/28882182852411/topic/22258841888158251
+gateTitle: "多账号管理最怕默认配置，部署后先把权限和暴露面收紧"
+gateDescription: "完整原帖包含部署、后台初始化、平台账号添加、API Key 创建和安全设置。"
+gateItems:
+  - 服务部署与后台初始化
+  - 多平台账号添加和状态检查
+  - 调度、密钥与权限配置
+  - 公网暴露前的安全清单
+category: tech
+icon: robot
+published: true
+---
+
+账号少的时候，拿个文本文件记一下也能用。账号一多，问题会一起冒出来：哪个还有额度，哪个刚失败过，哪个被某个项目占着，以及那串密钥到底给了谁。
+
+继续往配置文件里加账号，只会把问题往后拖。sub2api 的价值在管理层，它把不同平台账号集中到一个后台，再通过统一接口提供给下游工具。
+
+![sub2api 脱敏后的账号管理界面](/images/blog/sub2api-account-management/accounts-redacted.webp)
+
+## 省下来的不是复制粘贴
+
+统一管理以后，你能在一个地方看账号状态，调整调用顺序，并为下游创建独立密钥。某个客户端出问题时，也不用把整套上游凭证一起更换。
+
+这和前面的 Claude2api、chatgpt2api 有关联，但分工不同。前两者偏向把网页会话变成接口，sub2api 更像账号与接口之间的调度台。是否需要它，取决于你有多少账号、多少客户端，以及是否愿意承担一套额外服务的维护成本。
+
+## 后台出现，不代表安全问题消失
+
+账号集中以后，风险也集中。管理口令、上游凭证、下游 API Key 都需要单独保管；管理端不应无保护地暴露在公网；日志和截图必须先脱敏。
+
+![sub2api 项目页](/images/blog/sub2api-account-management/project.webp)
+
+所以我不会把它包装成“装完自动省钱”的工具。它真正解决的是可见性、调度和权限边界。完整的部署、后台配置和安全设置放在星球原帖，公开页面不出现任何真实账号或密钥。

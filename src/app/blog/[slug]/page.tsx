@@ -5,6 +5,7 @@ import { mdxComponents } from '@/components/mdx'
 import Link from 'next/link'
 import Image from 'next/image'
 import PlanetBanner from '@/components/PlanetBanner'
+import PlanetGate from '@/components/PlanetGate'
 import WechatCard from '@/components/WechatCard'
 import AppCard from '@/components/AppCard'
 import { getSettings } from '@/lib/admin-storage'
@@ -156,6 +157,11 @@ export default async function BlogPostPage({ params }: PageProps) {
               <span className="w-2 h-2 rounded-full bg-accent-primary animate-pulse"></span>
               {post.category === 'tech' ? '技术科普' : '社科感慨'}
             </span>
+            {post.access === 'planet-preview' && (
+              <span className="rounded-full border border-accent-primary/30 bg-accent-primary/10 px-3 py-1 text-sm font-medium text-accent-primary">
+                AI 实践公开预览
+              </span>
+            )}
             <div className="h-4 w-[1px] bg-border-default mx-1"></div>
             {post.tags?.map((tag) => (
               <Link
@@ -226,12 +232,24 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Lead Gen Banner */}
         <div className="mb-8">
-          <PlanetBanner 
-            title="想把本文的问题继续做深一点？"
-            description="知识星球里会继续整理相关案例、工程约束和问题讨论；具体内容以当前社区页面为准。"
-            planetUrl={settings.planetUrl}
-            planetQrCode={settings.planetQrCode}
-          />
+          {post.access === 'planet-preview' && post.planetTopicUrl ? (
+            <PlanetGate
+              slug={post.slug}
+              title={post.gateTitle || '完整实操已整理好'}
+              description={post.gateDescription || '命令、配置与排错记录继续放在 AI 实践原帖。'}
+              items={post.gateItems}
+              topicUrl={post.planetTopicUrl}
+              planetUrl={settings.planetUrl || 'https://wx.zsxq.com/group/28882182852411'}
+              planetQrCode={settings.planetQrCode}
+            />
+          ) : (
+            <PlanetBanner
+              title="想把本文的问题继续做深一点？"
+              description="知识星球里会继续整理相关案例、工程约束和问题讨论；具体内容以当前社区页面为准。"
+              planetUrl={settings.planetUrl}
+              planetQrCode={settings.planetQrCode}
+            />
+          )}
         </div>
 
         {/* Wechat Subscription Card */}

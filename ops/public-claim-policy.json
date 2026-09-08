@@ -15,6 +15,7 @@
     "src/components/FamilyAiLiteracyCheck.tsx",
     "src/components/GuardianPilotSurvey.tsx",
     "src/components/PlanetBanner.tsx",
+    "src/components/PlanetGate.tsx",
     "src/components/WechatCard.tsx",
     "content/campaigns/ai-native-generation-30d/2026-08-12-zsxq-profile-proposal.md"
   ],

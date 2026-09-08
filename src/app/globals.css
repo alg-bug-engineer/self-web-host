@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 @import "../styles/variables.css";
-@import "../styles/theme-dark.css";
 @import "../styles/theme-light.css";
+@import "../styles/theme-dark.css";
 @import "../styles/github-theme.css";
 @import "../styles/components.css";
 

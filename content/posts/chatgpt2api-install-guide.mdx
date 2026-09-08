@@ -1,0 +1,47 @@
+---
+title: "ChatGPT 网页账号闲着，本地工具却还在单独付 API：中间缺这一层"
+description: "chatgpt2api 将 ChatGPT 网页会话转换成兼容接口。公开部分介绍能力、适用场景和必须知道的限制。"
+date: 2026-09-08T11:36:54+08:00
+author: 芝士AI吃鱼
+tags:
+  - ChatGPT
+  - OpenAI API
+  - 本地部署
+cover: /images/blog/chatgpt2api-install-guide/project.webp
+topicId: "22258841888821441"
+topicCluster: ai-practice-toolchain
+access: planet-preview
+planetTopicUrl: https://wx.zsxq.com/group/28882182852411/topic/22258841888821441
+gateTitle: "项目能跑和接口真能用，中间还隔着账号导入与请求验证"
+gateDescription: "完整原帖保留部署、账号导入、curl 对话测试和生图验证；敏感凭证不会出现在公开页面。"
+gateItems:
+  - 本地部署与启动检查
+  - 账号导入的安全注意项
+  - curl 对话与生图测试
+  - 失败日志定位
+category: tech
+icon: robot
+published: true
+---
+
+ChatGPT 网页里明明有可用额度，本地脚本和 IDE 却只认识 API Key。很多人到这里的第一反应是再开一份 API 账单，其实还可以先研究兼容层。
+
+[chatgpt2api](https://github.com/basketikun/chatgpt2api) 把网页会话包装成常见接口，让支持自定义服务地址的客户端可以发起对话，部分能力也包含图像相关调用。
+
+![chatgpt2api 项目页](/images/blog/chatgpt2api-install-guide/project.webp)
+
+## 它适合解决什么
+
+最直接的用途是本地实验：统一已有工具的调用格式、验证网页账号能力，或者给个人工作流补一个兼容入口。如果你前面已经搭过 Claude2api，这个项目在架构上的位置几乎一样，只是上游换成 ChatGPT。
+
+它不等于 OpenAI 官方 API，也不保证网页端的所有能力都能一比一映射。上游页面、账号状态和项目版本变化，都可能影响可用性。生产系统仍然应该选有正式服务协议和稳定性承诺的接口。
+
+## 为什么生图值得单独测试
+
+文字返回成功，只能证明对话链路通了。图像请求还涉及不同的返回字段、文件访问方式和客户端兼容性，所以最好单独验证。
+
+![chatgpt2api 图像工作台](/images/blog/chatgpt2api-install-guide/image-workbench.webp)
+
+这里还有一条不能省：账号凭证和会话信息按密码处理。不要截图传播，不要写进公开仓库，也不要把本地管理端口直接暴露到公网。
+
+公开预览讲到这里，你已经能判断这个项目是不是自己需要的那块拼图。部署命令、账号导入位置、curl 请求和生图成功结果都放在完整原帖。
