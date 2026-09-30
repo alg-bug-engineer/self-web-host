@@ -146,7 +146,7 @@
     "test:search-console-sync-launchd": "node scripts/tests/test-search-console-sync-launchd.mjs",
     "deploy:production": "bash scripts/deploy.sh",
     "test:rag-evaluation": "node scripts/tests/test-rag-evaluation.mjs",
-    "test:commentary": "node scripts/tests/test-commentary.mjs && node scripts/tests/test-commentary-diagrams.mjs"
+    "test:commentary": "node scripts/tests/test-commentary.mjs && node scripts/tests/test-commentary-diagrams.mjs && node scripts/tests/test-calabash-commentary.mjs"
   },
   "dependencies": {
     "contentlayer2": "^0.5.8",
