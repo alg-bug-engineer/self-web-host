@@ -57,6 +57,7 @@ export function renderPostMarkdown(post, siteUrl) {
   const metadata = [
     `- 作者：${oneLine(post.author)}`,
     `- 发布日期：${publishedDate}`,
+    post.postType === 'commentary' ? `- 栏目：[AI锐评](${new URL('/commentary', siteUrl).toString()})（观点与分析）` : null,
     tags.length ? `- 主题：${tags.join('、')}` : null,
     `- HTML 正文：[${canonical}](${canonical})`,
     `- Markdown 永久链接：[${markdownUrl}](${markdownUrl})`,

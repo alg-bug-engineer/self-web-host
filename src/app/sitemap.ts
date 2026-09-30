@@ -14,12 +14,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }))
 
   // 基础路由
-  const latestPostDate = allPosts.reduce(
+  const latestPostDate = allPosts.filter((post) => post.published).reduce(
     (latest, post) => (post.date > latest ? post.date : latest),
     '2026-01-01',
   )
 
-  const routes = ['', '/blog', '/collections/manga', '/collections/tools', '/tools/markdown', '/portfolio', '/planet', '/ai-native-generation', '/about', '/lab'].map(
+  const routes = ['', '/blog', '/commentary', '/collections/manga', '/collections/tools', '/tools/markdown', '/portfolio', '/planet', '/ai-native-generation', '/about', '/lab'].map(
     (route) => ({
       url: `${baseUrl}${route}`,
       lastModified: new Date(latestPostDate),

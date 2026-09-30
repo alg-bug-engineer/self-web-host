@@ -10,6 +10,7 @@ interface HeaderProps {
 
 const navItems = [
   { label: '文章', href: '/blog' },
+  { label: 'AI锐评', href: '/commentary' },
   { label: '著作与作品', href: '/portfolio' },
   { label: 'AI 工具', href: '/collections/tools' },
   { label: 'AI 漫画', href: 'https://manga.ai-knowledgepoints.cn' },

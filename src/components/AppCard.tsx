@@ -79,7 +79,7 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
                 <div className="flex items-start gap-3">
                     {isPost ? (
                         <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded border border-border-default bg-bg-tertiary font-mono text-xs font-semibold text-text-secondary">
-                            文章
+                            {isPost && repository.postType === 'commentary' ? '锐评' : '文章'}
                         </div>
                     ) : (
                         <div className="relative w-12 h-12 flex-shrink-0 overflow-hidden rounded-xl">
@@ -142,7 +142,7 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
                             {latest_version}
                         </span>
                     ) : (
-                         <span className="rounded border border-border-default bg-bg-tertiary px-2 py-1 text-text-secondary">{isPost ? "深度文章" : "开源项目"}</span>
+                         <span className="rounded border border-border-default bg-bg-tertiary px-2 py-1 text-text-secondary">{isPost ? repository.postType === 'commentary' ? "AI锐评" : "深度文章" : "开源项目"}</span>
                     )}
                     {lastUpdated && <span className="capitalize">{lastUpdated}</span>}
                 </div>

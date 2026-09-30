@@ -13,6 +13,7 @@ import { compareDesc } from 'date-fns'
 import ArticleViewCounter from '@/components/ArticleViewCounter'
 import ArticleReadingGuide from '@/components/ArticleReadingGuide'
 import { BRAND_NAME, SITE_URL, absoluteUrl } from '@/lib/site'
+import { commentaryTopicLabel, isCommentary } from '@/lib/commentary.mjs'
 import { extractArticleHeadings } from '@/lib/article-headings.mjs'
 
 interface PageProps {
@@ -75,6 +76,9 @@ export default async function BlogPostPage({ params }: PageProps) {
   if (!post) {
     notFound()
   }
+  const commentary = isCommentary(post)
+  const sectionUrl = commentary ? '/commentary' : '/blog'
+  const sectionName = commentary ? 'AI锐评' : '文章'
   const articleHeadings = extractArticleHeadings(post.body.raw)
 
   // Get sorted posts for navigation
@@ -102,17 +106,18 @@ export default async function BlogPostPage({ params }: PageProps) {
     '@context': 'https://schema.org',
     '@graph': [
       {
-        '@type': 'TechArticle',
+        '@type': commentary ? 'Article' : 'TechArticle',
+        genre: commentary ? '观点与分析' : undefined,
         '@id': articleId,
         headline: post.title,
         description: post.description,
         mainEntityOfPage: absoluteUrl(post.url),
-        isPartOf: { '@id': `${SITE_URL}/#website` },
+        isPartOf: { '@id': commentary ? `${SITE_URL}/commentary#collection` : `${SITE_URL}/#website` },
         image: post.cover ? absoluteUrl(post.cover) : absoluteUrl('/og.png'),
         datePublished: post.date,
         dateModified: post.date,
         inLanguage: 'zh-CN',
-        articleSection: post.category === 'tech' ? 'AI 技术科普' : 'AI 与社会观察',
+        articleSection: commentary ? 'AI锐评' : post.category === 'tech' ? 'AI 技术科普' : 'AI 与社会观察',
         keywords: post.tags?.join(', '),
         citation: post.sourceUrl || undefined,
         author: { '@id': `${SITE_URL}/#person`, name: post.author || BRAND_NAME },
@@ -123,7 +128,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         '@id': `${absoluteUrl(post.url)}#breadcrumb`,
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: '首页', item: SITE_URL },
-          { '@type': 'ListItem', position: 2, name: '文章', item: `${SITE_URL}/blog` },
+          { '@type': 'ListItem', position: 2, name: sectionName, item: absoluteUrl(sectionUrl) },
           { '@type': 'ListItem', position: 3, name: post.title, item: absoluteUrl(post.url) },
         ],
       },
@@ -140,13 +145,13 @@ export default async function BlogPostPage({ params }: PageProps) {
       <div className="mx-auto max-w-6xl">
         {/* Back link */}
         <Link
-          href="/blog"
+          href={sectionUrl}
           className="mb-8 inline-flex items-center text-sm text-text-secondary transition-colors hover:text-accent-primary"
         >
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          返回文章列表
+          {commentary ? '返回 AI锐评' : '返回文章列表'}
         </Link>
 
         {/* Header */}
@@ -154,7 +159,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           {/* Category & Tags */}
           <div className="mb-4 flex flex-wrap items-center gap-2">
             <span className="flex items-center gap-1.5 rounded border border-border-default bg-bg-secondary px-2.5 py-1 text-sm font-medium text-text-secondary">
-              {post.category === 'tech' ? '技术科普' : '社科感慨'}
+              {commentary ? `AI锐评 · ${commentaryTopicLabel(post)}` : post.category === 'tech' ? '技术科普' : '社科感慨'}
             </span>
             {post.access === 'planet-preview' && (
               <span className="rounded border border-accent-tertiary/30 bg-[var(--accent-planet-subtle)] px-2.5 py-1 text-sm font-medium text-accent-tertiary">
@@ -189,7 +194,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
           {post.sourceUrl && (
             <p className="mt-4 text-sm text-text-tertiary">
-              来源：
+              {commentary ? '事实来源：' : '来源：'}
               <a
                 href={post.sourceUrl}
                 target="_blank"
@@ -295,14 +300,14 @@ export default async function BlogPostPage({ params }: PageProps) {
           <div className="flex items-center justify-between">
             <div>
               <p className="font-semibold text-text-primary">{post.author}</p>
-              <p className="text-sm text-text-secondary">持续记录 AI 原理和工程实践</p>
+              <p className="text-sm text-text-secondary">{commentary ? '有出处的事实，有理由的判断。' : '持续记录 AI 原理和工程实践'}</p>
             </div>
 
             <Link
-              href="/blog"
+              href={sectionUrl}
               className="inline-flex items-center rounded-md border border-border-default bg-bg-secondary px-4 py-2 text-text-primary transition-colors hover:bg-bg-tertiary"
             >
-              更多文章
+              {commentary ? '更多锐评' : '更多文章'}
               <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

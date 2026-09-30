@@ -2,6 +2,7 @@ import { allPosts } from 'contentlayer/generated'
 import { compareDesc } from 'date-fns'
 import Link from 'next/link'
 import { getTopPaths } from '@/lib/analytics-storage'
+import { commentaryTopicLabel, formatCommentaryDate, getPublishedCommentary, isCommentary } from '@/lib/commentary.mjs'
 import portfolioData from 'content/collections/portfolio.json'
 
 export const metadata = {
@@ -31,8 +32,10 @@ export default async function Home() {
   const posts = allPosts
     .filter((post) => post.published)
     .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
-  const newest = posts[0]
-  const latestPosts = posts.slice(1, 5)
+  const technicalPosts = posts.filter((post) => !isCommentary(post))
+  const newest = technicalPosts[0]
+  const latestPosts = technicalPosts.slice(1, 5)
+  const latestCommentary = getPublishedCommentary(posts)[0]
   const books = (portfolioData as Book[]).filter((item) => item.type === 'book')
   const weeklyTopPaths = await getTopPaths({ days: 7, prefix: '/blog/', limit: 4 })
   const rankedPosts = weeklyTopPaths
@@ -96,11 +99,32 @@ export default async function Home() {
         </div>
       </section>
 
+      <section className="home-section home-commentary" aria-labelledby="home-commentary-heading">
+        <div className="home-section-header">
+          <div>
+            <p className="eyebrow">按天更新 · 热点、产品与观点</p>
+            <h2 id="home-commentary-heading">AI锐评</h2>
+          </div>
+          <Link href="/commentary" className="section-link" data-analytics-event="explore_articles" data-analytics-target="home-commentary">进入 AI锐评 →</Link>
+        </div>
+        <div className="home-commentary-grid">
+          <p className="home-commentary-note">热闹看完，聊点真话。<span>技术有没有进步，普通人会不会更累，产品到底值不值得用。把兴奋和疑问一起摆上桌。</span></p>
+          {latestCommentary ? (
+            <Link href={latestCommentary.url} className="home-commentary-article">
+              <p className="commentary-kicker">{formatCommentaryDate(latestCommentary.date)} · {commentaryTopicLabel(latestCommentary)}</p>
+              <h3>{latestCommentary.title}</h3>
+              <p>{latestCommentary.description}</p>
+              <span className="section-link">读这篇锐评 →</span>
+            </Link>
+          ) : <p className="text-text-secondary">第一篇锐评正在准备。</p>}
+        </div>
+      </section>
+
       <section className="home-section">
         <div className="home-section-header">
           <div>
-            <p className="eyebrow">最近发布</p>
-            <h2>新文章</h2>
+            <p className="eyebrow">原理与工程 · 最近发布</p>
+            <h2>技术长文</h2>
           </div>
           <Link href="/blog" className="section-link" data-analytics-event="explore_articles" data-analytics-target="home-latest">浏览全部文章 →</Link>
         </div>
