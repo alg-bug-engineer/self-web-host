@@ -8,10 +8,15 @@ const origin = 'https://ai-knowledgepoints.cn'
 test('AI锐评有独立首页和导航入口，阅读返回与历史导航可重复使用', async ({ page }, testInfo) => {
   const errors: string[] = []
   page.on('pageerror', (error) => errors.push(error.message))
+  const feed = new XMLParser().parse(await (await page.request.get('/commentary/feed.xml')).text()).rss.channel
+  const items = Array.isArray(feed.item) ? feed.item : [feed.item]
+  const latest = items[0]
   await page.goto('/')
   const block = page.locator('.home-commentary')
   await expect(block.getByRole('heading', { name: 'AI锐评', exact: true })).toBeVisible()
   await expect(block.locator('a[href^="/blog/"]')).toHaveCount(1)
+  await expect(block.locator('.home-commentary-article')).toHaveAttribute('href', new URL(latest.link).pathname)
+  await expect(block.locator('.home-commentary-article')).toContainText(latest.title)
   await expect(page.getByRole('heading', { name: '技术长文' })).toBeVisible()
   if (testInfo.project.name === 'mobile-chromium') {
     await page.setViewportSize({ width: 375, height: 667 })
@@ -35,6 +40,9 @@ test('AI锐评有独立首页和导航入口，阅读返回与历史导航可重
   }
   await expect(page).toHaveURL(/\/commentary$/)
   await expect(page.locator('h1')).toHaveText('AI锐评热闹看完，聊点真话。')
+  await expect(page.locator('.commentary-feature h3 a')).toHaveAttribute('href', new URL(latest.link).pathname)
+  await expect(page.locator('.commentary-feature h3 a')).toHaveText(latest.title)
+  await expect(page.locator('.commentary-archive article')).toHaveCount(items.length - 1)
   const knownArticle = page.getByRole('heading', { name: articleTitle, exact: true })
   await expect(knownArticle).toBeVisible()
   await knownArticle.getByRole('link').click()
