@@ -25,6 +25,7 @@ test('RAG 文章图表与代码可读，公开样例和机器可读版本可访�
   page.on('pageerror', (error) => errors.push(error.message))
   await page.goto(articlePath)
   await expect(page.locator('[data-article-content]')).toContainText('没有调用真实检索器或大模型')
+  await expect(page.locator('[data-article-content]')).not.toContainText('**')
   const diagram = page.locator('[data-article-content] img')
   await expect.poll(() => diagram.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true)
   expect(await page.locator('[data-article-content] pre').count()).toBe(2)
