@@ -144,7 +144,8 @@
     "test:production-health": "node scripts/tests/test-production-health.mjs",
     "test:daily-launchd": "node scripts/tests/test-daily-launchd-config.mjs",
     "test:search-console-sync-launchd": "node scripts/tests/test-search-console-sync-launchd.mjs",
-    "deploy:production": "bash scripts/deploy.sh"
+    "deploy:production": "bash scripts/deploy.sh",
+    "test:rag-evaluation": "node scripts/tests/test-rag-evaluation.mjs"
   },
   "dependencies": {
     "contentlayer2": "^0.5.8",

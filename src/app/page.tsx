@@ -17,7 +17,7 @@ type Book = {
 
 const knowledgeTracks = [
   { title: '大模型基础', description: '从 Transformer、Token 到训练与推理，先把底层概念弄明白。', href: '/blog?tag=AI' },
-  { title: 'RAG 与知识工程', description: '拆开检索、向量化与生成，看知识库怎样从演示走到可用。', href: '/blog?tag=RAG' },
+  { title: 'RAG 与知识工程', description: '从检索命中、答案证据到拒答，用可运行的评测样例检查知识库。', href: '/blog/rag-evaluation-01-evidence-to-answer' },
   { title: 'Agent 与工作流', description: '不只看 Demo，继续讨论工具接入、系统约束和真实交付。', href: '/blog?tag=AI Agent' },
 ]
 
