@@ -32,9 +32,13 @@ sourceUrl: https://www.anthropic.com/claude-sonnet-5-5
 
 再加上多代理，这件事就更有意思了。分出去的任务可以并行推进，但拆任务、等结果、消化不同意见，都要占用预算。临时召集的代码审查也许很有价值，可工单的截止时间不会因此自动往后延。顺着这条脚注往下想：有限的时间花在了扩展出来的工作上，原本该交的东西就可能没交完。
 
+<ArticleDiagram src="/images/articles/sonnet-cto-commentary/scope-staircase.svg" mobileSrc="/images/articles/sonnet-cto-commentary/scope-staircase-mobile.svg" alt="工单范围阶梯：修好按钮、补足必要证据与测试；未经确认的额外扩张，会增加评审范围。" caption="作者分析示意。必要的深入可以保留；图中的红色阶梯指未经确认的额外扩张，并非所有多代理工作。" height={712} mobileHeight={1010} />
+
 轮到人接手，账还没算完。修按钮，检查按钮；碰了公共组件，就得看看其他调用方。假如改动里还夹着一轮清理，你得先辨认哪些是修复必需的，哪些只是它看着不顺眼。AI 把每件事都写进“已完成”，评审者却要一件件重新判断。它给自己扩了职责，给你扩了工作量。
 
 所以看到演示里工具调用飞快、代码不断往外冒，先别忙着替它庆功。生成速度确实是能力，但交付要算到有人敢接为止。要是省掉十分钟敲代码，随后却要多花半小时拆改动，这半小时总得有人认账。
+
+<ArticleDiagram src="/images/articles/sonnet-cto-commentary/handoff-cost-flow.svg" mobileSrc="/images/articles/sonnet-cto-commentary/handoff-cost-flow-mobile.svg" alt="交付责任流程：AI生成改动，人工评审；需要修改则返工并重新评审，符合要求后验收。" caption="作者分析示意，不代表各环节的实测耗时或比例。通过评审可以直接验收；返工只在需要修改时发生。" height={690} mobileHeight={1108} />
 
 这两例不足以判断 Max 在其他任务中的表现。排查跨模块故障、研究架构取舍，本来就可能需要更长的探索和多人审查。反过来，也不能为了让 diff 看着小，逼模型绕开必要的跨文件修复。问题始终是那张工单：哪些工作对完成它有必要，哪些发现应该另开一张。
 

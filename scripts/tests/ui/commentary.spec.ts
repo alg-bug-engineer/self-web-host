@@ -159,3 +159,47 @@ test('锐评浅色与深色主题及中等宽度可读', async ({ page }) => {
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   }
 })
+
+
+test('锐评图解按屏幕选择清晰布局，大图与 Markdown 可读', async ({ page }, testInfo) => {
+  const errors: string[] = []
+  page.on('pageerror', (error) => errors.push(error.message))
+  await page.goto(articlePath)
+  const diagrams = page.getByTestId('article-diagram')
+  await expect(diagrams).toHaveCount(2)
+  const mobile = testInfo.project.name === 'mobile-chromium'
+  for (let index = 0; index < 2; index += 1) {
+    const figure = diagrams.nth(index)
+    const img = figure.locator('img')
+    await img.scrollIntoViewIfNeeded()
+    await expect.poll(() => img.evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth > 0)).toBe(true)
+    await expect(img).toHaveAttribute('alt', index === 0 ? /^工单范围阶梯/ : /^交付责任流程/)
+    await expect(figure.locator('figcaption')).toContainText('作者分析示意')
+    expect(await img.evaluate((element: HTMLImageElement) => element.naturalWidth)).toBe(mobile ? 540 : 1080)
+    expect(await img.evaluate((element: HTMLImageElement) => element.naturalHeight)).toBe(index === 0 ? mobile ? 1010 : 712 : mobile ? 1108 : 690)
+    const stem = index === 0 ? 'scope-staircase' : 'handoff-cost-flow'
+    const filename = `${stem}${mobile ? '-mobile' : ''}.svg`
+    expect(await img.evaluate((element: HTMLImageElement) => element.currentSrc)).toContain(filename)
+    const renderedWidth = await img.evaluate((element) => element.getBoundingClientRect().width)
+    expect(24 * renderedWidth / (mobile ? 540 : 1080)).toBeGreaterThanOrEqual(14)
+    const fullSize = figure.locator('a:visible')
+    await expect(fullSize).toHaveAttribute('href', `/images/articles/sonnet-cto-commentary/${filename}`)
+    await expect(fullSize).toHaveAttribute('rel', 'noopener noreferrer')
+    const resource = await page.request.get((await fullSize.getAttribute('href'))!)
+    expect(resource.ok()).toBe(true)
+    expect(resource.headers()['content-type']).toContain('image/svg+xml')
+  }
+  const popupPromise = page.waitForEvent('popup')
+  await diagrams.first().locator('a:visible').click()
+  const popup = await popupPromise
+  await popup.waitForLoadState()
+  await expect(popup).toHaveURL(/scope-staircase(?:-mobile)?\.svg$/)
+  await popup.close()
+  await expect(page).toHaveURL(new RegExp(`${articlePath}$`))
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  const markdown = await (await page.request.get(`${articlePath}/index.html.md`)).text()
+  expect(markdown).not.toContain('<ArticleDiagram')
+  expect(markdown).toContain('![工单范围阶梯')
+  expect(markdown).toContain('handoff-cost-flow-mobile.svg')
+  expect(errors).toEqual([])
+})

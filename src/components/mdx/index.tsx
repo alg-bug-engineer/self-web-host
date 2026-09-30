@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import ArticleDiagram from '@/components/ArticleDiagram'
 import { Children, ReactNode, ComponentPropsWithoutRef, isValidElement } from 'react'
 import type { MDXComponents } from 'mdx/types'
 
@@ -210,6 +211,7 @@ function Paragraph({ children, ...props }: ComponentPropsWithoutRef<'p'>) {
 // Export all MDX components
 export const mdxComponents: MDXComponents = {
   // Custom components
+  ArticleDiagram,
   InfoCard,
   TwoColumnLayout,
   Left,
