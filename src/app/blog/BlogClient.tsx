@@ -47,6 +47,7 @@ const categoryMatches = (post: Post, categoryId: string) => {
   if (categoryId === 'all') return true
   const category = CATEGORIES.find((item) => item.id === categoryId)
   if (!category) return true
+  if (categoryId === 'practice' && post.topicCluster === 'ai-practice-toolchain') return true
   return post.tags?.some((tag) =>
     category.keywords.some((keyword) => tag.toLowerCase().includes(keyword.toLowerCase())),
   ) || false

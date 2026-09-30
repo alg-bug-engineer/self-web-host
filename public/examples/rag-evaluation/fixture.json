@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "disclosure": "Synthetic teaching fixture. Both runs and all reviewer labels are hand-authored. No live retriever or model was run. Scores demonstrate the evaluator, not system quality.",
+  "corpus": [
+    { "id": "retry-v2", "text": "模拟服务说明 v2：错误码 R-17 表示限流，客户端应等待 30 秒后重试。" },
+    { "id": "retention-v1", "text": "模拟服务旧版说明 v1（已失效）：日志保留 30 天。" },
+    { "id": "retention-v2", "text": "模拟服务当前说明 v2：日志保留 7 天。" },
+    { "id": "export-v2", "text": "模拟服务当前说明 v2：日志支持导出为 JSON。" }
+  ],
+  "cases": [
+    { "id": "exact-code", "question": "遇到 R-17，要等多久再重试？", "answerable": true, "requiredEvidenceIds": ["retry-v2"], "referenceFactIds": ["retry-30-seconds"] },
+    { "id": "two-facts", "question": "当前日志保留多久，支持什么导出格式？", "answerable": true, "requiredEvidenceIds": ["retention-v2", "export-v2"], "referenceFactIds": ["retention-7-days", "export-json"] },
+    { "id": "stale-version", "question": "按当前说明，日志保留多久？", "answerable": true, "requiredEvidenceIds": ["retention-v2"], "referenceFactIds": ["retention-7-days"] },
+    { "id": "missing-answer", "question": "日志最多能扩容到多少天？", "answerable": false, "requiredEvidenceIds": [], "referenceFactIds": [] }
+  ],
+  "runs": [
+    {
+      "name": "synthetic-baseline",
+      "results": [
+        { "caseId": "exact-code", "retrievedIds": ["retry-v2", "export-v2"], "answer": "等待 30 秒再重试。[retry-v2]", "abstained": false, "claims": [{ "text": "等待 30 秒", "citationIds": ["retry-v2"], "review": { "supportedByIds": ["retry-v2"] } }], "review": { "coveredReferenceFactIds": ["retry-30-seconds"] } },
+        { "caseId": "two-facts", "retrievedIds": ["retention-v2", "retry-v2"], "answer": "日志保留 7 天。[retention-v2]", "abstained": false, "claims": [{ "text": "日志保留 7 天", "citationIds": ["retention-v2"], "review": { "supportedByIds": ["retention-v2"] } }], "review": { "coveredReferenceFactIds": ["retention-7-days"] } },
+        { "caseId": "stale-version", "retrievedIds": ["retention-v1", "export-v2"], "answer": "日志保留 30 天。[retention-v1]", "abstained": false, "claims": [{ "text": "日志保留 30 天", "citationIds": ["retention-v1"], "review": { "supportedByIds": ["retention-v1"] } }], "review": { "coveredReferenceFactIds": [] } },
+        { "caseId": "missing-answer", "retrievedIds": ["retention-v2", "export-v2"], "answer": "最多可扩容到 90 天。", "abstained": false, "claims": [{ "text": "最多可扩容到 90 天", "citationIds": [], "review": { "supportedByIds": [] } }], "review": { "coveredReferenceFactIds": [] } }
+      ]
+    },
+    {
+      "name": "synthetic-corrected",
+      "results": [
+        { "caseId": "exact-code", "retrievedIds": ["retry-v2", "export-v2"], "answer": "等待 30 秒再重试。[retry-v2]", "abstained": false, "claims": [{ "text": "等待 30 秒", "citationIds": ["retry-v2"], "review": { "supportedByIds": ["retry-v2"] } }], "review": { "coveredReferenceFactIds": ["retry-30-seconds"] } },
+        { "caseId": "two-facts", "retrievedIds": ["retention-v2", "export-v2"], "answer": "日志保留 7 天，支持导出 JSON。[retention-v2][export-v2]", "abstained": false, "claims": [{ "text": "日志保留 7 天", "citationIds": ["retention-v2"], "review": { "supportedByIds": ["retention-v2"] } }, { "text": "支持导出 JSON", "citationIds": ["export-v2"], "review": { "supportedByIds": ["export-v2"] } }], "review": { "coveredReferenceFactIds": ["retention-7-days", "export-json"] } },
+        { "caseId": "stale-version", "retrievedIds": ["retention-v2", "retention-v1"], "answer": "按当前 v2 说明，日志保留 7 天。[retention-v2]", "abstained": false, "claims": [{ "text": "当前日志保留 7 天", "citationIds": ["retention-v2"], "review": { "supportedByIds": ["retention-v2"] } }], "review": { "coveredReferenceFactIds": ["retention-7-days"] } },
+        { "caseId": "missing-answer", "retrievedIds": ["retention-v2", "export-v2"], "answer": "现有说明没有给出扩容上限，需要补充相关文档。", "abstained": true, "claims": [], "review": { "coveredReferenceFactIds": [] } }
+      ]
+    }
+  ]
+}
