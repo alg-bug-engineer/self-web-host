@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 import { XMLParser } from 'fast-xml-parser'
 
 const articlePath = '/blog/commentary-2026-09-30-sonnet-max-review'
-const articleTitle = 'AI 改完了，为什么你更不敢点「合并」了？'
+const articleTitle = '你雇了个 AI 程序员，它非要当 CTO'
 const origin = 'https://ai-knowledgepoints.cn'
 
 test('AI锐评有独立首页和导航入口，阅读返回与历史导航可重复使用', async ({ page }, testInfo) => {
@@ -39,8 +39,8 @@ test('AI锐评有独立首页和导航入口，阅读返回与历史导航可重
   await expect(knownArticle).toBeVisible()
   await knownArticle.getByRole('link').click()
   await expect(page.locator('h1')).toHaveText(articleTitle)
-  await expect(page.locator('[data-article-content]')).toContainText('代码是写快了，人却一点也没轻松。')
-  await expect(page.locator('[data-article-content]')).toContainText('不是作者实测报告')
+  await expect(page.locator('[data-article-content]')).toContainText('它顺便给自己升了职。')
+  await expect(page.locator('[data-article-content]')).toContainText('这两例不足以判断 Max 在其他任务中的表现')
   await expect(page.locator('[data-article-content]')).not.toContainText('**')
   await expect(page.getByTestId('planet-gate-inline')).toHaveCount(0)
   await page.getByRole('link', { name: '返回 AI锐评', exact: true }).click()
