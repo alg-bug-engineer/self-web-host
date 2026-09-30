@@ -64,7 +64,10 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
     const stars = isPost ? 0 : (repository as any).stars;
     const topics: string[] = (isPost ? repository.tags : (repository as any).topics) || [];
     const latest_version = isPost ? undefined : (repository as any).latest_version;
-    const lastUpdated = timeAgo(isPost ? repository.date : ((repository as any).latest_release_date || (repository as any).github_updated_at));
+    // Static article HTML and browser hydration must not depend on the current minute.
+    const lastUpdated = isPost
+        ? `${new Date(repository.date).toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' })} 发布`
+        : timeAgo((repository as any).latest_release_date || (repository as any).github_updated_at);
     const fullName = isPost ? repository.author : (repository as any).full_name;
 
     const handleAvatarError = () => {
@@ -144,7 +147,7 @@ export default function AppCard({ repository, variant = 'grid' }: AppCardProps) 
                     ) : (
                          <span className="rounded border border-border-default bg-bg-tertiary px-2 py-1 text-text-secondary">{isPost ? repository.postType === 'commentary' ? "AI锐评" : "深度文章" : "开源项目"}</span>
                     )}
-                    {lastUpdated && <span className="capitalize">{lastUpdated}</span>}
+                    {lastUpdated && <span className="capitalize" data-testid={isPost ? 'article-card-date' : undefined}>{lastUpdated}</span>}
                 </div>
             </Link>
         </div>

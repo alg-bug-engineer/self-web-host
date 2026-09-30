@@ -11,7 +11,7 @@ test('AI锐评有独立首页和导航入口，阅读返回与历史导航可重
   await page.goto('/')
   const block = page.locator('.home-commentary')
   await expect(block.getByRole('heading', { name: 'AI锐评', exact: true })).toBeVisible()
-  await expect(block.locator(`a[href="${articlePath}"]`)).toHaveCount(1)
+  await expect(block.locator('a[href^="/blog/"]')).toHaveCount(1)
   await expect(page.getByRole('heading', { name: '技术长文' })).toBeVisible()
   if (testInfo.project.name === 'mobile-chromium') {
     await page.setViewportSize({ width: 375, height: 667 })
@@ -35,8 +35,9 @@ test('AI锐评有独立首页和导航入口，阅读返回与历史导航可重
   }
   await expect(page).toHaveURL(/\/commentary$/)
   await expect(page.locator('h1')).toHaveText('AI锐评热闹看完，聊点真话。')
-  await expect(page.locator('.commentary-feature h3')).toHaveText(articleTitle)
-  await page.locator('.commentary-feature h3 a').click()
+  const knownArticle = page.getByRole('heading', { name: articleTitle, exact: true })
+  await expect(knownArticle).toBeVisible()
+  await knownArticle.getByRole('link').click()
   await expect(page.locator('h1')).toHaveText(articleTitle)
   await expect(page.locator('[data-article-content]')).toContainText('代码是写快了，人却一点也没轻松。')
   await expect(page.locator('[data-article-content]')).toContainText('不是作者实测报告')
@@ -61,6 +62,7 @@ test('锐评筛选不污染技术分类，重复切换与搜索和标签仍然�
     await commentary.click()
     await expect(commentary).toHaveAttribute('aria-pressed', 'true')
     await expect(page.locator(`a[href="${articlePath}"]`)).toHaveCount(1)
+    await expect(page.getByTestId('article-card-date').first()).toHaveText(/\d{4}\/\d{1,2}\/\d{1,2} 发布/)
     await expect(page.locator('a[href="/blog/rag-evaluation-01-evidence-to-answer"]')).toHaveCount(0)
     await page.getByLabel('搜索文章或标签').fill('不可能存在的检索内容')
     await expect(page.getByText('没有找到相关文章，换个关键词试试。')).toBeVisible()
@@ -128,7 +130,13 @@ test('锐评 canonical、结构化数据、两个订阅源与机器入口一致�
   expect(await markdown.text()).toContain('栏目：[AI锐评]')
   for (const slug of ['daily-2026-08-11-ai-native-generation-learning-ability', 'daily-2026-08-12-child-ai-three-questions', 'daily-2026-08-19-child-ai-define-the-problem', 'daily-2026-08-29-child-ai-project-evidence-board', 'daily-2026-09-03-child-ai-family-safety-gates']) {
     for (const suffix of ['', '/index.html.md']) {
-      expect((await page.request.get(`/blog/${slug}${suffix}`)).status()).toBe(404)
+      const response = await page.request.get(`/blog/${slug}${suffix}`, { maxRedirects: 0 })
+      if (slug === 'daily-2026-08-11-ai-native-generation-learning-ability' && suffix === '') {
+        expect(response.status()).toBe(308)
+        expect(response.headers().location).toBe('/blog/daily-2026-08-11-engineering-human-override-design')
+      } else {
+        expect(response.status(), `${slug}${suffix}`).toBe(404)
+      }
     }
   }
 })

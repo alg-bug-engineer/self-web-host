@@ -48,6 +48,9 @@ assert.doesNotMatch(article, /\*\*[^*\n]+：\*\*[^\s]/)
 for (const filename of ['src/components/Header.tsx', 'src/components/MobileMenu.tsx', 'src/app/page.tsx', 'src/app/sitemap.ts', 'src/app/llms.txt/route.ts']) {
   assert.match(await read(filename), /\/commentary/, `${filename} must expose the new section`)
 }
+const appCard = await read('src/components/AppCard.tsx')
+assert.doesNotMatch(appCard, /timeAgo\(isPost/, 'Static post cards must not recompute a relative date during hydration')
+assert.match(appCard, /timeZone: 'Asia\/Shanghai'/)
 const feed = await read('src/app/commentary/feed.xml/route.ts')
 assert.match(feed, /getPublishedCommentary\(allPosts\)/)
 const rss = await read('src/lib/rss.ts')
