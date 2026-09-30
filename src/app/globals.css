@@ -256,3 +256,45 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* Daily commentary: a distinct editorial stream alongside technical long-form. */
+.commentary-page { max-width: 1080px; margin: 0 auto; padding: 64px 0 32px; }
+.commentary-header { padding-bottom: 40px; border-bottom: 2px solid var(--text-primary); }
+.commentary-header h1 { margin-top: 20px; font-size: clamp(2.75rem, 6vw, 4.8rem); font-weight: 750; letter-spacing: -.045em; line-height: 1.15; }
+.commentary-header h1 span { display: block; margin-top: 14px; font-size: clamp(1.35rem, 3vw, 2rem); font-weight: 500; letter-spacing: -.02em; }
+.commentary-intro { max-width: 730px; margin-top: 24px; color: var(--text-secondary); font-size: 17px; line-height: 1.95; }
+.commentary-meta { display: flex; flex-wrap: wrap; gap: 12px 28px; margin-top: 24px; color: var(--text-tertiary); font-size: 13px; }
+.commentary-meta a { color: var(--accent-primary); }
+.commentary-meta a:hover { text-decoration: underline; }
+.commentary-latest { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 48px; padding: 40px 0; border-bottom: 1px solid var(--border-default); }
+.commentary-side-note { display: flex; flex-direction: column; align-items: flex-start; gap: 9px; font-size: 13px; color: var(--text-tertiary); }
+.commentary-side-note h2 { font-size: 15px; color: var(--text-primary); font-weight: 650; }
+.commentary-side-note > span { margin-top: 7px; padding: 3px 9px; border: 1px solid var(--border-default); border-radius: 3px; }
+.commentary-kicker { color: var(--accent-tertiary); font-size: 12px; }
+.commentary-feature h3 { margin: 13px 0 18px; font-size: clamp(1.75rem, 4vw, 2.65rem); line-height: 1.4; font-weight: 700; letter-spacing: -.025em; }
+.commentary-feature > p:not(.commentary-kicker), .commentary-archive article > p:last-child { color: var(--text-secondary); font-size: 16px; line-height: 1.95; }
+.commentary-feature .section-link { margin-top: 24px; }
+.commentary-feature h3 a:hover, .commentary-archive h3 a:hover { color: var(--accent-primary); }
+.commentary-archive { padding-top: 40px; }
+.commentary-archive > h2 { font-size: 22px; font-weight: 650; }
+.commentary-archive article { padding: 28px 0; border-bottom: 1px solid var(--border-default); }
+.commentary-archive h3 { margin: 9px 0 12px; font-size: 23px; line-height: 1.5; font-weight: 650; }
+.commentary-editor-note { margin-top: 48px; padding: 26px; border-left: 3px solid var(--accent-tertiary); background: var(--bg-secondary); }
+.commentary-editor-note h2 { font-size: 17px; font-weight: 650; }
+.commentary-editor-note p { margin: 12px 0 18px; max-width: 760px; color: var(--text-secondary); font-size: 14px; line-height: 1.9; }
+.commentary-empty { padding: 48px 0; color: var(--text-secondary); }
+.commentary-empty a { color: var(--accent-primary); }
+.home-commentary-grid { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); gap: 52px; padding-top: 30px; }
+.home-commentary-note { color: var(--text-primary); font-size: 21px; font-weight: 600; }
+.home-commentary-note span { display: block; margin-top: 14px; font-size: 14px; line-height: 1.9; font-weight: 400; color: var(--text-secondary); }
+.home-commentary-article h3 { margin: 12px 0; font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.5; font-weight: 650; letter-spacing: -.025em; }
+.home-commentary-article > p:not(.commentary-kicker) { margin-bottom: 16px; color: var(--text-secondary); font-size: 15px; line-height: 1.85; }
+.home-commentary-article:hover h3 { color: var(--accent-primary); }
+@media (max-width: 767px) {
+  .commentary-page { padding-top: 38px; }
+  .commentary-intro { font-size: 16px; }
+  .commentary-latest, .home-commentary-grid { grid-template-columns: 1fr; gap: 24px; }
+  .commentary-side-note { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+  .commentary-side-note > span { margin-top: 0; }
+  .commentary-editor-note { padding: 20px; }
+}

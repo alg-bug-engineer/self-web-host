@@ -37,6 +37,7 @@ jobs:
       - run: npm run test:active-reading
       - run: npm run test:article-headings
       - run: npm run test:rag-evaluation
+      - run: npm run test:commentary
       - run: npm run test:operator-decision
       - run: npm run test:operator-experiments
       - run: npm run test:indexnow

@@ -13,6 +13,7 @@ const navGroups = [
     label: '探索内容',
     items: [
       { label: '全部文章', note: '原理、实践与观察', href: '/blog' },
+      { label: 'AI锐评', note: '热点、产品与每日观点', href: '/commentary' },
       { label: 'AI 工具', note: '可直接使用的工具', href: '/collections/tools' },
       { label: 'AI 漫画', note: '用图像理解概念', href: 'https://manga.ai-knowledgepoints.cn' },
     ],
@@ -94,16 +95,16 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
         aria-label="网站导航"
         className="absolute right-0 top-0 flex h-full w-[min(88vw,360px)] flex-col border-l border-border-default bg-bg-secondary p-5 shadow-xl"
       >
-        <div className="flex items-center justify-between border-b border-border-default pb-5">
+        <div className="flex shrink-0 items-center justify-between border-b border-border-default pb-5">
           <Link href="/" className="font-semibold text-text-primary" onClick={() => setIsOpen(false)}>芝士AI吃鱼</Link>
           <button ref={closeButtonRef} type="button" onClick={() => setIsOpen(false)} className="rounded-md p-2 hover:bg-bg-tertiary" aria-label="关闭菜单">
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeWidth="1.8" d="M6 6l12 12M18 6 6 18" /></svg>
           </button>
         </div>
-        <nav className="mt-6 flex flex-col gap-3" aria-label="移动端导航">
-          <Link href="/" onClick={() => setIsOpen(false)} className="rounded-md border border-border-default bg-bg-primary px-4 py-3 text-base font-medium text-text-primary">首页</Link>
+        <nav className="mt-6 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overscroll-contain pb-4" aria-label="移动端导航">
+          <Link href="/" onClick={() => setIsOpen(false)} className="shrink-0 rounded-md border border-border-default bg-bg-primary px-4 py-3 text-base font-medium text-text-primary">首页</Link>
           {navGroups.map((group) => (
-            <details key={group.label} open className="mobile-nav-accordion group rounded-md border border-border-default bg-bg-primary">
+            <details key={group.label} open className="mobile-nav-accordion group shrink-0 rounded-md border border-border-default bg-bg-primary">
               <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-text-primary">
                 {group.label}
                 <svg className="h-4 w-4 text-text-tertiary transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="m6 9 6 6 6-6" /></svg>
@@ -122,7 +123,7 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
             </details>
           ))}
         </nav>
-        <Link href="/search" onClick={() => setIsOpen(false)} className="mt-auto rounded-md bg-text-primary px-5 py-3 text-center text-sm font-medium text-bg-primary">搜索网站内容</Link>
+        <Link href="/search" onClick={() => setIsOpen(false)} className="mt-4 shrink-0 rounded-md bg-text-primary px-5 py-3 text-center text-sm font-medium text-bg-primary">搜索网站内容</Link>
       </aside>
     </div>
   )

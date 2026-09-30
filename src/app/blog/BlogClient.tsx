@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { Post } from 'contentlayer/generated'
 import AppCard from '@/components/AppCard'
 import Link from 'next/link'
+import { isCommentary } from '@/lib/commentary.mjs'
 
 interface BlogClientProps {
   posts: Post[]
@@ -11,6 +12,7 @@ interface BlogClientProps {
 
 const CATEGORIES = [
   { id: 'all', name: '全部文章', keywords: [] },
+  { id: 'commentary', name: 'AI锐评', keywords: [] },
   { id: 'principles', name: '模型与原理', keywords: ['GPT', 'Transformer', '深度学习', '大模型', 'RAG'] },
   { id: 'practice', name: 'Agent 与实践', keywords: ['Agent', '自动化工作流', '投资研究', 'GEO', 'SEO', 'openclaw'] },
   { id: 'insight', name: 'AI 与人', keywords: ['AI深度观察', 'AI原生一代', '科技哲学', '社会观察', '教育', '公众号同步', '愿景'] },
@@ -45,6 +47,8 @@ const LEARNING_PATHS = [
 
 const categoryMatches = (post: Post, categoryId: string) => {
   if (categoryId === 'all') return true
+  if (categoryId === 'commentary') return isCommentary(post)
+  if (isCommentary(post)) return false
   const category = CATEGORIES.find((item) => item.id === categoryId)
   if (!category) return true
   if (categoryId === 'practice' && post.topicCluster === 'ai-practice-toolchain') return true
@@ -107,7 +111,9 @@ export default function BlogClient({ posts }: BlogClientProps) {
             从模型原理、Agent 实践到 AI 与人的长期变化。先找到适合自己的入口，再往深处走。
           </p>
           <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-text-tertiary">
-            <span><strong className="text-text-primary">{posts.length}</strong> 篇深度文章</span>
+            <span><strong className="text-text-primary">{posts.length}</strong> 篇文章</span>
+            <span aria-hidden="true">·</span>
+            <Link href="/commentary" className="transition-colors hover:text-accent-primary">AI锐评：热点与每日观点</Link>
             <span aria-hidden="true">·</span>
             <Link href="/portfolio" className="transition-colors hover:text-accent-primary" data-analytics-event="view_portfolio" data-analytics-target="blog-proof">查看著作与作品</Link>
             <span aria-hidden="true">·</span>
@@ -142,9 +148,9 @@ export default function BlogClient({ posts }: BlogClientProps) {
         </section>
 
         {/* Filters & Search */}
-        <div className="flex flex-col md:flex-row gap-6 mb-10 items-center justify-between">
+        <div className="flex flex-col xl:flex-row gap-6 mb-10 items-center justify-between">
           {/* Categories */}
-          <div className="grid w-full grid-cols-2 gap-px overflow-hidden rounded-md border border-border-default bg-border-default md:flex md:w-auto" aria-label="文章主题筛选">
+          <div className="grid w-full grid-cols-2 gap-px overflow-hidden rounded-md border border-border-default bg-border-default lg:flex lg:w-auto" aria-label="文章主题筛选">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
@@ -165,7 +171,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
           </div>
 
           {/* Search */}
-          <div className="relative w-full md:w-80">
+          <div className="relative w-full xl:w-80 xl:shrink-0">
             <label htmlFor="blog-search" className="sr-only">搜索文章或标签</label>
             <input
               id="blog-search"

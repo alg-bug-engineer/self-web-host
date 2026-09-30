@@ -24,6 +24,15 @@ export function cleanMdxForLlms(source, siteUrl) {
       continue
     }
 
+    const diagram = line.match(/^\s*<ArticleDiagram\b([^>]+)\/?>\s*$/)
+    if (diagram) {
+      const attributes = Object.fromEntries([...diagram[1].matchAll(/(\w+)="([^"]*)"/g)].map((match) => [match[1], match[2]]))
+      if (attributes.src) output.push(`![${oneLine(attributes.alt || '文章图解')}](${attributes.src})`)
+      if (attributes.caption) output.push('', oneLine(attributes.caption))
+      if (attributes.mobileSrc) output.push('', `[查看竖版大图](${attributes.mobileSrc})`)
+      continue
+    }
+
     const infoCard = line.match(INFO_CARD_OPEN)
     if (infoCard) {
       const title = infoCard[1].match(/\btitle=["']([^"']+)["']/)?.[1]
@@ -57,6 +66,7 @@ export function renderPostMarkdown(post, siteUrl) {
   const metadata = [
     `- 作者：${oneLine(post.author)}`,
     `- 发布日期：${publishedDate}`,
+    post.postType === 'commentary' ? `- 栏目：[AI锐评](${new URL('/commentary', siteUrl).toString()})（观点与分析）` : null,
     tags.length ? `- 主题：${tags.join('、')}` : null,
     `- HTML 正文：[${canonical}](${canonical})`,
     `- Markdown 永久链接：[${markdownUrl}](${markdownUrl})`,

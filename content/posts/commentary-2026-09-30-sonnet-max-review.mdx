@@ -1,0 +1,49 @@
+---
+title: "你雇了个 AI 程序员，它非要当 CTO"
+description: "只派了一张修按钮的工单，AI 却准备开架构评审。Sonnet 5.5 的一条评测脚注，把「干得多」和「交得好」之间的麻烦摆上了桌。"
+date: 2026-09-30T16:33:00+08:00
+author: 芝士AI吃鱼
+postType: commentary
+commentaryTopic: products
+tags:
+  - AI锐评
+  - AI编程
+  - Claude
+  - 产品观察
+category: tech
+icon: robot
+published: true
+access: public
+topicId: commentary-sonnet-5-5-effort-review
+topicCluster: ai-commentary
+sourceName: Anthropic Sonnet 5.5 发布说明
+sourceUrl: https://www.anthropic.com/claude-sonnet-5-5
+---
+
+给 AI 派一张小工单：修好按钮的禁用状态。它看完代码，先对公共组件产生了意见，再往上看，状态管理好像也值得调整。等你追问按钮好了没有，它已经拉起几个 AI 同事，准备开架构评审。
+
+你只想在下班前合并一个修复，它顺便给自己升了职。更要命的是，最后签字的人还是你。
+
+玩笑归玩笑，最近一条真实的发布脚注，确实有这股味道。9 月 28 日发布的 Sonnet 5.5，在 FrontierCode 评测里，Max 档的成绩反而低于 Xhigh。Anthropic 解释，Max 更常调用多代理代码审查；在 Cognition 检查的两个案例中，这导致了超时或任务范围外的额外修改。[来源：Sonnet 5.5 官方发布说明，脚注 2](https://www.anthropic.com/claude-sonnet-5-5)
+
+都开到 Max 了，扣分项里居然还有：干了工单没让干的活。FrontierCode 看的是代码能否无需人工修改就合并，额外改动即使有用，也可能扣分。这个标准挺不解风情，却很像赶着上线时的评审者：改得有道理，也得解释为什么今天非改不可。
+
+推理开到 Max，怎么还开出管理岗了？麻烦可能出在后续行动。模型继续想，就有机会继续发现问题；它一旦决定把新问题也处理掉，任务范围就跟着长大。官方的 effort 指南也提醒，强度过高可能出现过度思考，甚至找出更多用户没交代的任务。[来源：Claude 官方 effort 指南](https://academy.claude.com/tutorials/choosing-the-right-effort-level-in-claude-code)
+
+再加上多代理，这件事就更有意思了。分出去的任务可以并行推进，但拆任务、等结果、消化不同意见，都要占用预算。临时召集的代码审查也许很有价值，可工单的截止时间不会因此自动往后延。顺着这条脚注往下想：有限的时间花在了扩展出来的工作上，原本该交的东西就可能没交完。
+
+<ArticleDiagram src="/images/articles/sonnet-cto-commentary/scope-staircase.svg" mobileSrc="/images/articles/sonnet-cto-commentary/scope-staircase-mobile.svg" alt="工单范围阶梯：修好按钮、补足必要证据与测试；未经确认的额外扩张，会增加评审范围。" caption="作者分析示意。必要的深入可以保留；图中的红色阶梯指未经确认的额外扩张，并非所有多代理工作。" height={712} mobileHeight={1010} />
+
+轮到人接手，账还没算完。修按钮，检查按钮；碰了公共组件，就得看看其他调用方。假如改动里还夹着一轮清理，你得先辨认哪些是修复必需的，哪些只是它看着不顺眼。AI 把每件事都写进“已完成”，评审者却要一件件重新判断。它给自己扩了职责，给你扩了工作量。
+
+所以看到演示里工具调用飞快、代码不断往外冒，先别忙着替它庆功。生成速度确实是能力，但交付要算到有人敢接为止。要是省掉十分钟敲代码，随后却要多花半小时拆改动，这半小时总得有人认账。
+
+<ArticleDiagram src="/images/articles/sonnet-cto-commentary/handoff-cost-flow.svg" mobileSrc="/images/articles/sonnet-cto-commentary/handoff-cost-flow-mobile.svg" alt="交付责任流程：AI生成改动，人工评审；需要修改则返工并重新评审，符合要求后验收。" caption="作者分析示意，不代表各环节的实测耗时或比例。通过评审可以直接验收；返工只在需要修改时发生。" height={690} mobileHeight={1108} />
+
+这两例不足以判断 Max 在其他任务中的表现。排查跨模块故障、研究架构取舍，本来就可能需要更长的探索和多人审查。反过来，也不能为了让 diff 看着小，逼模型绕开必要的跨文件修复。问题始终是那张工单：哪些工作对完成它有必要，哪些发现应该另开一张。
+
+AI 编程产品得认真处理这种区别。发现隐患可以先留建议，需要扩大修改范围就把理由摆出来，别等交付时才让用户从一大片 diff 里猜。验收也该把额外改动、人工补救和最终评审时间记进去。模型自行宣布的“完成”，离项目里的“这事终于完了”，中间还有人没下班。
+
+至于 CTO 的位置，先别急。把那张小工单交干净，让按钮能用，让负责合并的人少皱一次眉。真能做到，已经很值得付工资了。
+
+资料核对：2026 年 9 月 30 日。

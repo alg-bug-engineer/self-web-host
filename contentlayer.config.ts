@@ -54,6 +54,16 @@ export const Post = defineDocumentType(() => ({
       type: 'boolean',
       default: true,
     },
+    postType: {
+      type: 'enum',
+      options: ['article', 'commentary'],
+      default: 'article',
+    },
+    commentaryTopic: {
+      type: 'enum',
+      options: ['events', 'products', 'industry'],
+      required: false,
+    },
     category: {
       type: 'enum',
       options: ['tech', 'life'],
