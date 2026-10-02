@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { XMLValidator } from 'fast-xml-parser'
+import { summarizePublications } from '../check-daily-publications.mjs'
 import { cleanMdxForLlms } from '../../src/lib/llms-markdown.mjs'
 import { parseArticle, compareArticleCandidate, loadArticleHistory } from '../lib/content-diversity.mjs'
 
@@ -48,6 +49,7 @@ for (const [name, width, height] of [
 }
 const all = await loadArticleHistory(fileURLToPath(new URL('content/posts/', root)))
 assert.deepEqual(all.filter((p) => p.topicId === parsed.topicId).map((p) => p.filename), [filename])
-assert.equal(all.filter((p) => p.date.startsWith('2026-10-02')).length, 1, 'At most one new article today')
+const daily = summarizePublications(await Promise.all(all.map(async (p) => ({ path: p.filename, raw: await read(`content/posts/${p.filename}`) }))), '2026-10-02')
+assert.equal(daily.commentary.length, 1, 'Exactly one commentary on the publication date; technical series has an independent lane')
 for (const slug of ['daily-2026-08-11-ai-native-generation-learning-ability', 'daily-2026-08-12-child-ai-three-questions', 'daily-2026-08-19-child-ai-define-the-problem', 'daily-2026-08-29-child-ai-project-evidence-board', 'daily-2026-09-03-child-ai-family-safety-gates']) assert.match(await read(`content/posts/${slug}.mdx`), /published: false/)
-console.log('BootLoops 锐评通过：来源边界、全文去重、2 个可读原创 SVG、Markdown、当日单篇和草稿隔离。')
+console.log('BootLoops 锐评通过：来源边界、全文去重、2 个可读原创 SVG、Markdown、当日锐评单篇与技术长文独立计数、草稿隔离。')
