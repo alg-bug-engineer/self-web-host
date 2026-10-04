@@ -148,7 +148,9 @@
     "test:rag-evaluation": "node scripts/tests/test-rag-evaluation.mjs",
     "test:commentary": "node scripts/tests/test-commentary.mjs && node scripts/tests/test-commentary-diagrams.mjs && node scripts/tests/test-calabash-commentary.mjs && node scripts/tests/test-routing-commentary.mjs && node scripts/tests/test-bootloops-commentary.mjs",
     "test:rag-chunking": "node scripts/tests/test-rag-chunking.mjs && node scripts/tests/test-rag-chunking-content.mjs",
-    "test:daily-publications": "node scripts/tests/test-daily-publications.mjs"
+    "test:daily-publications": "node scripts/tests/test-daily-publications.mjs",
+    "test:rag-fusion": "node scripts/tests/test-rag-fusion.mjs",
+    "test:october3-content": "node scripts/tests/test-october3-content.mjs"
   },
   "dependencies": {
     "contentlayer2": "^0.5.8",
