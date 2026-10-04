@@ -40,6 +40,8 @@ jobs:
       - run: npm run test:rag-chunking
       - run: npm run test:rag-fusion
       - run: npm run test:october3-content
+      - run: npm run test:rag-release
+      - run: npm run test:october4-content
       - run: npm run test:daily-publications
       - run: npm run test:commentary
       - run: npm run test:operator-decision

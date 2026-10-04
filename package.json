@@ -150,7 +150,9 @@
     "test:rag-chunking": "node scripts/tests/test-rag-chunking.mjs && node scripts/tests/test-rag-chunking-content.mjs",
     "test:daily-publications": "node scripts/tests/test-daily-publications.mjs",
     "test:rag-fusion": "node scripts/tests/test-rag-fusion.mjs",
-    "test:october3-content": "node scripts/tests/test-october3-content.mjs"
+    "test:october3-content": "node scripts/tests/test-october3-content.mjs",
+    "test:rag-release": "node scripts/tests/test-rag-release.mjs",
+    "test:october4-content": "node scripts/tests/test-october4-content.mjs"
   },
   "dependencies": {
     "contentlayer2": "^0.5.8",
