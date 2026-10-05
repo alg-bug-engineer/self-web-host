@@ -42,6 +42,8 @@ jobs:
       - run: npm run test:october3-content
       - run: npm run test:rag-release
       - run: npm run test:october4-content
+      - run: npm run test:rag-citations
+      - run: npm run test:october5-content
       - run: npm run test:daily-publications
       - run: npm run test:commentary
       - run: npm run test:operator-decision
