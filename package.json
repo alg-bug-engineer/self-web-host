@@ -152,7 +152,9 @@
     "test:rag-fusion": "node scripts/tests/test-rag-fusion.mjs",
     "test:october3-content": "node scripts/tests/test-october3-content.mjs",
     "test:rag-release": "node scripts/tests/test-rag-release.mjs",
-    "test:october4-content": "node scripts/tests/test-october4-content.mjs"
+    "test:october4-content": "node scripts/tests/test-october4-content.mjs",
+    "test:rag-citations": "node scripts/tests/test-rag-citations.mjs",
+    "test:october5-content": "node scripts/tests/test-october5-content.mjs && node scripts/tests/context-editing-commentary.test.mjs"
   },
   "dependencies": {
     "contentlayer2": "^0.5.8",
