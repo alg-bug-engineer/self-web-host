@@ -5,7 +5,7 @@ import { pathToFileURL } from 'node:url'
 
 const fields = new Set(['date', 'published', 'postType', 'category', 'topicCluster', 'topicId'])
 // Explicit series registry, not title/tag inference. Extend only for a reviewed series.
-const technicalSeries = new Map([['rag-engineering', /^rag-evaluation-\d+$/]])
+const technicalSeries = new Map([['rag-engineering', /^rag-evaluation-\d+$/], ['agent-reliability', /^agent-reliability-\d+$/]])
 
 export function publicationDate(value) {
   if (typeof value !== 'string') throw new Error('文章缺少有效 date')

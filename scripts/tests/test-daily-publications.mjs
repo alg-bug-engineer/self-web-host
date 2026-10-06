@@ -27,6 +27,9 @@ for (const extra of ['topicCluster: engineering\ntopicId: engineering-human-over
   assert.equal(status.technicalSeries.length, 0)
   assert.equal(status.legacyArticleNeeded, false)
 }
+const agent = 'topicCluster: agent-reliability\ntopicId: agent-reliability-01'
+assert.equal(check([entry('agent', agent)]).technicalSeries.length, 1)
+for (const extra of [`${agent}\npublished: false`, `${agent}\ncategory: life`, `${agent}\npostType: commentary`, 'topicCluster: agent-reliability\ntopicId: rag-evaluation-01', 'topicCluster: agent-reliability\ntopicId: agent-reliability-demo']) assert.equal(check([entry('not-series', extra)]).technicalSeries.length, 0)
 const commentary = check([entry('commentary', `postType: commentary\n${rag}`)])
 assert.equal(commentary.commentary.length, 1)
 assert.equal(commentary.technicalSeries.length, 0)

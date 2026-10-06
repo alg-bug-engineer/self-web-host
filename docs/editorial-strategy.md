@@ -19,7 +19,7 @@
 
 发布判据取已 fetch 的 `origin/main` 中 frontmatter 的 `date`、`published`、`postType` 和系列元数据，不按文件名中的日期，也不把本地文件、分支候选稿或 `published: false` 草稿视作已发布。时间戳换算为上海日期；仅有日期时按该自然日判断。旧文章缺省 `postType` 为 `article`、缺省 `published` 为 `true`，与站点模型一致。
 
-当前技术系列注册规则为 `category: tech`（默认 tech）、`topicCluster: rag-engineering` 且 `topicId: rag-evaluation-<数字>`；标题、标签、普通 `engineering` 主题簇都不能替代系列标记。新增系列须先审查系列规划并扩展注册规则。此规则识别出版线，不代替正文质量、实验或长文完整度审核。
+当前技术系列注册规则为 `category: tech`（默认 tech），并匹配以下任一组合：`topicCluster: rag-engineering` + `topicId: rag-evaluation-<数字>`，或 `topicCluster: agent-reliability` + `topicId: agent-reliability-<数字>`；标题、标签、普通 `engineering` 主题簇都不能替代系列标记。新增系列须先审查系列规划并扩展注册规则。此规则识别出版线，不代替正文质量、实验或长文完整度审核。
 
 ## AI锐评：日更观点，与技术长文分开
 
@@ -45,6 +45,14 @@
 6. 候选：新生成输出的命题级支持与拒答审计。待具备可运行模型、可固定版本的真实输出和证据、可审查细粒度标签后推进；区分当前模型实测与第五篇历史档案重放，不用合成模板字符串填补缺失条件
 
 后续题目须先核对资料与可运行条件，不因日历安排而发布缺少实质内容的文章。Agent、上下文工程和模型机制可作为后续系列，以具体技术问题及验证条件决定顺序。
+
+## Agent 可靠执行实战
+
+1. 本期：工具已执行，回执丢了怎么办？以 Python 标准库、SQLite 与真实子进程退出实验，区分发送端持久化、接收端事务去重和外部副作用；操作内容为合成工单，不调用模型或真实业务服务
+2. 候选：多工作进程的租约、过期与 fencing。需用可复现交错证明旧工作进程不能覆盖新结果，不用一个锁变量冒充分布式保障
+3. 候选：不可幂等工具的 unknown 状态与人工对账。需明确查询能力、补偿与授权边界，不能把重试当成恢复
+
+本系列注册为 `topicCluster: agent-reliability`、`topicId: agent-reliability-<数字>`。RAG 第六篇的真实生成与细粒度审计条件保持待满足，不用本系列实验冒充 RAG 输出评测。候选题须先具备实质证据再写作。
 
 ## 发布检查
 

@@ -1,0 +1,314 @@
+{
+  "cases": {
+    "after_ack": {
+      "after_restart": {
+        "attempts": 1,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 1,
+        "receiver_tickets": 1,
+        "response": {
+          "caller": "agent-demo",
+          "operation_key": "op-1",
+          "payload_hash": "6d22889f013153bbe59ad279227a8ed1e6dc194fc29c408aad0e661ea47909f8",
+          "ticket_id": 1
+        },
+        "sender_state": "done"
+      },
+      "before_restart": {
+        "attempts": 1,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 1,
+        "receiver_tickets": 1,
+        "response": {
+          "caller": "agent-demo",
+          "operation_key": "op-1",
+          "payload_hash": "6d22889f013153bbe59ad279227a8ed1e6dc194fc29c408aad0e661ea47909f8",
+          "ticket_id": 1
+        },
+        "sender_state": "done"
+      }
+    },
+    "after_claim": {
+      "after_restart": {
+        "attempts": 2,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 1,
+        "receiver_tickets": 1,
+        "response": {
+          "caller": "agent-demo",
+          "operation_key": "op-1",
+          "payload_hash": "6d22889f013153bbe59ad279227a8ed1e6dc194fc29c408aad0e661ea47909f8",
+          "ticket_id": 1
+        },
+        "sender_state": "done"
+      },
+      "before_restart": {
+        "attempts": 1,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 0,
+        "receiver_tickets": 0,
+        "response": null,
+        "sender_state": "inflight"
+      }
+    },
+    "after_external_effect": {
+      "after_restart": {
+        "attempts": 1,
+        "external_tickets": 1,
+        "intent_rows": 1,
+        "receiver_receipts": 0,
+        "receiver_tickets": 0,
+        "response": null,
+        "sender_state": "unknown"
+      },
+      "automatic_retry": false
+    },
+    "after_intent_commit": {
+      "after_retry": {
+        "attempts": 1,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 1,
+        "receiver_tickets": 1,
+        "response": {
+          "caller": "agent-demo",
+          "operation_key": "op-1",
+          "payload_hash": "6d22889f013153bbe59ad279227a8ed1e6dc194fc29c408aad0e661ea47909f8",
+          "ticket_id": 1
+        },
+        "sender_state": "done"
+      },
+      "before_retry": {
+        "attempts": 0,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 0,
+        "receiver_tickets": 0,
+        "response": null,
+        "sender_state": "pending"
+      }
+    },
+    "after_response_before_ack": {
+      "after_restart": {
+        "attempts": 2,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 1,
+        "receiver_tickets": 1,
+        "response": {
+          "caller": "agent-demo",
+          "operation_key": "op-1",
+          "payload_hash": "6d22889f013153bbe59ad279227a8ed1e6dc194fc29c408aad0e661ea47909f8",
+          "ticket_id": 1
+        },
+        "sender_state": "done"
+      },
+      "before_restart": {
+        "attempts": 1,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 1,
+        "receiver_tickets": 1,
+        "response": null,
+        "sender_state": "inflight"
+      }
+    },
+    "after_response_write": {
+      "after_restart": {
+        "attempts": 1,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 1,
+        "receiver_tickets": 1,
+        "response": {
+          "caller": "agent-demo",
+          "operation_key": "op-1",
+          "payload_hash": "6d22889f013153bbe59ad279227a8ed1e6dc194fc29c408aad0e661ea47909f8",
+          "ticket_id": 1
+        },
+        "sender_state": "done"
+      },
+      "before_restart": {
+        "attempts": 1,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 1,
+        "receiver_tickets": 1,
+        "response": {
+          "caller": "agent-demo",
+          "operation_key": "op-1",
+          "payload_hash": "6d22889f013153bbe59ad279227a8ed1e6dc194fc29c408aad0e661ea47909f8",
+          "ticket_id": 1
+        },
+        "sender_state": "done"
+      }
+    },
+    "before_external_effect": {
+      "after_restart": {
+        "attempts": 1,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 0,
+        "receiver_tickets": 0,
+        "response": null,
+        "sender_state": "unknown"
+      },
+      "automatic_retry": false
+    },
+    "before_intent_commit": {
+      "after_retry": {
+        "attempts": 1,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 1,
+        "receiver_tickets": 1,
+        "response": {
+          "caller": "agent-demo",
+          "operation_key": "op-1",
+          "payload_hash": "6d22889f013153bbe59ad279227a8ed1e6dc194fc29c408aad0e661ea47909f8",
+          "ticket_id": 1
+        },
+        "sender_state": "done"
+      },
+      "before_retry": {
+        "attempts": 0,
+        "external_tickets": 0,
+        "intent_rows": 0,
+        "receiver_receipts": 0,
+        "receiver_tickets": 0,
+        "response": null,
+        "sender_state": "absent"
+      }
+    },
+    "before_receiver_commit": {
+      "after_restart": {
+        "attempts": 2,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 1,
+        "receiver_tickets": 1,
+        "response": {
+          "caller": "agent-demo",
+          "operation_key": "op-1",
+          "payload_hash": "6d22889f013153bbe59ad279227a8ed1e6dc194fc29c408aad0e661ea47909f8",
+          "ticket_id": 1
+        },
+        "sender_state": "done"
+      },
+      "before_restart": {
+        "attempts": 1,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 0,
+        "receiver_tickets": 0,
+        "response": null,
+        "sender_state": "inflight"
+      }
+    },
+    "concurrent_claim": {
+      "after_recovery": {
+        "attempts": 2,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 1,
+        "receiver_tickets": 1,
+        "response": {
+          "caller": "agent-demo",
+          "operation_key": "op-1",
+          "payload_hash": "6d22889f013153bbe59ad279227a8ed1e6dc194fc29c408aad0e661ea47909f8",
+          "ticket_id": 1
+        },
+        "sender_state": "done"
+      },
+      "claim_winners": 1,
+      "stale_ack_accepted": false,
+      "workers": 8
+    },
+    "concurrent_receiver": {
+      "receiver_receipts": 1,
+      "receiver_tickets": 1,
+      "unique_responses": 1,
+      "workers": 8
+    },
+    "idempotent_lost_ack": {
+      "after_restart": {
+        "attempts": 2,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 1,
+        "receiver_tickets": 1,
+        "response": {
+          "caller": "agent-demo",
+          "operation_key": "op-1",
+          "payload_hash": "6d22889f013153bbe59ad279227a8ed1e6dc194fc29c408aad0e661ea47909f8",
+          "ticket_id": 1
+        },
+        "sender_state": "done"
+      },
+      "before_restart": {
+        "attempts": 1,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 1,
+        "receiver_tickets": 1,
+        "response": null,
+        "sender_state": "inflight"
+      },
+      "restart_status": "done"
+    },
+    "mark_before_send_loses_task": {
+      "after_restart": {
+        "attempts": 1,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 0,
+        "receiver_tickets": 0,
+        "response": null,
+        "sender_state": "done"
+      },
+      "restart_status": "not_claimed"
+    },
+    "mismatched_payload": {
+      "receiver_tickets": 1,
+      "rejected": true
+    },
+    "naive_lost_ack": {
+      "after_restart": {
+        "attempts": 2,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 0,
+        "receiver_tickets": 2,
+        "response": {
+          "caller": "agent-demo",
+          "operation_key": "op-1",
+          "payload_hash": "6d22889f013153bbe59ad279227a8ed1e6dc194fc29c408aad0e661ea47909f8",
+          "ticket_id": 2
+        },
+        "sender_state": "done"
+      },
+      "before_restart": {
+        "attempts": 1,
+        "external_tickets": 0,
+        "intent_rows": 1,
+        "receiver_receipts": 0,
+        "receiver_tickets": 1,
+        "response": null,
+        "sender_state": "inflight"
+      },
+      "restart_status": "done"
+    },
+    "unsafe_external_retry": {
+      "external_tickets": 2,
+      "policy_bypassed_for_counterexample": true
+    }
+  },
+  "clock": "explicit logical ticks; lease length 10; replay at 11",
+  "experiment": "agent-reliability-01",
+  "measurement_scope": "local synthetic ticket side effects; process exits and restarts; no model or production benchmark",
+  "schema_version": 1
+}
