@@ -154,7 +154,9 @@
     "test:rag-release": "node scripts/tests/test-rag-release.mjs",
     "test:october4-content": "node scripts/tests/test-october4-content.mjs",
     "test:rag-citations": "node scripts/tests/test-rag-citations.mjs",
-    "test:october5-content": "node scripts/tests/test-october5-content.mjs && node scripts/tests/context-editing-commentary.test.mjs"
+    "test:october5-content": "node scripts/tests/test-october5-content.mjs && node scripts/tests/context-editing-commentary.test.mjs",
+    "test:agent-reliability": "python3 public/examples/agent-reliability-01/test_reliability.py",
+    "test:october6-content": "node scripts/tests/test-october6-content.mjs"
   },
   "dependencies": {
     "contentlayer2": "^0.5.8",
