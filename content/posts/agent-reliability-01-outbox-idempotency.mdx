@@ -148,7 +148,7 @@ python3 run_experiment.py --check results.json --output reproduced.json
 
 最值得带走的不是某个重试装饰器，而是一张边界清楚的执行记录：意图在哪里落地，业务在哪里提交，结果在哪里保存，哪一步退出以后只能说“不知道”。Agent 可以负责决定调用什么工具；工具是否已经造成变化，最终还得让可查询的业务事实说话。
 
-下一篇计划研究多工作进程接管时的租约与旧写入隔离；只有实验和边界验证齐备后发布。RAG 系列继续保留真实生成输出与细粒度支持标签的验证要求，不用合成回答代替缺失的模型实测。
+继续阅读[第二篇：租约过期与旧写入隔离](/blog/agent-reliability-02-leases-fencing)，通过真实子进程交错检查接收端 fencing 的保障与间隙。RAG 系列继续保留真实生成输出与细粒度支持标签的验证要求，不用合成回答代替缺失的模型实测。
 
 相关阅读：[断点恢复的责任边界](/blog/commentary-2026-10-04-durable-agent-receipt)；[RAG 评测实战：引用审计](/blog/rag-evaluation-05-citation-audit)。进一步讨论可查看[知识星球](/planet)，或通过[公众号入口](/about#wechat)关注更新。
 

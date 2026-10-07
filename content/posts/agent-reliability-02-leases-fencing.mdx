@@ -1,0 +1,141 @@
+---
+title: "Agent 可靠执行实战（二）：租约过期了，旧进程为什么还能写？"
+description: "用真实 Python 子进程与 SQLite 复现旧工作进程复活覆盖新结果，比较发送端 CAS 与接收端 fencing，解释租约到期、单调 epoch、原子写入和幂等的不同边界。"
+date: 2026-10-07
+author: 芝士AI吃鱼
+tags:
+  - Agent
+  - AI工程
+  - 可靠性
+  - 分布式系统
+category: tech
+postType: article
+icon: robot
+published: true
+access: public
+topicId: agent-reliability-02
+topicCluster: agent-reliability
+---
+
+两个 Agent 工作进程，领到了同一份任务。新来的已经交卷，旧的突然醒了，把文件覆盖回自己的版本。调度面板却一片祥和：任务成功，负责人是新进程。
+
+不是面板撒谎。它只管住了自己的那本账。
+
+这是本篇的假设场景。下面用真实子进程和 SQLite 把它跑出来：旧进程 A 领取任务后暂停，新进程 B 在租约到期时接管、提交结果，随后 A 恢复执行。没有调用大模型，也没有连接真实业务服务；合成的是文档内容，真实运行的是进程、事务和最后留下的数据。
+
+[第一篇](/blog/agent-reliability-01-outbox-idempotency)解决“工具执行了，回执丢了”的重复调用。本篇进一步处理接管后的旧写入。资料核对日期：2026 年 10 月 7 日。这是机制实验，不是生产吞吐量、跨机房容灾或模型能力评测。
+
+## 1. 租约回答谁该干活，不保证谁还能动手
+
+租约给任务一个有效期。A 在逻辑时刻 0 拿到任务，截止时刻为 10；到 10 还没有完成，就允许 B 接管。这里有效区间是半开区间：`now < deadline` 才有效，等于截止时刻已经过期。
+
+A 暂停时，并不会顺带撤销它已经持有的文件句柄、请求参数和工具连接。等它恢复，之前准备好的写请求照样可能发出去。哪怕 A 在写之前检查过租约，检查与实际写入之间仍可以再次暂停。因此，“写前先看一眼”不能作为最终防线。
+
+[Martin Kleppmann 对分布式锁的分析](https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html)讨论了客户端暂停与延迟请求造成的过期写入，并提出由被保护的存储检查 fencing token。本文只复现其中的旧写入问题，不据此评判某个锁产品在所有场景下是否可用。
+
+如果任务只是重复生成一份无副作用的临时草稿，多算一次可能只是浪费资源。若任务要覆盖发布文件、改库存或写共享状态，过期执行就会变成正确性问题。是否需要隔离，先看结果写到哪里。
+
+## 2. 给每次接管一个代次，不只记名字
+
+实验对每个资源分别保存 `owner`、`epoch`、`deadline`。第一次领取得到 epoch 1，接管时变成 2，再接管继续增加。递增发生在 `BEGIN IMMEDIATE` 事务内，读取当前代次与写入新租约不能被另一笔写事务插入。
+
+[SQLite 事务文档](https://www.sqlite.org/lang_transaction.html)说明了 IMMEDIATE 事务提前取得写事务的行为。本例使用这一能力串行化本机数据库写入，没有把一个 Python 锁变量当作分布式租约服务。真实多节点系统还需要可靠的权威状态、故障恢复和时间语义，这些不在本例实现范围内。
+
+只检查 owner 不够：同一个名为 A 的进程重新领取任务，也可能已经是另一代。旧请求必须带旧 epoch；新请求即使名字相同，也不能替旧请求背书。
+
+发送端完成任务时用条件更新：资源、owner、epoch 都匹配，且租约未过期，才写入结果。完整实现见文末下载，核心条件如下：
+
+```sql
+UPDATE lease SET result = ?
+WHERE resource = ? AND owner = ? AND epoch = ? AND deadline > ?;
+```
+
+受影响行数是 0，就意味着本次完成记录没有被接受。不要把它强行改成无条件更新，更不要因为“工作确实做完了”就忽略失去所有权。
+
+但这条 SQL 仍然只保护 lease 表。A 若先覆盖业务文档，再回来发现完成记录写不进去，文档已经受损。于是要把第二道检查放到真正接收写入的位置。
+
+<ArticleDiagram src="/images/articles/agent-reliability-02/two-boundaries.svg" mobileSrc="/images/articles/agent-reliability-02/two-boundaries-mobile.svg" alt="发送端按owner和epoch拒绝过期完成记录，接收端按已见最高epoch隔离旧文档写入，两道检查不能互相替代" caption="调度账正确，不代表业务结果正确。检查要落到各自真正提交的位置。" height={780} mobileHeight={1160} />
+
+## 3. fencing 必须和业务写入一起提交
+
+接收端为每个资源保存已经接受的最高 epoch。收到写入时，在同一个事务里比较代次、更新代次并写入内容：低于已见代次就拒绝；高于它可以接受。不能先查询代次、释放事务，再单独写文件，否则新的代次可能在这两步之间到达。
+
+本例额外规定：同一 epoch 只允许一个替换值。相同代次、相同值返回 replay；相同代次、不同值返回 conflict。这是为了让重放行为可检查的收窄协议，不是通用工具接口。如果一个任期内需要多次更新，要另行定义操作 ID、顺序和冲突规则。
+
+```python
+with tx(path) as c:
+    row = c.execute(
+        'SELECT * FROM sink WHERE resource=?', (resource,)
+    ).fetchone()
+    if row and epoch < row['epoch']:
+        return 'stale'
+    # 其余代次检查，以及 epoch / value 更新，也在这个事务里
+```
+
+这里的 token 不是密码。实验假设只有可信的租约权威能够签发正确代次，没有实现认证或防伪。如果任何调用方都能随口报出一个巨大的 epoch，它可以挡住后续合法写入。资源范围也必须一致：文档甲的第 99 代，不能拿来否定文档乙的第 1 代。
+
+## 4. 让 A 真暂停，让 B 真接管
+
+实验驱动使用 Python multiprocessing 的 spawn 模式，A 与 B 是独立子进程。A 提交领取事务后发出 ready 信号，然后等待 resume；主进程收到信号才启动 B，等待 B 提交并退出后，才唤醒 A。没有用 sleep 猜测哪个进程跑得快。
+
+租约的时间用显式整数 tick 控制。0、10、11 是逻辑时刻，不是实测秒数；15 秒的等待上限只是防止测试挂死。事件交错和 SQLite 写入是真实执行，网络抖动、时钟漂移、机器断电没有被注入。
+
+为了让读者零依赖运行，租约表与接收表放在同一个本机数据库文件，但每个 API 操作各自开启事务。接收端写入没有查询租约表，两端没有共享一次端到端提交。这足以展示两道检查的逻辑区别，却不能冒充两个独立服务器或独立存储故障实验。
+
+运行得到的两组结果如下；完整事件与最终两张表保存在 results.json：
+
+| 接收端策略 | B 写入后 A 恢复 | 调度表最终结果 | 业务表最终结果 |
+| --- | --- | --- | --- |
+| 无 fencing | A 的旧写入被接受；完成记录被拒绝 | new | old |
+| 原子 fencing | A 写入返回 stale；完成记录被拒绝 | new | new |
+
+这就是开头那种“面板成功，文件却旧了”的可复现版本。发送端 CAS 两组都有，只有第二组把隔离推进到了业务接收端。
+
+另一个回滚测试在写入新 epoch 与内容后、事务提交前抛出异常。结果两者一起回到旧状态，不会留下“已经看过新代次，但新内容没提交”的半张收据。它测试的是代码异常引发的事务回滚，不是硬件断电保障。
+
+## 5. 最容易写错的一句话：到期之后，旧写入全部失效
+
+这句话比前面的漏洞更隐蔽，因为它听起来很像 fencing 的承诺。
+
+第三个场景专门反驳它：A 得到 epoch 1，B 已经在租约表中接管到 epoch 2，但 B 还没有向接收端发送任何内容。此时 A 带着 1 写入，接收端还没见过 2，便接受了它。随后 B 写入 2，再来的 A 才被拒绝。
+
+| 到达接收端的顺序 | 返回值 | 接收端看到的变化 |
+| --- | --- | --- |
+| A 的 epoch 1，B 仅完成领取 | written | 首次接受旧内容 |
+| B 的 epoch 2 | written | 替换为新内容 |
+| A 的 epoch 1 再来一次 | stale | 保持新内容 |
+
+**本例证明的是：接收端已提交较新代次后，较旧代次不能覆盖它。它没有证明：租约一到期，整个世界立即拒绝旧持有者。**
+
+若业务要求接管完成之前就撤销旧写权限，需要将接收端登记新 fence 纳入接管协议，定义何时才向调度层宣布接管成功，以及登记失败时怎么办。仅仅在客户端多放一次检查，还没有封住那个间隙。若接收端能够和权威状态一起原子验证，则是另一种架构，不能把它偷算作本实验已实现。
+
+<ArticleDiagram src="/images/articles/agent-reliability-02/expiry-gap.svg" mobileSrc="/images/articles/agent-reliability-02/expiry-gap-mobile.svg" alt="B领取epoch2但接收端尚未见到时仍可接受A的epoch1；接收端提交epoch2后才拒绝旧代次" caption="租约到期是权威账上的事件；接收端观察到新 fence，是另一件事。" height={780} mobileHeight={1160} />
+
+## 6. 续租、重领，以及幂等不能替代的东西
+
+边界测试同时检查：截止时刻仍可接管，截止时刻不能续租；截止前续租成功，会推迟 B 的接管；已经被接管的 A 无法续租，也无法完成任务。同名 A 重新领取时，旧 epoch 的请求仍然失效。这些测试固定操作顺序验证状态转换，不能宣称覆盖了所有可能的分布式调度。
+
+fencing 和[第一篇的业务幂等](/blog/agent-reliability-01-outbox-idempotency)不是同一个标识。epoch 回答“这是谁的第几代执行权”；稳定操作 ID 回答“这是否是同一次业务意图”。一次业务请求跨越两代工作进程重试，操作 ID 可以保持不变，epoch 却应该改变。
+
+更重要的是，接收端必须有能力检查和拒绝。邮件已经发出去，新的 fence 不会让收件人失忆。调用一个不接受代次、不可撤销的外部工具，不能仅凭本地这几行 SQL 宣称 exactly-once。结果不明时，仍要保留 unknown、查询与人工对账的边界。
+
+代次本身也有生命周期：恢复旧数据库快照、清理接收端的最高代次记录、重置计数器，都可能使旧请求重新变得“新鲜”。本篇没有实现这些运维协议，也没有借 SQLite 的事务保证推导整个分布式系统永不失败。
+
+## 7. 把最后两张表跑出来，再决定是否信结论
+
+下载五个文件放在同一个空目录：[leases.py](/examples/agent-reliability-02/leases.py)、[run_experiment.py](/examples/agent-reliability-02/run_experiment.py)、[test_leases.py](/examples/agent-reliability-02/test_leases.py)、[results.json](/examples/agent-reliability-02/results.json)、[README.md](/examples/agent-reliability-02/README.md)。使用 Python 3.10 或更新版本，无需第三方包：
+
+```bash
+python3 test_leases.py
+python3 run_experiment.py --check results.json --output reproduced.json
+```
+
+第一条运行 17 个测试；第二条重新启动子进程、创建临时数据库、断言交错后的状态，再与存档结果整体比较。没有把已有结果文件当作计算过程。实验数据是临时合成值，不读取任何真实任务、用户会话或凭证。
+
+这套最小实现适合审查不变量，不适合原样接入生产：它没有真实分布式时钟、共识、权限认证、网络分区测试、吞吐测试或独立服务故障恢复。下一篇计划继续拆解不可幂等工具的 unknown 状态与对账，仍以可运行证据决定是否发布。
+
+真正需要守住的界线很朴素：旧进程可以醒来，可以继续算，甚至可以自信地说“完成了”。但在新的执行权已经被接收端确认之后，它不能再替新进程改答案。
+
+相关阅读：[工具回执丢失与事务幂等](/blog/agent-reliability-01-outbox-idempotency)、[断点恢复的责任边界](/blog/commentary-2026-10-04-durable-agent-receipt)。进一步讨论可查看[知识星球](/planet)，或通过[公众号入口](/about#wechat)关注更新。
+
+本文及原创图解、样例代码由 AI 辅助制作，并经过代码执行与内容核验。合成业务数据仅用于机制实验，不构成生产系统可靠性承诺。
