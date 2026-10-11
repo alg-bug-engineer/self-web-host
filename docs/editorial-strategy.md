@@ -50,7 +50,7 @@
 
 1. 本期：工具已执行，回执丢了怎么办？以 Python 标准库、SQLite 与真实子进程退出实验，区分发送端持久化、接收端事务去重和外部副作用；操作内容为合成工单，不调用模型或真实业务服务
 2. 已编写：多工作进程的租约、过期与 fencing。slug：`agent-reliability-02-leases-fencing`。真实子进程与事件握手复现接管后旧写入；对照发送端 CAS 与接收端原子 fencing，保留“接收端尚未见新代次”的过期间隙反例。单机 SQLite 与逻辑时刻，不冒充分布式服务、时钟或独立故障测试；发布仍须质量与上线核验
-3. 候选：不可幂等工具的 unknown 状态与人工对账。需明确查询能力、补偿与授权边界，不能把重试当成恢复
+3. 已编写：不可幂等工具的 unknown 状态与人工对账。slug：`agent-reliability-03-unknown-reconciliation`。真实子进程与独立 SQLite 数据库复现提交后回执丢失、空查询后的迟到写入、原子封口、人工对账版本冲突和补偿再次 unknown；明确封口写入及补偿的授权边界。合成工单与可信协议输入，不冒充生产认证、真实服务或 exactly-once 保证；发布仍须质量与上线核验
 
 本系列注册为 `topicCluster: agent-reliability`、`topicId: agent-reliability-<数字>`。RAG 第六篇的真实生成与细粒度审计条件保持待满足，不用本系列实验冒充 RAG 输出评测。候选题须先具备实质证据再写作。
 
