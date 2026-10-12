@@ -160,7 +160,9 @@
     "test:agent-fencing": "python3 public/examples/agent-reliability-02/test_leases.py",
     "test:october7-content": "node scripts/tests/test-october7-content.mjs",
     "test:agent-reconciliation": "python3 public/examples/agent-reliability-03/test_reconciliation.py && python3 public/examples/agent-reliability-03/run_experiment.py --check",
-    "test:october11-content": "node scripts/tests/test-october11-content.mjs"
+    "test:october11-content": "node scripts/tests/test-october11-content.mjs",
+    "test:october12-content": "node scripts/tests/test-october12-content.mjs",
+    "test:agent-retry-budgets": "python3 public/examples/agent-reliability-04/test_retry_budget.py && python3 public/examples/agent-reliability-04/run_experiment.py --check"
   },
   "dependencies": {
     "contentlayer2": "^0.5.8",

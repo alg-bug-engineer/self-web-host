@@ -1,0 +1,306 @@
+{
+  "cancelled_during_dispatch": {
+    "backoff_logical_ticks": 0,
+    "business_state": "read_only",
+    "dispatch_deadline_logical_ticks": [
+      100
+    ],
+    "dispatch_keys": [
+      null
+    ],
+    "dispatch_start_logical_ticks": [
+      0
+    ],
+    "dispatches": 1,
+    "elapsed_logical_ticks": 4,
+    "reason": "cancelled",
+    "status": "stopped"
+  },
+  "configuration": {
+    "dispatch_cap_includes_initial_attempt": true,
+    "layers": 3,
+    "max_attempts_per_layer": 3,
+    "max_retries_per_layer": 2,
+    "multiplicative_attempts": 27
+  },
+  "measurement_boundary": {
+    "client_state": "missing-receipt state label; no durable sender state machine",
+    "concurrency": "sequential retry model; no simultaneous dispatches tested",
+    "network_or_models": false,
+    "persistence": "actual local SQLite transactions and terminated Python subprocesses",
+    "retry_timing": "synthetic integer logical ticks; not wall-clock latency"
+  },
+  "reset_at_every_layer": {
+    "backoff_logical_ticks": 0,
+    "business_state": "read_only",
+    "dispatch_deadline_logical_ticks": [
+      20,
+      20,
+      20,
+      38,
+      38,
+      38,
+      56,
+      56,
+      56,
+      74,
+      74,
+      74,
+      92,
+      92,
+      92,
+      110,
+      110,
+      110,
+      128,
+      128,
+      128,
+      146,
+      146,
+      146,
+      164,
+      164,
+      164
+    ],
+    "dispatch_keys": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "dispatch_start_logical_ticks": [
+      0,
+      6,
+      12,
+      18,
+      24,
+      30,
+      36,
+      42,
+      48,
+      54,
+      60,
+      66,
+      72,
+      78,
+      84,
+      90,
+      96,
+      102,
+      108,
+      114,
+      120,
+      126,
+      132,
+      138,
+      144,
+      150,
+      156
+    ],
+    "dispatches": 27,
+    "elapsed_logical_ticks": 162,
+    "reason": "fixture_response",
+    "status": "transient"
+  },
+  "schema_version": 1,
+  "shared_absolute_deadline": {
+    "backoff_logical_ticks": 0,
+    "business_state": "read_only",
+    "dispatch_deadline_logical_ticks": [
+      20,
+      20,
+      20,
+      20
+    ],
+    "dispatch_keys": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "dispatch_start_logical_ticks": [
+      0,
+      6,
+      12,
+      18
+    ],
+    "dispatches": 4,
+    "elapsed_logical_ticks": 20,
+    "reason": "deadline_exceeded",
+    "status": "stopped"
+  },
+  "shared_cap_and_deadline": {
+    "backoff_logical_ticks": 0,
+    "business_state": "read_only",
+    "dispatch_deadline_logical_ticks": [
+      20,
+      20,
+      20,
+      20
+    ],
+    "dispatch_keys": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "dispatch_start_logical_ticks": [
+      0,
+      6,
+      12,
+      18
+    ],
+    "dispatches": 4,
+    "elapsed_logical_ticks": 20,
+    "reason": "deadline_exceeded",
+    "status": "stopped"
+  },
+  "shared_deadline_includes_backoff": {
+    "backoff_logical_ticks": 8,
+    "business_state": "read_only",
+    "dispatch_deadline_logical_ticks": [
+      14,
+      14
+    ],
+    "dispatch_keys": [
+      null,
+      null
+    ],
+    "dispatch_start_logical_ticks": [
+      0,
+      10
+    ],
+    "dispatches": 2,
+    "elapsed_logical_ticks": 14,
+    "reason": "deadline_exceeded",
+    "status": "stopped"
+  },
+  "shared_dispatch_cap": {
+    "backoff_logical_ticks": 0,
+    "business_state": "read_only",
+    "dispatch_deadline_logical_ticks": [
+      1000,
+      1000,
+      1000,
+      1000
+    ],
+    "dispatch_keys": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "dispatch_start_logical_ticks": [
+      0,
+      6,
+      12,
+      18
+    ],
+    "dispatches": 4,
+    "elapsed_logical_ticks": 24,
+    "reason": "dispatch_budget_exhausted",
+    "status": "stopped"
+  },
+  "sqlite_commit_then_cancel": {
+    "non_idempotent": {
+      "business_receipt_received": false,
+      "client_state": "unknown",
+      "effects_after_deliberate_unsafe_replay": 2,
+      "effects_after_reopen": 1,
+      "retry_permitted": false,
+      "worker_terminated": true
+    },
+    "receiver_idempotent": {
+      "business_receipt_received": false,
+      "changed_payload_same_key_rejected": true,
+      "client_state": "unknown",
+      "effects_after_deliberate_key_rotation": 2,
+      "effects_after_rejected_payload": 1,
+      "effects_after_reopen": 1,
+      "effects_after_same_key_replay": 1,
+      "replayed_effect_id": 1,
+      "retry_permitted": true,
+      "worker_terminated": true
+    }
+  },
+  "unknown_declared_idempotent": {
+    "backoff_logical_ticks": 0,
+    "business_state": "confirmed",
+    "dispatch_deadline_logical_ticks": [
+      100,
+      100
+    ],
+    "dispatch_keys": [
+      "stable-operation-1",
+      "stable-operation-1"
+    ],
+    "dispatch_start_logical_ticks": [
+      0,
+      3
+    ],
+    "dispatches": 2,
+    "elapsed_logical_ticks": 6,
+    "reason": "fixture_response",
+    "status": "success"
+  },
+  "unknown_non_idempotent": {
+    "backoff_logical_ticks": 0,
+    "business_state": "unknown",
+    "dispatch_deadline_logical_ticks": [
+      100
+    ],
+    "dispatch_keys": [
+      null
+    ],
+    "dispatch_start_logical_ticks": [
+      0
+    ],
+    "dispatches": 1,
+    "elapsed_logical_ticks": 3,
+    "reason": "unsafe_retry_requires_reconciliation",
+    "status": "unknown"
+  },
+  "unknown_read_only": {
+    "backoff_logical_ticks": 0,
+    "business_state": "read_only",
+    "dispatch_deadline_logical_ticks": [
+      100,
+      100
+    ],
+    "dispatch_keys": [
+      null,
+      null
+    ],
+    "dispatch_start_logical_ticks": [
+      0,
+      3
+    ],
+    "dispatches": 2,
+    "elapsed_logical_ticks": 6,
+    "reason": "fixture_response",
+    "status": "success"
+  }
+}
