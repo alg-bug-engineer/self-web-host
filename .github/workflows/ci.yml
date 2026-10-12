@@ -50,6 +50,8 @@ jobs:
       - run: npm run test:october7-content
       - run: npm run test:agent-reconciliation
       - run: npm run test:october11-content
+      - run: npm run test:agent-retry-budgets
+      - run: npm run test:october12-content
       - run: npm run test:daily-publications
       - run: npm run test:commentary
       - run: npm run test:operator-decision
