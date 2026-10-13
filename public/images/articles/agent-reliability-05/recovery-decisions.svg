@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="790" viewBox="0 0 1080 790" role="img" aria-labelledby="title desc">
+<title id="title">恢复要接过旧账，不能另领一整本券</title><desc id="desc">资源额度 ≠ 再次执行的许可</desc>
+<rect width="100%" height="100%" fill="#fff"/>
+<g font-family="Noto Sans CJK SC, sans-serif" font-size="27" fill="#334155">
+<text x="40" y="62" font-size="42" fill="#1768b5" font-weight="700">恢复要接过旧账，不能另领一整本券</text>
+<text x="40" y="152">资源额度 ≠ 再次执行的许可</text>
+<rect x="40" y="211" width="315" height="360" rx="18" fill="#eaf4ff" stroke="#a8cff4" stroke-width="2"/>
+<text x="60" y="258" font-size="27" fill="#1768b5" font-weight="700">1 先读持久状态</text>
+<text x="60" y="309">同一意图、同一上限</text>
+<text x="60" y="352">读取已消耗预留</text>
+<text x="60" y="395">已有确认就停止</text>
+<path d="M360 381 h20 m-8 -8 8 8 -8 8" stroke="#63809d" stroke-width="3" fill="none"/>
+<rect x="385" y="211" width="315" height="360" rx="18" fill="#e8f8f5" stroke="#90cfc3" stroke-width="2"/>
+<text x="405" y="258" font-size="27" fill="#1768b5" font-weight="700">2 判断业务安全</text>
+<text x="405" y="309">非幂等结果不明</text>
+<text x="405" y="352">即使有余额也不重试</text>
+<text x="405" y="395">先核验与对账</text>
+<path d="M705 381 h20 m-8 -8 8 8 -8 8" stroke="#63809d" stroke-width="3" fill="none"/>
+<rect x="730" y="211" width="315" height="360" rx="18" fill="#fff0ee" stroke="#e8b2a9" stroke-width="2"/>
+<text x="750" y="258" font-size="27" fill="#1768b5" font-weight="700">3 再申请新预留</text>
+<text x="750" y="309">可重放仍需新序号</text>
+<text x="750" y="352">耗尽就停，不退款</text>
+<text x="750" y="395">旧预留不当新许可</text>
+<rect x="40" y="617" width="1000" height="126" rx="16" fill="#fff5c7" stroke="#e4cd71" stroke-width="2"/>
+<text x="60" y="664" font-size="27" fill="#615017" font-weight="700">“没有收到回执”不能推导“这次可以退款”</text>
+<text x="60" y="707" font-size="27" fill="#615017">测试反例：上限 1，缺确认就退款，接收端仍被进入 3 次</text>
+</g></svg>

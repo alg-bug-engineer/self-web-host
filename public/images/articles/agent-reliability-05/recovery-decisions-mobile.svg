@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1190" viewBox="0 0 540 1190" role="img" aria-labelledby="title desc">
+<title id="title">恢复要接过旧账|不能另领一整本券</title><desc id="desc">资源额度 ≠ 再次执行的许可</desc>
+<rect width="100%" height="100%" fill="#fff"/>
+<g font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">
+<text x="30" y="62" font-size="34" fill="#1768b5" font-weight="700">恢复要接过旧账</text>
+<text x="30" y="110" font-size="34" fill="#1768b5" font-weight="700">不能另领一整本券</text>
+<text x="30" y="162">资源额度 ≠ 再次执行的许可</text>
+<rect x="30" y="204" width="480" height="212" rx="18" fill="#eaf4ff" stroke="#a8cff4" stroke-width="2"/>
+<text x="50" y="251" font-size="30" fill="#1768b5" font-weight="700">1 先读持久状态</text>
+<text x="50" y="302">已有确认：不再申请</text>
+<text x="50" y="345">没有确认：保留不确定</text>
+<path d="M270 423 v24 m-9 -9 9 9 9 -9" stroke="#63809d" stroke-width="3" fill="none"/>
+<rect x="30" y="455" width="480" height="212" rx="18" fill="#e8f8f5" stroke="#90cfc3" stroke-width="2"/>
+<text x="50" y="502" font-size="30" fill="#1768b5" font-weight="700">2 判断业务安全</text>
+<text x="50" y="553">非幂等 unknown：对账</text>
+<text x="50" y="596">有幂等契约：才可重放</text>
+<path d="M270 674 v24 m-9 -9 9 9 9 -9" stroke="#63809d" stroke-width="3" fill="none"/>
+<rect x="30" y="706" width="480" height="212" rx="18" fill="#fff0ee" stroke="#e8b2a9" stroke-width="2"/>
+<text x="50" y="753" font-size="30" fill="#1768b5" font-weight="700">3 再申请新预留</text>
+<text x="50" y="804">可重放仍要花新额度</text>
+<text x="50" y="847">耗尽就停，不重置计数</text>
+<rect x="30" y="990" width="480" height="150" rx="16" fill="#fff5c7" stroke="#e4cd71" stroke-width="2"/>
+<text x="50" y="1037" font-size="30" fill="#615017" font-weight="700">保守耗尽可能留下零条效果</text>
+<text x="50" y="1080" font-size="30" fill="#615017">这是安全与活性的明确取舍</text>
+</g></svg>

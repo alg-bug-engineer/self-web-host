@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="790" viewBox="0 0 1080 790" role="img" aria-labelledby="title desc">
+<title id="title">预留、派发与效果，不是同一个数字</title><desc id="desc">本地事务实验 · 合成工单</desc>
+<rect width="100%" height="100%" fill="#fff"/>
+<g font-family="Noto Sans CJK SC, sans-serif" font-size="27" fill="#334155">
+<text x="40" y="62" font-size="42" fill="#1768b5" font-weight="700">预留、派发与效果，不是同一个数字</text>
+<text x="40" y="152">本地事务实验 · 合成工单</text>
+<rect x="40" y="211" width="315" height="360" rx="18" fill="#eaf4ff" stroke="#a8cff4" stroke-width="2"/>
+<text x="60" y="258" font-size="27" fill="#1768b5" font-weight="700">1 先提交预留</text>
+<text x="60" y="309">检查同一任务上限</text>
+<text x="60" y="352">计数与预留一起提交</text>
+<text x="60" y="395">先拿新许可，再发送</text>
+<path d="M360 381 h20 m-8 -8 8 8 -8 8" stroke="#63809d" stroke-width="3" fill="none"/>
+<rect x="385" y="211" width="315" height="360" rx="18" fill="#e8f8f5" stroke="#90cfc3" stroke-width="2"/>
+<text x="405" y="258" font-size="27" fill="#1768b5" font-weight="700">2 再进入接收端</text>
+<text x="405" y="309">接收端入口计数</text>
+<text x="405" y="352">同键重放仍算一次</text>
+<text x="405" y="395">业务效果另外计数</text>
+<path d="M705 381 h20 m-8 -8 8 8 -8 8" stroke="#63809d" stroke-width="3" fill="none"/>
+<rect x="730" y="211" width="315" height="360" rx="18" fill="#fff0ee" stroke="#e8b2a9" stroke-width="2"/>
+<text x="750" y="258" font-size="27" fill="#1768b5" font-weight="700">3 最后记录确认</text>
+<text x="750" y="309">确认单独提交</text>
+<text x="750" y="352">缺确认不自动退款</text>
+<text x="750" y="395">重启不补满额度</text>
+<rect x="40" y="617" width="1000" height="126" rx="16" fill="#fff5c7" stroke="#e4cd71" stroke-width="2"/>
+<text x="60" y="664" font-size="27" fill="#615017" font-weight="700">入口次数 ≤ 已提交预留数 ≤ 上限</text>
+<text x="60" y="707" font-size="27" fill="#615017">前提：受控入口、每张新预留最多派发一次、没有隐藏重试</text>
+</g></svg>

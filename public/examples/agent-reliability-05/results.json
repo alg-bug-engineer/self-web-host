@@ -1,0 +1,256 @@
+{
+  "uncommitted_reservation": {
+    "first": {
+      "exit": 71,
+      "reply": null
+    },
+    "before_restart": {
+      "spent": 0,
+      "cap": 2,
+      "confirmed": false,
+      "reservations": [],
+      "receiver_calls": 0,
+      "effects": 0
+    },
+    "restart": {
+      "exit": 0,
+      "reply": {
+        "reason": "confirmed",
+        "seq": 1,
+        "effect": 1
+      }
+    },
+    "after_restart": {
+      "spent": 1,
+      "cap": 2,
+      "confirmed": true,
+      "reservations": [
+        {
+          "seq": 1,
+          "ack": 1
+        }
+      ],
+      "receiver_calls": 1,
+      "effects": 1
+    }
+  },
+  "reserved_before_send": {
+    "first": {
+      "exit": 72,
+      "reply": null
+    },
+    "before_restart": {
+      "spent": 1,
+      "cap": 2,
+      "confirmed": false,
+      "reservations": [
+        {
+          "seq": 1,
+          "ack": 0
+        }
+      ],
+      "receiver_calls": 0,
+      "effects": 0
+    },
+    "restart": {
+      "exit": 0,
+      "reply": {
+        "reason": "confirmed",
+        "seq": 2,
+        "effect": 1
+      }
+    },
+    "after_restart": {
+      "spent": 2,
+      "cap": 2,
+      "confirmed": true,
+      "reservations": [
+        {
+          "seq": 1,
+          "ack": 0
+        },
+        {
+          "seq": 2,
+          "ack": 1
+        }
+      ],
+      "receiver_calls": 1,
+      "effects": 1
+    }
+  },
+  "sink_commit_without_ack": {
+    "first": {
+      "exit": 73,
+      "reply": null
+    },
+    "before_restart": {
+      "spent": 1,
+      "cap": 2,
+      "confirmed": false,
+      "reservations": [
+        {
+          "seq": 1,
+          "ack": 0
+        }
+      ],
+      "receiver_calls": 1,
+      "effects": 1
+    },
+    "restart": {
+      "exit": 0,
+      "reply": {
+        "reason": "confirmed",
+        "seq": 2,
+        "effect": 1
+      }
+    },
+    "after_restart": {
+      "spent": 2,
+      "cap": 2,
+      "confirmed": true,
+      "reservations": [
+        {
+          "seq": 1,
+          "ack": 0
+        },
+        {
+          "seq": 2,
+          "ack": 1
+        }
+      ],
+      "receiver_calls": 2,
+      "effects": 1
+    }
+  },
+  "acknowledged_before_exit": {
+    "first": {
+      "exit": 74,
+      "reply": null
+    },
+    "before_restart": {
+      "spent": 1,
+      "cap": 2,
+      "confirmed": true,
+      "reservations": [
+        {
+          "seq": 1,
+          "ack": 1
+        }
+      ],
+      "receiver_calls": 1,
+      "effects": 1
+    },
+    "restart": {
+      "exit": 0,
+      "reply": {
+        "reason": "confirmed"
+      }
+    },
+    "after_restart": {
+      "spent": 1,
+      "cap": 2,
+      "confirmed": true,
+      "reservations": [
+        {
+          "seq": 1,
+          "ack": 1
+        }
+      ],
+      "receiver_calls": 1,
+      "effects": 1
+    }
+  },
+  "conservative_exhaustion": {
+    "exits": [
+      72,
+      72,
+      0
+    ],
+    "state": {
+      "spent": 2,
+      "cap": 2,
+      "confirmed": false,
+      "reservations": [
+        {
+          "seq": 1,
+          "ack": 0
+        },
+        {
+          "seq": 2,
+          "ack": 0
+        }
+      ],
+      "receiver_calls": 0,
+      "effects": 0
+    }
+  },
+  "concurrent_workers": {
+    "admission": {
+      "workers": 8,
+      "reserved": 3,
+      "rejected": 5,
+      "reasons": [
+        "budget_exhausted",
+        "budget_exhausted",
+        "budget_exhausted",
+        "budget_exhausted",
+        "budget_exhausted"
+      ],
+      "effects_returned": [
+        1,
+        1,
+        1
+      ]
+    },
+    "state": {
+      "spent": 3,
+      "cap": 3,
+      "confirmed": true,
+      "reservations": [
+        {
+          "seq": 1,
+          "ack": 1
+        },
+        {
+          "seq": 2,
+          "ack": 1
+        },
+        {
+          "seq": 3,
+          "ack": 1
+        }
+      ],
+      "receiver_calls": 3,
+      "effects": 1
+    }
+  },
+  "non_idempotent_unknown": {
+    "restart": {
+      "exit": 0,
+      "reply": {
+        "reason": "unknown_requires_reconciliation"
+      }
+    },
+    "state": {
+      "spent": 1,
+      "cap": 3,
+      "confirmed": false,
+      "reservations": [
+        {
+          "seq": 1,
+          "ack": 0
+        }
+      ],
+      "receiver_calls": 1,
+      "effects": 1
+    }
+  },
+  "unsafe_refund_counterexample": {
+    "spent": 0,
+    "cap": 1,
+    "confirmed": false,
+    "reservations": [],
+    "receiver_calls": 3,
+    "effects": 1
+  }
+}
