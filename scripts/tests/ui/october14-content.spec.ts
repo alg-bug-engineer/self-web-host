@@ -66,3 +66,26 @@ for(const slug of slugs){
   for(const path of ['/sitemap.xml','/llms.txt'])expect(await(await page.request.get(path)).text()).toContain(origin+route)
  })
 }
+
+// Existing longform must restore rendered route state after a hash navigation.
+for(const entry of ['目录','标题永久链接'])test(`既有 Agent 第四篇${entry}跳转后的浏览器返回恢复正文`,async({page})=>{
+ const route='/blog/agent-reliability-04-deadlines-retry-budgets'
+ await page.goto(route)
+ const title=await page.locator('h1').textContent()
+ const anchor=entry==='目录'
+  ?page.getByRole('navigation',{name:'本文目录'}).locator('a[href^="#"]').last()
+  :page.locator('[data-article-content] h2').last().locator('a[href^="#"]').last()
+ const href=await anchor.getAttribute('href');await anchor.click()
+ await expect.poll(()=>decodeURIComponent(new URL(page.url()).hash)).toBe(href)
+ await page.getByRole('link',{name:'返回文章列表',exact:true}).click()
+ await expect(page).toHaveURL(/\/blog$/)
+ await expect(page.locator('h1')).toHaveText('用人话，讲透 AI 原理。')
+ await page.goBack()
+ await expect.poll(()=>new URL(page.url()).pathname).toBe(route)
+ await expect.poll(()=>decodeURIComponent(new URL(page.url()).hash)).toBe(href)
+ await expect(page.locator('h1')).toHaveText(title!)
+ await expect(page.locator('[data-article-content]')).toContainText('AI 辅助制作')
+ await page.goForward()
+ await expect(page).toHaveURL(/\/blog$/)
+ await expect(page.locator('h1')).toHaveText('用人话，讲透 AI 原理。')
+})

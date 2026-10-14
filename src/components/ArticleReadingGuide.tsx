@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import type { ArticleHeading } from '@/lib/article-headings.mjs'
 
 export default function ArticleReadingGuide({ headings }: { headings: ArticleHeading[] }) {
@@ -64,7 +65,7 @@ export default function ArticleReadingGuide({ headings }: { headings: ArticleHea
             <ol className="grid gap-1 sm:grid-cols-2 lg:grid-cols-1">
               {headings.map((heading, index) => (
                 <li key={heading.id}>
-                  <a
+                  <Link
                     href={`#${heading.id}`}
                     aria-current={activeId === heading.id ? 'location' : undefined}
                     className={`group flex min-h-10 items-start gap-3 rounded-lg px-2 py-2 text-sm leading-6 transition-colors ${
@@ -75,7 +76,7 @@ export default function ArticleReadingGuide({ headings }: { headings: ArticleHea
                   >
                     <span className="mt-0.5 shrink-0 font-mono text-xs text-text-tertiary">{String(index + 1).padStart(2, '0')}</span>
                     <span>{heading.text}</span>
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ol>
