@@ -14,8 +14,11 @@ for(const slug of slugs){
   await expect(content).not.toContainText('EXPERIMENT_RESULTS');await expect(content).not.toContainText('**')
   await expect(page.getByTestId('planet-gate-inline')).toHaveCount(0)
   await expect(page.getByRole('link',{name:'查看学习社区'})).toHaveAttribute('href','https://t.zsxq.com/WtjvX')
-  if(raw.includes('postType: commentary')){await expect(page.getByRole('navigation',{name:'本文目录'})).toHaveCount(0);await page.getByRole('link',{name:'返回 AI锐评',exact:true}).click();await expect(page).toHaveURL(/\/commentary$/);await page.goBack();await expect(page.locator('h1')).toHaveText(title)}
-  else {const links=page.getByRole('navigation',{name:'本文目录'}).locator('a[href^="#"]');await expect(links).toHaveCount(await content.locator('h2').count());const href=await links.last().getAttribute('href');await links.last().click();await expect.poll(()=>decodeURIComponent(new URL(page.url()).hash)).toBe(href)}
+  const links=page.getByRole('navigation',{name:'本文目录'}).locator('a[href^="#"]')
+  await expect(links).toHaveCount(await content.locator('h2').count())
+  const href=await links.last().getAttribute('href');await links.last().click()
+  await expect.poll(()=>decodeURIComponent(new URL(page.url()).hash)).toBe(href)
+  if(raw.includes('postType: commentary')){await page.getByRole('link',{name:'返回 AI锐评',exact:true}).click();await expect(page).toHaveURL(/\/commentary$/);await page.goBack();await expect(page.locator('h1')).toHaveText(title)}
   await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);expect(errors).toEqual([])
  })
  test(slug+' 图解手机桌面可读及原图',async({page},info)=>{
