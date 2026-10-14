@@ -18,7 +18,16 @@ for(const slug of slugs){
   await expect(links).toHaveCount(await content.locator('h2').count())
   const href=await links.last().getAttribute('href');await links.last().click()
   await expect.poll(()=>decodeURIComponent(new URL(page.url()).hash)).toBe(href)
-  if(raw.includes('postType: commentary')){await page.getByRole('link',{name:'返回 AI锐评',exact:true}).click();await expect(page).toHaveURL(/\/commentary$/);await page.goBack();await expect(page.locator('h1')).toHaveText(title)}
+  if(raw.includes('postType: commentary')){
+   const historySnapshot=()=>page.evaluate(()=>({url:location.href,state:history.state,length:history.length}))
+   const anchored=await historySnapshot()
+   await page.getByRole('link',{name:'返回 AI锐评',exact:true}).click()
+   await expect(page).toHaveURL(/\/commentary$/)
+   await expect(page.locator('h1')).toHaveText('AI锐评热闹看完，聊点真话。')
+   const listing=await historySnapshot();await page.goBack()
+   try {await expect(page.locator('h1')).toHaveText(title);await expect.poll(()=>new URL(page.url()).pathname).toBe(route)}
+   catch(error){console.log('Commentary history diagnostic',JSON.stringify({anchored,listing,returned:await historySnapshot()}));throw error}
+  }
   await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);expect(errors).toEqual([])
  })
  test(slug+' 图解手机桌面可读及原图',async({page},info)=>{
