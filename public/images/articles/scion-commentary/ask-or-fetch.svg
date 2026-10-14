@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="980" viewBox="0 0 1080 980" role="img" aria-labelledby="title desc"><title id="title">先问任务，再决定取什么</title><desc id="desc">查询与执行需要不同输入；Git 对象下载与工作树选择是不同层次。原创机制图，无性能测量。</desc><rect width="1080" height="980" fill="#ffffff"/>
+<text x="48" y="72" font-family="Noto Sans CJK SC, sans-serif" font-size="44" fill="#1d4ed8" font-weight="700">先问任务，再决定取什么</text>
+<text x="48" y="124" font-family="Noto Sans CJK SC, sans-serif" font-size="29" fill="#64748b" font-weight="400">原创机制示意 · 不是性能对照或 Scion 架构复刻</text>
+<rect x="48" y="176" width="474" height="130" rx="20" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="72" y="224" font-family="Noto Sans CJK SC, sans-serif" font-size="34" fill="#1d4ed8" font-weight="700">只查一段历史</text>
+<text x="72" y="270" font-family="Noto Sans CJK SC, sans-serif" font-size="27" fill="#334155" font-weight="400">需要：版本、路径、查询条件</text>
+<path d="M285 317 v38 m-10 -10 l10 10 10 -10" fill="none" stroke="#64748b" stroke-width="3"/>
+<rect x="48" y="376" width="474" height="100" rx="20" fill="#ecfdf5" stroke="#5eead4" stroke-width="2"/>
+<text x="72" y="437" font-family="Noto Sans CJK SC, sans-serif" font-size="29" fill="#0f766e" font-weight="600">可能直接取得服务端答案</text>
+<rect x="558" y="176" width="474" height="130" rx="20" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="582" y="224" font-family="Noto Sans CJK SC, sans-serif" font-size="34" fill="#1d4ed8" font-weight="700">需要执行代码</text>
+<text x="582" y="270" font-family="Noto Sans CJK SC, sans-serif" font-size="27" fill="#334155" font-weight="400">需要：代码、配置、依赖文件</text>
+<path d="M795 317 v38 m-10 -10 l10 10 10 -10" fill="none" stroke="#64748b" stroke-width="3"/>
+<rect x="558" y="376" width="474" height="100" rx="20" fill="#ecfdf5" stroke="#5eead4" stroke-width="2"/>
+<text x="582" y="437" font-family="Noto Sans CJK SC, sans-serif" font-size="29" fill="#0f766e" font-weight="600">按真实依赖准备工作区</text>
+<text x="48" y="540" font-family="Noto Sans CJK SC, sans-serif" font-size="34" fill="#1d4ed8" font-weight="700">Git 已有能力：作用层次不要混淆</text>
+<rect x="48" y="574" width="474" height="196" rx="20" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="72" y="627" font-family="Noto Sans CJK SC, sans-serif" font-size="33" fill="#1d4ed8" font-weight="700">partial clone</text>
+<text x="72" y="677" font-family="Noto Sans CJK SC, sans-serif" font-size="29" fill="#334155" font-weight="400">先省略部分对象下载</text>
+<text x="72" y="724" font-family="Noto Sans CJK SC, sans-serif" font-size="29" fill="#334155" font-weight="400">缺失对象需要时再补取</text>
+<rect x="558" y="574" width="474" height="196" rx="20" fill="#fff1f2" stroke="#fda4af" stroke-width="2"/>
+<text x="582" y="627" font-family="Noto Sans CJK SC, sans-serif" font-size="33" fill="#be123c" font-weight="700">sparse checkout</text>
+<text x="582" y="677" font-family="Noto Sans CJK SC, sans-serif" font-size="29" fill="#334155" font-weight="400">选择工作树呈现的文件</text>
+<text x="582" y="724" font-family="Noto Sans CJK SC, sans-serif" font-size="29" fill="#334155" font-weight="400">不等于已减少对象下载</text>
+<rect x="48" y="812" width="984" height="120" rx="20" fill="#fef9c3" stroke="#fde047" stroke-width="2"/>
+<text x="72" y="861" font-family="Noto Sans CJK SC, sans-serif" font-size="34" fill="#854d0e" font-weight="700">少搬无用数据，也要拿齐任务依赖</text>
+<text x="72" y="907" font-family="Noto Sans CJK SC, sans-serif" font-size="29" fill="#854d0e" font-weight="400">离线能力、远端可达性与测试输入，仍须分别验证</text>
+</svg>

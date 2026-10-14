@@ -164,7 +164,9 @@
     "test:october12-content": "node scripts/tests/test-october12-content.mjs",
     "test:agent-retry-budgets": "python3 public/examples/agent-reliability-04/test_retry_budget.py && python3 public/examples/agent-reliability-04/run_experiment.py --check",
     "test:october13-content": "node scripts/tests/test-october13-content.mjs",
-    "test:agent-durable-budgets": "python3 public/examples/agent-reliability-05/test_durable_budget.py && python3 public/examples/agent-reliability-05/run_experiment.py --check"
+    "test:agent-durable-budgets": "python3 public/examples/agent-reliability-05/test_durable_budget.py && python3 public/examples/agent-reliability-05/run_experiment.py --check",
+    "test:october14-content": "node scripts/tests/test-october14-content.mjs",
+    "test:agent-retention": "python3 public/examples/agent-reliability-06/test_retention.py && python3 public/examples/agent-reliability-06/run_experiment.py --check"
   },
   "dependencies": {
     "contentlayer2": "^0.5.8",

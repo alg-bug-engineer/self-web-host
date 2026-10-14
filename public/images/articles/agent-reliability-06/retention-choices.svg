@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="950" viewBox="0 0 1080 950" role="img" aria-labelledby="title desc">
+<title id="title">清理哪一层，就改变哪一种承诺</title><desc id="desc">同一旧请求到达时，三种策略的行为并不相同</desc><rect width="100%" height="100%" fill="white"/>
+<text x="32" y="65" font-family="Noto Sans CJK SC, sans-serif" font-size="45" fill="#1565c0" font-weight="700">清理哪一层，就改变哪一种承诺</text>
+<text x="32" y="115" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#64748b">同一旧请求到达时，三种策略的行为并不相同</text>
+<rect x="24" y="180" width="1032" height="181" rx="20" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="44" y="229" font-family="Noto Sans CJK SC, sans-serif" font-size="36" fill="#0f4c81" font-weight="700">① 删除整条回执</text>
+<text x="44" y="280" font-family="Noto Sans CJK SC, sans-serif" font-size="31" fill="#334155">没有回执，也没有拒绝边界 → 被当作新请求</text>
+<text x="44" y="323" font-family="Noto Sans CJK SC, sans-serif" font-size="31" fill="#334155">本实验：相同操作再次执行，留下两条效果</text>
+<rect x="24" y="383" width="1032" height="181" rx="20" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="2"/>
+<text x="44" y="432" font-family="Noto Sans CJK SC, sans-serif" font-size="36" fill="#0f4c81" font-weight="700">② 只清结果，保留墓碑</text>
+<text x="44" y="483" font-family="Noto Sans CJK SC, sans-serif" font-size="31" fill="#334155">保留键与参数摘要 → 不重做，但原结果不可返回</text>
+<text x="44" y="526" font-family="Noto Sans CJK SC, sans-serif" font-size="31" fill="#334155">不同参数仍冲突；每个操作仍占一行</text>
+<rect x="24" y="586" width="1032" height="181" rx="20" fill="#fff1f2" stroke="#fda4af" stroke-width="2"/>
+<text x="44" y="635" font-family="Noto Sans CJK SC, sans-serif" font-size="36" fill="#0f4c81" font-weight="700">③ 关闭范围，再删除回执</text>
+<text x="44" y="686" font-family="Noto Sans CJK SC, sans-serif" font-size="31" fill="#334155">持久边界 closed_through → 拒绝整个旧代次</text>
+<text x="44" y="729" font-family="Noto Sans CJK SC, sans-serif" font-size="31" fill="#334155">省去该范围的回执行，也拒绝从未到达的合法旧任务</text>
+<rect x="24" y="815" width="1032" height="110" rx="18" fill="#fef3c7" stroke="#fcd34d"/>
+<text x="44" y="859" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#713f12" font-weight="700">少存一点，不是免费午餐</text>
+<text x="44" y="901" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#713f12" font-weight="700">结果可用性、重复识别与旧任务准入，都需要明确取舍</text>
+</svg>

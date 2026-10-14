@@ -54,6 +54,8 @@ jobs:
       - run: npm run test:october12-content
       - run: npm run test:agent-durable-budgets
       - run: npm run test:october13-content
+      - run: npm run test:agent-retention
+      - run: npm run test:october14-content
       - run: npm run test:daily-publications
       - run: npm run test:commentary
       - run: npm run test:operator-decision

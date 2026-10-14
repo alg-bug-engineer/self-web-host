@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1100" viewBox="0 0 540 1100" role="img" aria-labelledby="title desc">
+<title id="title">先排队，再决定能否写</title><desc id="desc">BEGIN IMMEDIATE|每次只容纳一个写事务</desc><rect width="100%" height="100%" fill="white"/>
+<text x="32" y="65" font-family="Noto Sans CJK SC, sans-serif" font-size="34" fill="#1565c0" font-weight="700">先排队，再决定能否写</text>
+<text x="32" y="115" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#64748b">BEGIN IMMEDIATE</text>
+<text x="32" y="157" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#64748b">每次只容纳一个写事务</text>
+<rect x="24" y="195" width="492" height="345" rx="20" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="44" y="244" font-family="Noto Sans CJK SC, sans-serif" font-size="32" fill="#0f4c81" font-weight="700">A：业务先提交</text>
+<text x="44" y="295" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">检查边界</text>
+<text x="44" y="343" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">写效果 + 写回执</text>
+<text x="44" y="391" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">一起提交</text>
+<text x="44" y="439" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">随后封口清理回执</text>
+<text x="44" y="487" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">已发生的效果仍保留</text>
+<rect x="24" y="562" width="492" height="345" rx="20" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="2"/>
+<text x="44" y="611" font-family="Noto Sans CJK SC, sans-serif" font-size="32" fill="#0f4c81" font-weight="700">B：封口先提交</text>
+<text x="44" y="662" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">提高边界 + 删回执</text>
+<text x="44" y="710" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">一起提交</text>
+<text x="44" y="758" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">旧请求再来检查</text>
+<text x="44" y="806" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">返回 closed</text>
+<text x="44" y="854" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">禁止新增旧批次效果</text>
+<rect x="24" y="965" width="492" height="110" rx="18" fill="#fef3c7" stroke="#fcd34d"/>
+<text x="44" y="1009" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#713f12" font-weight="700">封口不是时间倒流</text>
+<text x="44" y="1051" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#713f12" font-weight="700">不能撤销已提交效果</text>
+</svg>
