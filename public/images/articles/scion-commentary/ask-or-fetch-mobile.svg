@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1460" viewBox="0 0 540 1460" role="img" aria-labelledby="title desc"><title id="title">先问任务，再决定取什么</title><desc id="desc">查询与执行需要不同输入；Git 对象下载与工作树选择是不同层次。原创机制图，无性能测量。</desc><rect width="540" height="1460" fill="#ffffff"/>
+<text x="28" y="66" font-family="Noto Sans CJK SC, sans-serif" font-size="40" fill="#1d4ed8" font-weight="700">先问任务</text>
+<text x="28" y="118" font-family="Noto Sans CJK SC, sans-serif" font-size="40" fill="#1d4ed8" font-weight="700">再决定取什么</text>
+<text x="28" y="170" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#64748b" font-weight="400">原创机制图 · 非性能测试</text>
+<rect x="28" y="210" width="484" height="180" rx="20" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="48" y="258" font-family="Noto Sans CJK SC, sans-serif" font-size="34" fill="#1d4ed8" font-weight="700">只查一段历史</text>
+<text x="48" y="312" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155" font-weight="400">给出版本、路径和条件</text>
+<text x="48" y="362" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155" font-weight="400">可能直接取得服务端答案</text>
+<text x="28" y="434" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#64748b" font-weight="400">另一类任务：</text>
+<rect x="28" y="460" width="484" height="180" rx="20" fill="#ecfdf5" stroke="#5eead4" stroke-width="2"/>
+<text x="48" y="510" font-family="Noto Sans CJK SC, sans-serif" font-size="34" fill="#0f766e" font-weight="700">需要执行代码</text>
+<text x="48" y="562" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155" font-weight="400">准备代码、配置和依赖</text>
+<text x="48" y="612" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155" font-weight="400">不能只凭改动目录取文件</text>
+<text x="28" y="704" font-family="Noto Sans CJK SC, sans-serif" font-size="34" fill="#1d4ed8" font-weight="700">Git 的两种不同控制</text>
+<rect x="28" y="742" width="484" height="184" rx="20" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="48" y="792" font-family="Noto Sans CJK SC, sans-serif" font-size="34" fill="#1d4ed8" font-weight="700">partial clone</text>
+<text x="48" y="846" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155" font-weight="400">先省略部分对象下载</text>
+<text x="48" y="896" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155" font-weight="400">缺失对象需要时再补取</text>
+<rect x="28" y="956" width="484" height="184" rx="20" fill="#fff1f2" stroke="#fda4af" stroke-width="2"/>
+<text x="48" y="1006" font-family="Noto Sans CJK SC, sans-serif" font-size="34" fill="#be123c" font-weight="700">sparse checkout</text>
+<text x="48" y="1060" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155" font-weight="400">选择工作树呈现的文件</text>
+<text x="48" y="1110" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155" font-weight="400">不等于已减少对象下载</text>
+<rect x="28" y="1178" width="484" height="236" rx="20" fill="#fef9c3" stroke="#fde047" stroke-width="2"/>
+<text x="48" y="1230" font-family="Noto Sans CJK SC, sans-serif" font-size="34" fill="#854d0e" font-weight="700">少搬无用数据</text>
+<text x="48" y="1280" font-family="Noto Sans CJK SC, sans-serif" font-size="34" fill="#854d0e" font-weight="700">也要拿齐任务依赖</text>
+<text x="48" y="1336" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#854d0e" font-weight="400">离线能力与远端可达性</text>
+<text x="48" y="1382" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#854d0e" font-weight="400">仍须分别验证</text>
+</svg>

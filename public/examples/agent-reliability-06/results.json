@@ -1,0 +1,259 @@
+{
+  "naive_delete": {
+    "late": {
+      "status": "created",
+      "effect": 2
+    },
+    "state": {
+      "boundaries": [
+        [
+          "demo",
+          0
+        ]
+      ],
+      "receipts": 1,
+      "tombstones": 0,
+      "effects": 2
+    }
+  },
+  "tombstone": {
+    "retry": {
+      "status": "result_expired",
+      "effect": null
+    },
+    "conflict": {
+      "status": "conflict"
+    },
+    "state": {
+      "boundaries": [
+        [
+          "demo",
+          0
+        ]
+      ],
+      "receipts": 1,
+      "tombstones": 1,
+      "effects": 1
+    }
+  },
+  "sealed_late": {
+    "late": {
+      "status": "closed"
+    },
+    "unseen": {
+      "status": "closed"
+    },
+    "new_epoch": {
+      "status": "created",
+      "effect": 2
+    },
+    "state": {
+      "boundaries": [
+        [
+          "demo",
+          1
+        ]
+      ],
+      "receipts": 1,
+      "tombstones": 0,
+      "effects": 2
+    }
+  },
+  "after_boundary": {
+    "crash": {
+      "exit": 73,
+      "reply": null
+    },
+    "before_retry": {
+      "boundaries": [
+        [
+          "demo",
+          0
+        ]
+      ],
+      "receipts": 1,
+      "tombstones": 0,
+      "effects": 1
+    },
+    "retry": {
+      "status": "replayed",
+      "effect": 1
+    },
+    "state": {
+      "boundaries": [
+        [
+          "demo",
+          0
+        ]
+      ],
+      "receipts": 1,
+      "tombstones": 0,
+      "effects": 1
+    }
+  },
+  "before_close_commit": {
+    "crash": {
+      "exit": 74,
+      "reply": null
+    },
+    "before_retry": {
+      "boundaries": [
+        [
+          "demo",
+          0
+        ]
+      ],
+      "receipts": 1,
+      "tombstones": 0,
+      "effects": 1
+    },
+    "retry": {
+      "status": "replayed",
+      "effect": 1
+    },
+    "state": {
+      "boundaries": [
+        [
+          "demo",
+          0
+        ]
+      ],
+      "receipts": 1,
+      "tombstones": 0,
+      "effects": 1
+    }
+  },
+  "after_close_commit": {
+    "crash": {
+      "exit": 75,
+      "reply": null
+    },
+    "before_retry": {
+      "boundaries": [
+        [
+          "demo",
+          1
+        ]
+      ],
+      "receipts": 0,
+      "tombstones": 0,
+      "effects": 1
+    },
+    "retry": {
+      "status": "closed"
+    },
+    "state": {
+      "boundaries": [
+        [
+          "demo",
+          1
+        ]
+      ],
+      "receipts": 0,
+      "tombstones": 0,
+      "effects": 1
+    }
+  },
+  "before_receipt": {
+    "crash": {
+      "exit": 71,
+      "reply": null
+    },
+    "before_retry": {
+      "boundaries": [
+        [
+          "demo",
+          0
+        ]
+      ],
+      "receipts": 0,
+      "tombstones": 0,
+      "effects": 0
+    },
+    "retry": {
+      "status": "created",
+      "effect": 1
+    },
+    "state": {
+      "boundaries": [
+        [
+          "demo",
+          0
+        ]
+      ],
+      "receipts": 1,
+      "tombstones": 0,
+      "effects": 1
+    }
+  },
+  "after_effect_commit": {
+    "crash": {
+      "exit": 72,
+      "reply": null
+    },
+    "before_retry": {
+      "boundaries": [
+        [
+          "demo",
+          0
+        ]
+      ],
+      "receipts": 1,
+      "tombstones": 0,
+      "effects": 1
+    },
+    "retry": {
+      "status": "replayed",
+      "effect": 1
+    },
+    "state": {
+      "boundaries": [
+        [
+          "demo",
+          0
+        ]
+      ],
+      "receipts": 1,
+      "tombstones": 0,
+      "effects": 1
+    }
+  },
+  "rekey_is_new_intent": {
+    "retry": {
+      "status": "created",
+      "effect": 2
+    },
+    "state": {
+      "boundaries": [
+        [
+          "demo",
+          1
+        ]
+      ],
+      "receipts": 1,
+      "tombstones": 0,
+      "effects": 2
+    }
+  },
+  "namespace_isolation": {
+    "other": {
+      "status": "replayed",
+      "effect": 2
+    },
+    "state": {
+      "boundaries": [
+        [
+          "demo",
+          1
+        ],
+        [
+          "other",
+          0
+        ]
+      ],
+      "receipts": 1,
+      "tombstones": 0,
+      "effects": 2
+    }
+  }
+}

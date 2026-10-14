@@ -167,9 +167,9 @@ function createHeading(level: 1 | 2 | 3 | 4 | 5 | 6) {
       <Tag id={id} className={`${sizes[level]} scroll-mt-24 font-bold text-text-primary mt-8 mb-4 group`} {...props}>
         {children}
         {id && (
-          <a href={`#${id}`} className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity text-accent-primary">
+          <Link href={`#${id}`} className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity text-accent-primary">
             #
-          </a>
+          </Link>
         )}
       </Tag>
     )

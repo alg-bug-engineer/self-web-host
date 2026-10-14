@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1320" viewBox="0 0 540 1320" role="img" aria-labelledby="title desc">
+<title id="title">回执变薄，承诺也在变</title><desc id="desc">三种清理策略|面对同一条旧请求</desc><rect width="100%" height="100%" fill="white"/>
+<text x="32" y="65" font-family="Noto Sans CJK SC, sans-serif" font-size="34" fill="#1565c0" font-weight="700">回执变薄，承诺也在变</text>
+<text x="32" y="115" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#64748b">三种清理策略</text>
+<text x="32" y="157" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#64748b">面对同一条旧请求</text>
+<rect x="24" y="195" width="492" height="297" rx="20" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="44" y="244" font-family="Noto Sans CJK SC, sans-serif" font-size="32" fill="#0f4c81" font-weight="700">① 整条删除</text>
+<text x="44" y="295" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">回执不在了</text>
+<text x="44" y="343" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">拒绝边界也没有</text>
+<text x="44" y="391" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">旧请求被当作新请求</text>
+<text x="44" y="439" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">本实验产生第二条效果</text>
+<rect x="24" y="514" width="492" height="297" rx="20" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="2"/>
+<text x="44" y="563" font-family="Noto Sans CJK SC, sans-serif" font-size="32" fill="#0f4c81" font-weight="700">② 保留墓碑</text>
+<text x="44" y="614" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">保留键与参数摘要</text>
+<text x="44" y="662" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">相同请求不再执行</text>
+<text x="44" y="710" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">原结果不能直接返回</text>
+<text x="44" y="758" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">每个操作仍占一行</text>
+<rect x="24" y="833" width="492" height="297" rx="20" fill="#fff1f2" stroke="#fda4af" stroke-width="2"/>
+<text x="44" y="882" font-family="Noto Sans CJK SC, sans-serif" font-size="32" fill="#0f4c81" font-weight="700">③ 先关闭范围</text>
+<text x="44" y="933" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">旧代次一律拒绝</text>
+<text x="44" y="981" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">再删除范围内回执</text>
+<text x="44" y="1029" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">包括从未到达的任务</text>
+<text x="44" y="1077" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#334155">新批次不是全局去重</text>
+<rect x="24" y="1185" width="492" height="110" rx="18" fill="#fef3c7" stroke="#fcd34d"/>
+<text x="44" y="1229" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#713f12" font-weight="700">清理会改变业务承诺</text>
+<text x="44" y="1271" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#713f12" font-weight="700">不能只批准磁盘优化</text>
+</svg>

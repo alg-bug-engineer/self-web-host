@@ -56,6 +56,8 @@
 
 5. 已编写：持久派发预留、崩溃恢复与并发预算。slug：`agent-reliability-05-durable-dispatch-reservations`。以 Python 标准库、真实子进程退出及两个本地 SQLite 文件，验证原子预留、重启不补满、缺回执不退款、非幂等 unknown 停止与保守耗尽；区分预留、接收端入口和业务效果，不冒充分布式配额服务、持久 deadline 或 exactly-once。发布仍须完整 CI 与上线核验。
 
+6. 已编写：幂等回执保留、结果墓碑与代次范围封口。slug：`agent-reliability-06-idempotency-retention`。用 Python 标准库、SQLite 事务和真实子进程验证清理后的迟到重复、保留摘要但过期结果、原子封口清理及崩溃恢复；明确拒绝合法旧工作、新代次改键不提供全局去重，以及可信输入与生产授权边界。不冒充 TTL、外部 API、磁盘容量、跨节点或断电测试；发布仍须完整 CI 与上线核验。
+
 本系列注册为 `topicCluster: agent-reliability`、`topicId: agent-reliability-<数字>`。RAG 第六篇的真实生成与细粒度审计条件保持待满足，不用本系列实验冒充 RAG 输出评测。候选题须先具备实质证据再写作。
 
 ## 发布检查
