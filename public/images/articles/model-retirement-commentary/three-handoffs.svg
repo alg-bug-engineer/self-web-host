@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1050" viewBox="0 0 1080 1050" role="img"><title>模型迁移的三个检查面，接口、行为与停服后兜底</title><rect width="100%" height="100%" fill="#fff"/><g font-family="Noto Sans CJK SC, sans-serif">
+<text x="48" y="75" font-size="44" fill="#1d4ed8" font-weight="700">换模型，交接三个检查面</text>
+<text x="48" y="130" font-size="30" fill="#64748b" font-weight="400">任何一项通过，都不能替另外两项签字</text>
+<rect x="48" y="175" width="984" height="185" rx="22" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="76" y="225" font-size="34" fill="#0f172a" font-weight="700">01  接口兼容</text>
+<text x="76" y="277" font-size="30" fill="#334155" font-weight="400">端点、参数、字段与错误处理是否兼容？</text>
+<text x="76" y="321" font-size="30" fill="#334155" font-weight="400">请求成功、JSON 可解析：只说明这一层接上了</text>
+<rect x="48" y="390" width="984" height="185" rx="22" fill="#ecfdf5" stroke="#5eead4" stroke-width="2"/>
+<text x="76" y="440" font-size="34" fill="#0f172a" font-weight="700">02  任务行为</text>
+<text x="76" y="492" font-size="30" fill="#334155" font-weight="400">同一输入、固定上下文，按业务要求比较结果</text>
+<text x="76" y="536" font-size="30" fill="#334155" font-weight="400">旧输出是参照，不自动等于正确答案</text>
+<rect x="48" y="605" width="984" height="185" rx="22" fill="#fff1f2" stroke="#fda4af" stroke-width="2"/>
+<text x="76" y="655" font-size="34" fill="#0f172a" font-weight="700">03  停服后兜底</text>
+<text x="76" y="707" font-size="30" fill="#334155" font-weight="400">旧服务仍可用时，才能验证切回旧模型</text>
+<text x="76" y="751" font-size="30" fill="#334155" font-weight="400">停服之后：已验收的其他路径，或缩小自动化范围</text>
+<rect x="48" y="835" width="984" height="150" rx="22" fill="#fffbeb" stroke="#fcd34d" stroke-width="2"/>
+<text x="76" y="890" font-size="32" fill="#854d0e" font-weight="700">先写清不能变的行为，再判断允许变的部分</text>
+<text x="76" y="940" font-size="27" fill="#713f12" font-weight="400">原创机制示意 · 无模型对比实测 · 不表示三步即完成迁移</text>
+</g></svg>

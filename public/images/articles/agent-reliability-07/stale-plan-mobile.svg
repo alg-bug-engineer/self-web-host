@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1250" viewBox="0 0 540 1250" role="img" aria-labelledby="title desc">
+<title id="title">只执行一次，|也可能办错</title><desc id="desc">合成名额调拨 |计划与执行之间有空隙</desc>
+<rect width="540" height="1250" fill="white"/>
+<g font-family="Noto Sans CJK SC, sans-serif">
+<text x="28" y="54" fill="#1d4ed8" font-size="34" font-weight="700">只执行一次，</text>
+<text x="28" y="102" fill="#1d4ed8" font-size="34" font-weight="700">也可能办错</text>
+<text x="28" y="148" fill="#64748b" font-size="30" font-weight="400">合成名额调拨 </text>
+<text x="28" y="192" fill="#64748b" font-size="30" font-weight="400">计划与执行之间有空隙</text>
+<rect x="28" y="230" width="484" height="215" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="50" y="278" fill="#1e40af" font-size="32" font-weight="700">① 计划读取</text>
+<text x="50" y="328" fill="#334155" font-size="30" font-weight="400">A：10 个 / 版本 1</text>
+<text x="50" y="374" fill="#334155" font-size="30" font-weight="400">B：0 个 / 版本 1</text>
+<text x="50" y="420" fill="#334155" font-size="30" font-weight="400">决定从 A 调 3 个给 B</text>
+<rect x="28" y="468" width="484" height="170" rx="18" fill="#ecfeff" stroke="#67e8f9" stroke-width="2"/>
+<text x="50" y="516" fill="#1e40af" font-size="32" font-weight="700">② 另一笔业务先提交</text>
+<text x="50" y="566" fill="#334155" font-size="30" font-weight="400">B 增加 2 个名额</text>
+<text x="50" y="612" fill="#334155" font-size="30" font-weight="400">B 的版本变成 2</text>
+<rect x="28" y="662" width="484" height="194" rx="18" fill="#fff1f2" stroke="#fda4af" stroke-width="2"/>
+<text x="50" y="710" fill="#1e40af" font-size="32" font-weight="700">③ 事务外检查，仍照办</text>
+<text x="50" y="760" fill="#334155" font-size="30" font-weight="400">没有重复，却按旧计划执行</text>
+<text x="50" y="806" fill="#334155" font-size="30" font-weight="400">结果：A = 7，B = 5</text>
+<rect x="28" y="880" width="484" height="190" rx="18" fill="#ecfeff" stroke="#67e8f9" stroke-width="2"/>
+<text x="50" y="928" fill="#1e40af" font-size="32" font-weight="700">④ 检查版本，拒绝旧计划</text>
+<text x="50" y="978" fill="#334155" font-size="30" font-weight="400">预期版本 1，实际版本 2</text>
+<text x="50" y="1024" fill="#334155" font-size="30" font-weight="400">结果：A = 10，B = 2</text>
+<rect x="28" y="1114" width="484" height="112" rx="14" fill="#fef9c3" stroke="#facc15"/>
+<text x="48" y="1157" fill="#713f12" font-size="30" font-weight="500">去重管重复</text>
+<text x="48" y="1200" fill="#713f12" font-size="30" font-weight="500">版本检查管依据是否过期</text>
+</g></svg>
