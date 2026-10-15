@@ -58,6 +58,8 @@
 
 6. 已编写：幂等回执保留、结果墓碑与代次范围封口。slug：`agent-reliability-06-idempotency-retention`。用 Python 标准库、SQLite 事务和真实子进程验证清理后的迟到重复、保留摘要但过期结果、原子封口清理及崩溃恢复；明确拒绝合法旧工作、新代次改键不提供全局去重，以及可信输入与生产授权边界。不冒充 TTL、外部 API、磁盘容量、跨节点或断电测试；发布仍须完整 CI 与上线核验。
 
+7. 已编写：业务状态版本前置条件与过期计划。slug：`agent-reliability-07-state-preconditions`。以合成名额调拨、Python 标准库、SQLite 和真实子进程，验证双资源版本检查与写入原子性、幂等回执优先、ABA、业务拒绝记忆、崩溃恢复及遗漏依赖反例；明确严格版本契约与余额不变量不同，不冒充授权、跨服务原子性或真实模型规划。发布仍须完整 CI 与上线核验。
+
 本系列注册为 `topicCluster: agent-reliability`、`topicId: agent-reliability-<数字>`。RAG 第六篇的真实生成与细粒度审计条件保持待满足，不用本系列实验冒充 RAG 输出评测。候选题须先具备实质证据再写作。
 
 ## 发布检查

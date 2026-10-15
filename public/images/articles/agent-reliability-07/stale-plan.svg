@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="820" viewBox="0 0 1080 820" role="img" aria-labelledby="title desc">
+<title id="title">只执行一次，也可能执行过期计划</title><desc id="desc">合成名额调拨：计划读完状态，执行之前，另一笔写入先到了</desc>
+<rect width="1080" height="820" fill="white"/>
+<g font-family="Noto Sans CJK SC, sans-serif">
+<text x="28" y="54" fill="#1d4ed8" font-size="40" font-weight="700">只执行一次，也可能执行过期计划</text>
+<text x="28" y="108" fill="#64748b" font-size="30" font-weight="400">合成名额调拨：计划读完状态，执行之前，另一笔写入先到了</text>
+<rect x="28" y="155" width="488" height="220" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="50" y="203" fill="#1e40af" font-size="32" font-weight="700">计划看见的状态</text>
+<text x="50" y="253" fill="#334155" font-size="30" font-weight="400">A：10 个名额 / 版本 1</text>
+<text x="50" y="299" fill="#334155" font-size="30" font-weight="400">B：0 个名额 / 版本 1</text>
+<text x="50" y="345" fill="#334155" font-size="30" font-weight="400">决定：从 A 调 3 个给 B</text>
+<rect x="564" y="155" width="488" height="220" rx="18" fill="#ecfeff" stroke="#67e8f9" stroke-width="2"/>
+<text x="586" y="203" fill="#1e40af" font-size="32" font-weight="700">另一笔业务先提交</text>
+<text x="586" y="253" fill="#334155" font-size="30" font-weight="400">B 增加 2 个名额</text>
+<text x="586" y="299" fill="#334155" font-size="30" font-weight="400">B 版本从 1 变为 2</text>
+<text x="586" y="345" fill="#334155" font-size="30" font-weight="400">旧计划的依据已变化</text>
+<rect x="28" y="413" width="488" height="240" rx="18" fill="#fff1f2" stroke="#fda4af" stroke-width="2"/>
+<text x="50" y="461" fill="#1e40af" font-size="32" font-weight="700">事务外检查，仍照办</text>
+<text x="50" y="511" fill="#334155" font-size="30" font-weight="400">旧请求第一次到达</text>
+<text x="50" y="557" fill="#334155" font-size="30" font-weight="400">业务仍然执行一次</text>
+<text x="50" y="603" fill="#334155" font-size="30" font-weight="400">结果：A = 7，B = 5</text>
+<rect x="564" y="413" width="488" height="240" rx="18" fill="#ecfeff" stroke="#67e8f9" stroke-width="2"/>
+<text x="586" y="461" fill="#1e40af" font-size="32" font-weight="700">版本前置条件：先拒绝</text>
+<text x="586" y="511" fill="#334155" font-size="30" font-weight="400">预期 B 版本 1，实际 2</text>
+<text x="586" y="557" fill="#334155" font-size="30" font-weight="400">返回 stale，不调拨</text>
+<text x="586" y="603" fill="#334155" font-size="30" font-weight="400">结果：A = 10，B = 2</text>
+<rect x="28" y="708" width="1024" height="88" rx="14" fill="#fef9c3" stroke="#facc15"/>
+<text x="48" y="751" fill="#713f12" font-size="30" font-weight="500">幂等识别重复；版本前置条件识别已过期的业务依据</text>
+</g></svg>
