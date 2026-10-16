@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1280" viewBox="0 0 540 1280" role="img" aria-labelledby="title desc"><title id="title">消费与业务回执一起提交</title><desc id="desc">移动版：先查回执，后查审批，原子消费</desc><rect width="540" height="1280" fill="#fff"/><g font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif">
+<text x="28" y="58" font-size="32" font-weight="700" fill="#1d4ed8">消费与业务回执一起提交</text>
+<text x="28" y="101" font-size="30" font-weight="400" fill="#475569">单个本地 SQLite 写事务</text>
+<rect x="28" y="135" width="484" height="190" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="52" y="179" font-size="30" font-weight="700" fill="#1d4ed8">① 先查回执</text>
+<text x="52" y="223" font-size="30" font-weight="400" fill="#475569">同一审批与计划 → 返回历史</text>
+<text x="52" y="263" font-size="30" font-weight="400" fill="#475569">改变审批或计划 → conflict</text>
+<path d="M270 330 v36 m-8 -8 l8 8 8 -8" fill="none" stroke="#64748b" stroke-width="3"/>
+<rect x="28" y="385" width="484" height="222" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="52" y="429" font-size="30" font-weight="700" fill="#1d4ed8">② 新操作才检查审批</text>
+<text x="52" y="473" font-size="30" font-weight="400" fill="#475569">核对操作 ID + 计划摘要</text>
+<text x="52" y="513" font-size="30" font-weight="400" fill="#475569">状态 active，now &lt; expires</text>
+<text x="52" y="553" font-size="30" font-weight="400" fill="#475569">通过后消费这一次处理机会</text>
+<path d="M270 613 v36 m-8 -8 l8 8 8 -8" fill="none" stroke="#64748b" stroke-width="3"/>
+<rect x="28" y="670" width="484" height="220" rx="18" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="2"/>
+<text x="52" y="714" font-size="30" font-weight="700" fill="#047857">③ 业务检查与终态记录</text>
+<text x="52" y="758" font-size="30" font-weight="400" fill="#475569">成功 → 效果 + applied 回执</text>
+<text x="52" y="798" font-size="30" font-weight="400" fill="#475569">业务拒绝 → 同样消费并记忆</text>
+<text x="52" y="838" font-size="30" font-weight="400" fill="#475569">所有更改一起提交</text>
+<rect x="28" y="925" width="484" height="150" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="52" y="969" font-size="30" font-weight="700" fill="#1d4ed8">进程退出后的两种恢复</text>
+<text x="52" y="1013" font-size="30" font-weight="400" fill="#475569">提交前全回滚；提交后重放</text>
+<rect x="28" y="1110" width="484" height="130" rx="18" fill="#fffbeb" stroke="#fcd34d" stroke-width="2"/>
+<text x="52" y="1154" font-size="30" font-weight="700" fill="#92400e">撤销不能倒带</text>
+<text x="52" y="1198" font-size="30" font-weight="400" fill="#475569">已消费的决定，只能读历史</text>
+</g></svg>
