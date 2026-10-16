@@ -168,7 +168,9 @@
     "test:october14-content": "node scripts/tests/test-october14-content.mjs",
     "test:agent-retention": "python3 public/examples/agent-reliability-06/test_retention.py && python3 public/examples/agent-reliability-06/run_experiment.py --check",
     "test:october15-content": "node scripts/tests/test-october15-content.mjs",
-    "test:agent-preconditions": "python3 public/examples/agent-reliability-07/test_preconditions.py && python3 public/examples/agent-reliability-07/run_experiment.py --check"
+    "test:agent-preconditions": "python3 public/examples/agent-reliability-07/test_preconditions.py && python3 public/examples/agent-reliability-07/run_experiment.py --check",
+    "test:october16-content": "node scripts/tests/test-october16-content.mjs",
+    "test:agent-approval": "python3 public/examples/agent-reliability-08/test_approval.py && python3 public/examples/agent-reliability-08/run_experiment.py --check"
   },
   "dependencies": {
     "contentlayer2": "^0.5.8",

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="860" viewBox="0 0 1080 860" role="img" aria-labelledby="title desc"><title id="title">消费、业务结果、回执一起提交</title><desc id="desc">一个本地SQLite事务；先查历史，再处理新决定</desc><rect width="1080" height="860" fill="#fff"/><g font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif">
+<text x="40" y="62" font-size="38" font-weight="700" fill="#1d4ed8">消费、业务结果、回执：一起提交</text>
+<text x="40" y="108" font-size="27" font-weight="400" fill="#475569">单个本地 SQLite 文件 · BEGIN IMMEDIATE</text>
+<rect x="40" y="145" width="1000" height="135" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="64" y="189" font-size="28" font-weight="700" fill="#1d4ed8">① 先查操作回执</text>
+<text x="64" y="233" font-size="27" font-weight="400" fill="#475569">同一审批与计划 → 返回历史；换审批或换计划 → conflict</text>
+<path d="M540 287 v36 m-8 -8 l8 8 8 -8" fill="none" stroke="#64748b" stroke-width="3"/>
+<rect x="40" y="340" width="480" height="210" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="64" y="384" font-size="28" font-weight="700" fill="#1d4ed8">② 新操作才检查审批</text>
+<text x="64" y="428" font-size="27" font-weight="400" fill="#475569">操作 ID 与计划摘要匹配</text>
+<text x="64" y="468" font-size="27" font-weight="400" fill="#475569">状态 active，逻辑 now &lt; expires</text>
+<text x="64" y="508" font-size="27" font-weight="400" fill="#475569">通过后消费这一次处理机会</text>
+<rect x="560" y="340" width="480" height="210" rx="18" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="2"/>
+<text x="584" y="384" font-size="28" font-weight="700" fill="#047857">③ 处理业务，保存终态</text>
+<text x="584" y="428" font-size="27" font-weight="400" fill="#475569">检查版本、余额与整数边界</text>
+<text x="584" y="468" font-size="27" font-weight="400" fill="#475569">成功：业务效果 + applied 回执</text>
+<text x="584" y="508" font-size="27" font-weight="400" fill="#475569">拒绝：消费审批 + 拒绝回执</text>
+<text x="40" y="603" font-size="28" font-weight="700" fill="#be123c">提交前退出</text>
+<text x="40" y="647" font-size="27" font-weight="400" fill="#475569">消费、业务、回执全部回滚</text>
+<text x="560" y="603" font-size="28" font-weight="700" fill="#047857">提交后退出</text>
+<text x="560" y="647" font-size="27" font-weight="400" fill="#475569">重试读取历史，不再执行业务</text>
+<rect x="40" y="690" width="1000" height="128" rx="18" fill="#fffbeb" stroke="#fcd34d" stroke-width="2"/>
+<text x="64" y="734" font-size="28" font-weight="700" fill="#92400e">撤销只阻止尚未消费的新执行</text>
+<text x="64" y="778" font-size="27" font-weight="400" fill="#475569">执行先提交 → consumed；撤销不能倒带，也不阻止历史重放</text>
+</g></svg>

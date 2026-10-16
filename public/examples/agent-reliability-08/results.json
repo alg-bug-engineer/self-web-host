@@ -1,0 +1,417 @@
+{
+  "after_commit": {
+    "exit": 83,
+    "recovered": {
+      "approvals": {
+        "grant-1": "consumed"
+      },
+      "effects": 1,
+      "receipts": 1,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "rev": 2
+        },
+        "B": {
+          "quota": 3,
+          "rev": 2
+        },
+        "C": {
+          "quota": 0,
+          "rev": 1
+        }
+      }
+    },
+    "retry": {
+      "result": {
+        "status": "applied"
+      },
+      "status": "replayed"
+    },
+    "state": {
+      "approvals": {
+        "grant-1": "consumed"
+      },
+      "effects": 1,
+      "receipts": 1,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "rev": 2
+        },
+        "B": {
+          "quota": 3,
+          "rev": 2
+        },
+        "C": {
+          "quota": 0,
+          "rev": 1
+        }
+      }
+    }
+  },
+  "after_consume": {
+    "exit": 81,
+    "recovered": {
+      "approvals": {
+        "grant-1": "active"
+      },
+      "effects": 0,
+      "receipts": 0,
+      "resources": {
+        "A": {
+          "quota": 10,
+          "rev": 1
+        },
+        "B": {
+          "quota": 0,
+          "rev": 1
+        },
+        "C": {
+          "quota": 0,
+          "rev": 1
+        }
+      }
+    },
+    "retry": {
+      "result": {
+        "status": "applied"
+      },
+      "status": "completed"
+    },
+    "state": {
+      "approvals": {
+        "grant-1": "consumed"
+      },
+      "effects": 1,
+      "receipts": 1,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "rev": 2
+        },
+        "B": {
+          "quota": 3,
+          "rev": 2
+        },
+        "C": {
+          "quota": 0,
+          "rev": 1
+        }
+      }
+    }
+  },
+  "before_commit": {
+    "exit": 82,
+    "recovered": {
+      "approvals": {
+        "grant-1": "active"
+      },
+      "effects": 0,
+      "receipts": 0,
+      "resources": {
+        "A": {
+          "quota": 10,
+          "rev": 1
+        },
+        "B": {
+          "quota": 0,
+          "rev": 1
+        },
+        "C": {
+          "quota": 0,
+          "rev": 1
+        }
+      }
+    },
+    "retry": {
+      "result": {
+        "status": "applied"
+      },
+      "status": "completed"
+    },
+    "state": {
+      "approvals": {
+        "grant-1": "consumed"
+      },
+      "effects": 1,
+      "receipts": 1,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "rev": 2
+        },
+        "B": {
+          "quota": 3,
+          "rev": 2
+        },
+        "C": {
+          "quota": 0,
+          "rev": 1
+        }
+      }
+    }
+  },
+  "changed_intent": {
+    "execution": {
+      "status": "approval_mismatch"
+    },
+    "state": {
+      "approvals": {
+        "grant-1": "active"
+      },
+      "effects": 0,
+      "receipts": 0,
+      "resources": {
+        "A": {
+          "quota": 10,
+          "rev": 1
+        },
+        "B": {
+          "quota": 0,
+          "rev": 1
+        },
+        "C": {
+          "quota": 0,
+          "rev": 1
+        }
+      }
+    }
+  },
+  "concurrent_duplicates": {
+    "state": {
+      "approvals": {
+        "grant-1": "consumed"
+      },
+      "effects": 1,
+      "receipts": 1,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "rev": 2
+        },
+        "B": {
+          "quota": 3,
+          "rev": 2
+        },
+        "C": {
+          "quota": 0,
+          "rev": 1
+        }
+      }
+    },
+    "statuses": {
+      "completed": 1,
+      "replayed": 15
+    }
+  },
+  "expiration_boundary": {
+    "execution": {
+      "status": "approval_expired"
+    },
+    "state": {
+      "approvals": {
+        "grant-1": "active"
+      },
+      "effects": 0,
+      "receipts": 0,
+      "resources": {
+        "A": {
+          "quota": 10,
+          "rev": 1
+        },
+        "B": {
+          "quota": 0,
+          "rev": 1
+        },
+        "C": {
+          "quota": 0,
+          "rev": 1
+        }
+      }
+    }
+  },
+  "operation_binding": {
+    "execution": {
+      "status": "approval_mismatch"
+    },
+    "state": {
+      "approvals": {
+        "grant-1": "active"
+      },
+      "effects": 0,
+      "receipts": 0,
+      "resources": {
+        "A": {
+          "quota": 10,
+          "rev": 1
+        },
+        "B": {
+          "quota": 0,
+          "rev": 1
+        },
+        "C": {
+          "quota": 0,
+          "rev": 1
+        }
+      }
+    }
+  },
+  "replay_after_expiry": {
+    "first": {
+      "result": {
+        "status": "applied"
+      },
+      "status": "completed"
+    },
+    "retry": {
+      "result": {
+        "status": "applied"
+      },
+      "status": "replayed"
+    },
+    "revocation": "consumed",
+    "state": {
+      "approvals": {
+        "grant-1": "consumed"
+      },
+      "effects": 1,
+      "receipts": 1,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "rev": 2
+        },
+        "B": {
+          "quota": 3,
+          "rev": 2
+        },
+        "C": {
+          "quota": 0,
+          "rev": 1
+        }
+      }
+    }
+  },
+  "safe_revocation": {
+    "execution": {
+      "status": "approval_revoked"
+    },
+    "revocation": "revoked",
+    "state": {
+      "approvals": {
+        "grant-1": "revoked"
+      },
+      "effects": 0,
+      "receipts": 0,
+      "resources": {
+        "A": {
+          "quota": 10,
+          "rev": 1
+        },
+        "B": {
+          "quota": 0,
+          "rev": 1
+        },
+        "C": {
+          "quota": 0,
+          "rev": 1
+        }
+      }
+    }
+  },
+  "stale_replan": {
+    "first": {
+      "result": {
+        "status": "stale"
+      },
+      "status": "completed"
+    },
+    "new_approval": {
+      "result": {
+        "status": "applied"
+      },
+      "status": "completed"
+    },
+    "old_approval_new_id": {
+      "status": "approval_mismatch"
+    },
+    "same_id": {
+      "status": "conflict"
+    },
+    "state": {
+      "approvals": {
+        "grant-1": "consumed",
+        "grant-2": "consumed"
+      },
+      "effects": 1,
+      "receipts": 2,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "rev": 2
+        },
+        "B": {
+          "quota": 5,
+          "rev": 3
+        },
+        "C": {
+          "quota": 0,
+          "rev": 1
+        }
+      }
+    }
+  },
+  "unsafe_blanket_approval": {
+    "approved_amount": 3,
+    "executed_amount": 4,
+    "state": {
+      "approvals": {
+        "grant-1": "active"
+      },
+      "effects": 1,
+      "receipts": 0,
+      "resources": {
+        "A": {
+          "quota": 6,
+          "rev": 2
+        },
+        "B": {
+          "quota": 4,
+          "rev": 2
+        },
+        "C": {
+          "quota": 0,
+          "rev": 1
+        }
+      }
+    }
+  },
+  "unsafe_revocation": {
+    "execution": {
+      "status": "unsafe_applied"
+    },
+    "revocation": "revoked",
+    "state": {
+      "approvals": {
+        "grant-1": "revoked"
+      },
+      "effects": 1,
+      "receipts": 0,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "rev": 2
+        },
+        "B": {
+          "quota": 3,
+          "rev": 2
+        },
+        "C": {
+          "quota": 0,
+          "rev": 1
+        }
+      }
+    }
+  }
+}

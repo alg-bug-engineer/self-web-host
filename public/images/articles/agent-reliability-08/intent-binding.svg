@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="800" viewBox="0 0 1080 800" role="img" aria-labelledby="title desc"><title id="title">同意必须绑定到那一份计划</title><desc id="desc">合成名额调拨：批准三个，不等于允许执行当前计划</desc><rect width="1080" height="800" fill="#fff"/><g font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif">
+<text x="40" y="62" font-size="38" font-weight="700" fill="#1d4ed8">同意，必须绑定到那一份计划</text>
+<text x="40" y="108" font-size="27" font-weight="400" fill="#475569">合成实验 · 同样批准 3 个名额，两种执行入口</text>
+<rect x="40" y="145" width="1000" height="140" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="64" y="189" font-size="28" font-weight="700" fill="#1d4ed8">确认对象：job-1 / A → B / 数量 3 / 预期版本 A=1、B=1</text>
+<text x="64" y="233" font-size="27" font-weight="400" fill="#475569">审批记录绑定操作 ID 与完整计划摘要；它不是身份凭证</text>
+<path d="M290 290 v36 m-8 -8 l8 8 8 -8" fill="none" stroke="#64748b" stroke-width="3"/>
+<path d="M790 290 v36 m-8 -8 l8 8 8 -8" fill="none" stroke="#64748b" stroke-width="3"/>
+<rect x="40" y="342" width="480" height="232" rx="18" fill="#fff1f2" stroke="#fda4af" stroke-width="2"/>
+<text x="64" y="386" font-size="28" font-weight="700" fill="#be123c">错误：只保存 approved=true</text>
+<text x="64" y="430" font-size="27" font-weight="400" fill="#475569">随后将数量改成 4</text>
+<text x="64" y="470" font-size="27" font-weight="400" fill="#475569">执行当前计划，不核对确认对象</text>
+<text x="64" y="510" font-size="27" font-weight="400" fill="#475569">实跑：A=6，B=4；效果 1 条</text>
+<rect x="560" y="342" width="480" height="232" rx="18" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="2"/>
+<text x="584" y="386" font-size="28" font-weight="700" fill="#047857">正确：核对 op + digest</text>
+<text x="584" y="430" font-size="27" font-weight="400" fill="#475569">随后将数量改成 4</text>
+<text x="584" y="470" font-size="27" font-weight="400" fill="#475569">返回 approval_mismatch</text>
+<text x="584" y="510" font-size="27" font-weight="400" fill="#475569">实跑：A=10，B=0；效果 0 条</text>
+<rect x="40" y="615" width="1000" height="130" rx="18" fill="#fffbeb" stroke="#fcd34d" stroke-width="2"/>
+<text x="64" y="659" font-size="28" font-weight="700" fill="#92400e">改计划，就是另一项决定</text>
+<text x="64" y="703" font-size="27" font-weight="400" fill="#475569">新操作 ID 也不能刷新旧审批；需要独立确认新的计划</text>
+</g></svg>
