@@ -62,6 +62,8 @@
 
 8. 已编写：人工批准与精确意图绑定。slug：`agent-reliability-08-intent-bound-approvals`。通过可信本地审批记录、合成名额调拨、SQLite 事务与真实进程退出，验证摘要绑定、撤销与到期、单次消费、终态回执重放及批准后计划变更；明确本地批准输入不提供身份认证、远端授权或跨服务原子性。发布仍须完整 CI 与上线核验。
 
+9. 已编写：货币预算的原子预留与未知账单对账。slug：`agent-reliability-09-monetary-budget-reservations`。以 Python 标准库、SQLite、真实并发进程和崩溃点，验证可信费用上界预留、未知结果保留占额、终态账单幂等结算及超界冻结；区分本地准入约束与外部计费保证，不调用付费工具或真实账单 API。发布仍须完整 CI 与上线核验。
+
 本系列注册为 `topicCluster: agent-reliability`、`topicId: agent-reliability-<数字>`。RAG 第六篇的真实生成与细粒度审计条件保持待满足，不用本系列实验冒充 RAG 输出评测。候选题须先具备实质证据再写作。
 
 ## 发布检查

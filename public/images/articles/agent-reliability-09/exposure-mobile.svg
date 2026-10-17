@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1160" viewBox="0 0 540 1160" role="img" aria-labelledby="title desc">
+<title id="title">钱没扣，额度先占住</title><desc id="desc">合成 USD 美分|A / B 是两种互斥情况</desc>
+<rect width="540" height="1160" fill="white"/>
+<style>text{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif}</style>
+<text x="30" y="58" font-size="34" fill="#1458a5" font-weight="700">钱没扣，额度先占住</text>
+<text x="30" y="108" font-size="30" fill="#64748b" font-weight="400">合成 USD 美分</text>
+<text x="30" y="150" font-size="30" fill="#64748b" font-weight="400">A / B 是两种互斥情况</text>
+<rect x="24" y="200" width="492" height="232.66666666666666" rx="18" fill="#eff6ff" stroke="#b9cddd" stroke-width="2"/>
+<text x="44" y="248" font-size="32" fill="#1458a5" font-weight="700">起点：预留 60</text>
+<text x="44" y="300" font-size="30" fill="#334155" font-weight="400">总预算 100 美分</text>
+<text x="44" y="344" font-size="30" fill="#334155" font-weight="400">未结算占用 60</text>
+<text x="44" y="388" font-size="30" fill="#334155" font-weight="400">可用额度 40</text>
+<rect x="24" y="488.66666666666663" width="492" height="232.66666666666666" rx="18" fill="#eafaf7" stroke="#b9cddd" stroke-width="2"/>
+<text x="44" y="536.6666666666666" font-size="32" fill="#1458a5" font-weight="700">分支 A：已核清</text>
+<text x="44" y="588.6666666666666" font-size="30" fill="#334155" font-weight="400">最终费用 20</text>
+<text x="44" y="632.6666666666666" font-size="30" fill="#334155" font-weight="400">只释放差额 40</text>
+<text x="44" y="676.6666666666666" font-size="30" fill="#334155" font-weight="400">可用额度 80</text>
+<rect x="24" y="777.3333333333333" width="492" height="232.66666666666666" rx="18" fill="#fff1f2" stroke="#b9cddd" stroke-width="2"/>
+<text x="44" y="825.3333333333333" font-size="32" fill="#1458a5" font-weight="700">分支 B：未核清</text>
+<text x="44" y="877.3333333333333" font-size="30" fill="#334155" font-weight="400">超时 ≠ 免费</text>
+<text x="44" y="921.3333333333333" font-size="30" fill="#334155" font-weight="400">仍按上界占 60</text>
+<text x="44" y="965.3333333333333" font-size="30" fill="#334155" font-weight="400">查清前不能释放</text>
+<rect x="24" y="1045" width="492" height="90" rx="14" fill="#fff7d6" stroke="#ead69a"/>
+<text x="40" y="1083" font-size="30" fill="#6b5520" font-weight="400">只释放已核清的差额</text>
+<text x="40" y="1120" font-size="30" fill="#6b5520" font-weight="400">缺账单不代表免费</text>
+</svg>

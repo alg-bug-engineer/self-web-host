@@ -170,7 +170,9 @@
     "test:october15-content": "node scripts/tests/test-october15-content.mjs",
     "test:agent-preconditions": "python3 public/examples/agent-reliability-07/test_preconditions.py && python3 public/examples/agent-reliability-07/run_experiment.py --check",
     "test:october16-content": "node scripts/tests/test-october16-content.mjs",
-    "test:agent-approval": "python3 public/examples/agent-reliability-08/test_approval.py && python3 public/examples/agent-reliability-08/run_experiment.py --check"
+    "test:agent-approval": "python3 public/examples/agent-reliability-08/test_approval.py && python3 public/examples/agent-reliability-08/run_experiment.py --check",
+    "test:october17-content": "node scripts/tests/test-october17-content.mjs",
+    "test:agent-monetary-budgets": "python3 public/examples/agent-reliability-09/test_budget.py && python3 public/examples/agent-reliability-09/run_experiment.py --check"
   },
   "dependencies": {
     "contentlayer2": "^0.5.8",
