@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1190" viewBox="0 0 540 1190" role="img" aria-labelledby="title desc">
+<title id="title">信号变强，先别急着奖励</title><desc id="desc">原创反馈机制图。观察信号后加入载体背景与非目标对照，再决定如何修改方案；对照不构成完整验证。</desc>
+<rect width="540" height="1190" fill="white"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 Z" fill="#567a96"/></marker></defs>
+<g font-family="Noto Sans CJK SC, sans-serif">
+<text x="30" y="60" font-size="38" fill="#1762aa" font-weight="700">信号变强</text>
+<text x="30" y="110" font-size="38" fill="#1762aa" font-weight="700">先别急着奖励</text>
+<text x="30" y="160" font-size="30" fill="#677888">反馈要能否定当前解释</text>
+<rect x="25" y="205" width="490" height="160" rx="20" fill="#eaf3ff" stroke="#9bbde5" stroke-width="2"/>
+<text x="50" y="252" font-size="32" fill="#1762aa" font-weight="700">观察</text>
+<text x="50" y="302" font-size="32" fill="#27384b">有东西留下来了</text>
+<text x="50" y="344" font-size="30" fill="#27384b">这还不是确认目标命中</text>
+<path d="M270,375 L270,410" fill="none" stroke="#567a96" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="25" y="430" width="490" height="245" rx="20" fill="#e7f7f4" stroke="#8bc8bc" stroke-width="2"/>
+<text x="50" y="480" font-size="30" fill="#1762aa" font-weight="700">加入能拆穿好消息的对照</text>
+<text x="50" y="535" font-size="32" fill="#27384b">载体本身有响应吗？</text>
+<text x="50" y="590" font-size="32" fill="#27384b">非目标也有响应吗？</text>
+<text x="50" y="645" font-size="32" fill="#27384b">哪些解释仍未排除？</text>
+<path d="M270,685 L270,720" fill="none" stroke="#567a96" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="25" y="740" width="490" height="175" rx="20" fill="#fff0ef" stroke="#e0adaa" stroke-width="2"/>
+<text x="50" y="790" font-size="32" fill="#1762aa" font-weight="700">再决定如何调整方案</text>
+<text x="50" y="845" font-size="32" fill="#27384b">保留失败与异常证据</text>
+<text x="50" y="890" font-size="32" fill="#27384b">不要只奖励原始高分</text>
+<rect x="25" y="965" width="490" height="170" rx="20" fill="#fff4cb" stroke="#eadc9c" stroke-width="2"/>
+<text x="50" y="1014" font-size="32" fill="#63532b" font-weight="700">对照缩小解释空间</text>
+<text x="50" y="1062" font-size="30" fill="#63532b">不保证排除所有误差</text>
+<text x="50" y="1110" font-size="30" fill="#63532b">机制示意 · 非操作流程</text>
+</g></svg>
