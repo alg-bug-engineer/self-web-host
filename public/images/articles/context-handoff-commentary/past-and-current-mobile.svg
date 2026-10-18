@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1260" viewBox="0 0 540 1260" role="img" aria-labelledby="title desc"><title id="title">交接之后，旧文档该站在哪里</title><desc id="desc">旧文档保留历史；当前职责需核实有效范围与来源；不知道时待核实，知道也不代表获准行动。</desc>
+<rect width="540" height="1260" fill="#fff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 Z" fill="#63829b"/></marker></defs>
+<g font-family="Noto Sans CJK SC, sans-serif">
+<text x="30" y="60" font-size="36" fill="#1762aa" font-weight="700">人交班了，信息也要交班</text>
+<text x="30" y="112" font-size="30" fill="#6b7785">原创机制示意 · 非产品架构</text>
+<rect x="30" y="150" width="480" height="170" rx="18" fill="#edf4fd" stroke="#9ebddd" stroke-width="2"/>
+<text x="52" y="197" font-size="32" fill="#1762aa" font-weight="700">旧文档：曾经由谁负责</text>
+<text x="52" y="246" font-size="30" fill="#28465c">保留出处与历史用途</text>
+<text x="52" y="290" font-size="30" fill="#28465c">不能直接当作现行安排</text>
+<path d="M270,330 L270,364" stroke="#63829b" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="30" y="380" width="480" height="228" rx="18" fill="#eaf8f5" stroke="#8ac2b7" stroke-width="2"/>
+<text x="52" y="427" font-size="32" fill="#1762aa" font-weight="700">另查现行职责</text>
+<text x="52" y="478" font-size="30" fill="#28465c">职责范围 · 生效时间</text>
+<text x="52" y="526" font-size="30" fill="#28465c">有权维护的来源</text>
+<text x="52" y="574" font-size="30" fill="#28465c">谁接手，也要说清楚</text>
+<text x="52" y="650" font-size="30" fill="#6b7785">核实结果：二选一</text>
+<rect x="30" y="667" width="480" height="124" rx="18" fill="#edf4fd" stroke="#9ebddd" stroke-width="2"/>
+<text x="52" y="714" font-size="31" fill="#1762aa" font-weight="700">可确认：作为派单候选</text>
+<text x="52" y="761" font-size="30" fill="#28465c">仍须检查本次行动授权</text>
+<rect x="30" y="812" width="480" height="124" rx="18" fill="#fff0ef" stroke="#dda6a2" stroke-width="2"/>
+<text x="52" y="859" font-size="31" fill="#a34540" font-weight="700">不可确认：保留待核实</text>
+<text x="52" y="906" font-size="30" fill="#28465c">不要用历史人名补空白</text>
+<rect x="30" y="975" width="480" height="124" rx="18" fill="#fff8d8" stroke="#d9c77a" stroke-width="2"/>
+<text x="52" y="1023" font-size="31" fill="#635523" font-weight="700">找到出处 ≠ 仍然有效</text>
+<text x="52" y="1071" font-size="31" fill="#635523" font-weight="700">知道职责 ≠ 获准行动</text>
+<text x="30" y="1160" font-size="30" fill="#6b7785">按任务授权读取必要信息</text>
+<text x="30" y="1206" font-size="30" fill="#6b7785">不要求开放全部私聊或人事资料</text>
+</g></svg>

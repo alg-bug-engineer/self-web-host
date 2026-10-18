@@ -64,6 +64,8 @@
 
 9. 已编写：货币预算的原子预留与未知账单对账。slug：`agent-reliability-09-monetary-budget-reservations`。以 Python 标准库、SQLite、真实并发进程和崩溃点，验证可信费用上界预留、未知结果保留占额、终态账单幂等结算及超界冻结；区分本地准入约束与外部计费保证，不调用付费工具或真实账单 API。发布仍须完整 CI 与上线核验。
 
+10. 已编写：多步流程的补偿状态机。slug：`agent-reliability-10-compensation-state-machine`。用三个独立本地 SQLite 文件、Python 标准库与真实进程退出验证明确拒绝后的定向释放、unknown 保留占用、补偿重放与并发恢复；按预留 ID 撤销，不覆盖其他流程的业务状态。合成资源预留，不冒充网络服务、生产 Saga 框架、跨库原子事务或自动授权。发布仍须完整 CI 与上线核验。
+
 本系列注册为 `topicCluster: agent-reliability`、`topicId: agent-reliability-<数字>`。RAG 第六篇的真实生成与细粒度审计条件保持待满足，不用本系列实验冒充 RAG 输出评测。候选题须先具备实质证据再写作。
 
 ## 发布检查
