@@ -62,6 +62,8 @@ jobs:
       - run: npm run test:october16-content
       - run: npm run test:agent-monetary-budgets
       - run: npm run test:october17-content
+      - run: npm run test:agent-compensation
+      - run: npm run test:october18-content
       - run: npm run test:daily-publications
       - run: npm run test:commentary
       - run: npm run test:operator-decision
