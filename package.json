@@ -174,7 +174,9 @@
     "test:october17-content": "node scripts/tests/test-october17-content.mjs",
     "test:agent-monetary-budgets": "python3 public/examples/agent-reliability-09/test_budget.py && python3 public/examples/agent-reliability-09/run_experiment.py --check",
     "test:agent-compensation": "python3 public/examples/agent-reliability-10/test_saga.py && python3 public/examples/agent-reliability-10/run_experiment.py --check",
-    "test:october18-content": "node scripts/tests/test-october18-content.mjs"
+    "test:october18-content": "node scripts/tests/test-october18-content.mjs",
+    "test:agent-ordered-inbox": "python3 public/examples/agent-reliability-11/test_ordered_events.py && python3 public/examples/agent-reliability-11/run_experiment.py --check && node scripts/tests/test-ordered-outbox-inbox.mjs",
+    "test:october19-content": "node scripts/tests/test-october19-content.mjs"
   },
   "dependencies": {
     "contentlayer2": "^0.5.8",
