@@ -1,0 +1,1544 @@
+{
+  "unsafe_dual_write": {
+    "exit": 81,
+    "relay": "idle",
+    "snapshot": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [],
+      "inbox": [],
+      "projections": [],
+      "effects": []
+    }
+  },
+  "unsafe_dedup_without_order": {
+    "view": [
+      2,
+      "confirmed",
+      3
+    ],
+    "effect_order": [
+      "released",
+      "reserved",
+      "confirmed"
+    ]
+  },
+  "ordered_process_delivery_3_1_2": {
+    "after_3": {
+      "applied": 0,
+      "stop": "gap"
+    },
+    "after_1": {
+      "applied": 1,
+      "stop": "gap"
+    },
+    "after_2": {
+      "applied": 2,
+      "stop": "idle"
+    },
+    "final": {
+      "flows": [
+        [
+          "A",
+          3,
+          "released",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          0
+        ],
+        [
+          "A2",
+          "A",
+          2,
+          0
+        ],
+        [
+          "A3",
+          "A",
+          3,
+          0
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "applied",
+          null
+        ],
+        [
+          "A2",
+          "A",
+          2,
+          "applied",
+          null
+        ],
+        [
+          "A3",
+          "A",
+          3,
+          "applied",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "A",
+          3,
+          "released",
+          3,
+          0
+        ]
+      ],
+      "effects": [
+        [
+          "A1",
+          "A",
+          1,
+          "reserved",
+          3
+        ],
+        [
+          "A2",
+          "A",
+          2,
+          "confirmed",
+          3
+        ],
+        [
+          "A3",
+          "A",
+          3,
+          "released",
+          3
+        ]
+      ]
+    }
+  },
+  "crash_producer_after_state": {
+    "exit": 73,
+    "before_recovery": {
+      "flows": [],
+      "outbox": [],
+      "inbox": [],
+      "projections": [],
+      "effects": []
+    },
+    "after_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "applied",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "A",
+          1,
+          "reserved",
+          3,
+          3
+        ]
+      ],
+      "effects": [
+        [
+          "A1",
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ]
+    }
+  },
+  "crash_producer_before_commit": {
+    "exit": 73,
+    "before_recovery": {
+      "flows": [],
+      "outbox": [],
+      "inbox": [],
+      "projections": [],
+      "effects": []
+    },
+    "after_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "applied",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "A",
+          1,
+          "reserved",
+          3,
+          3
+        ]
+      ],
+      "effects": [
+        [
+          "A1",
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ]
+    }
+  },
+  "crash_producer_after_commit": {
+    "exit": 73,
+    "before_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          0
+        ]
+      ],
+      "inbox": [],
+      "projections": [],
+      "effects": []
+    },
+    "after_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "applied",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "A",
+          1,
+          "reserved",
+          3,
+          3
+        ]
+      ],
+      "effects": [
+        [
+          "A1",
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ]
+    }
+  },
+  "crash_receive_before_commit": {
+    "exit": 73,
+    "before_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          0
+        ]
+      ],
+      "inbox": [],
+      "projections": [],
+      "effects": []
+    },
+    "after_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "applied",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "A",
+          1,
+          "reserved",
+          3,
+          3
+        ]
+      ],
+      "effects": [
+        [
+          "A1",
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ]
+    }
+  },
+  "crash_receive_after_commit": {
+    "exit": 73,
+    "before_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          0
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "pending",
+          null
+        ]
+      ],
+      "projections": [],
+      "effects": []
+    },
+    "after_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "applied",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "A",
+          1,
+          "reserved",
+          3,
+          3
+        ]
+      ],
+      "effects": [
+        [
+          "A1",
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ]
+    }
+  },
+  "crash_relay_before_ack_commit": {
+    "exit": 73,
+    "before_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          0
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "pending",
+          null
+        ]
+      ],
+      "projections": [],
+      "effects": []
+    },
+    "after_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "applied",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "A",
+          1,
+          "reserved",
+          3,
+          3
+        ]
+      ],
+      "effects": [
+        [
+          "A1",
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ]
+    }
+  },
+  "crash_relay_after_ack_commit": {
+    "exit": 73,
+    "before_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "pending",
+          null
+        ]
+      ],
+      "projections": [],
+      "effects": []
+    },
+    "after_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "applied",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "A",
+          1,
+          "reserved",
+          3,
+          3
+        ]
+      ],
+      "effects": [
+        [
+          "A1",
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ]
+    }
+  },
+  "crash_apply_after_projection": {
+    "exit": 73,
+    "before_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "pending",
+          null
+        ]
+      ],
+      "projections": [],
+      "effects": []
+    },
+    "after_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "applied",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "A",
+          1,
+          "reserved",
+          3,
+          3
+        ]
+      ],
+      "effects": [
+        [
+          "A1",
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ]
+    }
+  },
+  "crash_apply_before_commit": {
+    "exit": 73,
+    "before_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "pending",
+          null
+        ]
+      ],
+      "projections": [],
+      "effects": []
+    },
+    "after_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "applied",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "A",
+          1,
+          "reserved",
+          3,
+          3
+        ]
+      ],
+      "effects": [
+        [
+          "A1",
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ]
+    }
+  },
+  "crash_apply_after_commit": {
+    "exit": 73,
+    "before_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "applied",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "A",
+          1,
+          "reserved",
+          3,
+          3
+        ]
+      ],
+      "effects": [
+        [
+          "A1",
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ]
+    },
+    "after_recovery": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "applied",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "A",
+          1,
+          "reserved",
+          3,
+          3
+        ]
+      ],
+      "effects": [
+        [
+          "A1",
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ]
+    }
+  },
+  "accepted_is_not_applied": {
+    "flows": [
+      [
+        "A",
+        3,
+        "released",
+        3
+      ]
+    ],
+    "outbox": [
+      [
+        "A1",
+        "A",
+        1,
+        1
+      ],
+      [
+        "A2",
+        "A",
+        2,
+        1
+      ],
+      [
+        "A3",
+        "A",
+        3,
+        1
+      ]
+    ],
+    "inbox": [
+      [
+        "A1",
+        "A",
+        1,
+        "pending",
+        null
+      ],
+      [
+        "A2",
+        "A",
+        2,
+        "pending",
+        null
+      ],
+      [
+        "A3",
+        "A",
+        3,
+        "pending",
+        null
+      ]
+    ],
+    "projections": [],
+    "effects": []
+  },
+  "gap_isolated_by_flow": {
+    "processing": {
+      "A": {
+        "applied": 1,
+        "stop": "gap"
+      },
+      "B": {
+        "applied": 3,
+        "stop": "idle"
+      }
+    },
+    "snapshot": {
+      "flows": [
+        [
+          "A",
+          3,
+          "released",
+          3
+        ],
+        [
+          "B",
+          3,
+          "released",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          0
+        ],
+        [
+          "A2",
+          "A",
+          2,
+          0
+        ],
+        [
+          "A3",
+          "A",
+          3,
+          0
+        ],
+        [
+          "B1",
+          "B",
+          1,
+          0
+        ],
+        [
+          "B2",
+          "B",
+          2,
+          0
+        ],
+        [
+          "B3",
+          "B",
+          3,
+          0
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "applied",
+          null
+        ],
+        [
+          "A3",
+          "A",
+          3,
+          "pending",
+          null
+        ],
+        [
+          "B1",
+          "B",
+          1,
+          "applied",
+          null
+        ],
+        [
+          "B2",
+          "B",
+          2,
+          "applied",
+          null
+        ],
+        [
+          "B3",
+          "B",
+          3,
+          "applied",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "A",
+          1,
+          "reserved",
+          3,
+          3
+        ],
+        [
+          "B",
+          3,
+          "released",
+          3,
+          0
+        ]
+      ],
+      "effects": [
+        [
+          "A1",
+          "A",
+          1,
+          "reserved",
+          3
+        ],
+        [
+          "B1",
+          "B",
+          1,
+          "reserved",
+          3
+        ],
+        [
+          "B2",
+          "B",
+          2,
+          "confirmed",
+          3
+        ],
+        [
+          "B3",
+          "B",
+          3,
+          "released",
+          3
+        ]
+      ]
+    }
+  },
+  "schema_upgrade_replays_original": {
+    "old_handler": {
+      "applied": 1,
+      "stop": "unsupported_schema"
+    },
+    "blocked": {
+      "flows": [
+        [
+          "A",
+          3,
+          "released",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ],
+        [
+          "A2",
+          "A",
+          2,
+          1
+        ],
+        [
+          "A3",
+          "A",
+          3,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "applied",
+          null
+        ],
+        [
+          "A2",
+          "A",
+          2,
+          "blocked",
+          "unsupported_schema"
+        ],
+        [
+          "A3",
+          "A",
+          3,
+          "pending",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "A",
+          1,
+          "reserved",
+          3,
+          3
+        ]
+      ],
+      "effects": [
+        [
+          "A1",
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ]
+    },
+    "new_handler": {
+      "applied": 2,
+      "stop": "idle"
+    },
+    "final": {
+      "flows": [
+        [
+          "A",
+          3,
+          "released",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ],
+        [
+          "A2",
+          "A",
+          2,
+          1
+        ],
+        [
+          "A3",
+          "A",
+          3,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "applied",
+          null
+        ],
+        [
+          "A2",
+          "A",
+          2,
+          "applied",
+          null
+        ],
+        [
+          "A3",
+          "A",
+          3,
+          "applied",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "A",
+          3,
+          "released",
+          3,
+          0
+        ]
+      ],
+      "effects": [
+        [
+          "A1",
+          "A",
+          1,
+          "reserved",
+          3
+        ],
+        [
+          "A2",
+          "A",
+          2,
+          "confirmed",
+          3
+        ],
+        [
+          "A3",
+          "A",
+          3,
+          "released",
+          3
+        ]
+      ]
+    }
+  },
+  "identity_and_sequence_conflicts": {
+    "duplicate": "duplicate",
+    "changed_body": "id_conflict",
+    "same_sequence_new_id": "sequence_conflict",
+    "snapshot": {
+      "flows": [
+        [
+          "A",
+          3,
+          "released",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          0
+        ],
+        [
+          "A2",
+          "A",
+          2,
+          0
+        ],
+        [
+          "A3",
+          "A",
+          3,
+          0
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "pending",
+          null
+        ]
+      ],
+      "projections": [],
+      "effects": []
+    }
+  },
+  "default_relay_conflict_can_starve": {
+    "default_relay_results": [
+      "id_conflict",
+      "id_conflict",
+      "id_conflict"
+    ],
+    "before_selected_relay": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ],
+        [
+          "B",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          0
+        ],
+        [
+          "B1",
+          "B",
+          1,
+          0
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "pending",
+          null
+        ]
+      ],
+      "projections": [],
+      "effects": []
+    },
+    "selected_B": "accepted",
+    "final": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ],
+        [
+          "B",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          0
+        ],
+        [
+          "B1",
+          "B",
+          1,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "pending",
+          null
+        ],
+        [
+          "B1",
+          "B",
+          1,
+          "applied",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "B",
+          1,
+          "reserved",
+          3,
+          3
+        ]
+      ],
+      "effects": [
+        [
+          "B1",
+          "B",
+          1,
+          "reserved",
+          3
+        ]
+      ]
+    }
+  },
+  "concurrent_advance": {
+    "answers": [
+      "committed",
+      "existing",
+      "existing",
+      "existing",
+      "existing",
+      "existing"
+    ],
+    "snapshot": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          0
+        ]
+      ],
+      "inbox": [],
+      "projections": [],
+      "effects": []
+    }
+  },
+  "concurrent_receive": {
+    "answers": [
+      "accepted",
+      "duplicate",
+      "duplicate",
+      "duplicate",
+      "duplicate",
+      "duplicate"
+    ],
+    "snapshot": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          0
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "pending",
+          null
+        ]
+      ],
+      "projections": [],
+      "effects": []
+    }
+  },
+  "concurrent_apply": {
+    "answers": [
+      "applied",
+      "idle",
+      "idle",
+      "idle",
+      "idle",
+      "idle"
+    ],
+    "snapshot": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          0
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "applied",
+          null
+        ]
+      ],
+      "projections": [
+        [
+          "A",
+          1,
+          "reserved",
+          3,
+          3
+        ]
+      ],
+      "effects": [
+        [
+          "A1",
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ]
+    }
+  },
+  "concurrent_relay": {
+    "workers": 6,
+    "all_statuses_allowed": true,
+    "snapshot": {
+      "flows": [
+        [
+          "A",
+          1,
+          "reserved",
+          3
+        ]
+      ],
+      "outbox": [
+        [
+          "A1",
+          "A",
+          1,
+          1
+        ]
+      ],
+      "inbox": [
+        [
+          "A1",
+          "A",
+          1,
+          "pending",
+          null
+        ]
+      ],
+      "projections": [],
+      "effects": []
+    }
+  }
+}

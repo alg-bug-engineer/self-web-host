@@ -1,0 +1,242 @@
+---
+title: "Agent 可靠执行实战（十一）：消息没丢也没重复，流程为什么走反了？"
+description: "用两个独立 SQLite 文件、真实进程退出与乱序投递，验证状态与 outbox 原子提交、持久 inbox、按流程连续序号应用和版本阻塞；区分收件确认、业务完成及外部副作用。"
+date: 2026-10-19
+author: 芝士AI吃鱼
+tags:
+  - Agent
+  - AI工程
+  - Transactional Outbox
+  - 消息顺序
+  - SQLite
+category: tech
+postType: article
+icon: robot
+published: true
+access: public
+topicId: agent-reliability-11
+topicCluster: agent-reliability
+---
+
+Agent 给一个合成流程排好了三步：预留、确认、释放。三条消息都有独立编号，接收端也认真查重。没有丢消息，没有重复写记录，最后却显示“已确认，占用三份资源”。
+
+问题不在它漏做了哪一步，而在它先释放，再预留，最后确认。每一步恰好做了一次，也可以把整件事做反。
+
+这是为实验设计的假设场景，不是作者亲历的生产事故。[第一篇](/blog/agent-reliability-01-outbox-idempotency)已经处理回执丢失与重复执行，[第十篇](/blog/agent-reliability-10-compensation-state-machine)把多步补偿保存成可恢复状态机。这一篇补上另一条接缝：**状态变化怎样可靠地产生事件；事件允许重发、乱序到达时，下游怎样只执行连续、合法的那一段。**
+
+资料核对日期为 2026 年 10 月 19 日，文章日期按上海自然日记录。实际运行的是 Python 标准库、两个独立 SQLite 文件、并发子进程和突然退出。流程、资源数量、消息与故障均为合成输入。没有调用模型、消息云服务、真实业务 API 或付费工具；下文的业务效果，是消费端同一 SQLite 文件里的状态与记录，不能解释为远端工具已经完成。
+
+## 1. 三个看起来像成功的词，需要三本不同的账
+
+先定义一个很小的业务协议。每个流程依次经过 new、reserved、confirmed、released；前三次状态变化分别生成序号 1、2、3。数量固定为 3，reserved 和 confirmed 时本地 held 为 3，released 时为 0。流程不能跳步、重开或临时改数量。
+
+生产端记录自己提交到了哪一步。消费端保存一份按事件推进的本地状态机：它不只关心最新状态，还要留下每一步合法执行的记录。两边暂时不一致是允许的，不能因为生产端已经 released，就假装消费端已经做完三步。
+
+这条链上有三种不同的进展：
+
+- committed：生产端状态和待投递事件已经一起提交
+- accepted：消费端已经持久保存事件，可以在重启后继续处理
+- applied：消费端完成了该事件对应的本地状态变化，执行记录与进度一起提交
+
+accepted 可能比 applied 早很久。例如第 3 条已经收下，第 2 条还没来；又或者第 2 条用了旧消费者不认识的格式。此时运输工作可以告一段落，业务处理仍未完成。
+
+这里没有 broker。relay 直接调用另一个本地数据库的收件函数，专门用来暴露两个独立提交域的边界。它不是某家队列产品的集成测试，也没有把本地函数返回值等同于所有消息中间件的确认语义。
+
+## 2. 先改状态，等一会儿再写消息，中间的空白谁负责
+
+最直接的写法是：先提交流程状态，再把事件放进 outbox。问题在“再”字上。如果第一次提交之后进程死了，状态已经前进，待发事件却从来没有出现。再勤快的 relay，也找不到一条不存在的待办。
+
+实验中的 unsafe_dual_write 真的向 producer.db 写入 A 流程的 reserved、序号 1、数量 3，提交后执行 os._exit(81)，不写 outbox。重新打开数据库，flow 有一行，outbox 是空表，relay 返回 idle。这是一次实际的本地双写失败；“空闲”在这里并不代表业务链条完整。
+
+安全入口 advance 把序号分配、状态更新和 outbox 插入放进同一个事务。它先检查事件 ID 的历史，再确认 expected_seq 和合法下一步，然后一起提交。提交前退出，两者都没有；提交后退出，两者都保留。发送端恢复不需要靠最后一行日志猜测是否应该补消息。
+
+[AWS 的 transactional outbox 模式说明](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html)讨论的正是业务写入与事件通知的双写问题，并提醒重复投递与事件顺序仍需处理。本文使用的是这一事务边界思想，没有使用该页的 AWS 部署样例，也不继承某种队列的投递保证。
+
+生产端的两张表如下。这是样例中的真实结构，不是只标名字的架构图：
+
+```sql
+CREATE TABLE flow(
+    flow_id TEXT PRIMARY KEY,
+    seq INTEGER NOT NULL,
+    state TEXT NOT NULL,
+    amount INTEGER NOT NULL
+);
+CREATE TABLE outbox(
+    event_id TEXT PRIMARY KEY,
+    flow_id TEXT NOT NULL,
+    seq INTEGER NOT NULL,
+    body TEXT NOT NULL,
+    accepted INTEGER NOT NULL DEFAULT 0 CHECK(accepted IN (0,1)),
+    UNIQUE(flow_id,seq)
+);
+```
+
+这不是“所有 SQL 都天然遵守业务规则”的声明。合法迁移、数量范围与序号边界由受控入口检查；直接修改数据库可以破坏协议。调用方与数据库维护者都被视为可信，代码没有生产身份认证、授权或租户隔离。
+
+相同事件 ID、相同正文再次提交返回 existing。即使流程已经走到第 3 步，也先读回第 1 步的历史，不把一次重试误当成新迁移。相同 ID 改数量、改流程、改格式版本则返回 conflict。新 ID 携带过期 expected_seq 返回 stale。样例只保留已提交迁移的事件，未把 stale 或 invalid_transition 保存为永久拒绝回执；不能把前几篇的另一种失败记忆契约默认为已经集成。
+
+## 3. 一个事件至少有三种身份，别拿时间戳凑数
+
+样例事件包含 event_id、flow_id、seq、kind、schema、payload 六个字段。第 1 条可写成：
+
+```json
+{
+  "event_id": "A1",
+  "flow_id": "A",
+  "seq": 1,
+  "kind": "reserved",
+  "schema": 1,
+  "payload": {"amount": 3}
+}
+```
+
+event_id 识别同一条不可变事件，flow_id 指明顺序属于哪条流程，seq 表示它在该流程已提交事件中的位置。三个字段各有作用：有事件 ID 不代表知道先后；有序号不代表两个不同 ID 可以抢占同一位置；不同流程的序号 1 也没有全球先后关系。
+
+序号在生产端写事务里分配，只在真正提交一条迁移时增加。它不是墙上时钟，不是模型步骤编号，也不是[第七篇](/blog/agent-reliability-07-state-preconditions)的业务快照版本或租约 fencing token。消费者需要的是一个完整、有连续定义的事件流。若上游序号包含其他订阅者专属事件，而本消费者只拿到其中一部分，它会把合法过滤误判成永久缺口。使用之前必须先约定序号的范围。
+
+本文的 ID 只有一个可信生产者命名空间。接入多个来源时，需要明确来源身份及其与事件 ID、流程 ID 的共同唯一性，不能直接把不同系统碰巧相同的 A1 当成一件事。删除旧流程后复用 A、回滚数据库到旧序号或更换生成规则，都需要另外的代次与迁移设计；样例没有实现。
+
+正文比较采用受限对象的排序键 JSON 序列化，保存并比较完整字符串。这里不涉及签名，也不声称是一套跨语言通用 JSON 规范化标准。传输入口只接受有界的标量字段与小型对象，不接受任意嵌套文档。即便如此，它仍没有恶意输入隔离与积压总量限制，不应直接暴露给不可信调用者。
+
+## 4. 收件箱敢回“收到了”，就得真的接住后面的责任
+
+消费端先执行 receive。它用同一个写事务检查两类冲突：event_id 已存在时，正文相同返回 duplicate，正文不同返回 id_conflict；该 ID 不存在，但 flow_id 与 seq 的组合被另一 ID 占用时，返回 sequence_conflict。只有没有冲突的新事件，才持久插入 pending。
+
+```sql
+CREATE TABLE inbox(
+    event_id TEXT PRIMARY KEY,
+    flow_id TEXT NOT NULL,
+    seq INTEGER NOT NULL,
+    body TEXT NOT NULL,
+    state TEXT NOT NULL DEFAULT 'pending'
+        CHECK(state IN ('pending','blocked','applied')),
+    reason TEXT,
+    UNIQUE(flow_id,seq)
+);
+```
+
+receive 提交后才能回复 accepted。relay 只对 accepted 或正文一致的 duplicate，在生产端另开事务写 accepted=1；冲突不会变成已送达。这两个提交之间没有共同按钮，所以消费端已经收到、发送端尚未记账的情况仍然会出现。恢复时允许重发同一事件，由 inbox 识别重复。
+
+样例故意没有实现 relay 租约。六个进程可能同时取出同一条记录；这会多做运输工作，但在本地收件契约成立时，不会多插一条 inbox。减少多余发送与保护消费结果是两件事，不能因为准备以后加调度锁，就先省掉接收端的重复检查。
+
+最容易被误读的结果是 accepted_is_not_applied：三条 outbox 的 accepted 都为 1，三条 inbox 都为 pending，projection 与 effect 仍然为空。它没有失败，也没有完成业务，只是完成了责任转移。消费端从此必须负责保存待办、调度处理、发现缺口和格式阻塞。若把 pending 当临时缓存清理，发送端未必会主动再送。
+
+本例一直保留 outbox 和 inbox，没有实现清理协议。生产系统若要删记录，需要回到[第六篇的保留与封口问题](/blog/agent-reliability-06-idempotency-retention)，分别确定重放窗口、恢复来源和墓碑，而不是看见 accepted=1 就把所有证据一起删掉。
+
+<ArticleDiagram src="/images/articles/agent-reliability-11/commit-boundaries.svg" mobileSrc="/images/articles/agent-reliability-11/commit-boundaries-mobile.svg" alt="生产端状态和outbox同事务提交；relay允许重发；消费端持久收件后确认，随后另一个本地事务才完成状态、执行记录和已应用标记" caption="accepted 是持久收件确认；applied 是消费端本地效果完成。两个数据库之间没有原子提交，收件和应用也不是同一个动作。" height={940} mobileHeight={1520} />
+
+## 5. 严格顺序不是“比旧版本大”，而是“正好等于下一步”
+
+消费者保存 projection.last_seq。应用时，它只查询当前流程的 last_seq + 1。第 3 条先来时，不能因为 3 大于 0 就直接执行。这个判断适合某些“只看最新快照”的业务，却不满足本文“每一步合法处理都要发生”的契约。
+
+实际应用入口中的查询是：
+
+```python
+row = c.execute(
+    'SELECT event_id,body,state FROM inbox WHERE flow_id=? AND seq=?',
+    (flow_id, seq + 1),
+).fetchone()
+```
+
+如果下一条不存在，但还有更大的已收事件，返回 gap，保存现状等待。下一条存在时，解析 schema、核对负载与合法迁移；通过后，在同一个事务中更新 projection、插入 effect、把 inbox 改为 applied。任何一步失败，整个事务回滚。
+
+这里的 effect 只是一条本地执行记录，projection.held 只是合成占用数。其 SQL 写入与 inbox 共享数据库，所以可以一起回滚。把其中一行换成“发送邮件”或“调用远端预留 API”，这个保证就失效了；你会重新遇到外部副作用已经发生、但本地 applied 尚未提交的问题，需要远端幂等、另一段 outbox 或结果对账协议。本文没有实现那条新链。
+
+这组实验真的让一个子进程准备投递第 1 条后暂停。父进程先投递第 3 条，尝试消费；放行子进程后再消费；最后投递第 2 条。Event 握手确保顺序，不靠 sleep 碰运气。结果为：
+
+| 到达阶段 | 本次应用条数 | 停止原因 | 已应用连续前缀 |
+| --- | --- | --- | --- |
+| 只收到第 3 条 | 0 | gap | 空 |
+| 再收到第 1 条 | 1 | gap | 1 |
+| 最后收到第 2 条 | 2 | idle | 1、2、3 |
+
+最终状态 released、last_seq=3、held=0，执行记录顺序为 reserved、confirmed、released。单元测试还穷举三条事件的六种到达排列，逐次收件和应用，都得到相同的本地终态及连续记录。
+
+错误对照同样运行 SQLite：它只按 ID 去重，按到达顺序覆盖本地状态。输入 3、1、2、3 后，最后一个重复 3 被正确忽略，最终却是 confirmed、last_seq=2、held=3。查重没有失效，它只是从来没承诺修复顺序。
+
+若事件是可交换的计数增量，或者业务只需要一个完整的最新快照，也许不需要本文这种严格连续处理。先决定哪些中间步骤必须发生，再选协议；不要为了“更可靠”无条件给所有通知加上永久等待缺口的成本。
+
+<ArticleDiagram src="/images/articles/agent-reliability-11/ordered-inbox.svg" mobileSrc="/images/articles/agent-reliability-11/ordered-inbox-mobile.svg" alt="事件按3、1、2到达时，先缓冲3，应用1后等待2，再依次应用2和3；缺口或未知格式阻止同流程推进，其他已收件流程可独立处理" caption="顺序按流程约束。图中另一流程可前进，指消费端应用隔离，不表示示例 relay 已有公平调度。" height={996} mobileHeight={1752} />
+
+## 6. 不认识第 2 条，把它移走就能继续吗
+
+另一组实验让生产者先发送 schema=1 的 reserved，随后用 schema=2 发送 confirmed 与 released。版本 1 的数量字段是 amount，版本 2 改成 units。两种格式都由样例生产者真实生成，但默认消费者只支持版本 1。
+
+收件入口只验证传输外壳，不因为自己暂时不认识 schema=2 就把消息内容丢掉。它把原事件持久保存，回复 accepted。应用入口走到第 2 条时，标记 blocked，reason=unsupported_schema，last_seq 保持 1；第 3 条继续 pending。
+
+这不是无成本的兼容方案。它让消费端接下了保管未知内容的责任，也可能形成长期积压。真实系统可以选择更严格的版本准入，但必须把“没接收”和“已接收、待升级”清楚地告诉上游，不能两边都以为对方会负责。
+
+实验随后启用同一文件里已经实现的版本 2 解码分支 support_v2=True。原来的第 2、3 条事件不改正文、不换 ID、不换序号，重新处理后两条都 applied，最终 released。这个参数只是受控的教学升级开关，不是从消息中执行代码，也不代表生产热升级流程已经完成。
+
+如果真正的问题是数据错误、未知动作或不合法迁移，单纯换一个处理器未必能解决。本例保留 invalid_payload、invalid_transition 等阻塞原因，没有“自动改一改消息再试”的入口。悄悄改同 ID 的正文会破坏身份契约，给错误事件换一个 ID 但占原序号也会冲突。
+
+把第 2 条丢到死信队列，然后把游标推进到 2，让第 3 条继续，等于增加了一条业务规则：“这一动作可以被跳过。”这需要业务与授权决定，不能只靠重试次数替人做。[Amazon SQS 的死信队列文档](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html)也提醒，要求操作精确顺序时，配合 FIFO 使用死信队列会破坏这一顺序。本文没有接入 SQS 或实现 DLQ；这里只用官方说明强调，隔离错误与保全业务顺序不是同一项保证。
+
+## 7. A 卡住，B 能不能走，要问清卡在哪一层
+
+消费端按 flow_id 分别维护连续前缀。实验给 A 投递 1、3，故意缺 2；给 B 投递完整 1、2、3。process_all 处理之后，A 停在 reserved、held=3，B 到达 released、held=0。A 的 gap 不会被当成全站暂停按钮。
+
+但不要把这个结果扩展成“整个投递系统都有公平性”。默认 relay 每次按 flow_id、seq 找第一条未确认事件。如果 A 的第一条在收件端遇到永久 id_conflict，它每次都会被重新选中，排在后面的 B 可能一直没有机会。
+
+我们把这个限制也做成了实际反例：先创建正确的 A1 与 B1 待发事件，再在消费端放入同 ID、不同正文的 A1。连续调用默认 relay 三次，三次都是 id_conflict，B1 仍未送达。显式选择 relay(root, 'B1') 后，B 才能收件并应用。
+
+这说明两件事。第一，不能把冲突随便标为 accepted 来“疏通队列”，否则隐瞒了未解决的数据分歧。第二，样例的按流程应用隔离不等于已实现公平派发。完整调度器还需要明确的分区、退避、隔离、告警与人工处理规则。本篇把选择 event_id 的入口留出来，但没有把它包装成生产级调度器。
+
+所有流程也仍然共享消费端 SQLite 的单写者能力。“B 可以继续”指协议没有要求 B 等待 A 的缺口，不代表不同流程可以同时写入这个文件，更不代表故障、磁盘容量或锁等待已经相互隔离。
+
+## 8. 十个退出点，检查的不只是最后一个状态
+
+样例在十个位置让真实子进程执行 os._exit(73)，然后重新打开数据库检查。前后结果都保存在 results.json，不能只看恢复后“好像成功了”。
+
+| 退出边界 | 恢复前可以看到什么 | 继续执行依靠什么 |
+| --- | --- | --- |
+| 改完生产状态、还没插 outbox | 两张表都未提交 | 重新提交同一迁移 |
+| 插完 outbox、尚未提交 | 状态和事件都未提交 | 同上 |
+| 生产端已经提交 | 状态和事件都存在 | 读历史，再投递 |
+| inbox 插入后、收件提交前 | inbox 不存在 | 重发后重新收件 |
+| 收件提交后、确认返回前 | inbox 存在，发送端未确认 | 相同正文重发得到 duplicate |
+| 发送端确认写入后、提交前 | inbox 存在，accepted 仍为 0 | 同上 |
+| 发送端确认提交后 | accepted 为 1，inbox 尚待应用 | 消费端继续处理 |
+| 改完 projection、写 effect 前 | projection 与 effect 都未提交 | 从 pending 重做本地事务 |
+| 已写 effect 和 applied、提交前 | 本次应用整体未提交 | 同上 |
+| 应用提交后、返回前 | 状态、effect、applied 都存在 | 游标已前进，不再执行同一步 |
+
+十组在恢复后都只有一条 A1 的 effect，projection 为 reserved、last_seq=1、held=3。注意，这些退出场景只推进第一步，用来检查边界；它们不是十个完整三步业务，也不是十次生产事故。
+
+测试还用触发器分别拒绝 outbox 和 effect 插入。前者检查生产状态不会单独留下，后者检查消费端不会只改 projection 却缺少执行记录。SQL 错误直接传播，不能伪装成 accepted 或 applied。
+
+并发测试分别让六个真实进程争用生产迁移、收件、应用与 relay。相同事件生产只提交一条，收件只有一条，应用只有一条效果。不同新事件 ID 竞争同一流程的 expected_seq=0 时，一条 committed，其他五条 stale。relay 的 accepted、duplicate、idle 数量随调度变化，冻结结果只检查允许的返回集合与最终记录，不固定哪个进程获胜，也不拿耗时当性能结论。
+
+[SQLite 事务文档](https://www.sqlite.org/lang_transaction.html)说明，同一数据库同时只有一个写事务，BEGIN IMMEDIATE 会立即尝试取得写事务。本例依靠这个边界排序检查与修改；锁等待仍可能失败。数据库使用 [WAL](https://www.sqlite.org/wal.html) 和 synchronous=FULL，测试验证的是本机进程退出后的持久状态，不是断电、文件系统损坏、跨节点网络分区或灾备恢复。
+
+snapshot 对每个文件单独开启读事务，跨两个文件的报告只在工作进程退出后采样，不是跨库一致快照。测试的 20/30 秒等待是防挂死看门狗，不是实际业务延迟。
+
+## 9. 下载复现，再决定你真正需要哪一层保证
+
+把五个文件下载到同一空目录：[ordered_events.py](/examples/agent-reliability-11/ordered_events.py)、[test_ordered_events.py](/examples/agent-reliability-11/test_ordered_events.py)、[run_experiment.py](/examples/agent-reliability-11/run_experiment.py)、[results.json](/examples/agent-reliability-11/results.json)、[README.md](/examples/agent-reliability-11/README.md)。使用 Python 3.10 或更新版本，无第三方依赖：
+
+```bash
+python3 test_ordered_events.py
+python3 run_experiment.py --check
+python3 run_experiment.py --output reproduced.json
+```
+
+本次实跑环境为 Linux、Python 3.12.14、SQLite 3.53.1。48 项 unittest 通过，22 组具名场景的完整输出与冻结的 results.json 一致。输出包括状态、序号、收件标记、阻塞原因、执行记录与退出码；不包含随机目录、PID、运行耗时或私有数据。实验每次新建临时数据库，不需要网络、凭证或真实资源。
+
+代码使用的 [UPSERT 语法](https://www.sqlite.org/lang_upsert.html)要求 SQLite 3.24.0 或更新版本；Python 版本满足不自动证明它链接的 SQLite 版本也满足。可用下面的命令确认本机组合：
+
+```bash
+python3 -c "import sys, sqlite3; print(sys.version); print(sqlite3.sqlite_version)"
+```
+
+这套实现保持了一个有条件的不变量：每个流程的本地 applied 记录是已接收事件中的合法连续前缀，且同一事件不会重复留下本地效果。条件包括：稳定身份、可信生产者、未被绕过的入口、记录不被擅自删除或改写、SQLite 持久状态不丢失。它没有证明所有事件一定最终到达，也没有证明所有 blocked 最终能解除。
+
+没有自动循环服务、消息 broker、CDC、生产公平调度、退避、告警、总积压上限、记录清理、跨库事务、外部效果、权限系统或 Windows 验证。drain 有步数上限，达到上限会返回 limit；出现 gap 或 blocked 只是在明确报告未完成，不是在承诺“最终一致性迟早会替你收拾”。这些缺项里，有的属于运维能力，有的会改变协议本身，不能都留给一句笼统的“以后再补”。
+
+如果只需要显示最新快照，严格连续消费可能过重。如果每一步都有不可跳过的本地含义，就要把顺序写进接收协议。如果下一步还要调用远端工具，再为那条边界重新设计持久意图与结果对账。一个事务框不会因为画得大，就跨过它实际管不到的系统。
+
+回到开头：三封信一封没丢，也各拆了一次，事情还是可以办反。可靠执行需要知道的，不只是“有没有收到”，还包括“收到的是不是同一封”“轮到它了吗”，以及“这句完成，究竟完成到了哪一层”。
+
+系列讨论可查看[知识星球](/planet)，或通过[公众号入口](/about#wechat)关注更新。RAG 第六篇仍等待真实生成输出与细粒度审计证据，不用这组本地事件实验代替模型评测。
+
+本文、原创图解与示例代码由 AI 辅助制作，并经过执行与内容核验。合成业务与本地事务结果不构成生产可靠性、真实模型效果或外部授权保证。
