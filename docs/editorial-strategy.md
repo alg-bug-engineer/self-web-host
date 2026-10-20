@@ -68,6 +68,8 @@
 
 11. 已编写：状态提交与有序事件收件。slug：`agent-reliability-11-ordered-outbox-inbox`。用两个独立 SQLite 文件、真实进程退出及并发/乱序投递，验证生产状态与 outbox 同事务、持久 inbox、按流程连续前缀应用、格式升级重放及默认 relay 冲突饥饿反例；区分收件确认与本地效果完成，不冒充 broker 集成、外部副作用、生产公平调度或最终必达。发布仍须完整 CI 与上线核验。
 
+12. 已编写：持久公平派发与毒消息隔离。slug：`agent-reliability-12-fair-relay-quarantine`。用两个独立 SQLite 文件、Python 标准库和真实进程退出/争用，验证按流程头部轮转派发、退避、尝试预算、租约代次回调与显式原消息重投；区分符合条件的派发机会、业务完成及未知结果。合成计数效果，不冒充 broker 集成、网络负载公平、最终必达或生产授权。发布仍须完整 CI 与上线核验。
+
 本系列注册为 `topicCluster: agent-reliability`、`topicId: agent-reliability-<数字>`。RAG 第六篇的真实生成与细粒度审计条件保持待满足，不用本系列实验冒充 RAG 输出评测。候选题须先具备实质证据再写作。
 
 ## 发布检查
