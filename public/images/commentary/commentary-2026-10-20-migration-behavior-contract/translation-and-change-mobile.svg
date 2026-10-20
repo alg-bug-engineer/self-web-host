@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1450" viewBox="0 0 540 1450" role="img" aria-labelledby="title desc">
+<title id="title">翻译代码，别混入规则变更</title><desc id="desc">原创迁移分析。同一获准输入进入旧实现与新实现，比较约定的可观察结果。有差异先查原因；规则改变须另行确认。编译通过不能替代行为核对。</desc>
+<rect width="540" height="1450" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 Z" fill="#63829b"/></marker></defs>
+<g font-family="Noto Sans CJK SC, sans-serif">
+<text x="24" y="64" font-size="38" fill="#1762aa" font-weight="700">翻译代码，别混入规则变更</text>
+<text x="24" y="116" font-size="30" fill="#6b7785">原创分析 · 先约定比较范围</text>
+<rect x="24" y="170" width="492" height="122" rx="18" fill="#f3f5f7" stroke="#b9c4cd" stroke-width="2"/>
+<text x="270" y="219" font-size="32" fill="#28465c" text-anchor="middle">同一组</text>
+<text x="270" y="263" font-size="32" fill="#28465c" text-anchor="middle">获准使用的输入</text>
+<path d="M270,304 V326 H141 V350 M270,326 H399 V350" fill="none" stroke="#63829b" stroke-width="3" marker-end="url(#arrow)"/>
+<path d="M141,332 V350" stroke="#63829b" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="24" y="364" width="234" height="190" rx="18" fill="#edf4fd" stroke="#9ebddd" stroke-width="2"/>
+<text x="141" y="419" font-size="34" fill="#1762aa" font-weight="700" text-anchor="middle">旧实现</text>
+<text x="141" y="477" font-size="30" fill="#28465c" text-anchor="middle">记录原有行为</text>
+<text x="141" y="522" font-size="30" fill="#28465c" text-anchor="middle">作为比较依据</text>
+<rect x="282" y="364" width="234" height="190" rx="18" fill="#eaf8f5" stroke="#8ac2b7" stroke-width="2"/>
+<text x="399" y="419" font-size="34" fill="#1762aa" font-weight="700" text-anchor="middle">新实现</text>
+<text x="399" y="477" font-size="30" fill="#28465c" text-anchor="middle">换了语言</text>
+<text x="399" y="522" font-size="30" fill="#28465c" text-anchor="middle">仍须核对行为</text>
+<path d="M141,566 V598 H270 V624 M399,566 V598 H270" fill="none" stroke="#63829b" stroke-width="3"/>
+<path d="M270,604 V624" stroke="#63829b" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="24" y="638" width="492" height="230" rx="18" fill="#edf4fd" stroke="#9ebddd" stroke-width="2"/>
+<text x="270" y="691" font-size="34" fill="#1762aa" font-weight="700" text-anchor="middle">比较约定的可观察结果</text>
+<text x="54" y="751" font-size="30" fill="#28465c">发现差异：先查原因</text>
+<text x="54" y="803" font-size="30" fill="#28465c">结果一致：</text>
+<text x="54" y="845" font-size="30" fill="#28465c">也只覆盖已经测到的范围</text>
+<path d="M270,880 V914" stroke="#63829b" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="24" y="928" width="492" height="230" rx="18" fill="#fff0ef" stroke="#dda6a2" stroke-width="2"/>
+<text x="54" y="982" font-size="34" fill="#a34540" font-weight="700">确需改变规则？</text>
+<text x="54" y="1034" font-size="30" fill="#28465c">单列变更理由</text>
+<text x="54" y="1080" font-size="30" fill="#28465c">由有权决定的人确认</text>
+<text x="54" y="1126" font-size="30" fill="#28465c">再更新预期结果与测试</text>
+<rect x="24" y="1200" width="492" height="158" rx="18" fill="#fff8d8" stroke="#d9c77a" stroke-width="2"/>
+<text x="54" y="1253" font-size="32" fill="#635523" font-weight="700">编译通过，不能替收银台</text>
+<text x="54" y="1308" font-size="32" fill="#635523" font-weight="700">决定零头怎么处理</text>
+<text x="24" y="1410" font-size="30" fill="#6b7785">示意不含模型实测或成功率</text>
+</g></svg>
