@@ -70,6 +70,8 @@
 
 12. 已编写：持久公平派发与毒消息隔离。slug：`agent-reliability-12-fair-relay-quarantine`。用两个独立 SQLite 文件、Python 标准库和真实进程退出/争用，验证按流程头部轮转派发、退避、尝试预算、租约代次回调与显式原消息重投；区分符合条件的派发机会、业务完成及未知结果。合成计数效果，不冒充 broker 集成、网络负载公平、最终必达或生产授权。发布仍须完整 CI 与上线核验。
 
+13. 已编写：持久准入与积压背压。slug：`agent-reliability-13-durable-admission-backpressure`。用单个 SQLite 文件、Python 标准库及真实进程退出/并发争用，验证业务意图与任务原子入库、全局与租户未完成数量及 UTF-8 负载预算、原 ID 重放和精确终态释放；隔离与租约回收不提前归还容量。合成效果仅验证本地事务机制，不冒充远端结果、生产吞吐、租户鉴权或磁盘总量上限。终态回执保留造成存储增长的边界须明确；发布仍须完整 CI 与上线核验。
+
 本系列注册为 `topicCluster: agent-reliability`、`topicId: agent-reliability-<数字>`。RAG 第六篇的真实生成与细粒度审计条件保持待满足，不用本系列实验冒充 RAG 输出评测。候选题须先具备实质证据再写作。
 
 ## 发布检查
