@@ -2,18 +2,14 @@ import { allPosts } from 'contentlayer/generated'
 import { compareDesc } from 'date-fns'
 import Link from 'next/link'
 import { getTopPaths } from '@/lib/analytics-storage'
-import portfolioData from 'content/collections/portfolio.json'
+import ProjectCard from '@/components/ProjectCard'
+import { books, products, featuredProducts } from '@/lib/portfolio'
 
 export const metadata = {
   alternates: { canonical: '/' },
 }
 
 export const dynamic = 'force-dynamic'
-
-type Book = {
-  title: string
-  type: string
-}
 
 const knowledgeTracks = [
   { icon: '模', title: '大模型基础', description: '从 Transformer、Token 到训练与推理，建立不易过时的底层认知。', href: '/blog?tag=AI', tone: 'blue' },
@@ -27,7 +23,6 @@ export default async function Home() {
     .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
   const newest = posts[0]
   const latestPosts = posts.slice(1, 5)
-  const books = (portfolioData as Book[]).filter((item) => item.type === 'book')
   const weeklyTopPaths = await getTopPaths({ days: 7, prefix: '/blog/', limit: 4 })
   const rankedPosts = weeklyTopPaths
     .map((item) => posts.find((post) => post.url === item.pathname))
@@ -167,6 +162,20 @@ export default async function Home() {
               </Link>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="section-shell pt-24 sm:pt-32">
+        <div className="mb-10 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+          <div>
+            <p className="eyebrow">BUILT IN PRACTICE</p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.035em] text-text-primary sm:text-5xl">把方法，做成可用的产品。</h2>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-text-secondary">从公众号运营到桌面 AI 工具，围绕真实工作流持续开发、交付与迭代。</p>
+          </div>
+          <Link href="/portfolio#products" className="section-link">查看 {products.length} 个产品案例 <span>→</span></Link>
+        </div>
+        <div className="grid gap-6 lg:grid-cols-3">
+          {featuredProducts.map((item) => <ProjectCard key={item.id} item={item} index={products.indexOf(item)} />)}
         </div>
       </section>
 

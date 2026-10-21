@@ -25,8 +25,8 @@
   },
   {
     "id": "tool-1770096778398",
-    "name": "Cogniflow知识流笔记",
-    "description": "开源的基于大模型的知识流笔记，你只管输入，大模型负责处理和记录",
+    "name": "CogniFlow · AI 信息与任务管理",
+    "description": "统一记录任务、日程、笔记与链接，借助 AI 结构化整理，在看板和日历中安排工作。",
     "url": "https://ci.ai-knowledgepoints.cn/",
     "tags": [
       "大模型",
@@ -37,8 +37,8 @@
   },
   {
     "id": "tool-1770083369682",
-    "name": "AI 漫画网站",
-    "description": "基于 AI，生成的漫画网站，将人工智能、大模型、AI 等领域知识以漫画形式讲解",
+    "name": "天书漫画 · AI 知识阅读平台",
+    "description": "通过漫画理解 AI 概念，支持分类检索、章节阅读、个人书架与阅读进度。",
     "url": "https://manga.ai-knowledgepoints.cn/",
     "tags": [
       "漫画",

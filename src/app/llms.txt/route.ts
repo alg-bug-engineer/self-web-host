@@ -1,5 +1,5 @@
 import { allPosts } from 'contentlayer/generated'
-import portfolioData from 'content/collections/portfolio.json'
+import { portfolioItems } from '@/lib/portfolio'
 import { BRAND_NAME, SITE_DESCRIPTION, SITE_URL, absoluteUrl } from '@/lib/site'
 
 export const dynamic = 'force-static'
@@ -10,10 +10,10 @@ export async function GET() {
     .sort((left, right) => new Date(right.date).getTime() - new Date(left.date).getTime())
     .map((post) => `- [${post.title}](${absoluteUrl(`${post.url}/index.html.md`)}): ${post.description}`)
     .join('\n')
-  const works = portfolioData
+  const works = portfolioItems
     .map((item) => item.type === 'book'
       ? `- 《${item.title}》`
-      : `- [${item.title}](${item.link || `${SITE_URL}/portfolio`}): ${item.description}`)
+      : `- [${item.title}](${item.caseStudy || item.link || `${SITE_URL}/portfolio`}): ${item.description}${item.status ? `（${item.status}）` : ''}${item.note ? ` ${item.note}` : ''}`)
     .join('\n')
 
   const body = `# ${BRAND_NAME} · AI 知识点

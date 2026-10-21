@@ -20,34 +20,253 @@
     "type": "book"
   },
   {
-    "title": "CogniFlow：AI 智能工作流与效率笔记平台",
-    "type": "website",
-    "date": "2025-10-11",
-    "description": "面向知识工作者的 AI 工作流产品，将碎片化输入整理为可检索、可复用的结构化知识。",
-    "image": "/images/portfolio/cogniflow.png",
+    "id": "wechat-crm",
+    "title": "公众号 CRM 运营平台",
+    "category": "企业服务 · Web",
+    "status": "已独立部署",
+    "featured": true,
+    "description": "把公众号获客、客户跟进、客服接待与内容运营接入同一工作空间，让每一次沟通都有上下文。",
+    "highlights": [
+      "客户档案、微信身份、标签与动态分群",
+      "会话分配与转交，文字及图片、语音、视频回复",
+      "草稿编辑与微信同步、渠道二维码、运营分析"
+    ],
+    "tags": [
+      "Django / DRF",
+      "React / TypeScript",
+      "PostgreSQL / Celery"
+    ],
+    "link": "https://ai-knowledgepoints.cn/wechat-crm/",
+    "caseStudy": "https://www.proginn.com/w/1594126",
+    "image": "/images/portfolio/wechat-crm.png",
+    "note": "界面使用明确标记的演示客户数据。",
+    "type": "product"
+  },
+  {
+    "id": "aicap",
+    "title": "AICap · AI 编程容量管理",
+    "category": "开发工具 · macOS",
+    "status": "内测版",
+    "featured": true,
+    "description": "在桌面端统一观察 Codex、Claude 账号额度与调用记录，通过本地网关按容量和服务健康状态管理模型请求。",
+    "highlights": [
+      "额度仪表盘、重置时间与 Token 用量",
+      "本地容量路由、异常隔离与限流冷却",
+      "Keychain 凭据管理、流式透传与 DMG 交付"
+    ],
+    "tags": [
+      "Tauri 2",
+      "React / TypeScript",
+      "Rust / SQLite"
+    ],
+    "caseStudy": "https://www.proginn.com/w/1594046",
+    "image": "/images/portfolio/aicap.png",
+    "note": "基于 Quotio Desktop 二次开发，保留 MIT 许可与上游说明；配图为合成数据演示。",
+    "type": "product"
+  },
+  {
+    "id": "share-network",
+    "title": "Share Network · 模型资源调度",
+    "category": "AI 基础设施 · 桌面与 Web",
+    "status": "小范围内测",
+    "featured": true,
+    "description": "连接已授权接入的模型节点，用桌面客户端和管理中心完成资源发现、任务转发与运行观察。",
+    "highlights": [
+      "共享插件、节点服务与 Center 协同运行",
+      "会话绑定、本地优先、流式响应与贯穿取消",
+      "节点管理、队列、预算、用量与审计"
+    ],
+    "tags": [
+      "Go / WebSocket",
+      "React / TypeScript",
+      "Tauri / Rust"
+    ],
+    "caseStudy": "https://www.proginn.com/w/1594036",
+    "image": "/images/portfolio/share-network.png",
+    "note": "基于 CLIProxyAPI、EasyCLIProxyAPI 等上游扩展；当前为开发预发布与小范围测试。",
+    "type": "product"
+  },
+  {
+    "id": "cogniflow",
+    "title": "CogniFlow · AI 信息与任务管理",
+    "category": "效率工具 · Web",
+    "status": "开源项目",
+    "description": "把零散的任务、日程、笔记和链接变成结构化卡片，再用列表、看板、日历与报告组织日常工作。",
+    "highlights": [
+      "自然语言输入，AI 提取类型、时间、标签与摘要",
+      "任务看板、日历、模板及邮件提醒",
+      "IndexedDB 本地模式与 PostgreSQL 服务端模式"
+    ],
+    "tags": [
+      "React / Vite",
+      "Node.js / Express",
+      "PostgreSQL / IndexedDB"
+    ],
     "link": "https://ci.ai-knowledgepoints.cn/",
     "github": "https://github.com/alg-bug-engineer/cogniflow",
-    "tags": ["知识管理", "工作流", "Next.js", "Python"]
+    "caseStudy": "https://www.proginn.com/w/1594035",
+    "image": "/images/portfolio/cogniflow.png",
+    "type": "product"
+  },
+  {
+    "id": "content-studio",
+    "title": "AI 内容生产工作台",
+    "category": "内容工具 · 本地 Web",
+    "status": "持续使用与迭代",
+    "description": "串联素材发现、下载归集、分镜、配音、字幕和视频合成，让批量内容生产留下可追溯、可恢复的工程记录。",
+    "highlights": [
+      "素材索引与去重，监控、下载、制作独立排队",
+      "固定声线、字幕时间轴、统一封面与 FFmpeg 合成",
+      "ASR 核对、质量报告、成片预览与草稿交付"
+    ],
+    "tags": [
+      "Python / SQLite",
+      "JavaScript",
+      "TTS / ASR / FFmpeg"
+    ],
+    "caseStudy": "https://www.proginn.com/w/1594050",
+    "image": "/images/portfolio/content-studio.png",
+    "note": "保留人工试听、观看与发布审核环节。",
+    "type": "product"
+  },
+  {
+    "id": "jiuyuan-mini",
+    "title": "九圆医疗器械微信小程序",
+    "category": "医疗器械 · 微信小程序",
+    "status": "交付项目",
+    "description": "连接产品选型、询价报价与设备售后，为医疗器械客户提供从了解产品到持续服务的移动入口。",
+    "highlights": [
+      "产品目录、分类筛选与产品详情",
+      "询价、报价及订单业务衔接",
+      "设备登记、售后工单与个人服务中心"
+    ],
+    "tags": [
+      "微信小程序",
+      "产品选型",
+      "销售与售后"
+    ],
+    "caseStudy": "https://www.proginn.com/w/1594012",
+    "image": "/images/portfolio/jiuyuan-mini.png",
+    "imageFit": "contain",
+    "type": "product"
+  },
+  {
+    "id": "jiuyuan-brand",
+    "title": "九圆医疗器械品牌官网",
+    "category": "企业品牌 · Web",
+    "status": "交付项目",
+    "description": "面向产品采购和合作咨询，将品牌介绍、型号目录、配置对比与资料下载组织成清晰的企业网站。",
+    "highlights": [
+      "响应式品牌展示与产品目录",
+      "型号参数、配置比较与资料下载",
+      "企业内容、文章与咨询入口"
+    ],
+    "tags": [
+      "响应式网站",
+      "产品目录",
+      "内容管理"
+    ],
+    "caseStudy": "https://www.proginn.com/w/1594013",
+    "image": "/images/portfolio/jiuyuan-brand.jpg",
+    "type": "product"
+  },
+  {
+    "id": "jiuyuan-admin",
+    "title": "九圆统一管理后台",
+    "category": "业务管理 · Web",
+    "status": "交付项目",
+    "description": "在统一工作台中维护品牌内容、小程序商品、销售和售后业务，连接前台展示与内部运营。",
+    "highlights": [
+      "品牌内容、素材与草稿审核发布",
+      "询价报价、订单、设备与工单管理",
+      "统一登录、角色工作区与操作记录"
+    ],
+    "tags": [
+      "业务建模",
+      "内容工作流",
+      "权限与运营"
+    ],
+    "caseStudy": "https://www.proginn.com/w/1594014",
+    "image": "/images/portfolio/jiuyuan-admin.png",
+    "type": "product"
+  },
+  {
+    "id": "manga-reader",
+    "title": "天书漫画 · AI 知识阅读平台",
+    "category": "技术科普 · Web",
+    "status": "开源项目",
+    "description": "用漫画角色与连续叙事解释 AI 概念，把作品发现、章节阅读、个人书架与内容管理连成完整阅读体验。",
+    "highlights": [
+      "搜索、分类、标签与章节目录",
+      "收藏、书架、阅读进度及评论",
+      "元数据管理、目录扫描与 AI 创作接口"
+    ],
+    "tags": [
+      "Next.js 16",
+      "React / TypeScript",
+      "Tailwind CSS"
+    ],
+    "link": "https://manga.ai-knowledgepoints.cn/",
+    "github": "https://github.com/alg-bug-engineer/manga-reader",
+    "caseStudy": "https://www.proginn.com/w/1594060",
+    "image": "/images/portfolio/manga-reader.png",
+    "note": "AI 创作接口按配置接入外部生成服务。",
+    "type": "product"
+  },
+  {
+    "id": "ai-tower",
+    "title": "AI 魔塔 · 策略卡牌对战",
+    "category": "互动应用 · 浏览器游戏",
+    "status": "可运行原型",
+    "description": "把 Token、上下文、检索与幻觉变成角色和卡牌机制，在完整单机对局中探索 AI 主题的策略玩法。",
+    "highlights": [
+      "角色选择、起手换牌、回合战斗与胜负结算",
+      "数据驱动卡牌规则，Action、事件与界面分层",
+      "固定随机种子、战斗动画与窄屏适配"
+    ],
+    "tags": [
+      "React / TypeScript",
+      "规则引擎",
+      "交互设计"
+    ],
+    "caseStudy": "https://www.proginn.com/w/1594048",
+    "image": "/images/portfolio/ai-tower.png",
+    "note": "敌方按规则策略行动，不依赖实时大模型对战。",
+    "type": "product"
+  },
+  {
+    "id": "self-web-host",
+    "title": "芝士AI吃鱼 · 个人技术网站",
+    "category": "知识内容 · Web",
+    "status": "持续更新",
+    "description": "将技术文章、著作、作品和工具导航汇集为个人知识门户，用主题组织与机器可读内容支持长期沉淀。",
+    "highlights": [
+      "Markdown 内容构建、主题浏览与搜索",
+      "RSS、站点地图、结构化数据与 Markdown 永久链接",
+      "内容管理、发布检查、响应式阅读与深浅主题"
+    ],
+    "tags": [
+      "Next.js 15",
+      "TypeScript / Tailwind",
+      "Contentlayer"
+    ],
+    "link": "https://ai-knowledgepoints.cn/",
+    "github": "https://github.com/alg-bug-engineer/self-web-host",
+    "caseStudy": "https://www.proginn.com/w/1594044",
+    "image": "/images/portfolio/self-web-host.png",
+    "type": "product"
   },
   {
     "title": "Cheesy-AI-Fish：AI 技术知识库",
     "type": "opensource",
-    "date": "2024-01-01",
     "description": "持续整理大语言模型、RAG、Agent 与工程实践的开源知识库，让系统学习有清晰路径。",
-    "image": "/images/portfolio/self-web-host-cover.png",
     "link": "https://github.com/alg-bug-engineer/Cheesy-AI-Fish",
     "github": "https://github.com/alg-bug-engineer/Cheesy-AI-Fish",
-    "tags": ["知识库", "技术专栏", "大模型"]
-  },
-  {
-    "title": "天书漫画：AI 技术科普平台",
-    "type": "website",
-    "date": "2025-11-16",
-    "description": "用角色、场景和视觉叙事拆解抽象 AI 概念，让第一次接触技术的读者也能顺畅入门。",
-    "image": "/images/portfolio/self-web-host-cover.png",
-    "link": "https://manga.ai-knowledgepoints.cn/",
-    "github": "https://github.com/alg-bug-engineer/manga-reader",
-    "tags": ["视觉叙事", "技术科普", "Next.js"]
+    "tags": [
+      "知识库",
+      "技术专栏",
+      "大模型"
+    ]
   },
   {
     "title": "Vibe Coding · 100 个小工具计划",
@@ -55,7 +274,11 @@
     "description": "持续用 Vibe Coding 完成可独立运行的小工具，覆盖内容创作、自动化、学习与数据处理，并保留清晰的复用说明。",
     "link": "https://github.com/alg-bug-engineer/vibe-code-100-projects",
     "github": "https://github.com/alg-bug-engineer/vibe-code-100-projects",
-    "tags": ["Vibe Coding", "自动化", "开源实践"]
+    "tags": [
+      "Vibe Coding",
+      "自动化",
+      "开源实践"
+    ]
   },
   {
     "title": "Awesome Agent Skills",
@@ -63,7 +286,11 @@
     "description": "按框架、技能、工具、论文与教程整理 AI Agent 资源，为学习和搭建智能体提供可检索的入口。",
     "link": "https://github.com/alg-bug-engineer/agent-skills-collections",
     "github": "https://github.com/alg-bug-engineer/agent-skills-collections",
-    "tags": ["AI Agent", "Skills", "资源集合"]
+    "tags": [
+      "AI Agent",
+      "Skills",
+      "资源集合"
+    ]
   },
   {
     "title": "Vibe Coding 学习资源集",
@@ -71,6 +298,10 @@
     "description": "汇总 AI 辅助编程的核心概念、工具比较、课程、工作流与实战项目，帮助开发者建立系统学习路径。",
     "link": "https://github.com/alg-bug-engineer/vibe-coding-collection",
     "github": "https://github.com/alg-bug-engineer/vibe-coding-collection",
-    "tags": ["Vibe Coding", "AI 编程", "学习路径"]
+    "tags": [
+      "Vibe Coding",
+      "AI 编程",
+      "学习路径"
+    ]
   }
 ]

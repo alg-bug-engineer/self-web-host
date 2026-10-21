@@ -2,10 +2,11 @@ import Link from 'next/link'
 import WechatCard from '@/components/WechatCard'
 import { AUTHOR_PROFILES, BRAND_NAME, SITE_URL } from '@/lib/site'
 import profileData from '@/data/profile.json'
+import { featuredProducts, products } from '@/lib/portfolio'
 
 export const metadata = {
-  title: '关于我 | 芝士AI吃鱼',
-  description: '芝士AI吃鱼：持续整理大模型、RAG、Agent 与 GEO 内容。',
+  title: '关于我',
+  description: '芝士AI吃鱼：算法与人工智能研发、AI 产品开发与技术写作，分享公众号 CRM、桌面 AI 工具、知识管理和内容生产实践。',
   alternates: {
     canonical: '/about',
     types: { 'text/markdown': '/about/index.html.md' },
@@ -29,7 +30,7 @@ const verifiedWorks = profileData.verifiedWorks
 
 const expertiseAreas = [
   { name: '大语言模型与 RAG', description: '关注检索、知识库、模型微调与生成质量，把方法放回真实数据和系统约束里讨论。', evidence: '知识库项目与公开文章' },
-  { name: 'Agent 与自动化', description: '关注任务分解、工具调用、评测、权限和人工接管，不把一次跑通当成稳定落地。', evidence: '工程项目、专利与工具实践' },
+  { name: 'Agent 与自动化', description: '围绕任务分解、工具调用、评测与人工接管，把多步骤工作流组织成可观察、可恢复的系统。', evidence: 'AI 内容生产工作台、公众号 CRM 与工具实践' },
   { name: 'NLP 与算法工程', description: '长期从事搜索、推荐、NLP 和人工智能研发，重视从实验指标走向生产系统的过程。', evidence: career.sourceLabel },
   { name: 'AI 内容与 GEO', description: '把复杂概念写成人能读、机器也能核验和引用的文章、漫画与结构化知识。', evidence: '公众号、博客、漫画与本站机器可读内容' },
 ]
@@ -58,8 +59,8 @@ const timeline = [
   },
   {
     year: '现在',
-    title: '著作与持续创作',
-    description: '通过著作、公众号、博客、漫画和工具，继续把复杂的 AI 问题讲清楚。',
+    title: 'AI 产品与持续创作',
+    description: '开发公众号 CRM、桌面 AI 工具与内容工作台，也通过著作、文章和漫画分享工程方法。',
     icon: '🎨',
     tone: 'label-green',
   },
@@ -124,7 +125,7 @@ export default function AboutPage() {
                   <span className="label label-green">持续创作</span>
                 </div>
                 <p className="mt-1 text-sm text-text-secondary">
-                  天大计算机硕士 · 算法与人工智能研发 · AI 技术写作者
+                  天大计算机硕士 · 算法与人工智能研发 · AI 产品开发与技术写作
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {focusTags.map((tag) => (
@@ -143,6 +144,7 @@ export default function AboutPage() {
             <p className="mt-3 text-sm text-text-secondary">
               公开创作足迹覆盖公众号、51CTO、掘金、CSDN 与 GitHub，长期聚焦 NLP、大语言模型、RAG、Agent 和 AI 工程实践。
             </p>
+            <p className="mt-3 text-sm leading-7 text-text-secondary">也持续把这些方法做成产品：从客户运营、知识管理和视频生产，到模型资源调度、企业小程序与业务后台。</p>
 
             <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
               {socialLinks.map((link) => {
@@ -309,6 +311,22 @@ export default function AboutPage() {
           <div id="wechat" className="pt-4 scroll-mt-20">
             <WechatCard analyticsTarget="about-card" />
           </div>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-border-default bg-bg-secondary p-6 sm:p-8">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div><p className="eyebrow">Product Practice</p><h2 className="mt-2 text-2xl font-semibold text-text-primary">从工程方法到产品交付</h2></div>
+          <Link href="/portfolio#products" className="text-sm font-medium text-accent-tertiary hover:underline">查看 {products.length} 个产品案例 →</Link>
+        </div>
+        <div className="mt-6 grid gap-4 lg:grid-cols-3">
+          {featuredProducts.map((item) => (
+            <Link key={item.id} href={`/portfolio#${item.id}`} className="rounded-xl border border-border-default bg-bg-tertiary p-5 transition-colors hover:border-accent-tertiary">
+              <span className="text-xs text-text-tertiary">{item.category} · {item.status}</span>
+              <h3 className="mt-3 font-semibold text-text-primary">{item.title} ↗</h3>
+              <p className="mt-3 text-sm leading-7 text-text-secondary">{item.description}</p>
+            </Link>
+          ))}
         </div>
       </section>
 
