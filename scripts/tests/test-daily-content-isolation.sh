@@ -20,6 +20,7 @@ git -C "$SEED_DIR" config user.name test
 git -C "$SEED_DIR" config user.email test@example.com
 mkdir -p "$SEED_DIR/scripts" "$SEED_DIR/content/posts"
 install -m 755 "$PROJECT_DIR/scripts/run-daily-content.sh" "$SEED_DIR/scripts/run-daily-content.sh"
+install -m 644 "$PROJECT_DIR/scripts/check-daily-publications.mjs" "$SEED_DIR/scripts/check-daily-publications.mjs"
 printf '初始内容\n' > "$SEED_DIR/README.md"
 cat > "$SEED_DIR/scripts/run-daily-content-worker.sh" <<'WORKER'
 #!/usr/bin/env bash
@@ -158,5 +159,30 @@ DAILY_TEST_DOCKER_MARKER="$DOCKER_MARKER_FILE" \
 test -s "$MARKER_FILE"
 test -s "$DOCKER_MARKER_FILE"
 test "$(git -C "$CHECKOUT_DIR" worktree list --porcelain | grep -c '^worktree ')" -eq 1
+
+# A series slug, with a UTC timestamp that crosses the Shanghai day boundary,
+# must suppress the legacy article generator even when commentary is missing.
+printf '%s\n' '---' 'title: series' 'date: 2026-08-13T16:00:00Z' 'published: true' 'topicCluster: rag-engineering' 'topicId: rag-evaluation-02' '---' > "$SEED_DIR/content/posts/rag-evaluation-02-chunking-evidence-mapping.mdx"
+printf '%s\n' '---' 'title: commentary only' 'date: 2026-08-15' 'published: true' 'postType: commentary' '---' > "$SEED_DIR/content/posts/commentary-only.mdx"
+git -C "$SEED_DIR" add content/posts
+git -C "$SEED_DIR" commit -m 'series and commentary fixtures' >/dev/null
+git -C "$SEED_DIR" push origin main >/dev/null
+for day in 14 15; do
+  rm -f "$MARKER_FILE" "$DOCKER_MARKER_FILE"
+  PATH="$FAKE_BIN:$PATH" TMPDIR="$TEST_TMP" PROJECT_DIR="$CHECKOUT_DIR" \
+  CONTENT_DATE="2026-08-$day" CONTENT_LOCK_DIR="$TEST_ROOT/lock" CONTENT_AUTO_PUBLISH=true \
+  PUBLISHER_ENV_FILE="$TEST_ROOT/missing.env" DAILY_TEST_MARKER="$MARKER_FILE" \
+  DAILY_TEST_DOCKER_MARKER="$DOCKER_MARKER_FILE" \
+    bash "$CHECKOUT_DIR/scripts/run-daily-content.sh" > "$TEST_ROOT/status-$day" 2>&1
+  if [[ "$day" == 14 ]]; then
+    test ! -e "$MARKER_FILE"
+    test ! -e "$DOCKER_MARKER_FILE"
+    grep -q '锐评 0/1；技术系列长文 1/1' "$TEST_ROOT/status-$day"
+  else
+    test -s "$MARKER_FILE"
+    test -s "$DOCKER_MARKER_FILE"
+    grep -q '锐评 1/1；技术系列长文 0/1' "$TEST_ROOT/status-$day"
+  fi
+done
 
 echo "日更隔离测试通过：默认预检不会发布，显式授权后使用隔离工作区；脏工作区不受影响，失败分支原稿可恢复，已发布文章幂等跳过，退役旧稿可自动补位。"

@@ -1,0 +1,50 @@
+---
+title: "Claude 卡在注册第一步？先把这个邮箱入口准备好"
+description: "用 Proton Mail 准备一个邮箱账号，再通过邮件完成 Claude 登录。公开部分讲清原理、适用条件和最终结果。"
+date: 2026-09-08T09:47:25+08:00
+author: 芝士AI吃鱼
+tags:
+  - Claude
+  - Proton Mail
+  - AI 实践
+cover: /images/blog/proton-mail-claude-tutorial/proton-signup.webp
+topicId: "45548821411144448"
+topicCluster: ai-practice-toolchain
+access: planet-preview
+planetTopicUrl: https://wx.zsxq.com/group/28882182852411/topic/45548821411144448
+gateTitle: "账号建好了，下一步别在验证和登录上反复试"
+gateDescription: "我把完整页面截图、Claude 邮件登录顺序和常见卡点放在原帖里，按顺序走会省很多来回折腾。"
+gateItems:
+  - Proton 注册页面逐步截图
+  - Claude 邮件登录完整顺序
+  - 收不到邮件时的排查清单
+category: tech
+icon: cat
+published: true
+---
+
+很多人第一次用 Claude，真正把自己卡住的不是提示词，而是账号入口。邮箱选得不合适、验证邮件迟迟不到、登录链接点了没反应，半小时很快就耗没了。
+
+我这次换了一个更直接的做法：先准备 Proton Mail，再用这个邮箱登录 Claude。整个过程不需要手机接码，但能否注册和使用，仍然取决于你所在地区、当时的服务策略以及网络环境。
+
+## 先准备一个能正常收信的邮箱
+
+打开 [Proton Mail](https://mail.proton.me)，进入注册页面后选免费方案就够用。账号名和密码由你自己设置，密码最好单独保存，因为邮箱一旦进不去，后面的 Claude 登录邮件也就收不到了。
+
+![Proton Mail 免费方案与注册入口](/images/blog/proton-mail-claude-tutorial/proton-signup.webp)
+
+注册页面会根据风险判断显示不同的验证方式。这里没有一套对所有人都一样的界面，看到的选项与教程截图略有不同很正常。不要反复刷新，更不要把密码、恢复信息发给别人代操作。
+
+## Claude 的邮件登录是怎么回事
+
+Claude 的网页端可以通过邮箱接收登录邮件。你在登录页填入刚注册的 Proton 地址，随后回到邮箱，打开 Claude 发来的邮件并继续验证。它和“用邮箱注册一个固定密码账号”的感觉不完全一样，关键是这封邮件必须在有效期内打开。
+
+成功以后会进入 Claude 对话首页。看到输入框和可用方案提示，说明邮箱链路已经跑通。
+
+![Claude 登录后的首页](/images/blog/proton-mail-claude-tutorial/claude-ready.webp)
+
+## 动手前先看清三个条件
+
+第一，Proton 邮箱免费方案能满足这次注册，但免费方案本身有容量和功能限制。第二，Claude 是否向你的地区提供服务，以其当前页面为准。第三，不要把这套流程理解成绕过平台规则，它只是换了一个可正常收信的邮箱入口。
+
+公开部分先到这里。下面真正容易出错的是页面选择、邮件延迟和登录失败后的处理顺序，我把这些实操截图单独留在完整教程里。

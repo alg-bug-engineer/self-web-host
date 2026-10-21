@@ -110,6 +110,9 @@ curl --silent --fail -X POST "${request_headers[@]}" \
 curl --silent --fail -X POST "${request_headers[@]}" \
   --data '{"path":"/blog","referrer":""}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X POST "${request_headers[@]}" \
+  --data '{"path":"/blog/proton-mail-claude-tutorial","referrer":""}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
 curl --silent --fail -X POST "${campaign_headers[@]}" \
   --data '{"path":"/ai-native-generation","referrer":"","utmSource":"CSDN","utmMedium":"Organic","utmCampaign":"AI Native Generation 30D"}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
@@ -149,6 +152,15 @@ curl --silent --fail -X POST "${campaign_headers[@]}" \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
 curl --silent --fail -X POST "${campaign_headers[@]}" \
   --data '{"kind":"conversion","path":"/planet","name":"join_planet","target":"planet-footer"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X POST "${request_headers[@]}" \
+  --data '{"kind":"conversion","path":"/blog/proton-mail-claude-tutorial","name":"planet_gate_view","target":"article-gate-modal"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X POST "${request_headers[@]}" \
+  --data '{"kind":"conversion","path":"/blog/proton-mail-claude-tutorial","name":"open_planet_topic","target":"article-gate-inline"}' \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
+curl --silent --fail -X POST "${request_headers[@]}" \
+  --data '{"kind":"conversion","path":"/blog/proton-mail-claude-tutorial","name":"join_planet","target":"article-gate-modal"}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/analytics/view" >/dev/null
 GUARDIAN_SURVEY_PAYLOAD='{"kind":"guardian-survey","path":"/ai-native-generation","guardianConfirmed":true,"answers":{"age_range":"8-10","ai_use":"weekly","primary_scene":"assignment","family_rule":"partial","main_concern":"misinformation","desired_ability":"verification","weekly_time":"30-60","participation":"course-beta"}}'
 GUARDIAN_SURVEY_RESPONSE="$(curl --silent --fail -X POST "${campaign_headers[@]}" \
@@ -238,7 +250,7 @@ const daily = store.days[day]
 if (store.version !== 5) throw new Error(`expected store version 5, got ${store.version}`)
 if (store.visitorIdentity?.scope !== 'calendar-month') throw new Error('monthly visitor identity scope is missing')
 if (store.visitorIdentity?.reliableFromDay !== tomorrow.toISOString().slice(0, 10)) throw new Error('legacy migration day was not excluded')
-if (daily.pageViews !== 4) throw new Error(`expected four page views, got ${daily.pageViews}`)
+if (daily.pageViews !== 5) throw new Error(`expected five page views, got ${daily.pageViews}`)
 const campaignSource = 'campaign:csdn/organic/ai-native-generation-30d'
 const campaignVisitor = daily.conversions.course_preview_play.visitors[0]
 if (daily.sources[campaignSource] !== 1) throw new Error('campaign source visitor was not counted')
@@ -255,6 +267,9 @@ if (daily.conversions.course_beta_guardian_interest.targets['course-bottom'] !==
 if (daily.conversions.course_beta_guardian_interest.targets['guardian-intake-wechat'] !== 1) throw new Error('guardian intake handoff was not recorded')
 if (daily.conversions.ai_literacy_check_complete.targets.developing !== 1) throw new Error('family AI literacy check completion was not recorded')
 if (daily.conversions.join_planet.targets['planet-footer'] !== 1) throw new Error('planet join intent was not recorded')
+if (daily.conversions.planet_gate_view.targets['article-gate-modal'] !== 1) throw new Error('planet gate exposure was not recorded')
+if (daily.conversions.open_planet_topic.targets['article-gate-inline'] !== 1) throw new Error('planet topic click was not recorded')
+if (daily.conversions.join_planet.targets['article-gate-modal'] !== 1) throw new Error('article gate join intent was not recorded')
 if (daily.guardianSurvey.submissions !== 1) throw new Error('guardian survey total is wrong')
 if (daily.guardianSurvey.qualifiedSubmissions !== 1) throw new Error('qualified guardian survey total is wrong')
 if (daily.guardianSurvey.visitors.length !== 1) throw new Error('guardian survey visitor was not de-duplicated')
@@ -273,13 +288,21 @@ curl --silent --fail -c "$ADMIN_COOKIE_JAR" -X POST \
   -H 'Content-Type: application/json' \
   --data '{"username":"analytics-test-admin","password":"analytics-test-password"}' \
   "http://127.0.0.1:${ANALYTICS_TEST_PORT}/api/admin/login" >/dev/null
-ADMIN_HTML="$(curl --silent --fail -b "$ADMIN_COOKIE_JAR" "http://127.0.0.1:${ANALYTICS_TEST_PORT}/admin")"
-ADMIN_HTML_NORMALIZED="${ADMIN_HTML//<!-- -->/}"
-[[ "$ADMIN_HTML_NORMALIZED" == *"儿童 AI 素养渠道漏斗"* ]]
-[[ "$ADMIN_HTML_NORMALIZED" == *"活动 · csdn/organic/ai-native-generation-30d"* ]]
-[[ "$ADMIN_HTML_NORMALIZED" == *"监护人匿名调研汇总"* ]]
-[[ "$ADMIN_HTML_NORMALIZED" == *"有效样本 1 / 30"* ]]
-[[ "$ADMIN_HTML_NORMALIZED" != *"203.0.113."* ]]
+curl --silent --fail -b "$ADMIN_COOKIE_JAR" \
+  "http://127.0.0.1:${ANALYTICS_TEST_PORT}/admin" >"$ANALYTICS_TEST_DIR/admin.html"
+node - "$ANALYTICS_TEST_DIR/admin.html" <<'NODE'
+const fs = require('node:fs')
+const html = fs.readFileSync(process.argv[2], 'utf8').replaceAll('<!-- -->', '')
+for (const expected of [
+  '儿童 AI 素养渠道漏斗',
+  '活动 · csdn/organic/ai-native-generation-30d',
+  '监护人匿名调研汇总',
+  '有效样本 1 / 30',
+]) {
+  if (!html.includes(expected)) throw new Error(`admin report is missing: ${expected}`)
+}
+if (html.includes('203.0.113.')) throw new Error('admin report leaked a test IP address')
+NODE
 
 SITE_URL="http://127.0.0.1:${ANALYTICS_TEST_PORT}" \
   ANALYTICS_DATA_DIR="$ANALYTICS_TEST_DIR" \
@@ -322,7 +345,8 @@ if (report.status.currentMonthQualifiedVisitors !== null) throw new Error('mixed
 if (report.content !== null) throw new Error('missing content audit should be represented as null')
 if (report.value.conversionVisitors !== 2) throw new Error('report conversion visitor count is wrong')
 if (report.value.conversionRatePercent !== 100) throw new Error('report conversion rate is wrong')
-if (report.value.topConversions[0]?.name !== 'course_beta_guardian_interest') throw new Error('guardian intake handoff is not the leading conversion')
+if (!report.value.topConversions.some((item) => item.name === 'course_beta_guardian_interest')) throw new Error('guardian intake handoff conversion is missing')
+if (!report.value.topConversions.some((item) => item.name === 'planet_gate_view')) throw new Error('planet gate exposure conversion is missing')
 if (!report.value.topConversions.some((item) => item.name === 'view_book')) throw new Error('existing book conversion is missing')
 if (!report.observations.some((item) => item.includes('站内隐私统计已核验'))) throw new Error('private analytics readiness observation is missing')
 if (!report.observations.some((item) => item.includes('GA4 客户端配置已在生产构建资源中核验'))) throw new Error('GA4 readiness observation is missing')

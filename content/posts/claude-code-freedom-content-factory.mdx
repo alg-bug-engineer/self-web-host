@@ -1,0 +1,47 @@
+---
+title: "我把 Claude Code 从单一模型里拆了出来：一套能写文、画图、换账号的工作流"
+description: "把前面的邮箱、兼容接口、配置切换、账号管理、国产模型和生图服务串成一套可替换的内容生产架构。"
+date: 2026-09-08T12:52:01+08:00
+author: 芝士AI吃鱼
+tags:
+  - Claude Code
+  - 内容生产
+  - AI 工作流
+cover: /images/blog/claude-code-freedom-content-factory/architecture.webp
+topicId: "45548821885152188"
+topicCluster: ai-practice-toolchain
+access: planet-preview
+planetTopicUrl: https://wx.zsxq.com/group/28882182852411/topic/45548821885152188
+gateTitle: "零件都见过，真正能复用的是项目模板和执行顺序"
+gateDescription: "完整原帖给出目录模板、CLAUDE.md 约束、写文与画图的串联步骤，以及每层失败时的检查位置。"
+gateItems:
+  - 可复用的内容项目目录
+  - CLAUDE.md 工作约束
+  - 写文、配图与结果检查顺序
+  - 分层排错清单
+category: tech
+icon: cat
+published: true
+---
+
+前面几篇看起来各讲一个工具：注册邮箱、转换接口、切换配置、管理账号、接国产模型、调用生图。单独装完当然能用，但最容易发生的情况是桌面多了几个项目，真正写文章时还是手动复制粘贴。
+
+我最后做的不是再装一个“万能平台”，而是让 Claude Code 站在中间，把这些工具按职责接起来。
+
+![Claude Code 内容工作流总体架构](/images/blog/claude-code-freedom-content-factory/architecture.webp)
+
+## 三层各管一件事
+
+最上面是模型层。Claude、Kimi、Qwen、GLM 都可以按任务和可用情况选择，Claude Code 保留熟悉的 CLI 工作方式。
+
+中间是账号与接口层。Claude2api、chatgpt2api 把网页会话转换成兼容接口，sub2api 负责集中管理，cc-switch 负责在本机切换配置。不是每个人都需要全部装上，账号少时保持简单更好。
+
+最下面是执行层。Claude Code 读写文章文件、运行检查，需要配图时再调用 jimeng-api。写作、图片和发布材料最终都回到同一个项目目录，不再散落在聊天记录里。
+
+## 自由来自可替换，不来自工具数量
+
+某个模型限流时，可以换上游；某个接口项目失效时，只替换中间一层；生图方案变化时，文章模板不用重写。这才是这套架构真正省时间的地方。
+
+代价也很现实：服务多了，凭证和日志必须管好，版本更新需要自己验证。个人研究可以逐层搭建，面向他人提供服务则要额外考虑平台条款、稳定性和安全责任。
+
+这篇公开预览给出全貌，方便你先删掉不需要的层。完整项目模板、`CLAUDE.md`、写文画图的执行顺序和分层排错清单，我放在系列最后一篇原帖里。

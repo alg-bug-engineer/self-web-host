@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "parameters": {
+    "chunkSize": 120,
+    "overlap": 60,
+    "topK": 2,
+    "charBudget": 240
+  },
+  "currentVersions": {
+    "retry": "v2",
+    "retry-guide": "v2",
+    "logs": "v2",
+    "retention": "v2"
+  },
+  "documents": [
+    {
+      "id": "retry",
+      "version": "v2",
+      "text": "General setup notes. ...............................................................................For R-17, wait 30 seconds before retrying only when the request is idempotent. Archive details follow.........................................."
+    },
+    {
+      "id": "retry-guide",
+      "version": "v2",
+      "text": "R-17 wait seconds: consult applicable retry rules."
+    },
+    {
+      "id": "logs",
+      "version": "v2",
+      "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes.....................................................................\n\nThe export format is JSON."
+    },
+    {
+      "id": "retention",
+      "version": "v1",
+      "text": "Current logs retention policy: keep 30 days............................................................................\n\nCurrent logs retention policy: keep 30 days............................................................................"
+    },
+    {
+      "id": "retention",
+      "version": "v2",
+      "text": "Records stay for 7 days."
+    }
+  ],
+  "questions": [
+    {
+      "id": "boundary-condition",
+      "text": "R-17 wait seconds",
+      "facts": [
+        {
+          "id": "conditional-retry",
+          "supportGroups": [
+            [
+              {
+                "docId": "retry",
+                "version": "v2",
+                "start": 100,
+                "end": 178
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "two-facts",
+      "text": "logs retention export format",
+      "facts": [
+        {
+          "id": "retention",
+          "supportGroups": [
+            [
+              {
+                "docId": "logs",
+                "version": "v2",
+                "start": 65,
+                "end": 90
+              }
+            ],
+            [
+              {
+                "docId": "retention",
+                "version": "v2",
+                "start": 0,
+                "end": 24
+              }
+            ]
+          ]
+        },
+        {
+          "id": "export",
+          "supportGroups": [
+            [
+              {
+                "docId": "logs",
+                "version": "v2",
+                "start": 187,
+                "end": 213
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "current-version",
+      "text": "current logs retention policy",
+      "facts": [
+        {
+          "id": "retention",
+          "supportGroups": [
+            [
+              {
+                "docId": "logs",
+                "version": "v2",
+                "start": 65,
+                "end": 90
+              }
+            ],
+            [
+              {
+                "docId": "retention",
+                "version": "v2",
+                "start": 0,
+                "end": 24
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "no-evidence",
+      "text": "maximum extended archive duration",
+      "facts": []
+    }
+  ]
+}

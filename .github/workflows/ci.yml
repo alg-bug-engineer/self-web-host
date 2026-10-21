@@ -36,6 +36,42 @@ jobs:
       - run: npm run test:operator-content-report
       - run: npm run test:active-reading
       - run: npm run test:article-headings
+      - run: npm run test:rag-evaluation
+      - run: npm run test:rag-chunking
+      - run: npm run test:rag-fusion
+      - run: npm run test:october3-content
+      - run: npm run test:rag-release
+      - run: npm run test:october4-content
+      - run: npm run test:rag-citations
+      - run: npm run test:october5-content
+      - run: npm run test:agent-reliability
+      - run: npm run test:october6-content
+      - run: npm run test:agent-fencing
+      - run: npm run test:october7-content
+      - run: npm run test:agent-reconciliation
+      - run: npm run test:october11-content
+      - run: npm run test:agent-retry-budgets
+      - run: npm run test:october12-content
+      - run: npm run test:agent-durable-budgets
+      - run: npm run test:october13-content
+      - run: npm run test:agent-retention
+      - run: npm run test:october14-content
+      - run: npm run test:agent-preconditions
+      - run: npm run test:october15-content
+      - run: npm run test:agent-approval
+      - run: npm run test:october16-content
+      - run: npm run test:agent-monetary-budgets
+      - run: npm run test:october17-content
+      - run: npm run test:agent-compensation
+      - run: npm run test:october18-content
+      - run: npm run test:agent-ordered-inbox
+      - run: npm run test:october19-content
+      - run: npm run test:agent-fair-relay
+      - run: npm run test:october20-content
+      - run: npm run test:agent-admission
+      - run: npm run test:october21-content
+      - run: npm run test:daily-publications
+      - run: npm run test:commentary
       - run: npm run test:operator-decision
       - run: npm run test:operator-experiments
       - run: npm run test:indexnow

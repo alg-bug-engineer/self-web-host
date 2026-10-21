@@ -1,0 +1,1184 @@
+{
+  "both_reserved": {
+    "phase": "done",
+    "stock": {
+      "capacity": 10,
+      "used": 3,
+      "bookings": [
+        [
+          "A",
+          3,
+          "reserved"
+        ]
+      ],
+      "events": [
+        [
+          "A",
+          "reserved",
+          3
+        ]
+      ]
+    },
+    "slots": {
+      "capacity": 10,
+      "used": 3,
+      "bookings": [
+        [
+          "A",
+          3,
+          "reserved"
+        ]
+      ],
+      "events": [
+        [
+          "A",
+          "reserved",
+          3
+        ]
+      ]
+    }
+  },
+  "compensate_only_own_booking": {
+    "phase": "aborted",
+    "stock": {
+      "capacity": 10,
+      "used": 2,
+      "bookings": [
+        [
+          "A",
+          3,
+          "released"
+        ],
+        [
+          "B",
+          2,
+          "reserved"
+        ]
+      ],
+      "events": [
+        [
+          "A",
+          "released",
+          3
+        ],
+        [
+          "A",
+          "reserved",
+          3
+        ],
+        [
+          "B",
+          "reserved",
+          2
+        ]
+      ]
+    },
+    "slots": {
+      "capacity": 0,
+      "used": 0,
+      "bookings": [
+        [
+          "A",
+          3,
+          "rejected"
+        ]
+      ],
+      "events": [
+        [
+          "A",
+          "rejected",
+          3
+        ]
+      ]
+    }
+  },
+  "late_forward_and_duplicate_release": {
+    "reserve": "released",
+    "release": "released",
+    "unchanged": true
+  },
+  "unknown_is_not_rejection": {
+    "phase": "slot_pending",
+    "stock": {
+      "capacity": 10,
+      "used": 3,
+      "bookings": [
+        [
+          "A",
+          3,
+          "reserved"
+        ]
+      ],
+      "events": [
+        [
+          "A",
+          "reserved",
+          3
+        ]
+      ]
+    },
+    "slots": {
+      "capacity": 0,
+      "used": 0,
+      "bookings": [],
+      "events": []
+    }
+  },
+  "compensation_unavailable": {
+    "phase": "release_pending",
+    "stock": {
+      "capacity": 10,
+      "used": 3,
+      "bookings": [
+        [
+          "A",
+          3,
+          "reserved"
+        ]
+      ],
+      "events": [
+        [
+          "A",
+          "reserved",
+          3
+        ]
+      ]
+    },
+    "slots": {
+      "capacity": 0,
+      "used": 0,
+      "bookings": [
+        [
+          "A",
+          3,
+          "rejected"
+        ]
+      ],
+      "events": [
+        [
+          "A",
+          "rejected",
+          3
+        ]
+      ]
+    }
+  },
+  "crash_stock_before_commit": {
+    "before_recovery": {
+      "phase": "stock_pending",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [],
+        "events": []
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [],
+        "events": []
+      }
+    },
+    "after_recovery": {
+      "phase": "aborted",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "released"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "released",
+            3
+          ],
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    }
+  },
+  "crash_stock_after_commit": {
+    "before_recovery": {
+      "phase": "stock_pending",
+      "stock": {
+        "capacity": 10,
+        "used": 3,
+        "bookings": [
+          [
+            "A",
+            3,
+            "reserved"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [],
+        "events": []
+      }
+    },
+    "after_recovery": {
+      "phase": "aborted",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "released"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "released",
+            3
+          ],
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    }
+  },
+  "crash_stock_coordinator_before_commit": {
+    "before_recovery": {
+      "phase": "stock_pending",
+      "stock": {
+        "capacity": 10,
+        "used": 3,
+        "bookings": [
+          [
+            "A",
+            3,
+            "reserved"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [],
+        "events": []
+      }
+    },
+    "after_recovery": {
+      "phase": "aborted",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "released"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "released",
+            3
+          ],
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    }
+  },
+  "crash_stock_coordinator_after_commit": {
+    "before_recovery": {
+      "phase": "slot_pending",
+      "stock": {
+        "capacity": 10,
+        "used": 3,
+        "bookings": [
+          [
+            "A",
+            3,
+            "reserved"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [],
+        "events": []
+      }
+    },
+    "after_recovery": {
+      "phase": "aborted",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "released"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "released",
+            3
+          ],
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    }
+  },
+  "crash_slot_before_commit": {
+    "before_recovery": {
+      "phase": "slot_pending",
+      "stock": {
+        "capacity": 10,
+        "used": 3,
+        "bookings": [
+          [
+            "A",
+            3,
+            "reserved"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [],
+        "events": []
+      }
+    },
+    "after_recovery": {
+      "phase": "aborted",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "released"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "released",
+            3
+          ],
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    }
+  },
+  "crash_slot_after_commit": {
+    "before_recovery": {
+      "phase": "slot_pending",
+      "stock": {
+        "capacity": 10,
+        "used": 3,
+        "bookings": [
+          [
+            "A",
+            3,
+            "reserved"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    },
+    "after_recovery": {
+      "phase": "aborted",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "released"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "released",
+            3
+          ],
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    }
+  },
+  "crash_slot_coordinator_before_commit": {
+    "before_recovery": {
+      "phase": "slot_pending",
+      "stock": {
+        "capacity": 10,
+        "used": 3,
+        "bookings": [
+          [
+            "A",
+            3,
+            "reserved"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    },
+    "after_recovery": {
+      "phase": "aborted",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "released"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "released",
+            3
+          ],
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    }
+  },
+  "crash_slot_coordinator_after_commit": {
+    "before_recovery": {
+      "phase": "release_pending",
+      "stock": {
+        "capacity": 10,
+        "used": 3,
+        "bookings": [
+          [
+            "A",
+            3,
+            "reserved"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    },
+    "after_recovery": {
+      "phase": "aborted",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "released"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "released",
+            3
+          ],
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    }
+  },
+  "crash_release_before_commit": {
+    "before_recovery": {
+      "phase": "release_pending",
+      "stock": {
+        "capacity": 10,
+        "used": 3,
+        "bookings": [
+          [
+            "A",
+            3,
+            "reserved"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    },
+    "after_recovery": {
+      "phase": "aborted",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "released"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "released",
+            3
+          ],
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    }
+  },
+  "crash_release_after_commit": {
+    "before_recovery": {
+      "phase": "release_pending",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "released"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "released",
+            3
+          ],
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    },
+    "after_recovery": {
+      "phase": "aborted",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "released"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "released",
+            3
+          ],
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    }
+  },
+  "crash_release_coordinator_before_commit": {
+    "before_recovery": {
+      "phase": "release_pending",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "released"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "released",
+            3
+          ],
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    },
+    "after_recovery": {
+      "phase": "aborted",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "released"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "released",
+            3
+          ],
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    }
+  },
+  "crash_release_coordinator_after_commit": {
+    "before_recovery": {
+      "phase": "aborted",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "released"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "released",
+            3
+          ],
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    },
+    "after_recovery": {
+      "phase": "aborted",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "released"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "released",
+            3
+          ],
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    }
+  },
+  "six_recovery_workers": {
+    "aborted_count": 6,
+    "final": {
+      "phase": "aborted",
+      "stock": {
+        "capacity": 10,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "released"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "released",
+            3
+          ],
+          [
+            "A",
+            "reserved",
+            3
+          ]
+        ]
+      },
+      "slots": {
+        "capacity": 0,
+        "used": 0,
+        "bookings": [
+          [
+            "A",
+            3,
+            "rejected"
+          ]
+        ],
+        "events": [
+          [
+            "A",
+            "rejected",
+            3
+          ]
+        ]
+      }
+    }
+  },
+  "unsafe_snapshot_restore": {
+    "initial_free": 10,
+    "A_reserves": 3,
+    "B_reserves": 2,
+    "free_before_undo": 5,
+    "wrong_restored_free": 10,
+    "correct_free": 8
+  }
+}

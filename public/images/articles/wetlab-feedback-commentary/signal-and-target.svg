@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="820" viewBox="0 0 1080 820" role="img" aria-labelledby="title desc">
+<title id="title">信号变强，先别急着奖励</title><desc id="desc">原创反馈机制图。观察信号后加入载体背景与非目标对照，再决定如何修改方案；对照不构成完整验证。</desc>
+<rect width="1080" height="820" fill="white"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 Z" fill="#567a96"/></marker></defs>
+<g font-family="Noto Sans CJK SC, sans-serif">
+<text x="50" y="70" font-size="44" fill="#1762aa" font-weight="700">信号变强，先别急着奖励</text>
+<text x="50" y="122" font-size="32" fill="#677888">反馈的价值，也在于能否否定当前解释</text>
+<rect x="50" y="175" width="980" height="130" rx="20" fill="#eaf3ff" stroke="#9bbde5" stroke-width="2"/>
+<text x="80" y="225" font-size="34" fill="#1762aa" font-weight="700">观察：有东西留下来了</text>
+<text x="80" y="275" font-size="32" fill="#27384b">原始信号还不是已经确认的目标命中</text>
+<path d="M540,315 L540,345" fill="none" stroke="#567a96" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="50" y="365" width="980" height="155" rx="20" fill="#e7f7f4" stroke="#8bc8bc" stroke-width="2"/>
+<text x="80" y="414" font-size="34" fill="#1762aa" font-weight="700">加入对照：载体背景 / 非目标响应</text>
+<text x="80" y="466" font-size="32" fill="#27384b">让“它认准了目标”接受另一种解释的检验</text>
+<path d="M540,530 L540,560" fill="none" stroke="#567a96" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="50" y="580" width="980" height="105" rx="20" fill="#fff0ef" stroke="#e0adaa" stroke-width="2"/>
+<text x="80" y="625" font-size="32" fill="#27384b" font-weight="700">再修改方案：保留异常，不只奖励原始高分</text>
+<text x="80" y="667" font-size="30" fill="#27384b">检查覆盖之外，仍可能存在未被发现的误差</text>
+<rect x="50" y="720" width="980" height="65" rx="20" fill="#fff4cb" stroke="#eadc9c" stroke-width="2"/>
+<text x="80" y="762" font-size="32" fill="#63532b" font-weight="700">对照缩小解释空间，不等于完成全部验证</text>
+</g></svg>

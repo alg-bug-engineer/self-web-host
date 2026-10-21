@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1600" viewBox="0 0 540 1600" role="img" aria-labelledby="title desc">
+<title id="title">把自查放在它能负责的位置</title><desc id="desc">原创设计建议：先做行动前检查，生成回答以后再自查；两种自查结果分别进入复核或获准抽检，不能互相替代。</desc>
+<rect width="540" height="1600" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 Z" fill="#63829b"/></marker></defs>
+<g font-family="Noto Sans CJK SC, sans-serif">
+<text x="30" y="62" font-size="36" fill="#1762aa" font-weight="700">把自查放在</text>
+<text x="30" y="112" font-size="36" fill="#1762aa" font-weight="700">它能负责的位置</text>
+<text x="30" y="164" font-size="30" fill="#6b7785">原创设计建议 · 非产品架构</text>
+<rect x="30" y="204" width="480" height="132" rx="18" fill="#edf4fd" stroke="#9ebddd" stroke-width="2"/>
+<text x="52" y="254" font-size="34" fill="#1762aa" font-weight="700">行动前防护</text>
+<text x="52" y="306" font-size="32" fill="#28465c">权限与实时检查，先于动作</text>
+<path d="M270,346 V376" stroke="#63829b" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="30" y="390" width="480" height="132" rx="18" fill="#f3f5f7" stroke="#b9c4cd" stroke-width="2"/>
+<text x="52" y="440" font-size="34" fill="#1762aa" font-weight="700">生成回答</text>
+<text x="52" y="492" font-size="32" fill="#28465c">已有输出，不能当作未发</text>
+<path d="M270,532 V562" stroke="#63829b" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="30" y="576" width="480" height="170" rx="18" fill="#edf4fd" stroke="#9ebddd" stroke-width="2"/>
+<text x="52" y="626" font-size="34" fill="#1762aa" font-weight="700">回答后自查</text>
+<text x="52" y="678" font-size="32" fill="#28465c">追加待查线索</text>
+<text x="52" y="720" font-size="32" fill="#28465c">无法回溯撤销输出</text>
+<text x="30" y="800" font-size="30" fill="#6b7785">两种结果，各有检查出口</text>
+<rect x="30" y="832" width="480" height="202" rx="18" fill="#fff0ef" stroke="#dda6a2" stroke-width="2"/>
+<text x="52" y="882" font-size="34" fill="#a34540" font-weight="700">有标记：送去复核</text>
+<text x="52" y="930" font-size="32" fill="#28465c">核实证据，再决定处理</text>
+<text x="52" y="974" font-size="32" fill="#28465c">保留纠正误判的入口</text>
+<text x="52" y="1018" font-size="30" fill="#a34540">线索不等于违规结论</text>
+<rect x="30" y="1064" width="480" height="202" rx="18" fill="#eaf8f5" stroke="#8ac2b7" stroke-width="2"/>
+<text x="52" y="1114" font-size="34" fill="#1762aa" font-weight="700">无标记：保留获准抽检</text>
+<text x="52" y="1162" font-size="32" fill="#28465c">检查未标记样本</text>
+<text x="52" y="1206" font-size="32" fill="#28465c">寻找没有送上来的漏报</text>
+<text x="52" y="1250" font-size="30" fill="#1762aa">未标记不等于核验安全</text>
+<rect x="30" y="1310" width="480" height="136" rx="18" fill="#fff8d8" stroke="#d9c77a" stroke-width="2"/>
+<text x="52" y="1364" font-size="34" fill="#635523" font-weight="700">红灯是待查线索</text>
+<text x="52" y="1414" font-size="34" fill="#635523" font-weight="700">熄灯也不是安全证明</text>
+<text x="30" y="1504" font-size="30" fill="#6b7785">示意不含检出率</text>
+<text x="30" y="1552" font-size="30" fill="#6b7785">抽检与处置均需相应权限</text>
+</g></svg>

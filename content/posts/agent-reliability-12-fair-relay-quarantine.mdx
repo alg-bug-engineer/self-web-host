@@ -1,0 +1,174 @@
+---
+title: "Agent 可靠执行实战（十二）：持久轮转调度与毒消息隔离"
+description: "承接有序 outbox 的饥饿反例，用持久轮转票号、按流程头部派发、退避与隔离、租约回调校验和原消息重投，验证有限流程的执行机会公平与不可跳步边界。"
+date: 2026-10-20
+author: 芝士AI吃鱼
+tags:
+  - Agent
+  - AI工程
+  - 消息调度
+  - 死信隔离
+  - SQLite
+category: tech
+postType: article
+icon: robot
+published: true
+access: public
+topicId: agent-reliability-12
+topicCluster: agent-reliability
+---
+
+窗口前有三个人。A 的材料少了一页，工作人员说回去补。叫号机很负责：下一位，A。材料仍然少一页。下一位，还是 A。
+
+B 和 C 的材料没有问题，但他们连被检查的机会都没有。系统日志却十分热闹，每次都有请求、有回答、有错误。没有进程挂住，队伍依然不动。
+
+这是为说明调度问题设计的假设场景，不是作者亲历的事故。[第十一篇](/blog/agent-reliability-11-ordered-outbox-inbox)已经实际复现：默认 relay 每次挑第一条未确认事件，A 的永久身份冲突会让 B 一直排在后面。消费端按流程隔离，不代表派发端也给每个流程机会。
+
+本篇沿着这个反例往下做：**既不把失败伪装成确认，也不跳过同一流程的前置事件，怎样让其他符合条件的流程继续执行？**
+
+资料核对日期为 2026 年 10 月 20 日。实验使用 Python 标准库、两个独立 SQLite 文件、真实子进程突然退出和八进程竞争。事件、计数业务、故障和逻辑时刻都是合成输入；没有模型、broker、网络服务或真实业务资源。本文不是某家消息队列的集成评测，也不把调度次数当作吞吐量。
+
+## 1. 先把“公平”缩小到代码真的能保证的范围
+
+本例的流程 A、B、C 各有三条事件。每条事件携带一个正整数 delta，消费端必须按该流程的连续序号，把 delta 累加到本地 projection，并保留 receipt。这是刻意简单的合成业务，用来观察谁获得派发机会、谁被阻塞，以及本地效果有没有重复。
+
+我们需要的是机会轮转，不是平均耗时：在有限的一组流程中，只要它们的头部事件持续符合派发条件，获得一次 claim 的流程就排到这些流程后面。A 失败不能占着队首无限立即重试；A 成功后还有一百条积压，也不能一次把窗口包圆。
+
+但若 A 正在等退避到期，它就不属于当前可派发集合。若 B 已经有一个仍在租约内的执行者，它也不应该同时领取第二条。若 C 的头部已经隔离，其后续事件仍须等待。这些不是被调度器不公平地忽略，而是协议明确不允许现在处理。
+
+还有一个容易被“公平队列”四个字遮住的边界：不断涌入的新流程，在本文规则下可能继续排到老流程前面。测试专门保留了这个反例。这里没有租户权重、准入上限或新老流量配额，不能承诺无限动态流量下无饥饿，更不能承诺每个流程在多少毫秒内完成。
+
+## 2. 队首不是第一行，而是每条流程自己的第一件未结事项
+
+queue.db 保存 flow、event、clock 和 audit 四张表。flow.seq 负责生成连续序号，flow.served 保存最近一次获得机会的全局票号。event 保存不可变正文、状态、下次可尝试时刻、租约截止、代次和尝试次数。clock 保存单调递增的逻辑时刻与票号；audit 保存明确重投决定。
+
+示例 enqueue 把新事件、流程序号一起提交。相同 ID、流程和 delta 再次入队返回 existing；同 ID 改内容返回 conflict。它不实现业务规划、权限检查或生产者数据库与队列之间的跨库原子性。若事件源自另一套业务状态，仍须使用第十一篇的同事务 outbox，而不能拿这里的 enqueue 包一层，就宣布双写问题解决了。
+
+选择头部事件的关键条件不是 state='ready'，而是先找到每条流程中最小的未确认序号：
+
+```sql
+SELECT e.*, f.served
+FROM event e JOIN flow f USING(flow_id)
+WHERE e.state != 'acked'
+  AND NOT EXISTS (
+    SELECT 1 FROM event p
+    WHERE p.flow_id=e.flow_id
+      AND p.seq<e.seq
+      AND p.state!='acked'
+  )
+ORDER BY f.served, e.flow_id;
+```
+
+这个次序很重要。如果先把 quarantined 过滤掉，A1 被隔离后，A2 就会伪装成新的队首。查询看似疏通了队列，业务规则却被偷偷改成“失败的前一步可以不存在”。
+
+在本例里，A1 不管是 ready、inflight 还是 quarantined，只要尚未 acked，就始终挡住 A2。对其他流程则没有这条依赖：A1 隔离，不妨碍 B1。
+
+[Amazon SQS 的死信队列文档](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html)明确提醒，对必须保持精确操作顺序的 FIFO 流程，死信队列可能破坏这一顺序。这里采用的是保留原记录、隔离当前头部的教学协议，不是对 SQS 的配置建议，也没有接入 SQS。
+
+## 3. 领取一次机会，就先记一次账，不等成功才轮到别人
+
+claim 在 BEGIN IMMEDIATE 事务内完成以下事情：验证逻辑时间不倒退，找到每个流程的头部，排除未到期、仍在租约内和已隔离的记录，再按 served 从小到大挑选。确定事件后，全局 ticket 加一，写回该流程的 served，同时把事件改成 inflight，增加 generation 和 attempts，并保存 lease_until。
+
+这些字段必须一起提交。否则“事件已经被取走，但轮转位置没记住”，或“轮转票号前进了，但事件没留下领取记录”，都会让恢复语义变得含混。
+
+更关键的是：**served 在领取时更新，不是在成功时更新。** 如果只有成功才排到后面，永远失败的 A 就永远保有最靠前的位置。claim 成功之后，即使执行者在发送之前退出，这次机会也已经消耗。
+
+实验给 A、B、C 各放三条事件，所有事件在逻辑时刻 0 可用，依次调用九次 step。实际读取的顺序为：
+
+```text
+A1 → B1 → C1 → A2 → B2 → C2 → A3 → B3 → C3
+```
+
+这不是按墙上时钟采样的性能曲线。九次调用在代码中顺序执行，记录的是数据库选择结果。另一个八进程实验同时争抢 A、B、C 的各两条事件，只有 A1、B1、C1 被领取，另外五个进程得到 idle，没有进程越过头部去领 A2。谁先获得写锁不固定，冻结文件只比较被领取 ID 的集合和最终状态。
+
+[SQLite 事务文档](https://www.sqlite.org/lang_transaction.html)解释了 IMMEDIATE 写事务以及同一数据库的单写者约束。本例用这条约束把选择、票号和领取记录串成一个原子步骤；它不是跨节点分布式调度，也没有证明 SQLite 在大积压下的扫描成本可接受。HEADS 查询会扫描流程头部，生产容量规划与索引优化需要另做测量。
+
+<ArticleDiagram src="/images/articles/agent-reliability-12/fair-heads.svg" mobileSrc="/images/articles/agent-reliability-12/fair-heads-mobile.svg" alt="A1被隔离时A2仍等待；B1与C1按最近领取票号轮转；票号在领取时持久更新，而不是等成功才更新" caption="公平的是当前符合条件流程的领取机会。隔离 A1，不等于允许 A2 跳过它。图为协议示意，不是性能数据。" height={850} mobileHeight={1420} />
+
+## 4. 暂时失败、永久冲突和没有回音，不该共用一个重试按钮
+
+一次 claim 之后，worker 才调用接收端，调用期间不持有 queue.db 的写锁。返回结果交给 settle，决定下一步状态。
+
+accepted 和正文一致的 duplicate 可以写 acked。id_conflict、sequence_conflict 与样例中的 unsupported_delta 立即进入 quarantined。retry 与 gap 在当前一轮预算尚有余额时回到 ready，并保存 next_at；耗尽预算则隔离。
+
+unsupported_delta 表示教学接收器目前允许的 delta 上限比事件值小，不表示事件已被修改或丢弃。本例只用这个明确返回值演示“修复接收能力之后，重放同一条原消息”。真实永久错误的分类必须来自具体服务契约，不能把任何 4xx 或自然语言报错都自动归到这一类。
+
+retry 在实验中由 unavailable 合成输入产生，发生在发送前。它检验调度策略，不冒充一次网络超时。真正“接收已提交，发送端却没有记账”的缝隙由进程退出实验单独覆盖。
+
+样例每轮最多领取三次。第一次 retry 后 next_at=2，第二次后 next_at=6，第三次再失败则隔离。逻辑时刻 1 和 5 的 claim 都不会提前取出它。与此同时，B 在时刻 0 就能执行，不必陪 A 一起等。
+
+这里采用有上限的确定性指数退避，方便完整结果复现，没有实现随机抖动。[AWS Builders’ Library 的重试文章](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/)解释了重试如何增加负载，以及抖动如何分散同步重试。本文没有测试同步流量洪峰，不能据此声称“不加 jitter 也没有问题”；生产接入还要设计 jitter、整体预算与并发限制。
+
+需要特别注意 attempts 的含义：它计的是持久领取次数，不是对端实际收到请求的次数。三个执行者若都在 claim 提交后、发送前退出，三次预算照样用完；接收端仍然可以是空的。这是有意的保守策略。反过来，acked 尚未写回也不证明接收端没产生效果。quarantined 的含义只是“停止自动派发，等待处置”，不是“这件事一定失败、可以放心重做”。
+
+## 5. 租约到期只收回本地写账权，不会收回已经发出的请求
+
+claim 返回的 token 包含 event_id 与 generation。settle 要同时检查事件仍为 inflight、generation 相同、当前逻辑时刻尚未达到 lease_until。三个条件缺一不可。token 与 result 都来自可信的本地调用链，代次校验不是消息签名；伪造 accepted 的不可信调用者不在本例保护范围内。
+
+实验先在时刻 0 领取 A1，代次为 1；到时刻 5 再领取，代次变成 2。旧执行者随后把原事件送到接收端，接收端第一次应用，返回 accepted。旧执行者再回写发送端时，代次不匹配，只能得到 stale。新执行者重发同一正文，接收端返回 duplicate；新 token 才能把事件写成 acked。
+
+最终有两次发送调用、一次本地效果和一次有效的发送端终态写入。**代次校验阻止的是旧回调覆盖新调度状态；接收端去重阻止的是重复业务效果。** 二者不能互相替代。
+
+如果租约已经到期，但还没有任何新进程接管，本例也拒绝旧 token 回写，返回 expired。这样本地租约的边界不会依赖“恰好有没有别人来领”。代价是一次已经成功的收件可能仍要重发确认；接收端必须支持稳定 ID、不可变正文与持久回执。
+
+本文接收端的 accepted 特意收窄为：receipt 与合成累加效果在同一个事务中完成。它与第十一篇“先持久收件、稍后应用”的 accepted 含义不同。两篇没有悄悄共用一个模糊成功词。本例为了聚焦调度，没有再做独立 inbox 应用阶段；真实接入应以对端契约判断 acked 到底代表保管责任转移，还是本地处理完成。
+
+接收端在同一个写事务中检查 event_id、流程序号与原正文，插入 receipt 并更新 projection。若改成发邮件、扣款或调用另一个 API，就不再受这个 SQLite 事务保护。需要重新设计那条边界，不能把这里的单次累加结果扩展成远端工具 exactly-once。
+
+<ArticleDiagram src="/images/articles/agent-reliability-12/late-callback.svg" mobileSrc="/images/articles/agent-reliability-12/late-callback-mobile.svg" alt="旧worker代次1租约到期后，新worker取得代次2；旧请求仍可到达，接收端持久去重只应用一次，旧回调被拒绝，新回调记录确认" caption="本地代次挡住旧回调，远端同 ID 去重挡住重复效果。租约本身没有撤回在途请求。这里的远端仅由第二个独立本地数据库模拟。" height={880} mobileHeight={1390} />
+
+## 6. 重投不是删掉红灯，再造一张绿票
+
+隔离后要有一个明确出口，否则系统只是把自动重试改成了永久堆积。出口也不能只是直接改 state='ready'，连谁决定重新尝试、此前累计领取多少次都不留下。
+
+redrive 要求 event_id、expected_generation、非空原因和逻辑时刻。它只接受当前仍为 quarantined、代次也一致的记录；同一个事务把状态改回 ready、代次再加一、当前轮 attempts 清零，并追加 audit。lifetime_attempts 不清零，原 event_id、flow_id、seq 和 body 全部保留。需要准确说明：重投会清空 event.reason；audit 保存的是本次操作者原因和新代次，不保存旧隔离原因或每次失败的完整历史。它提供重投决定与累计次数的证据，不是一套完整故障审计日志。
+
+expected_generation 是乐观并发检查，不是身份认证。它防止两个操作员基于同一旧状态重复开启尝试，也阻止隔离前的旧 worker 在重投后继续回写。本例的操作者输入被视为可信，没有账户、签名或审批系统。真实的重新执行决定仍需业务权限，不能因为函数叫 redrive 就自动取得授权。
+
+完整实验中，A1 的 delta=10，旧接收器只允许到 5，A1 因而隔离。A2 没有被领取，B1 却正常完成。随后输入一条明确的重投原因，启用样例中原本就有的接收上限 1000，再处理 A1、A2：两条都完成，A 的连续序号为 2，累计值为 11。audit 保留这一决定；A1 的 lifetime_attempts 为 2。
+
+这个演示没有“自动修复毒消息”。它只是改变可信调用时传入的接收能力上限，不代表真实线上版本升级已经完成。身份冲突尤其不能通过改 ID、改正文或者删除对端回执来偷偷解决：新 ID 仍可能抢占同一流程序号；删除回执还会破坏此前依赖的去重保证。本例不提供这些破坏性修复入口。
+
+如果同一事件跨十次重投循环，每轮又有三次预算，总领取次数当然可能继续增加。当前轮预算不是终身预算。lifetime_attempts 与 audit 用来保留事实，没有实现全局费用上限、处置次数上限或自动批准。
+
+## 7. 崩溃恢复：轮转位置、业务效果和确认各自留下了什么
+
+六个故障点使用真实子进程的 os._exit(73)。每次先看退出后的持久状态，再在逻辑时刻 5 恢复；不只比较最后是否成功。
+
+| 退出位置 | 恢复前可见状态 | 恢复方式 |
+| --- | --- | --- |
+| claim 提交前 | 票号、领取次数和状态均未前进 | 正常领取 |
+| claim 提交后 | inflight、票号和一次预算已保留 | 租约到期后重新领取 |
+| receipt/effect 提交前 | 领取已提交，接收端事务回滚 | 到期后重发 |
+| receipt/effect 提交后 | 接收效果存在，发送端尚未确认 | 同 ID 重发得到 duplicate |
+| settle 提交前 | 接收效果存在，确认事务回滚 | 同上 |
+| settle 提交后 | acked 已存在 | 恢复调用返回 idle |
+
+六组恢复后都只有一条 receipt，一份合成本地效果，事件为 acked。表格描述的是六组单事件实验，不是假装六次生产故障，也没有测试断电、文件系统损坏或跨节点分区。
+
+额外的触发器测试分别拒绝 event、projection 和 audit 插入，验证入队不会只增加流程序号、接收不会只保留回执却没改效果、重投不会先放开执行再丢失审计。数据库错误向调用方传播，不会被宽泛 except 转成普通 retry 或成功。
+
+每个数据库启用 WAL 与 synchronous=FULL。snapshot 在每个文件内开启独立读事务，只在实验工作进程退出后采样；它不是跨文件一致快照。20/30 秒只用于防测试挂死，不是租约时长或性能结论。业务租约的 5、实际走到的退避 2 和 4 都是逻辑刻度，没有实际等待这么多秒。公式虽然配置了退避上限 8，但当前三次领取预算使第三次失败直接隔离，因此上限 8 在这些执行路径中不会触发。所有队列写入口共享持久 tick，并拒绝倒退；即使旧回调被判 stale，它提供的更大合法 tick 仍可能被保存。因此时刻输入必须由可信测试调度统一控制，这不是多机器各读墙钟的生产模型。
+
+## 8. 下载完整代码，检查“没有饿死”究竟依赖什么
+
+把五个文件放进同一空目录：[fair_relay.py](/examples/agent-reliability-12/fair_relay.py)、[test_fair_relay.py](/examples/agent-reliability-12/test_fair_relay.py)、[run_experiment.py](/examples/agent-reliability-12/run_experiment.py)、[results.json](/examples/agent-reliability-12/results.json)、[README.md](/examples/agent-reliability-12/README.md)。使用 Python 3.10 或更新版本，SQLite 3.24.0 或更新版本，无第三方依赖：
+
+```bash
+python3 test_fair_relay.py
+python3 run_experiment.py --check
+python3 run_experiment.py --output reproduced.json
+python3 -c "import sys, sqlite3; print(sys.version); print(sqlite3.sqlite_version)"
+```
+
+本次实际运行环境为 Linux、Python 3.12.14、SQLite 3.53.1。40 项 unittest 通过，16 组具名场景的完整结果与冻结 JSON 一致。并发结果不冻结进程赢家、PID、耗时和临时路径；业务状态、领取集合、回执和审计逐项比较。错误的字典序选择对照是明确标注的纯调度算例，没有伪装成数据库或网络实测。
+
+这套机制在有限且持续可派发的流程集合里，让一次领取消耗一个持久机会，防止单个坏头部靠“永远失败、永远排第一”垄断选择。它依赖同一个队列数据库的原子事务、可信入口、稳定身份、记录不被擅自删除，以及逻辑时刻不倒退。任意绕过入口改表，都可以破坏这些条件。
+
+它没有守护进程、消息 broker、真实网络超时、随机抖动、全局限流、租户公平、告警、自动数据修复、积压上限、清理策略、灾备或 Windows 验证。新的流程始终以 served=0 入场，持续新增流量可以挤占旧流程的下一轮机会；已有测试明确展示 B、C、D 依次插入并抢在 A2 之前。若你的业务允许无限新流量，需要另加准入与调度策略，不能把有限集合的轮转结论直接搬过去。
+
+回到窗口前。A 的材料不对，应该让 A 停下来补，不应该让所有人陪他反复听同一句报错。但 A 的下一步，也不能因为叫号机嫌麻烦就擅自代办。可靠的隔离，不是把红色记录藏起来，而是把“谁暂时不能走”和“谁仍然可以走”分清，再把每次重新放行的决定留在账上。
+
+系列讨论可查看[知识星球](/planet)，或通过[公众号入口](/about#wechat)关注更新。RAG 第六篇仍等待真实生成与细粒度审计条件，不以本地调度实验代替模型评测。
+
+本文、原创图解与代码由 AI 辅助制作，并经过执行与内容核验。合成业务结果不构成生产性能、外部执行或身份授权保证。

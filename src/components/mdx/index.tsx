@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import ArticleDiagram from '@/components/ArticleDiagram'
 import { Children, ReactNode, ComponentPropsWithoutRef, isValidElement } from 'react'
 import type { MDXComponents } from 'mdx/types'
 
@@ -107,7 +108,7 @@ interface HighlightBoxProps {
 
 function HighlightBox({ children }: HighlightBoxProps) {
   return (
-    <div className="my-6 p-6 rounded-xl bg-gradient-to-br from-accent-primary/5 to-accent-secondary/5 border border-accent-primary/20">
+    <div className="my-6 rounded-lg border border-accent-primary/20 border-l-[3px] border-l-accent-primary bg-bg-secondary p-6">
       {children}
     </div>
   )
@@ -166,9 +167,9 @@ function createHeading(level: 1 | 2 | 3 | 4 | 5 | 6) {
       <Tag id={id} className={`${sizes[level]} scroll-mt-24 font-bold text-text-primary mt-8 mb-4 group`} {...props}>
         {children}
         {id && (
-          <a href={`#${id}`} className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity text-accent-primary">
+          <Link href={`#${id}`} className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity text-accent-primary">
             #
-          </a>
+          </Link>
         )}
       </Tag>
     )
@@ -210,6 +211,7 @@ function Paragraph({ children, ...props }: ComponentPropsWithoutRef<'p'>) {
 // Export all MDX components
 export const mdxComponents: MDXComponents = {
   // Custom components
+  ArticleDiagram,
   InfoCard,
   TwoColumnLayout,
   Left,

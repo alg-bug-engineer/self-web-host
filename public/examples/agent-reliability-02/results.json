@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "scope": "synthetic values; real spawned processes and SQLite; logical ticks; not distributed failover or performance",
+  "scenarios": {
+    "unfenced": {
+      "events": [
+        [
+          "A_acquire",
+          1
+        ],
+        [
+          "B_acquire",
+          2
+        ],
+        [
+          "B_write",
+          "written"
+        ],
+        [
+          "B_complete",
+          true
+        ],
+        [
+          "A_write",
+          "written"
+        ],
+        [
+          "A_complete",
+          false
+        ]
+      ],
+      "final": {
+        "lease": [
+          {
+            "resource": "document",
+            "owner": "B",
+            "epoch": 2,
+            "deadline": 20,
+            "result": "new"
+          }
+        ],
+        "sink": [
+          {
+            "resource": "document",
+            "epoch": 1,
+            "value": "old"
+          }
+        ]
+      }
+    },
+    "fenced": {
+      "events": [
+        [
+          "A_acquire",
+          1
+        ],
+        [
+          "B_acquire",
+          2
+        ],
+        [
+          "B_write",
+          "written"
+        ],
+        [
+          "B_complete",
+          true
+        ],
+        [
+          "A_write",
+          "stale"
+        ],
+        [
+          "A_complete",
+          false
+        ]
+      ],
+      "final": {
+        "lease": [
+          {
+            "resource": "document",
+            "owner": "B",
+            "epoch": 2,
+            "deadline": 20,
+            "result": "new"
+          }
+        ],
+        "sink": [
+          {
+            "resource": "document",
+            "epoch": 2,
+            "value": "new"
+          }
+        ]
+      }
+    },
+    "expiry_gap": {
+      "events": [
+        "written",
+        "written",
+        "stale"
+      ],
+      "meaning": "B acquired but receiver had not observed epoch 2; first A write still accepted",
+      "final": {
+        "lease": [
+          {
+            "resource": "document",
+            "owner": "B",
+            "epoch": 2,
+            "deadline": 20,
+            "result": null
+          }
+        ],
+        "sink": [
+          {
+            "resource": "document",
+            "epoch": 2,
+            "value": "new"
+          }
+        ]
+      }
+    }
+  }
+}

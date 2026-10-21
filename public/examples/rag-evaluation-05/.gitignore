@@ -1,0 +1,6 @@
+# Do not redistribute upstream model outputs or source passages.
+.data/
+.cache/
+source.json
+human_eval_citations_completed.json
+*.download

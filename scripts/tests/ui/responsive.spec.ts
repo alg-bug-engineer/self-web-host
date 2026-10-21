@@ -39,16 +39,18 @@ test('首页在桌面和移动端保持可读且无横向溢出', async ({ page 
   expect(errors).toEqual([])
 })
 
-test('首页知识图谱在浅色主题下使用浅色面板', async ({ page }) => {
+test('首页在浅色主题下使用技术博客式编辑布局', async ({ page }) => {
   await page.goto('/')
   await page.evaluate(() => localStorage.setItem('vite-ui-theme', 'light'))
   await page.reload()
 
-  const consolePanel = page.locator('.knowledge-console')
-  await expect(consolePanel).toBeVisible()
-  await expect(consolePanel).toHaveCSS('background-color', 'rgb(255, 255, 255)')
-  await expect(consolePanel.locator('.satellite').first()).toHaveCSS('background-color', 'rgb(255, 255, 255)')
-  await expect(consolePanel.locator('.console-metrics > div').first()).toHaveCSS('background-color', 'rgb(247, 247, 251)')
+  const hero = page.locator('.editorial-hero')
+  const index = page.locator('.home-index')
+  await expect(hero).toBeVisible()
+  await expect(index).toBeVisible()
+  await expect(index.getByRole('link')).toHaveCount(3)
+  await expect(page.locator('.knowledge-console')).toHaveCount(0)
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(245, 247, 250)')
 })
 
 test('移动菜单具备对话框语义、滚动锁定和键盘关闭', async ({ page }, testInfo) => {
@@ -79,8 +81,8 @@ test('移动菜单具备对话框语义、滚动锁定和键盘关闭', async ({
   await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden')
 })
 
-test('最新日更文章包含完整正文结构和有效封面', async ({ page }) => {
-  await page.goto('/')
+test('已发布日更文章包含完整正文结构和有效封面', async ({ page }) => {
+  await page.goto('/blog')
   const latestDaily = page.locator('a[href^="/blog/daily-"]').first()
   await expect(latestDaily).toBeVisible()
   const href = await latestDaily.getAttribute('href')
@@ -142,6 +144,61 @@ test('旧长文保留阅读进度但不伪造目录结构', async ({ page }) => 
   expect(response?.ok()).toBe(true)
   await expect(page.getByTestId('article-reading-progress')).toHaveCount(1)
   await expect(page.getByRole('navigation', { name: '本文目录' })).toHaveCount(0)
+  await expectNoHorizontalOverflow(page)
+})
+
+test('AI 实践公开预览只在锁定区弹窗一次，并保留正确外链', async ({ page }) => {
+  await page.goto('/blog/proton-mail-claude-tutorial')
+  await expect(page.getByText('AI 实践公开预览')).toBeVisible()
+  const dialog = page.getByRole('dialog', { name: '完整教程解锁' })
+  await expect(dialog).toBeHidden()
+
+  const inlineGate = page.getByTestId('planet-gate-inline')
+  await inlineGate.scrollIntoViewIfNeeded()
+  await expect(dialog).toBeVisible()
+  await expect(dialog.getByRole('link', { name: '打开完整教程' })).toHaveAttribute(
+    'href',
+    'https://wx.zsxq.com/group/28882182852411/topic/45548821411144448',
+  )
+  await expect(dialog.getByRole('link', { name: '加入 AI 实践', exact: true })).toHaveAttribute(
+    'href',
+    'https://t.zsxq.com/WtjvX',
+  )
+  await expect(dialog.getByTestId('planet-gate-poster')).toHaveAttribute('href', 'https://t.zsxq.com/WtjvX')
+  const poster = dialog.getByRole('img', { name: 'AI 实践知识星球加入海报，包含可扫描二维码' })
+  await expect(poster).toBeVisible()
+  await expect(poster).toHaveAttribute('src', /ai-practice-poster\.png/)
+  await expect.poll(() => poster.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth === 750 && image.naturalHeight === 412)).toBe(true)
+
+  await page.keyboard.press('Escape')
+  await expect(dialog).toBeHidden()
+  await expect(inlineGate.getByRole('link', { name: '打开完整教程' })).toBeFocused()
+  await expect(inlineGate).toBeVisible()
+
+  await page.reload()
+  await page.getByTestId('planet-gate-inline').scrollIntoViewIfNeeded()
+  await expect(dialog).toBeHidden()
+
+  const markdown = await page.request.get('/blog/proton-mail-claude-tutorial/index.html.md')
+  expect(markdown.status()).toBe(200)
+  const markdownBody = await markdown.text()
+  expect(markdownBody).toContain('访问范围：AI 实践公开预览')
+  expect(markdownBody).toContain('https://wx.zsxq.com/group/28882182852411/topic/45548821411144448')
+  expect(markdownBody).not.toMatch(/^##\s+(?:完整部署|Cookie 获取|curl 测试)/m)
+  await expectNoHorizontalOverflow(page)
+})
+
+test('AI 实践解锁窗口支持暗色主题和关闭按钮', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('vite-ui-theme', 'dark'))
+  await page.goto('/blog/claude2api-ide-tutorial')
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await page.getByTestId('planet-gate-inline').scrollIntoViewIfNeeded()
+
+  const dialog = page.getByRole('dialog', { name: '完整教程解锁' })
+  await expect(dialog).toBeVisible()
+  await expect(dialog).toHaveCSS('background-color', 'rgb(22, 27, 34)')
+  await dialog.getByRole('button', { name: '关闭解锁窗口' }).click()
+  await expect(dialog).toBeHidden()
   await expectNoHorizontalOverflow(page)
 })
 

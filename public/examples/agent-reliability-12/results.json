@@ -1,0 +1,1560 @@
+{
+  "backoff_and_budget": {
+    "snapshot": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 6,
+          "ticket": 4
+        }
+      ],
+      "event": [
+        {
+          "attempts": 3,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 3,
+          "lease_until": 11,
+          "lifetime_attempts": 3,
+          "next_at": 6,
+          "reason": "attempt_budget",
+          "seq": 1,
+          "state": "quarantined"
+        },
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"B1\",\"flow_id\":\"B\",\"seq\":1}",
+          "event_id": "B1",
+          "flow_id": "B",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 4
+        },
+        {
+          "flow_id": "B",
+          "seq": 1,
+          "served": 2
+        }
+      ],
+      "projection": [
+        {
+          "flow_id": "B",
+          "seq": 1,
+          "total": 1
+        }
+      ],
+      "receipt": [
+        {
+          "body": "{\"delta\":1,\"event_id\":\"B1\",\"flow_id\":\"B\",\"seq\":1}",
+          "event_id": "B1",
+          "flow_id": "B",
+          "seq": 1
+        }
+      ]
+    },
+    "steps": [
+      {
+        "event": "A1",
+        "result": "retry",
+        "state": "ready"
+      },
+      {
+        "event": "B1",
+        "result": "accepted",
+        "state": "acked"
+      },
+      {
+        "event": null,
+        "result": "idle"
+      },
+      {
+        "event": "A1",
+        "result": "retry",
+        "state": "ready"
+      },
+      {
+        "event": null,
+        "result": "idle"
+      },
+      {
+        "event": "A1",
+        "result": "retry",
+        "state": "quarantined"
+      }
+    ]
+  },
+  "concurrent_claims": {
+    "claims": [
+      "A1",
+      "B1",
+      "C1"
+    ],
+    "idle": 5,
+    "snapshot": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 0,
+          "ticket": 3
+        }
+      ],
+      "event": [
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "inflight"
+        },
+        {
+          "attempts": 0,
+          "body": "{\"delta\":1,\"event_id\":\"A2\",\"flow_id\":\"A\",\"seq\":2}",
+          "event_id": "A2",
+          "flow_id": "A",
+          "generation": 0,
+          "lease_until": 0,
+          "lifetime_attempts": 0,
+          "next_at": 0,
+          "reason": null,
+          "seq": 2,
+          "state": "ready"
+        },
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"B1\",\"flow_id\":\"B\",\"seq\":1}",
+          "event_id": "B1",
+          "flow_id": "B",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "inflight"
+        },
+        {
+          "attempts": 0,
+          "body": "{\"delta\":1,\"event_id\":\"B2\",\"flow_id\":\"B\",\"seq\":2}",
+          "event_id": "B2",
+          "flow_id": "B",
+          "generation": 0,
+          "lease_until": 0,
+          "lifetime_attempts": 0,
+          "next_at": 0,
+          "reason": null,
+          "seq": 2,
+          "state": "ready"
+        },
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"C1\",\"flow_id\":\"C\",\"seq\":1}",
+          "event_id": "C1",
+          "flow_id": "C",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "inflight"
+        },
+        {
+          "attempts": 0,
+          "body": "{\"delta\":1,\"event_id\":\"C2\",\"flow_id\":\"C\",\"seq\":2}",
+          "event_id": "C2",
+          "flow_id": "C",
+          "generation": 0,
+          "lease_until": 0,
+          "lifetime_attempts": 0,
+          "next_at": 0,
+          "reason": null,
+          "seq": 2,
+          "state": "ready"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 2,
+          "served": 1
+        },
+        {
+          "flow_id": "B",
+          "seq": 2,
+          "served": 2
+        },
+        {
+          "flow_id": "C",
+          "seq": 2,
+          "served": 3
+        }
+      ],
+      "projection": [],
+      "receipt": []
+    }
+  },
+  "crash_before_send_spends_budget": {
+    "generations": [
+      1,
+      2,
+      3
+    ],
+    "next_claim": null,
+    "snapshot": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 15,
+          "ticket": 3
+        }
+      ],
+      "event": [
+        {
+          "attempts": 3,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 4,
+          "lease_until": 15,
+          "lifetime_attempts": 3,
+          "next_at": 0,
+          "reason": "attempt_budget",
+          "seq": 1,
+          "state": "quarantined"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 3
+        }
+      ],
+      "projection": [],
+      "receipt": []
+    }
+  },
+  "crash_claim_after_commit": {
+    "after": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 5,
+          "ticket": 2
+        }
+      ],
+      "event": [
+        {
+          "attempts": 2,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 2,
+          "lease_until": 10,
+          "lifetime_attempts": 2,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 2
+        }
+      ],
+      "projection": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "total": 1
+        }
+      ],
+      "receipt": [
+        {
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "seq": 1
+        }
+      ]
+    },
+    "before": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 0,
+          "ticket": 1
+        }
+      ],
+      "event": [
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "inflight"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 1
+        }
+      ],
+      "projection": [],
+      "receipt": []
+    },
+    "exitcode": 73,
+    "recovery": {
+      "event": "A1",
+      "result": "accepted",
+      "state": "acked"
+    }
+  },
+  "crash_claim_before_commit": {
+    "after": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 5,
+          "ticket": 1
+        }
+      ],
+      "event": [
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 1,
+          "lease_until": 10,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 1
+        }
+      ],
+      "projection": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "total": 1
+        }
+      ],
+      "receipt": [
+        {
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "seq": 1
+        }
+      ]
+    },
+    "before": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 0,
+          "ticket": 0
+        }
+      ],
+      "event": [
+        {
+          "attempts": 0,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 0,
+          "lease_until": 0,
+          "lifetime_attempts": 0,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "ready"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 0
+        }
+      ],
+      "projection": [],
+      "receipt": []
+    },
+    "exitcode": 73,
+    "recovery": {
+      "event": "A1",
+      "result": "accepted",
+      "state": "acked"
+    }
+  },
+  "crash_receive_after_commit": {
+    "after": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 5,
+          "ticket": 2
+        }
+      ],
+      "event": [
+        {
+          "attempts": 2,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 2,
+          "lease_until": 10,
+          "lifetime_attempts": 2,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 2
+        }
+      ],
+      "projection": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "total": 1
+        }
+      ],
+      "receipt": [
+        {
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "seq": 1
+        }
+      ]
+    },
+    "before": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 0,
+          "ticket": 1
+        }
+      ],
+      "event": [
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "inflight"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 1
+        }
+      ],
+      "projection": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "total": 1
+        }
+      ],
+      "receipt": [
+        {
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "seq": 1
+        }
+      ]
+    },
+    "exitcode": 73,
+    "recovery": {
+      "event": "A1",
+      "result": "duplicate",
+      "state": "acked"
+    }
+  },
+  "crash_receive_before_commit": {
+    "after": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 5,
+          "ticket": 2
+        }
+      ],
+      "event": [
+        {
+          "attempts": 2,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 2,
+          "lease_until": 10,
+          "lifetime_attempts": 2,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 2
+        }
+      ],
+      "projection": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "total": 1
+        }
+      ],
+      "receipt": [
+        {
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "seq": 1
+        }
+      ]
+    },
+    "before": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 0,
+          "ticket": 1
+        }
+      ],
+      "event": [
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "inflight"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 1
+        }
+      ],
+      "projection": [],
+      "receipt": []
+    },
+    "exitcode": 73,
+    "recovery": {
+      "event": "A1",
+      "result": "accepted",
+      "state": "acked"
+    }
+  },
+  "crash_settle_after_commit": {
+    "after": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 5,
+          "ticket": 1
+        }
+      ],
+      "event": [
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 1
+        }
+      ],
+      "projection": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "total": 1
+        }
+      ],
+      "receipt": [
+        {
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "seq": 1
+        }
+      ]
+    },
+    "before": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 0,
+          "ticket": 1
+        }
+      ],
+      "event": [
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 1
+        }
+      ],
+      "projection": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "total": 1
+        }
+      ],
+      "receipt": [
+        {
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "seq": 1
+        }
+      ]
+    },
+    "exitcode": 73,
+    "recovery": {
+      "event": null,
+      "result": "idle"
+    }
+  },
+  "crash_settle_before_commit": {
+    "after": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 5,
+          "ticket": 2
+        }
+      ],
+      "event": [
+        {
+          "attempts": 2,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 2,
+          "lease_until": 10,
+          "lifetime_attempts": 2,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 2
+        }
+      ],
+      "projection": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "total": 1
+        }
+      ],
+      "receipt": [
+        {
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "seq": 1
+        }
+      ]
+    },
+    "before": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 0,
+          "ticket": 1
+        }
+      ],
+      "event": [
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "inflight"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 1
+        }
+      ],
+      "projection": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "total": 1
+        }
+      ],
+      "receipt": [
+        {
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "seq": 1
+        }
+      ]
+    },
+    "exitcode": 73,
+    "recovery": {
+      "event": "A1",
+      "result": "duplicate",
+      "state": "acked"
+    }
+  },
+  "expiry_without_reclaim": {
+    "delivered": "accepted",
+    "expired_callback": "expired",
+    "retry": {
+      "event": "A1",
+      "result": "duplicate",
+      "state": "acked"
+    },
+    "snapshot": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 5,
+          "ticket": 2
+        }
+      ],
+      "event": [
+        {
+          "attempts": 2,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 2,
+          "lease_until": 10,
+          "lifetime_attempts": 2,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 2
+        }
+      ],
+      "projection": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "total": 1
+        }
+      ],
+      "receipt": [
+        {
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "seq": 1
+        }
+      ]
+    }
+  },
+  "identity_conflict_is_not_ack": {
+    "b": {
+      "event": "B1",
+      "result": "accepted",
+      "state": "acked"
+    },
+    "conflict": "id_conflict",
+    "snapshot": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 0,
+          "ticket": 2
+        }
+      ],
+      "event": [
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": "id_conflict",
+          "seq": 1,
+          "state": "quarantined"
+        },
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"B1\",\"flow_id\":\"B\",\"seq\":1}",
+          "event_id": "B1",
+          "flow_id": "B",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 1
+        },
+        {
+          "flow_id": "B",
+          "seq": 1,
+          "served": 2
+        }
+      ],
+      "projection": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "total": 2
+        },
+        {
+          "flow_id": "B",
+          "seq": 1,
+          "total": 1
+        }
+      ],
+      "receipt": [
+        {
+          "body": "{\"delta\":2,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "seq": 1
+        },
+        {
+          "body": "{\"delta\":1,\"event_id\":\"B1\",\"flow_id\":\"B\",\"seq\":1}",
+          "event_id": "B1",
+          "flow_id": "B",
+          "seq": 1
+        }
+      ]
+    }
+  },
+  "late_worker": {
+    "new_callback": "acked",
+    "new_delivery": "duplicate",
+    "old_callback": "stale",
+    "old_delivery": "accepted",
+    "snapshot": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 5,
+          "ticket": 2
+        }
+      ],
+      "event": [
+        {
+          "attempts": 2,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 2,
+          "lease_until": 10,
+          "lifetime_attempts": 2,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 2
+        }
+      ],
+      "projection": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "total": 1
+        }
+      ],
+      "receipt": [
+        {
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "seq": 1
+        }
+      ]
+    }
+  },
+  "quarantine_does_not_skip": {
+    "after": {
+      "audit": [
+        {
+          "event_id": "A1",
+          "generation": 2,
+          "n": 1,
+          "reason": "reviewed decoder limit increase; preserve original event"
+        }
+      ],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 1,
+          "ticket": 4
+        }
+      ],
+      "event": [
+        {
+          "attempts": 1,
+          "body": "{\"delta\":10,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 3,
+          "lease_until": 6,
+          "lifetime_attempts": 2,
+          "next_at": 1,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        },
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"A2\",\"flow_id\":\"A\",\"seq\":2}",
+          "event_id": "A2",
+          "flow_id": "A",
+          "generation": 1,
+          "lease_until": 6,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 2,
+          "state": "acked"
+        },
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"B1\",\"flow_id\":\"B\",\"seq\":1}",
+          "event_id": "B1",
+          "flow_id": "B",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 2,
+          "served": 4
+        },
+        {
+          "flow_id": "B",
+          "seq": 1,
+          "served": 2
+        }
+      ],
+      "projection": [
+        {
+          "flow_id": "A",
+          "seq": 2,
+          "total": 11
+        },
+        {
+          "flow_id": "B",
+          "seq": 1,
+          "total": 1
+        }
+      ],
+      "receipt": [
+        {
+          "body": "{\"delta\":10,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "seq": 1
+        },
+        {
+          "body": "{\"delta\":1,\"event_id\":\"A2\",\"flow_id\":\"A\",\"seq\":2}",
+          "event_id": "A2",
+          "flow_id": "A",
+          "seq": 2
+        },
+        {
+          "body": "{\"delta\":1,\"event_id\":\"B1\",\"flow_id\":\"B\",\"seq\":1}",
+          "event_id": "B1",
+          "flow_id": "B",
+          "seq": 1
+        }
+      ]
+    },
+    "before": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 0,
+          "ticket": 2
+        }
+      ],
+      "event": [
+        {
+          "attempts": 1,
+          "body": "{\"delta\":10,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": "unsupported_delta",
+          "seq": 1,
+          "state": "quarantined"
+        },
+        {
+          "attempts": 0,
+          "body": "{\"delta\":1,\"event_id\":\"A2\",\"flow_id\":\"A\",\"seq\":2}",
+          "event_id": "A2",
+          "flow_id": "A",
+          "generation": 0,
+          "lease_until": 0,
+          "lifetime_attempts": 0,
+          "next_at": 0,
+          "reason": null,
+          "seq": 2,
+          "state": "ready"
+        },
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"B1\",\"flow_id\":\"B\",\"seq\":1}",
+          "event_id": "B1",
+          "flow_id": "B",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 2,
+          "served": 1
+        },
+        {
+          "flow_id": "B",
+          "seq": 1,
+          "served": 2
+        }
+      ],
+      "projection": [
+        {
+          "flow_id": "B",
+          "seq": 1,
+          "total": 1
+        }
+      ],
+      "receipt": [
+        {
+          "body": "{\"delta\":1,\"event_id\":\"B1\",\"flow_id\":\"B\",\"seq\":1}",
+          "event_id": "B1",
+          "flow_id": "B",
+          "seq": 1
+        }
+      ]
+    },
+    "first": {
+      "event": "A1",
+      "result": "unsupported_delta",
+      "state": "quarantined"
+    },
+    "idle": {
+      "event": null,
+      "result": "idle"
+    },
+    "recovered": [
+      {
+        "event": "A1",
+        "result": "accepted",
+        "state": "acked"
+      },
+      {
+        "event": "A2",
+        "result": "accepted",
+        "state": "acked"
+      }
+    ],
+    "redrive": "ready",
+    "second": {
+      "event": "B1",
+      "result": "accepted",
+      "state": "acked"
+    }
+  },
+  "redrive_compare_and_set": {
+    "first": "ready",
+    "second": "stale",
+    "snapshot": {
+      "audit": [
+        {
+          "event_id": "A1",
+          "generation": 2,
+          "n": 1,
+          "reason": "approved local decoder fix"
+        }
+      ],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 1,
+          "ticket": 1
+        }
+      ],
+      "event": [
+        {
+          "attempts": 0,
+          "body": "{\"delta\":10,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 2,
+          "lease_until": 0,
+          "lifetime_attempts": 1,
+          "next_at": 1,
+          "reason": null,
+          "seq": 1,
+          "state": "ready"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 1,
+          "served": 1
+        }
+      ],
+      "projection": [],
+      "receipt": []
+    },
+    "stale": "stale"
+  },
+  "round_robin": {
+    "snapshot": {
+      "audit": [],
+      "clock": [
+        {
+          "id": 1,
+          "tick": 0,
+          "ticket": 9
+        }
+      ],
+      "event": [
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        },
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"A2\",\"flow_id\":\"A\",\"seq\":2}",
+          "event_id": "A2",
+          "flow_id": "A",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 2,
+          "state": "acked"
+        },
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"A3\",\"flow_id\":\"A\",\"seq\":3}",
+          "event_id": "A3",
+          "flow_id": "A",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 3,
+          "state": "acked"
+        },
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"B1\",\"flow_id\":\"B\",\"seq\":1}",
+          "event_id": "B1",
+          "flow_id": "B",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        },
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"B2\",\"flow_id\":\"B\",\"seq\":2}",
+          "event_id": "B2",
+          "flow_id": "B",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 2,
+          "state": "acked"
+        },
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"B3\",\"flow_id\":\"B\",\"seq\":3}",
+          "event_id": "B3",
+          "flow_id": "B",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 3,
+          "state": "acked"
+        },
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"C1\",\"flow_id\":\"C\",\"seq\":1}",
+          "event_id": "C1",
+          "flow_id": "C",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 1,
+          "state": "acked"
+        },
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"C2\",\"flow_id\":\"C\",\"seq\":2}",
+          "event_id": "C2",
+          "flow_id": "C",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 2,
+          "state": "acked"
+        },
+        {
+          "attempts": 1,
+          "body": "{\"delta\":1,\"event_id\":\"C3\",\"flow_id\":\"C\",\"seq\":3}",
+          "event_id": "C3",
+          "flow_id": "C",
+          "generation": 1,
+          "lease_until": 5,
+          "lifetime_attempts": 1,
+          "next_at": 0,
+          "reason": null,
+          "seq": 3,
+          "state": "acked"
+        }
+      ],
+      "flow": [
+        {
+          "flow_id": "A",
+          "seq": 3,
+          "served": 7
+        },
+        {
+          "flow_id": "B",
+          "seq": 3,
+          "served": 8
+        },
+        {
+          "flow_id": "C",
+          "seq": 3,
+          "served": 9
+        }
+      ],
+      "projection": [
+        {
+          "flow_id": "A",
+          "seq": 3,
+          "total": 3
+        },
+        {
+          "flow_id": "B",
+          "seq": 3,
+          "total": 3
+        },
+        {
+          "flow_id": "C",
+          "seq": 3,
+          "total": 3
+        }
+      ],
+      "receipt": [
+        {
+          "body": "{\"delta\":1,\"event_id\":\"A1\",\"flow_id\":\"A\",\"seq\":1}",
+          "event_id": "A1",
+          "flow_id": "A",
+          "seq": 1
+        },
+        {
+          "body": "{\"delta\":1,\"event_id\":\"A2\",\"flow_id\":\"A\",\"seq\":2}",
+          "event_id": "A2",
+          "flow_id": "A",
+          "seq": 2
+        },
+        {
+          "body": "{\"delta\":1,\"event_id\":\"A3\",\"flow_id\":\"A\",\"seq\":3}",
+          "event_id": "A3",
+          "flow_id": "A",
+          "seq": 3
+        },
+        {
+          "body": "{\"delta\":1,\"event_id\":\"B1\",\"flow_id\":\"B\",\"seq\":1}",
+          "event_id": "B1",
+          "flow_id": "B",
+          "seq": 1
+        },
+        {
+          "body": "{\"delta\":1,\"event_id\":\"B2\",\"flow_id\":\"B\",\"seq\":2}",
+          "event_id": "B2",
+          "flow_id": "B",
+          "seq": 2
+        },
+        {
+          "body": "{\"delta\":1,\"event_id\":\"B3\",\"flow_id\":\"B\",\"seq\":3}",
+          "event_id": "B3",
+          "flow_id": "B",
+          "seq": 3
+        },
+        {
+          "body": "{\"delta\":1,\"event_id\":\"C1\",\"flow_id\":\"C\",\"seq\":1}",
+          "event_id": "C1",
+          "flow_id": "C",
+          "seq": 1
+        },
+        {
+          "body": "{\"delta\":1,\"event_id\":\"C2\",\"flow_id\":\"C\",\"seq\":2}",
+          "event_id": "C2",
+          "flow_id": "C",
+          "seq": 2
+        },
+        {
+          "body": "{\"delta\":1,\"event_id\":\"C3\",\"flow_id\":\"C\",\"seq\":3}",
+          "event_id": "C3",
+          "flow_id": "C",
+          "seq": 3
+        }
+      ]
+    },
+    "steps": [
+      {
+        "event": "A1",
+        "result": "accepted",
+        "state": "acked"
+      },
+      {
+        "event": "B1",
+        "result": "accepted",
+        "state": "acked"
+      },
+      {
+        "event": "C1",
+        "result": "accepted",
+        "state": "acked"
+      },
+      {
+        "event": "A2",
+        "result": "accepted",
+        "state": "acked"
+      },
+      {
+        "event": "B2",
+        "result": "accepted",
+        "state": "acked"
+      },
+      {
+        "event": "C2",
+        "result": "accepted",
+        "state": "acked"
+      },
+      {
+        "event": "A3",
+        "result": "accepted",
+        "state": "acked"
+      },
+      {
+        "event": "B3",
+        "result": "accepted",
+        "state": "acked"
+      },
+      {
+        "event": "C3",
+        "result": "accepted",
+        "state": "acked"
+      }
+    ]
+  },
+  "unsafe_lexical_selection": {
+    "B_selected": false,
+    "candidates": [
+      "A1",
+      "B1"
+    ],
+    "kind": "deterministic scheduler-only counterexample; no database effects",
+    "selected": [
+      "A1",
+      "A1",
+      "A1",
+      "A1"
+    ]
+  }
+}

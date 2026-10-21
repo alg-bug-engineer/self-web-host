@@ -55,7 +55,7 @@ export default function GuardianPilotSurvey() {
   }[submissionState]
 
   return (
-    <section id="guardian-pilot-survey" className="scroll-mt-24 rounded-3xl border border-border-default bg-bg-secondary p-6 md:p-10">
+    <section id="guardian-pilot-survey" className="scroll-mt-24 rounded-lg border border-border-default bg-bg-secondary p-6 md:p-10">
       <div className="mx-auto max-w-3xl text-center">
         <p className="eyebrow">GUARDIAN PILOT SURVEY</p>
         <h2 className="mt-2 text-3xl font-bold text-text-primary">监护人匿名调研</h2>
@@ -69,7 +69,7 @@ export default function GuardianPilotSurvey() {
 
       <div className="mx-auto mt-8 max-w-3xl space-y-5">
         {GUARDIAN_SURVEY_QUESTIONS.map((question, questionIndex) => (
-          <fieldset key={question.id} className="rounded-2xl border border-border-default bg-bg-tertiary p-5">
+          <fieldset key={question.id} className="rounded-lg border border-border-default bg-bg-tertiary p-5">
             <legend className="px-1 text-sm font-semibold leading-6 text-text-primary">
               {questionIndex + 1}. {question.label}
             </legend>
@@ -96,7 +96,7 @@ export default function GuardianPilotSurvey() {
           </fieldset>
         ))}
 
-        <label className="flex items-start gap-3 rounded-2xl border border-border-default bg-bg-tertiary p-5 text-sm leading-6 text-text-secondary">
+        <label className="flex items-start gap-3 rounded-lg border border-border-default bg-bg-tertiary p-5 text-sm leading-6 text-text-secondary">
           <input
             type="checkbox"
             checked={guardianConfirmed}

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="620" viewBox="0 0 1120 620" role="img" aria-labelledby="title desc">
+  <title id="title">RAG 的三段检查与独立评测基准</title>
+  <desc id="desc">固定知识快照，检索并选择上下文，生成回答或说明信息不足。独立人工基准分别检查召回、事实覆盖和支持度，以及拒答与权限边界。</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#5269a4"/></marker></defs>
+  <rect width="1120" height="620" rx="20" fill="#f5f7fb"/>
+  <g font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif">
+    <text x="56" y="58" font-size="15" font-weight="700" letter-spacing="2" fill="#5269a4">RAG ENGINEERING / 01</text>
+    <text x="56" y="104" font-size="30" font-weight="700" fill="#172c46">先定位错误发生在哪一段</text>
+    <text x="56" y="142" font-size="18" fill="#5b6879">同一份基准，分别检查“找到什么”与“答对什么”</text>
+    <g fill="#fff" stroke="#ccd7e6" stroke-width="2">
+      <rect x="56" y="193" width="286" height="174" rx="14"/>
+      <rect x="417" y="193" width="286" height="174" rx="14"/>
+      <rect x="778" y="193" width="286" height="174" rx="14"/>
+    </g>
+    <g fill="#172c46" font-size="23" font-weight="700">
+      <text x="80" y="235">01 知识快照</text>
+      <text x="441" y="235">02 检索与上下文</text>
+      <text x="802" y="235">03 回答或拒答</text>
+    </g>
+    <g fill="#526174" font-size="18">
+      <text x="80" y="280">文档 / 版本 / 权限</text><text x="80" y="317">保留有效且获准的证据</text>
+      <text x="441" y="280">候选 → 重排 → top-k</text><text x="441" y="317">检查必需证据是否仍在</text>
+      <text x="802" y="280">事实 / 引用 / 缺口说明</text><text x="802" y="317">检查答全、支持与边界</text>
+    </g>
+    <g stroke="#5269a4" stroke-width="3" fill="none" marker-end="url(#arrow)">
+      <path d="M350 275H402"/><path d="M711 275H763"/>
+    </g>
+    <rect x="56" y="465" width="1008" height="98" rx="14" fill="#e9eef9" stroke="#c6d3eb"/>
+    <text x="80" y="503" font-size="21" font-weight="700" fill="#274674">独立基准：问题 + 必需证据 + 参考事实 + 可回答性</text>
+    <text x="80" y="539" font-size="17" fill="#526174">由可信审核者核验标签；被测模型不能给自己的答案打分</text>
+    <g stroke="#5269a4" stroke-width="2" stroke-dasharray="6 7" fill="none" marker-end="url(#arrow)">
+      <path d="M199 459V382"/><path d="M560 459V382"/><path d="M921 459V382"/>
+    </g>
+    <text x="56" y="597" font-size="14" fill="#6d798a">芝士AI吃鱼 · 作者设计的排错示意，非性能对比或实测数据</text>
+  </g>
+</svg>

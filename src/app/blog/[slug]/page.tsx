@@ -5,6 +5,7 @@ import { mdxComponents } from '@/components/mdx'
 import Link from 'next/link'
 import Image from 'next/image'
 import PlanetBanner from '@/components/PlanetBanner'
+import PlanetGate from '@/components/PlanetGate'
 import WechatCard from '@/components/WechatCard'
 import AppCard from '@/components/AppCard'
 import { getSettings } from '@/lib/admin-storage'
@@ -12,6 +13,7 @@ import { compareDesc } from 'date-fns'
 import ArticleViewCounter from '@/components/ArticleViewCounter'
 import ArticleReadingGuide from '@/components/ArticleReadingGuide'
 import { BRAND_NAME, SITE_URL, absoluteUrl } from '@/lib/site'
+import { commentaryTopicLabel, isCommentary } from '@/lib/commentary.mjs'
 import { extractArticleHeadings } from '@/lib/article-headings.mjs'
 
 interface PageProps {
@@ -74,6 +76,9 @@ export default async function BlogPostPage({ params }: PageProps) {
   if (!post) {
     notFound()
   }
+  const commentary = isCommentary(post)
+  const sectionUrl = commentary ? '/commentary' : '/blog'
+  const sectionName = commentary ? 'AI锐评' : '文章'
   const articleHeadings = extractArticleHeadings(post.body.raw)
 
   // Get sorted posts for navigation
@@ -101,17 +106,18 @@ export default async function BlogPostPage({ params }: PageProps) {
     '@context': 'https://schema.org',
     '@graph': [
       {
-        '@type': 'TechArticle',
+        '@type': commentary ? 'Article' : 'TechArticle',
+        genre: commentary ? '观点与分析' : undefined,
         '@id': articleId,
         headline: post.title,
         description: post.description,
         mainEntityOfPage: absoluteUrl(post.url),
-        isPartOf: { '@id': `${SITE_URL}/#website` },
+        isPartOf: { '@id': commentary ? `${SITE_URL}/commentary#collection` : `${SITE_URL}/#website` },
         image: post.cover ? absoluteUrl(post.cover) : absoluteUrl('/og.png'),
         datePublished: post.date,
         dateModified: post.date,
         inLanguage: 'zh-CN',
-        articleSection: post.category === 'tech' ? 'AI 技术科普' : 'AI 与社会观察',
+        articleSection: commentary ? 'AI锐评' : post.category === 'tech' ? 'AI 技术科普' : 'AI 与社会观察',
         keywords: post.tags?.join(', '),
         citation: post.sourceUrl || undefined,
         author: { '@id': `${SITE_URL}/#person`, name: post.author || BRAND_NAME },
@@ -122,7 +128,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         '@id': `${absoluteUrl(post.url)}#breadcrumb`,
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: '首页', item: SITE_URL },
-          { '@type': 'ListItem', position: 2, name: '文章', item: `${SITE_URL}/blog` },
+          { '@type': 'ListItem', position: 2, name: sectionName, item: absoluteUrl(sectionUrl) },
           { '@type': 'ListItem', position: 3, name: post.title, item: absoluteUrl(post.url) },
         ],
       },
@@ -130,7 +136,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   return (
-    <article className="py-8">
+    <article className="py-8 sm:py-12">
       {/* Inject JSON-LD */}
       <script
         type="application/ld+json"
@@ -139,29 +145,32 @@ export default async function BlogPostPage({ params }: PageProps) {
       <div className="mx-auto max-w-6xl">
         {/* Back link */}
         <Link
-          href="/blog"
-          className="inline-flex items-center text-text-secondary hover:text-accent-primary transition-colors mb-8"
+          href={sectionUrl}
+          className="mb-8 inline-flex items-center text-sm text-text-secondary transition-colors hover:text-accent-primary"
         >
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          返回博客列表
+          {commentary ? '返回 AI锐评' : '返回文章列表'}
         </Link>
 
         {/* Header */}
-        <header className="mx-auto mb-10 max-w-3xl">
+        <header className="mx-auto mb-10 max-w-[744px] border-b border-border-default pb-8">
           {/* Category & Tags */}
-          <div className="flex flex-wrap items-center gap-3 mb-4">
-            <span className="px-3 py-1 text-sm font-bold rounded-lg bg-bg-tertiary text-text-primary border border-border-default flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-accent-primary animate-pulse"></span>
-              {post.category === 'tech' ? '技术科普' : '社科感慨'}
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <span className="flex items-center gap-1.5 rounded border border-border-default bg-bg-secondary px-2.5 py-1 text-sm font-medium text-text-secondary">
+              {commentary ? `AI锐评 · ${commentaryTopicLabel(post)}` : post.category === 'tech' ? '技术科普' : '社科感慨'}
             </span>
-            <div className="h-4 w-[1px] bg-border-default mx-1"></div>
+            {post.access === 'planet-preview' && (
+              <span className="rounded border border-accent-tertiary/30 bg-[var(--accent-planet-subtle)] px-2.5 py-1 text-sm font-medium text-accent-tertiary">
+                AI 实践公开预览
+              </span>
+            )}
             {post.tags?.map((tag) => (
               <Link
                 key={tag}
                 href={`/blog?tag=${encodeURIComponent(tag)}`}
-                className="px-3 py-1 text-sm font-medium rounded-full bg-accent-primary/10 text-accent-primary hover:bg-accent-primary hover:text-text-on-emphasis transition-all"
+                className="px-1 py-1 text-sm text-text-tertiary transition-colors hover:text-accent-primary hover:underline"
               >
                 #{tag}
               </Link>
@@ -169,26 +178,23 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
 
           {/* Title */}
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary mb-6 leading-tight">
+          <h1 className="mb-6 text-3xl font-bold leading-tight tracking-[-0.03em] text-text-primary sm:text-4xl lg:text-[2.75rem]">
             {post.title}
           </h1>
 
           {/* Meta */}
-          <div className="flex flex-wrap items-center gap-4 text-text-secondary">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">{post.icon === 'cat' ? '🐱' : '🤖'}</span>
-              <span>{post.author}</span>
-            </div>
-            <span>·</span>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-text-secondary">
+            <span>{post.author}</span>
+            <span aria-hidden="true">·</span>
             <span>{new Date(post.date).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-            <span>·</span>
+            <span aria-hidden="true">·</span>
             <span>{post.readingTime} 分钟阅读</span>
-            <span>·</span>
+            <span aria-hidden="true">·</span>
             <ArticleViewCounter path={post.url} />
           </div>
           {post.sourceUrl && (
             <p className="mt-4 text-sm text-text-tertiary">
-              来源：
+              {commentary ? '事实来源：' : '来源：'}
               <a
                 href={post.sourceUrl}
                 target="_blank"
@@ -203,7 +209,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Cover Image */}
         {post.cover && (
-          <div className="relative mx-auto mb-10 aspect-video max-w-4xl overflow-hidden rounded-2xl border border-border-default bg-bg-secondary shadow-xl">
+          <div className="relative mx-auto mb-10 aspect-video max-w-4xl overflow-hidden rounded-md border border-border-default bg-bg-secondary">
             <Image
               src={post.cover}
               alt={post.title}
@@ -226,12 +232,24 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Lead Gen Banner */}
         <div className="mb-8">
-          <PlanetBanner 
-            title="想把本文的问题继续做深一点？"
-            description="知识星球里会继续整理相关案例、工程约束和问题讨论；具体内容以当前社区页面为准。"
-            planetUrl={settings.planetUrl}
-            planetQrCode={settings.planetQrCode}
-          />
+          {post.access === 'planet-preview' && post.planetTopicUrl ? (
+            <PlanetGate
+              slug={post.slug}
+              title={post.gateTitle || '完整实操已整理好'}
+              description={post.gateDescription || '命令、配置与排错记录继续放在 AI 实践原帖。'}
+              items={post.gateItems}
+              topicUrl={post.planetTopicUrl}
+              planetUrl={settings.planetUrl || 'https://t.zsxq.com/WtjvX'}
+              planetQrCode={settings.planetQrCode}
+            />
+          ) : (
+            <PlanetBanner
+              title="想把本文的问题继续做深一点？"
+              description="知识星球里会继续整理相关案例、工程约束和问题讨论；具体内容以当前社区页面为准。"
+              planetUrl={settings.planetUrl}
+              planetQrCode={settings.planetQrCode}
+            />
+          )}
         </div>
 
         {/* Wechat Subscription Card */}
@@ -242,7 +260,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         {/* Post Navigation */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-12 border-t border-border-default pt-8">
           {prevPost ? (
-            <Link href={prevPost.url} className="group p-4 rounded-2xl border border-border-default hover:border-accent-primary/50 transition-colors">
+            <Link href={prevPost.url} className="group rounded-md border border-border-default p-4 transition-colors hover:border-card-hover-border">
               <p className="text-sm text-text-tertiary mb-1 flex items-center gap-1">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -253,7 +271,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             </Link>
           ) : <div />}
           {nextPost ? (
-            <Link href={nextPost.url} className="group p-4 rounded-2xl border border-border-default hover:border-accent-primary/50 transition-colors text-right">
+            <Link href={nextPost.url} className="group rounded-md border border-border-default p-4 text-right transition-colors hover:border-card-hover-border">
               <p className="text-sm text-text-tertiary mb-1 flex items-center justify-end gap-1">
                 下一篇
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -278,21 +296,18 @@ export default async function BlogPostPage({ params }: PageProps) {
         )}
 
         {/* Footer */}
-        <footer className="mt-16 pt-8 border-t border-border-default">
+        <footer className="mt-16 border-t border-border-default pt-8">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-3xl">{post.icon === 'cat' ? '🐱' : '🤖'}</span>
-              <div>
-                <p className="font-semibold text-text-primary">{post.author}</p>
-                <p className="text-text-secondary text-sm">用人话讲透 AI</p>
-              </div>
+            <div>
+              <p className="font-semibold text-text-primary">{post.author}</p>
+              <p className="text-sm text-text-secondary">{commentary ? '有出处的事实，有理由的判断。' : '持续记录 AI 原理和工程实践'}</p>
             </div>
 
             <Link
-              href="/blog"
-              className="inline-flex items-center px-4 py-2 bg-bg-tertiary text-text-primary rounded-full hover:bg-bg-secondary transition-colors"
+              href={sectionUrl}
+              className="inline-flex items-center rounded-md border border-border-default bg-bg-secondary px-4 py-2 text-text-primary transition-colors hover:bg-bg-tertiary"
             >
-              更多文章
+              {commentary ? '更多锐评' : '更多文章'}
               <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

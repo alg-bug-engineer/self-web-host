@@ -30,6 +30,8 @@ export async function GET() {
 
 - [首页](${SITE_URL})
 - [文章](${SITE_URL}/blog)
+- [AI锐评：热门事件、产品与行业观察](${SITE_URL}/commentary)
+- [AI锐评 RSS](${SITE_URL}/commentary/feed.xml)
 - [关于作者](${SITE_URL}/about/index.html.md)
 - [作品与项目](${SITE_URL}/portfolio/index.html.md)
 - [RSS](${SITE_URL}/feed.xml)

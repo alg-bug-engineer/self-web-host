@@ -1,0 +1,44 @@
+{
+  "compensation": {
+    "blind_retry_rejected": true,
+    "receipt_bytes": 0,
+    "receiver_compensation_effects": 1,
+    "receiver_exit": 23,
+    "scoped_target_effect": 1,
+    "sender_state": "unknown"
+  },
+  "delayed_original": {
+    "closed_barrier_rejects_late_write": true,
+    "empty_lookup_classification": "inconclusive",
+    "unsafe_retry_effects_after_delayed_arrival": 2
+  },
+  "human_reconciliation": {
+    "evidence_records_after_stale_attempt": 1,
+    "original": {
+      "effect": 1,
+      "kind": "original",
+      "payload": "create:synthetic-ticket",
+      "state": "confirmed",
+      "target": null,
+      "version": 2
+    },
+    "stale_decision_rejected": true,
+    "terminal_absence_state": "not_applied"
+  },
+  "lost_receipt": {
+    "receipt_bytes": 0,
+    "receiver_exit": 23,
+    "sender_state": "unknown"
+  },
+  "query_outcomes": {
+    "closed_authoritative_negative": "terminal_absence",
+    "closed_exact": "unique_exact_match",
+    "complete_open_exact": "exact_match_existence_only",
+    "complete_open_negative": "inconclusive",
+    "duplicate": "duplicate_matches",
+    "incomplete_negative": "inconclusive",
+    "non_authoritative_negative": "inconclusive",
+    "payload_mismatch": "payload_mismatch"
+  },
+  "schema_version": 1
+}

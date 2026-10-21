@@ -1,0 +1,200 @@
+{
+  "concurrent_admission": {
+    "outcomes": {
+      "budget_exceeded": 5,
+      "reserved": 3
+    },
+    "exposure_cents": 90
+  },
+  "unsafe_check_then_spend": {
+    "observed_balances": [
+      100,
+      100
+    ],
+    "each_cost_cents": 60,
+    "total_cents": 120,
+    "cap_cents": 100,
+    "kind": "deterministic synthetic interleaving, not provider execution"
+  },
+  "reserve_before_commit": {
+    "exit_code": 73,
+    "ledger": {
+      "cap_cents": 100,
+      "exposure_cents": 0,
+      "remaining_cents": 100,
+      "frozen": false,
+      "calls": []
+    }
+  },
+  "reserve_after_commit": {
+    "exit_code": 73,
+    "ledger": {
+      "cap_cents": 100,
+      "exposure_cents": 60,
+      "remaining_cents": 40,
+      "frozen": false,
+      "calls": [
+        {
+          "op": "a",
+          "maximum_cents": 60,
+          "state": "reserved",
+          "charged_cents": null,
+          "evidence": null
+        }
+      ]
+    }
+  },
+  "claim_before_commit": {
+    "exit_code": 73,
+    "ledger": {
+      "cap_cents": 100,
+      "exposure_cents": 60,
+      "remaining_cents": 40,
+      "frozen": false,
+      "calls": [
+        {
+          "op": "a",
+          "maximum_cents": 60,
+          "state": "reserved",
+          "charged_cents": null,
+          "evidence": null
+        }
+      ]
+    }
+  },
+  "claim_after_commit": {
+    "exit_code": 73,
+    "ledger": {
+      "cap_cents": 100,
+      "exposure_cents": 60,
+      "remaining_cents": 40,
+      "frozen": false,
+      "calls": [
+        {
+          "op": "a",
+          "maximum_cents": 60,
+          "state": "unknown",
+          "charged_cents": null,
+          "evidence": null
+        }
+      ]
+    }
+  },
+  "settle_before_commit": {
+    "exit_code": 73,
+    "ledger": {
+      "cap_cents": 100,
+      "exposure_cents": 60,
+      "remaining_cents": 40,
+      "frozen": false,
+      "calls": [
+        {
+          "op": "a",
+          "maximum_cents": 60,
+          "state": "unknown",
+          "charged_cents": null,
+          "evidence": null
+        }
+      ]
+    }
+  },
+  "settle_after_commit": {
+    "exit_code": 73,
+    "ledger": {
+      "cap_cents": 100,
+      "exposure_cents": 20,
+      "remaining_cents": 80,
+      "frozen": false,
+      "calls": [
+        {
+          "op": "a",
+          "maximum_cents": 60,
+          "state": "settled",
+          "charged_cents": 20,
+          "evidence": "invoice-a"
+        }
+      ]
+    }
+  },
+  "unknown_keeps_maximum": {
+    "retry": "budget_exceeded",
+    "ledger": {
+      "cap_cents": 100,
+      "exposure_cents": 60,
+      "remaining_cents": 40,
+      "frozen": false,
+      "calls": [
+        {
+          "op": "a",
+          "maximum_cents": 60,
+          "state": "unknown",
+          "charged_cents": null,
+          "evidence": null
+        }
+      ]
+    }
+  },
+  "final_bill_releases_difference": {
+    "reconciliation": "settled",
+    "next_admission": "reserved",
+    "ledger": {
+      "cap_cents": 100,
+      "exposure_cents": 100,
+      "remaining_cents": 0,
+      "frozen": false,
+      "calls": [
+        {
+          "op": "a",
+          "maximum_cents": 60,
+          "state": "settled",
+          "charged_cents": 20,
+          "evidence": "invoice-a"
+        },
+        {
+          "op": "b",
+          "maximum_cents": 80,
+          "state": "reserved",
+          "charged_cents": null,
+          "evidence": null
+        }
+      ]
+    }
+  },
+  "verified_zero_bill": {
+    "reconciliation": "settled",
+    "ledger": {
+      "cap_cents": 100,
+      "exposure_cents": 0,
+      "remaining_cents": 100,
+      "frozen": false,
+      "calls": [
+        {
+          "op": "a",
+          "maximum_cents": 60,
+          "state": "settled",
+          "charged_cents": 0,
+          "evidence": "invoice-zero"
+        }
+      ]
+    }
+  },
+  "provider_bound_violation": {
+    "reconciliation": "bound_breached",
+    "next_admission": "frozen",
+    "ledger": {
+      "cap_cents": 100,
+      "exposure_cents": 120,
+      "remaining_cents": -20,
+      "frozen": true,
+      "calls": [
+        {
+          "op": "a",
+          "maximum_cents": 60,
+          "state": "settled",
+          "charged_cents": 120,
+          "evidence": "invoice-a"
+        }
+      ]
+    }
+  }
+}

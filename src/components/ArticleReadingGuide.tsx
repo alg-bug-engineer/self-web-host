@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import type { ArticleHeading } from '@/lib/article-headings.mjs'
 
 export default function ArticleReadingGuide({ headings }: { headings: ArticleHeading[] }) {
@@ -49,11 +50,11 @@ export default function ArticleReadingGuide({ headings }: { headings: ArticleHea
         />
       </div>
       {headings.length >= 2 && (
-        <details open className="article-guide group mb-8 rounded-2xl border border-border-default bg-bg-secondary lg:mb-0">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 lg:cursor-default lg:p-6">
+        <details open className="article-guide group mb-8 rounded-lg border border-border-default bg-bg-secondary lg:mb-0">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-4 lg:cursor-default">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-tertiary">READING GUIDE</p>
-              <h2 className="mt-1 text-lg font-semibold text-text-primary">本文目录</h2>
+              <p className="text-xs font-medium text-text-tertiary">阅读位置</p>
+              <h2 className="mt-1 text-base font-semibold text-text-primary">本文目录</h2>
             </div>
             <span className="flex items-center gap-2 text-xs text-text-tertiary">
               {headings.length} 个章节
@@ -64,7 +65,7 @@ export default function ArticleReadingGuide({ headings }: { headings: ArticleHea
             <ol className="grid gap-1 sm:grid-cols-2 lg:grid-cols-1">
               {headings.map((heading, index) => (
                 <li key={heading.id}>
-                  <a
+                  <Link
                     href={`#${heading.id}`}
                     aria-current={activeId === heading.id ? 'location' : undefined}
                     className={`group flex min-h-10 items-start gap-3 rounded-lg px-2 py-2 text-sm leading-6 transition-colors ${
@@ -75,7 +76,7 @@ export default function ArticleReadingGuide({ headings }: { headings: ArticleHea
                   >
                     <span className="mt-0.5 shrink-0 font-mono text-xs text-text-tertiary">{String(index + 1).padStart(2, '0')}</span>
                     <span>{heading.text}</span>
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ol>

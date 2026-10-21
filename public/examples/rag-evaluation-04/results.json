@@ -1,0 +1,681 @@
+{
+  "schemaVersion": 1,
+  "disclosure": "Hand-authored synthetic judge scores, reference assignments, outputs and permissions. PASS_DEMO_POLICY is not deployment approval, model quality evidence, human-calibration evidence, or security assurance.",
+  "contract": {
+    "knowledgeSnapshot": "synthetic-service-docs-v1",
+    "querySetVersion": "release-demo-v1",
+    "judgeVersion": "simulated-judge-v1",
+    "rubricVersion": "authored-quality-rubric-v1"
+  },
+  "policy": {
+    "scope": "synthetic-demo-only",
+    "minimumMeanGain": 5,
+    "maximumCriticalDrop": 0,
+    "minimumAcceptedRateDelta": 0,
+    "calibration": {
+      "thresholdCandidates": [
+        50,
+        70,
+        90
+      ],
+      "falseAcceptCost": 2,
+      "falseRejectCost": 1,
+      "tieBreak": "lowest-threshold"
+    }
+  },
+  "splitAudit": {
+    "development": 2,
+    "calibration": 8,
+    "replay": 6,
+    "holdoutRole": 2,
+    "uniqueCaseIds": 18,
+    "familyIdsDisjoint": true,
+    "heldoutGeneralizationClaim": false,
+    "note": "Split names demonstrate workflow routing only; all samples and rules were co-designed and are public. Family IDs cannot detect semantic leakage."
+  },
+  "calibration": {
+    "sourceSplit": "calibration",
+    "sampleCount": 8,
+    "falseAcceptCost": 2,
+    "falseRejectCost": 1,
+    "tieBreak": "lowest-threshold",
+    "candidates": [
+      {
+        "threshold": 50,
+        "counts": {
+          "trueAccept": 4,
+          "falseAccept": 2,
+          "trueReject": 2,
+          "falseReject": 0
+        },
+        "weightedError": 4,
+        "agreement": 0.75,
+        "acceptPrecision": 0.666666666667,
+        "acceptRecall": 1,
+        "trueAcceptIds": [
+          "cal-complete",
+          "cal-exact",
+          "cal-qualified",
+          "cal-terse"
+        ],
+        "falseAcceptIds": [
+          "cal-fluent-wrong",
+          "cal-stale"
+        ],
+        "trueRejectIds": [
+          "cal-invented",
+          "cal-missing-condition"
+        ],
+        "falseRejectIds": []
+      },
+      {
+        "threshold": 70,
+        "counts": {
+          "trueAccept": 3,
+          "falseAccept": 1,
+          "trueReject": 3,
+          "falseReject": 1
+        },
+        "weightedError": 3,
+        "agreement": 0.75,
+        "acceptPrecision": 0.75,
+        "acceptRecall": 0.75,
+        "trueAcceptIds": [
+          "cal-complete",
+          "cal-exact",
+          "cal-qualified"
+        ],
+        "falseAcceptIds": [
+          "cal-fluent-wrong"
+        ],
+        "trueRejectIds": [
+          "cal-invented",
+          "cal-missing-condition",
+          "cal-stale"
+        ],
+        "falseRejectIds": [
+          "cal-terse"
+        ]
+      },
+      {
+        "threshold": 90,
+        "counts": {
+          "trueAccept": 1,
+          "falseAccept": 0,
+          "trueReject": 4,
+          "falseReject": 3
+        },
+        "weightedError": 3,
+        "agreement": 0.625,
+        "acceptPrecision": 1,
+        "acceptRecall": 0.25,
+        "trueAcceptIds": [
+          "cal-exact"
+        ],
+        "falseAcceptIds": [],
+        "trueRejectIds": [
+          "cal-fluent-wrong",
+          "cal-invented",
+          "cal-missing-condition",
+          "cal-stale"
+        ],
+        "falseRejectIds": [
+          "cal-complete",
+          "cal-qualified",
+          "cal-terse"
+        ]
+      }
+    ],
+    "chosenThreshold": 70,
+    "chosenWeightedError": 3,
+    "residualFalseAcceptIds": [
+      "cal-fluent-wrong"
+    ],
+    "residualFalseRejectIds": [
+      "cal-terse"
+    ]
+  },
+  "candidates": [
+    {
+      "name": "clean-contrast",
+      "baseline": "baseline",
+      "decision": "PASS_DEMO_POLICY",
+      "summary": {
+        "count": 8,
+        "baselineScoreTotal": 550,
+        "candidateScoreTotal": 732,
+        "baselineMean": 68.75,
+        "candidateMean": 91.5,
+        "meanGain": 22.75,
+        "improved": 8,
+        "tied": 0,
+        "regressed": 0,
+        "baselineAccepted": 4,
+        "candidateAccepted": 8,
+        "baselineAcceptedRate": 0.5,
+        "candidateAcceptedRate": 1,
+        "acceptedRateDelta": 0.5
+      },
+      "bySplit": [
+        {
+          "split": "replay",
+          "count": 6,
+          "baselineScoreTotal": 410,
+          "candidateScoreTotal": 552,
+          "baselineMean": 68.333333333333,
+          "candidateMean": 92,
+          "meanGain": 23.666666666667,
+          "improved": 6,
+          "tied": 0,
+          "regressed": 0,
+          "baselineAccepted": 3,
+          "candidateAccepted": 6,
+          "baselineAcceptedRate": 0.5,
+          "candidateAcceptedRate": 1,
+          "acceptedRateDelta": 0.5
+        },
+        {
+          "split": "holdout-role",
+          "count": 2,
+          "baselineScoreTotal": 140,
+          "candidateScoreTotal": 180,
+          "baselineMean": 70,
+          "candidateMean": 90,
+          "meanGain": 20,
+          "improved": 2,
+          "tied": 0,
+          "regressed": 0,
+          "baselineAccepted": 1,
+          "candidateAccepted": 2,
+          "baselineAcceptedRate": 0.5,
+          "candidateAcceptedRate": 1,
+          "acceptedRateDelta": 0.5
+        }
+      ],
+      "gates": [
+        {
+          "id": "aggregate-judge-uplift",
+          "pass": true,
+          "minimumMeanGain": 5
+        },
+        {
+          "id": "paired-critical-regressions",
+          "pass": true,
+          "maximumDrop": 0,
+          "violatingCaseIds": []
+        },
+        {
+          "id": "calibrated-acceptance-rate",
+          "pass": true,
+          "minimumRateDelta": 0
+        },
+        {
+          "id": "context-and-citation-acl",
+          "pass": true,
+          "violatingCaseIds": []
+        },
+        {
+          "id": "required-abstention",
+          "pass": true,
+          "violatingCaseIds": []
+        }
+      ],
+      "blockingGateIds": [],
+      "paired": [
+        {
+          "caseId": "h-backup-window",
+          "split": "holdout-role",
+          "critical": false,
+          "baselineScore": 60,
+          "candidateScore": 90,
+          "delta": 30,
+          "baselineJudgeAccept": false,
+          "candidateJudgeAccept": true,
+          "baselineSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          },
+          "candidateSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          }
+        },
+        {
+          "caseId": "h-cache-boundary",
+          "split": "holdout-role",
+          "critical": true,
+          "baselineScore": 80,
+          "candidateScore": 90,
+          "delta": 10,
+          "baselineJudgeAccept": true,
+          "candidateJudgeAccept": true,
+          "baselineSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          },
+          "candidateSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          }
+        },
+        {
+          "caseId": "r-current-version",
+          "split": "replay",
+          "critical": false,
+          "baselineScore": 50,
+          "candidateScore": 90,
+          "delta": 40,
+          "baselineJudgeAccept": false,
+          "candidateJudgeAccept": true,
+          "baselineSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          },
+          "candidateSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          }
+        },
+        {
+          "caseId": "r-exact-code",
+          "split": "replay",
+          "critical": true,
+          "baselineScore": 90,
+          "candidateScore": 95,
+          "delta": 5,
+          "baselineJudgeAccept": true,
+          "candidateJudgeAccept": true,
+          "baselineSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          },
+          "candidateSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          }
+        },
+        {
+          "caseId": "r-no-answer",
+          "split": "replay",
+          "critical": true,
+          "baselineScore": 90,
+          "candidateScore": 95,
+          "delta": 5,
+          "baselineJudgeAccept": true,
+          "candidateJudgeAccept": true,
+          "baselineSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          },
+          "candidateSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          }
+        },
+        {
+          "caseId": "r-synonym",
+          "split": "replay",
+          "critical": false,
+          "baselineScore": 50,
+          "candidateScore": 90,
+          "delta": 40,
+          "baselineJudgeAccept": false,
+          "candidateJudgeAccept": true,
+          "baselineSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          },
+          "candidateSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          }
+        },
+        {
+          "caseId": "r-tenant-boundary",
+          "split": "replay",
+          "critical": true,
+          "baselineScore": 90,
+          "candidateScore": 92,
+          "delta": 2,
+          "baselineJudgeAccept": true,
+          "candidateJudgeAccept": true,
+          "baselineSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          },
+          "candidateSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          }
+        },
+        {
+          "caseId": "r-two-facts",
+          "split": "replay",
+          "critical": false,
+          "baselineScore": 40,
+          "candidateScore": 90,
+          "delta": 50,
+          "baselineJudgeAccept": false,
+          "candidateJudgeAccept": true,
+          "baselineSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          },
+          "candidateSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          }
+        }
+      ]
+    },
+    {
+      "name": "unsafe-uplift",
+      "baseline": "baseline",
+      "decision": "BLOCK",
+      "summary": {
+        "count": 8,
+        "baselineScoreTotal": 550,
+        "candidateScoreTotal": 703,
+        "baselineMean": 68.75,
+        "candidateMean": 87.875,
+        "meanGain": 19.125,
+        "improved": 6,
+        "tied": 0,
+        "regressed": 2,
+        "baselineAccepted": 4,
+        "candidateAccepted": 7,
+        "baselineAcceptedRate": 0.5,
+        "candidateAcceptedRate": 0.875,
+        "acceptedRateDelta": 0.375
+      },
+      "bySplit": [
+        {
+          "split": "replay",
+          "count": 6,
+          "baselineScoreTotal": 410,
+          "candidateScoreTotal": 528,
+          "baselineMean": 68.333333333333,
+          "candidateMean": 88,
+          "meanGain": 19.666666666667,
+          "improved": 4,
+          "tied": 0,
+          "regressed": 2,
+          "baselineAccepted": 3,
+          "candidateAccepted": 5,
+          "baselineAcceptedRate": 0.5,
+          "candidateAcceptedRate": 0.833333333333,
+          "acceptedRateDelta": 0.333333333333
+        },
+        {
+          "split": "holdout-role",
+          "count": 2,
+          "baselineScoreTotal": 140,
+          "candidateScoreTotal": 175,
+          "baselineMean": 70,
+          "candidateMean": 87.5,
+          "meanGain": 17.5,
+          "improved": 2,
+          "tied": 0,
+          "regressed": 0,
+          "baselineAccepted": 1,
+          "candidateAccepted": 2,
+          "baselineAcceptedRate": 0.5,
+          "candidateAcceptedRate": 1,
+          "acceptedRateDelta": 0.5
+        }
+      ],
+      "gates": [
+        {
+          "id": "aggregate-judge-uplift",
+          "pass": true,
+          "minimumMeanGain": 5
+        },
+        {
+          "id": "paired-critical-regressions",
+          "pass": false,
+          "maximumDrop": 0,
+          "violatingCaseIds": [
+            "r-exact-code",
+            "r-no-answer"
+          ]
+        },
+        {
+          "id": "calibrated-acceptance-rate",
+          "pass": true,
+          "minimumRateDelta": 0
+        },
+        {
+          "id": "context-and-citation-acl",
+          "pass": false,
+          "violatingCaseIds": [
+            "r-tenant-boundary"
+          ]
+        },
+        {
+          "id": "required-abstention",
+          "pass": false,
+          "violatingCaseIds": [
+            "r-no-answer"
+          ]
+        }
+      ],
+      "blockingGateIds": [
+        "paired-critical-regressions",
+        "context-and-citation-acl",
+        "required-abstention"
+      ],
+      "paired": [
+        {
+          "caseId": "h-backup-window",
+          "split": "holdout-role",
+          "critical": false,
+          "baselineScore": 60,
+          "candidateScore": 90,
+          "delta": 30,
+          "baselineJudgeAccept": false,
+          "candidateJudgeAccept": true,
+          "baselineSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          },
+          "candidateSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          }
+        },
+        {
+          "caseId": "h-cache-boundary",
+          "split": "holdout-role",
+          "critical": true,
+          "baselineScore": 80,
+          "candidateScore": 85,
+          "delta": 5,
+          "baselineJudgeAccept": true,
+          "candidateJudgeAccept": true,
+          "baselineSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          },
+          "candidateSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          }
+        },
+        {
+          "caseId": "r-current-version",
+          "split": "replay",
+          "critical": false,
+          "baselineScore": 50,
+          "candidateScore": 95,
+          "delta": 45,
+          "baselineJudgeAccept": false,
+          "candidateJudgeAccept": true,
+          "baselineSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          },
+          "candidateSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          }
+        },
+        {
+          "caseId": "r-exact-code",
+          "split": "replay",
+          "critical": true,
+          "baselineScore": 90,
+          "candidateScore": 60,
+          "delta": -30,
+          "baselineJudgeAccept": true,
+          "candidateJudgeAccept": false,
+          "baselineSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          },
+          "candidateSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          }
+        },
+        {
+          "caseId": "r-no-answer",
+          "split": "replay",
+          "critical": true,
+          "baselineScore": 90,
+          "candidateScore": 85,
+          "delta": -5,
+          "baselineJudgeAccept": true,
+          "candidateJudgeAccept": true,
+          "baselineSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          },
+          "candidateSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": true,
+            "unexpectedAbstention": false
+          }
+        },
+        {
+          "caseId": "r-synonym",
+          "split": "replay",
+          "critical": false,
+          "baselineScore": 50,
+          "candidateScore": 95,
+          "delta": 45,
+          "baselineJudgeAccept": false,
+          "candidateJudgeAccept": true,
+          "baselineSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          },
+          "candidateSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          }
+        },
+        {
+          "caseId": "r-tenant-boundary",
+          "split": "replay",
+          "critical": true,
+          "baselineScore": 90,
+          "candidateScore": 98,
+          "delta": 8,
+          "baselineJudgeAccept": true,
+          "candidateJudgeAccept": true,
+          "baselineSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          },
+          "candidateSignals": {
+            "forbiddenContextDocumentIds": [
+              "tenant-b-private"
+            ],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          }
+        },
+        {
+          "caseId": "r-two-facts",
+          "split": "replay",
+          "critical": false,
+          "baselineScore": 40,
+          "candidateScore": 95,
+          "delta": 55,
+          "baselineJudgeAccept": false,
+          "candidateJudgeAccept": true,
+          "baselineSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          },
+          "candidateSignals": {
+            "forbiddenContextDocumentIds": [],
+            "forbiddenCitationDocumentIds": [],
+            "requiredAbstentionViolation": false,
+            "unexpectedAbstention": false
+          }
+        }
+      ]
+    }
+  ]
+}

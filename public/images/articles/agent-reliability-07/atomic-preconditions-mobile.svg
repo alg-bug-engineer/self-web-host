@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1250" viewBox="0 0 540 1250" role="img" aria-labelledby="title desc">
+<title id="title">检查与写入，|同进同退</title><desc id="desc">同一 SQLite 文件|不覆盖远端 API 动作</desc>
+<rect width="540" height="1250" fill="white"/>
+<g font-family="Noto Sans CJK SC, sans-serif">
+<text x="28" y="54" fill="#1d4ed8" font-size="34" font-weight="700">检查与写入，</text>
+<text x="28" y="102" fill="#1d4ed8" font-size="34" font-weight="700">同进同退</text>
+<text x="28" y="148" fill="#64748b" font-size="30" font-weight="400">同一 SQLite 文件</text>
+<text x="28" y="192" fill="#64748b" font-size="30" font-weight="400">不覆盖远端 API 动作</text>
+<rect x="28" y="230" width="484" height="215" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="50" y="278" fill="#1e40af" font-size="32" font-weight="700">① 先查回执</text>
+<text x="50" y="328" fill="#334155" font-size="30" font-weight="400">同键同命令：重放历史结果</text>
+<text x="50" y="374" fill="#334155" font-size="30" font-weight="400">同键改命令：conflict</text>
+<text x="50" y="420" fill="#334155" font-size="30" font-weight="400">没有回执才继续</text>
+<rect x="28" y="470" width="484" height="215" rx="18" fill="#ecfeff" stroke="#67e8f9" stroke-width="2"/>
+<text x="50" y="518" fill="#1e40af" font-size="32" font-weight="700">② 检查依赖版本</text>
+<text x="50" y="568" fill="#334155" font-size="30" font-weight="400">A、B 必须同时匹配</text>
+<text x="50" y="614" fill="#334155" font-size="30" font-weight="400">不匹配：持久记录 stale</text>
+<text x="50" y="660" fill="#334155" font-size="30" font-weight="400">匹配后再检查业务约束</text>
+<rect x="28" y="710" width="484" height="270" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="50" y="758" fill="#1e40af" font-size="32" font-weight="700">③ 同一事务提交</text>
+<text x="50" y="808" fill="#334155" font-size="30" font-weight="400">扣 A、加 B，递增版本</text>
+<text x="50" y="854" fill="#334155" font-size="30" font-weight="400">写业务效果与操作回执</text>
+<text x="50" y="900" fill="#334155" font-size="30" font-weight="400">提交前退出：全部回滚</text>
+<text x="50" y="946" fill="#334155" font-size="30" font-weight="400">提交后失联：重放回执</text>
+<rect x="28" y="1114" width="484" height="112" rx="14" fill="#fef9c3" stroke="#facc15"/>
+<text x="48" y="1157" fill="#713f12" font-size="30" font-weight="500">自己的写入也会改变版本</text>
+<text x="48" y="1200" fill="#713f12" font-size="30" font-weight="500">所以必须先识别已完成操作</text>
+</g></svg>

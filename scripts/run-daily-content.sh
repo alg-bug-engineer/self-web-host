@@ -113,17 +113,14 @@ if [[ "$CONTENT_AUTO_PUBLISH" != true ]]; then
 fi
 
 git -c "$GIT_SSH_REWRITE" fetch origin main
-published_path=""
-while IFS= read -r candidate; do
-  [[ -z "$candidate" ]] && continue
-  if ! git show "origin/main:$candidate" | grep -Eq '^published:[[:space:]]*false[[:space:]]*$'; then
-    published_path="$candidate"
-    break
-  fi
-done < <(git ls-tree -r --name-only origin/main -- content/posts | grep -E "^content/posts/daily-${date_key}-.*\.mdx$" || true)
-if [[ -n "$published_path" ]]; then
-  echo "$date_key 已在 origin/main 发布深度文章：$published_path"
+publication_action="$(node "$PROJECT_DIR/scripts/check-daily-publications.mjs" --legacy-action)"
+if [[ "$publication_action" == skip ]]; then
+  echo "$date_key 已在 origin/main 发布长文，旧长文生成器幂等跳过；双线缺项以上述 frontmatter 检查为准。"
   exit 0
+fi
+if [[ "$publication_action" != generate ]]; then
+  echo "无法确认日更生成动作，停止。" >&2
+  exit 1
 fi
 
 branch="codex/daily-article-$date_key"

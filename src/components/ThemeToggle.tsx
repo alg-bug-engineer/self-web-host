@@ -16,7 +16,7 @@ export function ThemeToggle() {
   if (!mounted) {
     // Render a placeholder or null on the server to avoid hydration mismatch
     return (
-      <div className="theme-toggle w-10 h-10 rounded-full bg-bg-tertiary border border-border-default"></div>
+      <div className="theme-toggle h-10 w-10 border border-border-default bg-bg-tertiary"></div>
     );
   }
 

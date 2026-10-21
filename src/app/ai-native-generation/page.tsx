@@ -176,11 +176,11 @@ export default function AiNativeGenerationPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <section className="text-center space-y-6">
-        <div className="inline-flex items-center gap-2 rounded-full bg-accent-tertiary/10 px-3 py-1 text-sm font-medium text-accent-tertiary">
+        <div className="inline-flex items-center gap-2 rounded bg-accent-tertiary/10 px-3 py-1 text-sm font-medium text-accent-tertiary">
           <span className="h-2 w-2 rounded-full bg-accent-tertiary" />
           30 天试运行 · 8—14 岁亲子共同学习
         </div>
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-text-primary">
+        <h1 className="text-4xl font-bold tracking-[-0.035em] text-text-primary md:text-5xl">
           AI 原生一代
         </h1>
         <p className="text-xl md:text-2xl font-medium text-text-primary">
@@ -205,7 +205,7 @@ export default function AiNativeGenerationPage() {
             先读公开文章
           </Link>
         </div>
-        <figure className="mx-auto mt-8 max-w-4xl overflow-hidden rounded-3xl border border-border-default bg-bg-secondary shadow-xl">
+        <figure className="mx-auto mt-8 max-w-4xl overflow-hidden rounded-lg border border-border-default bg-bg-secondary">
           <Image
             src="/images/campaigns/ai-native-generation-30d/ai-native-generation-family-ai-hero.webp"
             alt="家长与孩子共同观察问题、核验、安全和创意图标的课程插画"
@@ -226,7 +226,7 @@ export default function AiNativeGenerationPage() {
 
       <section className="grid gap-5 md:grid-cols-2">
         {weeks.map((item) => (
-          <article key={item.week} className="rounded-2xl border border-border-default bg-bg-secondary p-6">
+          <article key={item.week} className="rounded-lg border border-border-default bg-bg-secondary p-6">
             <p className="eyebrow">{item.week}</p>
             <h2 className="mt-2 text-xl font-semibold text-text-primary">{item.title}</h2>
             <ul className="mt-4 space-y-2 text-sm leading-6 text-text-secondary">
@@ -236,7 +236,7 @@ export default function AiNativeGenerationPage() {
         ))}
       </section>
 
-      <section className="rounded-3xl border border-border-default bg-bg-secondary p-8 md:p-12">
+      <section className="rounded-lg border border-border-default bg-bg-secondary p-8 md:p-12">
         <div className="grid gap-10 md:grid-cols-[1fr_1.2fr]">
           <div>
             <p className="eyebrow">HOW IT WORKS</p>
@@ -271,7 +271,7 @@ export default function AiNativeGenerationPage() {
         </div>
         <div className="grid gap-7 md:grid-cols-2">
           {previews.map((preview) => (
-            <article key={preview.id} className="overflow-hidden rounded-3xl border border-border-default bg-bg-secondary shadow-xl">
+            <article key={preview.id} className="overflow-hidden rounded-lg border border-border-default bg-bg-secondary">
               <CoursePreviewVideo
                 lessonId={preview.id}
                 src={preview.video}
@@ -317,7 +317,7 @@ export default function AiNativeGenerationPage() {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-border-default bg-bg-secondary p-8 text-center md:p-12">
+      <section className="rounded-lg border border-border-default bg-bg-secondary p-8 text-center md:p-12">
         <h2 className="text-3xl font-bold text-text-primary">十二节试听完成以后，由监护人选择下一步</h2>
         <p className="mx-auto mt-4 max-w-2xl leading-7 text-text-secondary">
           可以进入知识星球完成任务、答疑和去标识化作品反馈；也可以由监护人单独表达课程内测意向，或者继续观察。孩子的自测和答辩结果不用于决定付费资格。
@@ -348,7 +348,7 @@ export default function AiNativeGenerationPage() {
         </p>
       </section>
 
-      <section id="guardian-beta-intake" className="scroll-mt-24 rounded-3xl border border-accent-tertiary/30 bg-accent-tertiary/5 p-8 md:p-12">
+      <section id="guardian-beta-intake" className="scroll-mt-24 rounded-lg border border-accent-tertiary/30 bg-accent-tertiary/5 p-8 md:p-12">
         <p className="eyebrow">GUARDIAN-ONLY INTAKE</p>
         <h2 className="mt-2 text-3xl font-bold text-text-primary">课程内测意向，由监护人完成三步</h2>
         <p className="mt-4 max-w-3xl leading-7 text-text-secondary">
@@ -360,14 +360,14 @@ export default function AiNativeGenerationPage() {
             ['02', '选择参与形式', '只选择异步任务、集中答疑或两者都可；每周少于 30 分钟也可以如实登记，不据此评价孩子能力。'],
             ['03', '由监护人私信', '通过公众号“芝士AI吃鱼”私信关键词“儿童AI内测”，再发送年龄段、每周可共同投入时间和参与偏好，不发送孩子身份与作业。'],
           ].map(([step, title, detail]) => (
-            <div key={step} className="rounded-2xl border border-border-default bg-bg-secondary p-6">
+            <div key={step} className="rounded-lg border border-border-default bg-bg-secondary p-6">
               <span className="text-xs font-semibold text-accent-tertiary">STEP {step}</span>
               <h3 className="mt-2 text-lg font-semibold text-text-primary">{title}</h3>
               <p className="mt-3 text-sm leading-6 text-text-secondary">{detail}</p>
             </div>
           ))}
         </div>
-        <div className="mt-7 rounded-2xl border border-border-default bg-bg-secondary p-6">
+        <div className="mt-7 rounded-lg border border-border-default bg-bg-secondary p-6">
           <p className="text-sm font-semibold text-text-primary">建议由监护人发送这三项</p>
           <p className="mt-3 rounded-xl bg-bg-tertiary px-4 py-3 text-sm leading-6 text-text-secondary">
             儿童AI内测｜年龄段：8—10 / 11—12 / 13—14｜每周：少于 30 / 30—60 / 60—90 分钟｜参与偏好：异步任务 / 集中答疑 / 两者都可

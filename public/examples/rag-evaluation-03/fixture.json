@@ -1,0 +1,346 @@
+{
+  "schemaVersion": 1,
+  "description": "Hand-authored synthetic mechanism probes; not a benchmark or model evaluation.",
+  "parameters": {
+    "bm25": {
+      "k1": 1.2,
+      "b": 0.75
+    },
+    "rrfK": 60,
+    "candidateDepths": [
+      2,
+      4
+    ],
+    "charBudget": 140,
+    "smallCharBudget": 80
+  },
+  "synonymGroups": [
+    [
+      "terminate",
+      "cancel",
+      "revoke",
+      "disable"
+    ],
+    [
+      "credential",
+      "key",
+      "token"
+    ],
+    [
+      "deletion",
+      "delete",
+      "erase",
+      "remove"
+    ],
+    [
+      "undo",
+      "restore",
+      "rollback"
+    ],
+    [
+      "retry",
+      "repeat"
+    ],
+    [
+      "wait",
+      "delay"
+    ],
+    [
+      "logs",
+      "records"
+    ],
+    [
+      "export",
+      "download"
+    ]
+  ],
+  "currentVersions": {
+    "retry-rule": "v1",
+    "retry-overview": "v1",
+    "key-rule": "v1",
+    "key-overview": "v1",
+    "logs-retention": "v1",
+    "logs-export": "v1",
+    "logs-overview": "v1",
+    "cache-rule": "v1",
+    "cache-overview": "v1",
+    "vault-policy": "v1",
+    "vault-faq": "v1",
+    "atlas-a": "v1",
+    "atlas-b": "v1",
+    "atlas-c": "v1",
+    "atlas-rule": "v1",
+    "timeout": "v2",
+    "timeout-internal": "v1",
+    "archive-overview": "v1"
+  },
+  "documents": [
+    {
+      "id": "retry-rule",
+      "version": "v1",
+      "visibility": "public",
+      "text": "For R-17, wait 30 seconds before retry only when the request is idempotent."
+    },
+    {
+      "id": "retry-overview",
+      "version": "v1",
+      "visibility": "public",
+      "text": "Retry wait guide. Generic retry wait retry wait overview."
+    },
+    {
+      "id": "key-rule",
+      "version": "v1",
+      "visibility": "public",
+      "text": "Cancel the key to revoke access immediately."
+    },
+    {
+      "id": "key-overview",
+      "version": "v1",
+      "visibility": "public",
+      "text": "Credential lifecycle overview. Consult the account guide."
+    },
+    {
+      "id": "logs-retention",
+      "version": "v1",
+      "visibility": "public",
+      "text": "Logs retention is 7 days."
+    },
+    {
+      "id": "logs-export",
+      "version": "v1",
+      "visibility": "public",
+      "text": "Logs export format is JSON."
+    },
+    {
+      "id": "logs-overview",
+      "version": "v1",
+      "visibility": "public",
+      "text": "Logs retention export format overview. Read the retention and export guide before proceeding."
+    },
+    {
+      "id": "cache-rule",
+      "version": "v1",
+      "visibility": "public",
+      "text": "Cache never stores tokens; only public response bodies are cached."
+    },
+    {
+      "id": "cache-overview",
+      "version": "v1",
+      "visibility": "public",
+      "text": "Cache tokens cache tokens overview."
+    },
+    {
+      "id": "vault-policy",
+      "version": "v1",
+      "visibility": "public",
+      "text": "Vault deletion undo window is 24 hours. After that window, restoration is unavailable."
+    },
+    {
+      "id": "vault-faq",
+      "version": "v1",
+      "visibility": "public",
+      "text": "Vault deletion glossary: erase remove delete restore rollback undoing. Read this topic index."
+    },
+    {
+      "id": "atlas-a",
+      "version": "v1",
+      "visibility": "public",
+      "text": "Atlas backup restore overview."
+    },
+    {
+      "id": "atlas-b",
+      "version": "v1",
+      "visibility": "public",
+      "text": "Atlas backup restore guide."
+    },
+    {
+      "id": "atlas-c",
+      "version": "v1",
+      "visibility": "public",
+      "text": "Atlas backup restore index."
+    },
+    {
+      "id": "atlas-rule",
+      "version": "v1",
+      "visibility": "public",
+      "text": "Atlas backup restore retention is 3 days. The limit applies to completed backups in the public service."
+    },
+    {
+      "id": "timeout",
+      "version": "v1",
+      "visibility": "public",
+      "text": "Current service timeout policy is 30 seconds. This legacy setting is obsolete."
+    },
+    {
+      "id": "timeout",
+      "version": "v2",
+      "visibility": "public",
+      "text": "Service timeout is 7 seconds. This value applies to the public synchronous API."
+    },
+    {
+      "id": "timeout-internal",
+      "version": "v1",
+      "visibility": "internal",
+      "text": "Current service timeout policy is 90 seconds. Internal staging service only."
+    },
+    {
+      "id": "archive-overview",
+      "version": "v1",
+      "visibility": "public",
+      "text": "Archive duration overview. Extended plans exist; no maximum duration is specified here."
+    }
+  ],
+  "questions": [
+    {
+      "id": "exact-identifier",
+      "text": "R-17 retry wait",
+      "facts": [
+        {
+          "id": "conditional-retry",
+          "supportGroups": [
+            [
+              {
+                "docId": "retry-rule",
+                "version": "v1",
+                "start": 0,
+                "end": 75
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "synonym-only",
+      "text": "terminate credential",
+      "facts": [
+        {
+          "id": "revoke-access",
+          "supportGroups": [
+            [
+              {
+                "docId": "key-rule",
+                "version": "v1",
+                "start": 0,
+                "end": 44
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "two-facts",
+      "text": "logs retention export format",
+      "facts": [
+        {
+          "id": "retention",
+          "supportGroups": [
+            [
+              {
+                "docId": "logs-retention",
+                "version": "v1",
+                "start": 0,
+                "end": 25
+              }
+            ]
+          ]
+        },
+        {
+          "id": "format",
+          "supportGroups": [
+            [
+              {
+                "docId": "logs-export",
+                "version": "v1",
+                "start": 0,
+                "end": 27
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "negation-distractor",
+      "text": "cache tokens",
+      "facts": [
+        {
+          "id": "no-token-storage",
+          "supportGroups": [
+            [
+              {
+                "docId": "cache-rule",
+                "version": "v1",
+                "start": 0,
+                "end": 66
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fusion-regression",
+      "text": "vault deletion undo",
+      "facts": [
+        {
+          "id": "undo-window",
+          "supportGroups": [
+            [
+              {
+                "docId": "vault-policy",
+                "version": "v1",
+                "start": 0,
+                "end": 86
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "depth-omission",
+      "text": "atlas backup restore",
+      "facts": [
+        {
+          "id": "backup-retention",
+          "supportGroups": [
+            [
+              {
+                "docId": "atlas-rule",
+                "version": "v1",
+                "start": 0,
+                "end": 103
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "eligibility",
+      "text": "current service timeout",
+      "facts": [
+        {
+          "id": "current-timeout",
+          "supportGroups": [
+            [
+              {
+                "docId": "timeout",
+                "version": "v2",
+                "start": 0,
+                "end": 79
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "no-answer",
+      "text": "maximum extended archive duration",
+      "facts": []
+    }
+  ]
+}

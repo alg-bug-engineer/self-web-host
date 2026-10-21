@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="740" viewBox="0 0 1080 740" role="img" aria-labelledby="title desc">
+<title id="title">封口与执行，必须在同一道门内排队</title><desc id="desc">同一数据库的写事务排序；这不是跨服务撤销协议</desc><rect width="100%" height="100%" fill="white"/>
+<text x="32" y="65" font-family="Noto Sans CJK SC, sans-serif" font-size="45" fill="#1565c0" font-weight="700">封口与执行，必须在同一道门内排队</text>
+<text x="32" y="115" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#64748b">同一数据库的写事务排序；这不是跨服务撤销协议</text>
+<rect x="24" y="180" width="1032" height="181" rx="20" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="44" y="229" font-family="Noto Sans CJK SC, sans-serif" font-size="36" fill="#0f4c81" font-weight="700">顺序 A：业务事务先提交</text>
+<text x="44" y="280" font-family="Noto Sans CJK SC, sans-serif" font-size="31" fill="#334155">检查边界 → 写效果和回执 → 提交</text>
+<text x="44" y="323" font-family="Noto Sans CJK SC, sans-serif" font-size="31" fill="#334155">随后封口：删除旧回执，保留已发生的业务效果</text>
+<rect x="24" y="383" width="1032" height="181" rx="20" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="2"/>
+<text x="44" y="432" font-family="Noto Sans CJK SC, sans-serif" font-size="36" fill="#0f4c81" font-weight="700">顺序 B：封口事务先提交</text>
+<text x="44" y="483" font-family="Noto Sans CJK SC, sans-serif" font-size="31" fill="#334155">提高边界 + 删除旧回执 → 一起提交</text>
+<text x="44" y="526" font-family="Noto Sans CJK SC, sans-serif" font-size="31" fill="#334155">随后旧请求：读到 closed → 不再写入业务效果</text>
+<rect x="24" y="605" width="1032" height="110" rx="18" fill="#fef3c7" stroke="#fcd34d"/>
+<text x="44" y="649" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#713f12" font-weight="700">事务提交前退出：整组回滚；提交后退出：整组保留</text>
+<text x="44" y="691" font-family="Noto Sans CJK SC, sans-serif" font-size="30" fill="#713f12" font-weight="700">范围关闭不等于撤销，closed 也不证明旧动作从未发生</text>
+</svg>

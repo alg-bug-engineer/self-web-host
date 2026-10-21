@@ -10,13 +10,13 @@ export default function ProjectCard({ item, index }: { item: PortfolioItem; inde
   ].filter((link): link is { href: string; label: string; event: string } => Boolean(link))
 
   return (
-    <article id={item.id} className="flex min-w-0 scroll-mt-24 flex-col overflow-hidden rounded-[1.75rem] border border-border-default bg-bg-secondary">
+    <article id={item.id} className="flex min-w-0 scroll-mt-24 flex-col overflow-hidden rounded-lg border border-border-default bg-bg-secondary">
       <div className="relative aspect-[16/9] overflow-hidden bg-bg-tertiary">
         {item.image ? (
           <Image src={item.image} alt={`${item.title}实际界面`} fill className={item.imageFit === 'contain' ? 'object-contain' : 'object-cover object-top'} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
         ) : (
-          <div className="absolute inset-0 flex items-end bg-[radial-gradient(circle_at_78%_18%,rgba(82,190,255,.25),transparent_28%),linear-gradient(145deg,#102a43,#1b4965)] p-6 text-white">
-            <div><span className="text-[10px] tracking-[0.24em] text-white/60">OPEN SOURCE</span><strong className="mt-2 block text-xl leading-7">{item.title}</strong></div>
+          <div className="absolute inset-0 flex items-end bg-[#234e70] p-6 text-white">
+            <div><span className="text-[10px] tracking-[0.24em] text-white/60">开源项目</span><strong className="mt-2 block text-xl leading-7">{item.title}</strong></div>
           </div>
         )}
       </div>

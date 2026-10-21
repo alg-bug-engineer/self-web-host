@@ -1,0 +1,885 @@
+---
+title: "真正让 Skill 跑起来的，是 Harness"
+description: "ESSAY × INSIGHT 真正让 Skill 跑起来的，是 Harness 最近一段时间，Skill 几乎成了 AI Agent 领域最容易被感知到的变化之一。 Claude Code 有 Skills，Codex 支持 Agent Skills，越来越多项目开始出现这样的目录： my-skill/├── SKILL.md├── scr..."
+date: 2026-08-18T16:30:03.000Z
+author: 芝士AI吃鱼
+tags:
+  - 公众号同步
+  - AI
+icon: robot
+published: true
+sourceUrl: "https://mp.weixin.qq.com/s/cvFnEmJawuZNOinBXQVt9Q"
+sourceName: 芝士AI吃鱼公众号
+---
+
+> 本文同步自「芝士AI吃鱼」公众号，原文链接见文章信息。
+
+ESSAY × INSIGHT
+
+# 真正让 Skill 跑起来的，是 Harness
+
+最近一段时间，Skill 几乎成了 AI Agent 领域最容易被感知到的变化之一。
+
+Claude Code 有 Skills，Codex 支持 Agent Skills，越来越多项目开始出现这样的目录：
+
+```
+my-skill/├── SKILL.md├── scripts/├── references/└── assets/
+```
+
+对普通用户来说，这种体验很直观。
+
+以前 AI 不会做某件事，装一个 Skill；以后再遇到类似任务，它似乎就知道该怎么处理了。
+
+于是很容易产生一种理解：
+
+> Skill 就像给大模型安装了一个新能力。
+
+但如果继续追问一步，问题马上就来了。
+
+假设我们什么 IDE 都不用。
+
+没有 Claude Code，没有 Codex，也没有 Cursor。
+
+服务器上只有一个普通的大模型 API。
+
+然后我们在某个目录里放进去：
+
+```
+SKILL.md
+```
+
+会发生什么？
+
+答案其实非常简单。
+
+**什么都不会发生。**
+
+大模型不知道你的硬盘上多了这个文件，也不会主动搜索它，更不会因为文件名叫 `SKILL.md` 就自动按照里面的步骤执行。
+
+那 Claude Code 和 Codex 里的 Skill 为什么能工作？
+
+真正值得理解的东西，就藏在这里。
+
+那个负责发现 Skill、读取 Skill、调用工具、执行脚本、把结果交回模型、让模型继续思考的系统，现在越来越多地被叫作：
+
+**Harness。**
+
+FIGURE · 01
+
+### 图1：Skill 能跑起来，背后其实是 Harness
+
+![](/images/wechat/wechat-2026-08-18-3c6698cb/image-01.webp)
+
+图1：Skill 能跑起来，背后其实是 Harness
+
+* * *
+
+## 一、我们以为自己在使用“大模型”，实际用的是一个系统
+
+先看一个很常见的现象。
+
+同样一个模型，如果直接通过 API 调用，可能是这样的：
+
+```
+用户 ↓大模型 API ↓回答
+```
+
+你说：
+
+> 帮我检查这个项目有没有 Bug。
+
+模型可以读你发给它的代码，然后告诉你哪里可能有问题。
+
+但如果把同一个模型放进一个成熟的 Coding Agent 里，事情就完全不同了。
+
+它可能先查看项目目录，然后搜索相关代码，读取配置文件，运行测试，根据报错定位问题，修改代码，再跑一次测试。如果测试还失败，它继续看日志、继续修改。最后测试通过，它还可能检查 Git Diff，确认没有误改其他文件。
+
+模型可能还是那个模型。
+
+变化最大的，是模型外面多了一整套东西。
+
+OpenAI 在介绍 Codex 时，把这一层明确称为 **Codex harness** 。官方描述中，它承担 Codex 各种产品形态背后的核心 agent loop 和执行逻辑。也就是说，无论你从 CLI、IDE、App 还是其他入口使用 Codex，真正把模型组织成一个可以连续干活的 Agent 的，是下面这层运行系统。
+
+Anthropic 对这个概念的解释也非常接近：一个 agent harness，也可以叫 scaffold，是让模型能够作为 Agent 行动的系统，它处理输入、组织工具调用，并把执行结果返回。Claude Code 本身就可以被理解成一种 Agent Harness。
+
+于是，一个很重要的认知变化出现了。
+
+我们平时说：
+
+> Claude Code 很强。
+
+> Codex 很强。
+
+很多时候，其实混在一起说了两个东西：
+
+```
+模型能力+Harness 能力
+```
+
+这两个东西共同决定最终体验。
+
+* * *
+
+## 二、Harness 到底是什么？先不要被这个词吓到
+
+Harness 没有特别神秘。
+
+甚至可以从一个最简单的大模型程序开始理解。
+
+假设你写了这样一个程序：
+
+```
+把用户的问题发给模型↓模型返回答案↓显示给用户
+```
+
+这时候几乎没有 Harness。
+
+后来你发现，模型得查数据库。
+
+于是给它增加一个工具：
+
+```
+query_database
+```
+
+接着发现它还要读文件：
+
+```
+read_file
+```
+
+还要运行程序：
+
+```
+run_shell
+```
+
+还要搜索互联网：
+
+```
+web_search
+```
+
+问题又出现了。
+
+模型调用完一次数据库以后，接下来怎么办？
+
+于是你写一个循环：
+
+```
+模型判断下一步↓需要工具↓执行工具↓把结果交回模型↓模型继续判断
+```
+
+这已经开始有 Harness 的样子了。
+
+然后实际运行几天，你会继续遇到问题。
+
+模型上下文越来越长，需要压缩。
+
+Shell 权限太大，需要限制。
+
+有些命令很危险，需要用户确认。
+
+执行失败以后需要重试。
+
+一个任务跑几十分钟，中间状态需要保存。
+
+多个 Agent 同时工作，需要调度。
+
+模型认为“完成了”，但实际上测试没通过，所以还需要验证。
+
+慢慢地，你的系统变成：
+
+```
+模型+ Agent Loop+ Tools+ Skills+ Context+ Memory+ Sandbox+ Permissions+ Retry+ Validation+ State+ Tracing……
+```
+
+围绕模型搭起来的这一整层工程，就是我们现在谈 Harness Engineering 时真正关心的东西。
+
+OpenAI 在 2026 年公开讨论 Harness Engineering 时，已经把关注点从“给模型写一个好 Prompt”推进到了另一层：怎样设计环境、规则和反馈循环，让 Agent 能够持续工作、自我检查并修正结果。
+
+所以可以先用一句很白话的话记住：
+
+**模型负责想，Harness 负责让“想”变成一个可以持续发生的工作过程。**
+
+* * *
+
+FIGURE · 02
+
+### 图2：Harness 是模型外面的运行系统
+
+![](/images/wechat/wechat-2026-08-18-3c6698cb/image-02.webp)
+
+图2：Harness 是模型外面的运行系统
+
+## 三、这样再看 Skill，就突然清楚了
+
+回到我们最开始讨论的 Skill。
+
+假设有这样一个目录：
+
+```
+traffic-analysis/├── SKILL.md├── scripts/│   └── query_data.py├── references/│   └── diagnosis_rules.md└── assets/    └── report_template.md
+```
+
+里面写着一整套交通数据诊断流程。
+
+用户说：
+
+> 帮我检查昨天哪些路口存在严重的数据缺失，并生成报告。
+
+Skill 自己会运行吗？
+
+不会。
+
+真正发生的事情大概是这样的。
+
+Harness 先把当前可用 Skill 的名字和简介告诉模型。
+
+模型发现：
+
+```
+traffic-analysis
+```
+
+可能适合这个任务。
+
+于是 Harness 让完整的 `SKILL.md` 进入模型上下文。
+
+模型读完以后发现，第一步应该运行：
+
+```
+scripts/query_data.py
+```
+
+于是模型发出一次工具调用。
+
+但这里一定要注意：
+
+**真正运行 Python 的不是大模型。**
+
+是 Harness 提供的执行环境。
+
+Python 跑完以后返回一份 JSON。
+
+Harness 再把 JSON 放回模型上下文。
+
+模型继续判断。
+
+发现有几个路口完整率异常，于是根据 `SKILL.md` 的说明继续读取：
+
+```
+references/diagnosis_rules.md
+```
+
+规则进入上下文以后，模型再次分析。
+
+最后按照：
+
+```
+assets/report_template.md
+```
+
+生成报告。
+
+整个过程其实是：
+
+```
+用户 ↓Harness ↓模型判断 ↓加载 Skill ↓模型判断 ↓调用工具 ↓Harness 真正执行 ↓结果返回模型 ↓模型继续判断 ↓读取 reference ↓再次分析 ↓输出结果
+```
+
+所以 Skill 和 Harness 的关系，可以非常简单地理解：
+
+**Skill 保存“这类事情应该怎么做”。**
+
+**Harness 负责让模型真的按照这个方法一步一步做下去。**
+
+OpenAI 当前的 Codex Skills 文档也明确把 Skill 定义成包含 instructions、resources 和可选 scripts 的任务能力包，Codex 再在运行过程中选择和使用这些内容。
+
+因此， `SKILL.md` 并不是执行引擎。
+
+它更像一份可以被 Agent 理解的工作方法。
+
+真正让工作方法生效的是 Harness。
+
+* * *
+
+FIGURE · 03
+
+### 图3：Agent Loop 是 Harness 的心脏
+
+![](/images/wechat/wechat-2026-08-18-3c6698cb/image-03.webp)
+
+图3：Agent Loop 是 Harness 的心脏
+
+## 四、Harness 最核心的东西，其实是一个循环
+
+如果把复杂的 Harness 一层层剥掉，最里面有一个非常简单的结构：
+
+**Agent Loop。**
+
+OpenAI 在拆解 Codex agent loop 时，描述的核心过程就是：Harness 给模型提供上下文，模型产生下一步动作；如果动作需要工具，系统执行工具，再把执行结果交回模型；模型基于新的信息继续工作。这个过程一直重复，直到任务结束。
+
+用最简单的伪代码，甚至可以写成：
+
+```
+while True:    response = model(messages)    if response 要调用工具:        result = execute_tool()        messages.append(result)        continue    return response
+```
+
+代码看起来简单得甚至有点不像“智能体”。
+
+但今天绝大多数 Agent 的底层，都绕不开这个循环。
+
+比如用户说：
+
+> 帮我修这个 Bug。
+
+第一轮：
+
+```
+模型：我需要先读取代码。
+```
+
+Harness：
+
+```
+执行 read_file
+```
+
+第二轮：
+
+```
+模型：我发现这里可能有问题，需要运行测试。
+```
+
+Harness：
+
+```
+执行 pytest
+```
+
+第三轮：
+
+```
+模型：测试失败，报错来自 database.py 第 81 行。我要读取这个文件。
+```
+
+Harness：
+
+```
+执行 read_file
+```
+
+第四轮：
+
+```
+模型：找到问题了，修改代码。
+```
+
+Harness：
+
+```
+执行 write_file
+```
+
+第五轮：
+
+```
+模型：重新运行测试。
+```
+
+Harness：
+
+```
+执行 pytest
+```
+
+直到：
+
+```
+模型：测试通过，任务完成。
+```
+
+如果只有大模型 API，却没有这个 Loop，你得到的更多是一轮问答。
+
+有了 Loop，它才开始表现得像一个可以连续办事的 Agent。
+
+OpenAI 的 Agents SDK Runner 也把 tool loop、Agent handoff 和运行结束判断直接作为核心能力。
+
+* * *
+
+FIGURE · 04
+
+### 图4：Skill 在 Harness 里的工作方式
+
+![](/images/wechat/wechat-2026-08-18-3c6698cb/image-04.webp)
+
+图4：Skill 在 Harness 里的工作方式
+
+## 五、所以 Harness 远远不只有 Skills
+
+到这里很容易出现另一个误解：
+
+> 那 Harness 是不是就是 Skill Runtime？
+
+不是。
+
+**Skills 只是 Harness 的一部分。**
+
+一个成熟的 Harness 往往还需要解决很多更基础的问题。
+
+例如模型想执行：
+
+```
+rm -rf /
+```
+
+怎么办？
+
+不能因为“模型认为应该执行”，系统就真的执行。
+
+于是需要：
+
+```
+SandboxPermissionsApproval
+```
+
+模型连续工作一小时，上下文越来越长怎么办？
+
+于是需要：
+
+```
+Context ManagementCompactionMemory
+```
+
+Anthropic 在介绍长时间运行 Agent 时，就特别提到 context compaction，因为没有上下文管理，Agent 很难持续完成长任务。
+
+模型修改代码以后说：
+
+> 已经修好了。
+
+到底是不是真的修好了？
+
+不能只相信模型自己。
+
+于是 Harness 还要提供：
+
+```
+测试编译LintEvalValidation
+```
+
+OpenAI 在关于 Agent Improvement Loop 的资料里，甚至直接把 Harness 描述为模型外围的完整契约，其中包括 instructions、tools、routing、output requirements 和 validation。
+
+再比如一个任务需要连续工作几个小时。
+
+中间网络断了怎么办？
+
+模型进程挂了怎么办？
+
+任务执行到哪一步了？
+
+这又需要：
+
+```
+StateCheckpointRecovery
+```
+
+所以越往后看，就越容易理解：
+
+**Harness 不是模型旁边的一个“小插件”。**
+
+它逐渐接近 Agent 的整个运行基础设施。
+
+* * *
+
+## 六、Tools、MCP、Skills，到底都放在哪里？
+
+现在可以把几个经常混在一起的词放到同一张图上了。
+
+```
+                 用户                  │                  ▼        ┌───────────────────┐        │      Harness      │        │                   │        │   Agent Loop      │        │       │           │        │       ▼           │        │     Model         │        │       │           │        │  ┌────┼────┐      │        │  ▼    ▼    ▼      │        │ Skill Tool MCP    │        │                   │        │ Context / Memory  │        │ Sandbox / State   │        │ Validation        │        └───────────────────┘
+```
+
+Tool 解决的是：
+
+> Agent 能做什么动作？
+
+例如：
+
+```
+读取文件执行 Shell查询数据库发送邮件
+```
+
+MCP 更接近：
+
+> 外部这些工具和资源，怎样以相对统一的协议接给 Agent？
+
+Skill 回答：
+
+> 面对某一种任务，应该按照什么方法使用这些能力？
+
+Harness 则站得更高一些：
+
+> **整个 Agent 到底怎么运行？**
+
+什么时候调用模型。
+
+什么时候加载 Skill。
+
+什么时候让模型使用工具。
+
+工具到底在哪里执行。
+
+执行结果怎样进入上下文。
+
+哪些操作需要批准。
+
+什么时候压缩上下文。
+
+失败以后怎么办。
+
+什么时候认为任务已经完成。
+
+这些问题最终都落到 Harness。
+
+所以可以这样理解它们之间的关系：
+
+```
+Tool 是能力。MCP 是连接方式。Skill 是做事方法。Harness 是运行这些东西的系统。
+```
+
+* * *
+
+## 七、为什么同一个模型，放进不同产品里，感觉完全不是一个东西？
+
+理解 Harness 以后，一个过去很奇怪的问题也就很好解释了。
+
+有人调用 Claude API，会觉得：
+
+> 好像也就这样。
+
+然后打开 Claude Code：
+
+> 怎么突然这么能干？
+
+同样也有人直接调用 OpenAI API，然后使用 Codex：
+
+> 为什么像换了一个模型？
+
+原因并不一定是模型换了。
+
+模型外围的 Harness 变了。
+
+Claude Code 可以读取项目、修改文件、运行命令并和开发工具配合。Anthropic 的 Agent SDK 文档甚至直接说明，它提供了和 Claude Code 相同的一些核心能力，包括 tools、agent loop 和 context management。
+
+OpenAI 对 Codex 的描述也是类似逻辑：Codex harness 承担核心 Agent Loop 和 execution logic，并进一步结合代码执行、工具、sandbox 等运行能力。
+
+所以今天再评价一个 Agent，只问：
+
+> 它背后是什么模型？
+
+已经越来越不够了。
+
+还应该知道：
+
+```
+它怎么管理上下文？给了模型什么工具？有没有文件系统？有没有 Shell？怎么加载 Skill？能不能使用 MCP？有没有 Sandbox？执行失败会不会重试？有没有验证机制？长任务怎样保持状态？
+```
+
+这些因素都会影响最终效果。
+
+Anthropic 在讨论 Agent Eval 时也明确指出，评价一个 Agent 时，实际评价的是模型与 Harness 一起工作的结果，而不是单独评价模型。
+
+这是一个很值得关注的变化。
+
+过去我们主要比较：
+
+```
+Model AvsModel B
+```
+
+现在越来越多真实任务比较的其实是：
+
+```
+Model A + Harness AvsModel B + Harness B
+```
+
+甚至可能出现：
+
+```
+Model A + 好 Harness>更强的 Model B + 很弱的 Harness
+```
+
+具体是否如此当然取决于任务，但 Harness 已经成为无法忽略的变量。
+
+* * *
+
+## 八、如果只有一个大模型 API，可以自己写 Harness 吗？
+
+可以。
+
+而且理解 Harness 最好的方法之一，就是把它缩到最小。
+
+假设现在只有一个 OpenAI-compatible API。
+
+第一版：
+
+```
+用户 ↓LLM API ↓回答
+```
+
+第二版，增加 Tool Calling：
+
+```
+LLM ↓read_filerun_shellquery_database
+```
+
+第三版，加一个循环：
+
+```
+调用模型 ↓是否需要工具 ↓执行工具 ↓结果返回模型 ↓继续调用模型
+```
+
+到这里已经有了最小 Agent。
+
+然后加入 Skill Registry：
+
+```
+daily-reportdatabase-analysistraffic-diagnosis
+```
+
+启动时只把 Skill 的名字和 description 告诉模型。
+
+任务命中以后加载完整：
+
+```
+SKILL.md
+```
+
+需要时再让模型访问：
+
+```
+scripts/references/assets/
+```
+
+这时候已经实现了一个最小的 Skills Harness。
+
+再继续加：
+
+```
+Context ManagementSandboxPermissionsRetryValidationMemoryCheckpointTracing
+```
+
+系统会越来越像一个成熟 Agent Runtime。
+
+所以，如果你有一天决定：
+
+> 我不用 Claude Code，也不用 Codex，我要基于公司的私有模型做一个自己的智能体平台。
+
+你真正要做的事情，其实已经不是简单的：
+
+```
+接一个大模型 API
+```
+
+而是：
+
+**构建自己的 Harness。**
+
+OpenAI 在 Agents SDK 的发展中也在持续增加这类能力，包括 memory、sandbox-aware orchestration、filesystem tools 等，这正说明今天的 Agent SDK 正逐渐承担越来越完整的 Harness 职责。
+
+* * *
+
+FIGURE · 05
+
+### 图5：只有一个 API，也能搭出最小 Harness
+
+![](/images/wechat/wechat-2026-08-18-3c6698cb/image-05.webp)
+
+图5：只有一个 API，也能搭出最小 Harness
+
+## 九、Harness Engineering 为什么突然变得重要？
+
+这里可能才是最值得思考的地方。
+
+过去做 AI 应用，大家大量精力花在 Prompt。
+
+于是出现：
+
+```
+Prompt Engineering
+```
+
+后来发现上下文比一句 Prompt 更重要。
+
+于是大家开始谈：
+
+```
+Context Engineering
+```
+
+现在 Agent 开始真正执行长任务。
+
+问题又变了。
+
+模型应该看到哪些文件？
+
+什么时候加载 Skill？
+
+工具权限怎么控制？
+
+什么情况下允许 Shell？
+
+执行结果如何反馈？
+
+任务失败怎么恢复？
+
+什么算真正完成？
+
+模型跑偏以后怎样拉回来？
+
+怎样建立自动验证？
+
+这些问题已经无法靠“写一句更好的 Prompt”解决。
+
+于是工程关注点继续向模型外围迁移。
+
+这就是 Harness Engineering 开始受到重视的原因。
+
+OpenAI 今年专门使用 “Harness Engineering” 这个词来描述 Agent-first 的软件开发实践；Anthropic 也持续讨论 long-running agents 中 Harness 对 Agent 表现的重要影响。
+
+我们开始发现：
+
+**模型越来越像一个能力很强、但必须置于合适工作环境中的通用推理核心。**
+
+模型知道很多东西。
+
+也能做复杂判断。
+
+但要让它持续、可靠、安全地完成真实工作，外面的系统仍然决定了很多事情。
+
+* * *
+
+## 十、再回头看 Skill，会发现它只是入口
+
+这也是为什么，我觉得大家现在学习 Skills 是一件很好的事情。
+
+因为 Skill 很直观。
+
+打开文件夹，就能看到：
+
+```
+SKILL.mdscripts/references/assets/
+```
+
+普通人很容易理解：
+
+这里放规则。
+
+这里放脚本。
+
+这里放知识。
+
+这里放模板。
+
+但如果理解停在这里，很容易认为：
+
+> Agent 的秘密就是写好 SKILL.md。
+
+实际上，顺着 Skill 再往下面追问一次：
+
+> 谁读取 SKILL.md？
+
+Harness。
+
+> 谁决定什么时候加载 references？
+
+模型做判断，Harness 提供加载能力。
+
+> scripts 是谁运行的？
+
+Harness 的执行环境。
+
+> 运行结果怎么回到模型？
+
+Harness。
+
+> 模型为什么会继续执行第二步、第三步？
+
+Agent Loop。
+
+> 模型执行危险命令怎么办？
+
+Sandbox 和权限系统。
+
+> 上下文满了怎么办？
+
+Context Management。
+
+> 模型说完成了，到底信不信？
+
+Validation。
+
+走到这里以后，Skill 就不再是孤立的一个概念。
+
+它只是整个 Agent 系统里非常容易被普通人看到的一层。
+
+* * *
+
+## 结语：真正发生变化的，也许不是 Skill，而是“模型正在被系统化”
+
+过去我们使用大模型，体验非常像聊天。
+
+你问一句。
+
+它答一句。
+
+后来出现 Tool Calling，模型开始可以“动手”。
+
+再后来出现 MCP，大量外部系统开始接进来。
+
+Skill 又把人的经验、SOP、脚本和参考资料变成可以被 Agent 按需加载的工作方法。
+
+但当这些东西越来越多以后，就必须有一层系统把它们组织起来。
+
+这个系统就是今天越来越重要的 Harness。
+
+所以，如果把一个现代 Agent 拆开来看，可以得到一个很简单的结构：
+
+```
+Agent≈Model+Harness
+```
+
+而 Harness 里面继续展开：
+
+```
+Agent LoopToolsSkillsMCPContextMemorySandboxStateValidation……
+```
+
+于是我们也终于可以回答最开始的问题：
+
+**到底是什么让一个 Skill 跑起来？**
+
+不是 Markdown。
+
+不是文件夹。
+
+也不是因为某个模型天生认识 `SKILL.md` 。
+
+是 Harness 发现了它，把它交给模型，在合适的时候执行工具，把结果重新塞回上下文，然后不断驱动下一轮判断。
+
+Skill 给 AI 一种做事的方法。
+
+Harness 则把这种方法变成真正能够运行的过程。
+
+这也是为什么，在 Agent 时代，我们也许需要慢慢改变一个习惯。
+
+看到一个 Agent 很强时，别再只问：
+
+> 它用了什么模型？
+
+> **它的 Harness 是怎么设计的？**
+
+还可以再问一句：
+
+这个问题，很可能会越来越重要。

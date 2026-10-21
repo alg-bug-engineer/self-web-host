@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="880" viewBox="0 0 1080 880" role="img" aria-labelledby="title desc">
+<title id="title">把检查与写入放进同一笔事务</title><desc id="desc">本例同一 SQLite 文件；外部服务动作不在这个原子边界内</desc>
+<rect width="1080" height="880" fill="white"/>
+<g font-family="Noto Sans CJK SC, sans-serif">
+<text x="28" y="54" fill="#1d4ed8" font-size="40" font-weight="700">把检查与写入放进同一笔事务</text>
+<text x="28" y="108" fill="#64748b" font-size="30" font-weight="400">本例同一 SQLite 文件；外部服务动作不在这个原子边界内</text>
+<rect x="28" y="155" width="1024" height="145" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="50" y="203" fill="#1e40af" font-size="32" font-weight="700">① 先查操作回执</text>
+<text x="50" y="253" fill="#334155" font-size="30" font-weight="400">同键同命令 → 返回历史结果；同键改命令 → conflict</text>
+<rect x="28" y="326" width="1024" height="145" rx="18" fill="#ecfeff" stroke="#67e8f9" stroke-width="2"/>
+<text x="50" y="374" fill="#1e40af" font-size="32" font-weight="700">② 没有回执，检查完整依赖版本</text>
+<text x="50" y="424" fill="#334155" font-size="30" font-weight="400">A、B 都匹配 → 再检查余额；不匹配 → 记录 stale</text>
+<rect x="28" y="497" width="1024" height="190" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="50" y="545" fill="#1e40af" font-size="32" font-weight="700">③ 原子提交结果</text>
+<text x="50" y="595" fill="#334155" font-size="30" font-weight="400">扣 A、加 B、各自递增版本，写效果和回执</text>
+<text x="50" y="641" fill="#334155" font-size="30" font-weight="400">提交前退出：全部回滚；提交后失联：重放回执</text>
+<rect x="28" y="744" width="1024" height="112" rx="14" fill="#fef9c3" stroke="#facc15"/>
+<text x="48" y="787" fill="#713f12" font-size="30" font-weight="500">BEGIN IMMEDIATE → 检查和全部写入 → COMMIT</text>
+<text x="48" y="830" fill="#713f12" font-size="30" font-weight="500">回执要先查，否则自己的成功写入也会让旧版本失配</text>
+</g></svg>

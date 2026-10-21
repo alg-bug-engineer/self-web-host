@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1510" viewBox="0 0 540 1510" role="img"><title>模型迁移：接口兼容、任务行为、停服后兜底</title><rect width="100%" height="100%" fill="#fff"/><g font-family="Noto Sans CJK SC, sans-serif">
+<text x="28" y="67" font-size="38" fill="#1d4ed8" font-weight="700">换模型，要交接什么</text>
+<text x="28" y="117" font-size="30" fill="#64748b" font-weight="400">三个检查面，互不替代</text>
+<rect x="24" y="160" width="492" height="310" rx="22" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="46" y="215" font-size="34" fill="#0f172a" font-weight="700">01  接口兼容</text>
+<text x="46" y="272" font-size="30" fill="#334155" font-weight="400">端点、参数、字段</text>
+<text x="46" y="310" font-size="30" fill="#334155" font-weight="400">与错误处理是否兼容？</text>
+<text x="46" y="386" font-size="30" fill="#334155" font-weight="400">请求成功、JSON 可解析</text>
+<text x="46" y="424" font-size="30" fill="#334155" font-weight="400">只说明接口这一层接上</text>
+<rect x="24" y="505" width="492" height="310" rx="22" fill="#ecfdf5" stroke="#5eead4" stroke-width="2"/>
+<text x="46" y="560" font-size="34" fill="#0f172a" font-weight="700">02  任务行为</text>
+<text x="46" y="617" font-size="30" fill="#334155" font-weight="400">同一输入、固定上下文</text>
+<text x="46" y="655" font-size="30" fill="#334155" font-weight="400">按业务要求比较结果</text>
+<text x="46" y="731" font-size="30" fill="#334155" font-weight="400">旧输出可以作参照</text>
+<text x="46" y="769" font-size="30" fill="#334155" font-weight="400">不能自动当正确答案</text>
+<rect x="24" y="850" width="492" height="310" rx="22" fill="#fff1f2" stroke="#fda4af" stroke-width="2"/>
+<text x="46" y="905" font-size="34" fill="#0f172a" font-weight="700">03  停服后兜底</text>
+<text x="46" y="962" font-size="30" fill="#334155" font-weight="400">旧服务仍可用时</text>
+<text x="46" y="1000" font-size="30" fill="#334155" font-weight="400">才能验证切回旧模型</text>
+<text x="46" y="1076" font-size="30" fill="#334155" font-weight="400">停服后：其他已验收路径</text>
+<text x="46" y="1114" font-size="30" fill="#334155" font-weight="400">或缩小自动处理范围</text>
+<rect x="24" y="1200" width="492" height="235" rx="22" fill="#fffbeb" stroke="#fcd34d" stroke-width="2"/>
+<text x="46" y="1254" font-size="32" fill="#854d0e" font-weight="700">先写清不能变的行为</text>
+<text x="46" y="1300" font-size="32" fill="#854d0e" font-weight="700">再判断允许变的部分</text>
+<text x="46" y="1355" font-size="30" fill="#713f12" font-weight="400">原创示意 · 非模型实测</text>
+<text x="46" y="1400" font-size="30" fill="#713f12" font-weight="400">不表示三步即完成迁移</text>
+</g></svg>

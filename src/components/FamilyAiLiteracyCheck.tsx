@@ -77,7 +77,7 @@ export default function FamilyAiLiteracyCheck() {
   }
 
   return (
-    <section id="family-ai-check" className="scroll-mt-24 rounded-3xl border border-accent-tertiary/30 bg-accent-tertiary/5 p-6 md:p-10">
+    <section id="family-ai-check" className="scroll-mt-24 rounded-lg border border-accent-tertiary/30 bg-accent-tertiary/5 p-6 md:p-10">
       <div className="mx-auto max-w-3xl text-center">
         <p className="eyebrow">FAMILY SELF-CHECK</p>
         <h2 className="mt-2 text-3xl font-bold text-text-primary">家庭 AI 素养八问</h2>
@@ -91,7 +91,7 @@ export default function FamilyAiLiteracyCheck() {
 
       <div className="mx-auto mt-8 max-w-3xl space-y-5">
         {questions.map((question, questionIndex) => (
-          <fieldset key={question} className="rounded-2xl border border-border-default bg-bg-secondary p-5">
+          <fieldset key={question} className="rounded-lg border border-border-default bg-bg-secondary p-5">
             <legend className="px-1 text-sm font-semibold leading-6 text-text-primary">
               {questionIndex + 1}. {question}
             </legend>
@@ -135,7 +135,7 @@ export default function FamilyAiLiteracyCheck() {
         </div>
 
         {resultLevel && (
-          <div className="mt-7 rounded-2xl border border-accent-tertiary/40 bg-bg-secondary p-6 md:p-8" aria-live="polite">
+          <div className="mt-7 rounded-lg border border-accent-tertiary/40 bg-bg-secondary p-6 md:p-8" aria-live="polite">
             <p className="eyebrow">YOUR NEXT STEP</p>
             <h3 className="mt-2 text-2xl font-bold text-text-primary">{resultLevels[resultLevel].title}</h3>
             <p className="mt-3 leading-7 text-text-secondary">{resultLevels[resultLevel].summary}</p>
@@ -167,4 +167,3 @@ export default function FamilyAiLiteracyCheck() {
     </section>
   )
 }
-

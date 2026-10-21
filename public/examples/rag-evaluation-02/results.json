@@ -1,0 +1,3727 @@
+{
+  "schemaVersion": 1,
+  "parameters": {
+    "chunkSize": 120,
+    "overlap": 60,
+    "topK": 2,
+    "charBudget": 240
+  },
+  "runs": [
+    {
+      "strategy": "fixed",
+      "versionFilter": false,
+      "mode": "topK",
+      "limit": 2,
+      "indexedChunks": 9,
+      "eligibleChunks": 9,
+      "questions": [
+        {
+          "id": "boundary-condition",
+          "query": "R-17 wait seconds",
+          "ranked": [
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry\",\"v2\",0,120]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 se",
+              "score": 2,
+              "matchedTerms": [
+                "r-17",
+                "wait"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry\",\"v2\",0,120]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 se",
+              "score": 2,
+              "matchedTerms": [
+                "r-17",
+                "wait"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 170,
+          "uniqueSourceChars": 170,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 1,
+          "recall": 0
+        },
+        {
+          "id": "two-facts",
+          "query": "logs retention export format",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",120,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 120,
+              "end": 213,
+              "text": ".................................................................\n\nThe export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",0,120]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 120,
+              "text": "Current logs retention policy: keep 30 days............................................................................\n",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",120,240]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 120,
+              "end": 240,
+              "text": "\nCurrent logs retention policy: keep 30 days............................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",120,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 120,
+              "end": 213,
+              "text": ".................................................................\n\nThe export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"retention\",\"v1\",0,120]",
+              "reason": "top-k-full"
+            },
+            {
+              "id": "[\"retention\",\"v1\",120,240]",
+              "reason": "top-k-full"
+            }
+          ],
+          "usedChars": 213,
+          "uniqueSourceChars": 213,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "retention",
+            "export"
+          ],
+          "coveredFacts": 2,
+          "requiredFacts": 2,
+          "recall": 1
+        },
+        {
+          "id": "current-version",
+          "query": "current logs retention policy",
+          "ranked": [
+            {
+              "id": "[\"retention\",\"v1\",0,120]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 120,
+              "text": "Current logs retention policy: keep 30 days............................................................................\n",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",120,240]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 120,
+              "end": 240,
+              "text": "\nCurrent logs retention policy: keep 30 days............................................................................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retention\",\"v1\",0,120]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 120,
+              "text": "Current logs retention policy: keep 30 days............................................................................\n",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",120,240]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 120,
+              "end": 240,
+              "text": "\nCurrent logs retention policy: keep 30 days............................................................................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "reason": "top-k-full"
+            }
+          ],
+          "usedChars": 240,
+          "uniqueSourceChars": 240,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 1,
+          "recall": 0
+        },
+        {
+          "id": "no-evidence",
+          "query": "maximum extended archive duration",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",120,240]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 120,
+              "end": 240,
+              "text": "conds before retrying only when the request is idempotent. Archive details follow.......................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry\",\"v2\",120,240]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 120,
+              "end": 240,
+              "text": "conds before retrying only when the request is idempotent. Archive details follow.......................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 120,
+          "uniqueSourceChars": 120,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 0,
+          "recall": null
+        }
+      ],
+      "summary": {
+        "answerableQuestions": 3,
+        "unanswerableQuestions": 1,
+        "macroEvidenceRecall": 0.3333333333333333,
+        "coveredFacts": 2,
+        "requiredFacts": 4,
+        "meanContextChars": 185.75
+      }
+    },
+    {
+      "strategy": "fixed",
+      "versionFilter": false,
+      "mode": "charBudget",
+      "limit": 240,
+      "indexedChunks": 9,
+      "eligibleChunks": 9,
+      "questions": [
+        {
+          "id": "boundary-condition",
+          "query": "R-17 wait seconds",
+          "ranked": [
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry\",\"v2\",0,120]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 se",
+              "score": 2,
+              "matchedTerms": [
+                "r-17",
+                "wait"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry\",\"v2\",0,120]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 se",
+              "score": 2,
+              "matchedTerms": [
+                "r-17",
+                "wait"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 170,
+          "uniqueSourceChars": 170,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 1,
+          "recall": 0
+        },
+        {
+          "id": "two-facts",
+          "query": "logs retention export format",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",120,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 120,
+              "end": 213,
+              "text": ".................................................................\n\nThe export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",0,120]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 120,
+              "text": "Current logs retention policy: keep 30 days............................................................................\n",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",120,240]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 120,
+              "end": 240,
+              "text": "\nCurrent logs retention policy: keep 30 days............................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",120,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 120,
+              "end": 213,
+              "text": ".................................................................\n\nThe export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"retention\",\"v1\",0,120]",
+              "reason": "does-not-fit"
+            },
+            {
+              "id": "[\"retention\",\"v1\",120,240]",
+              "reason": "does-not-fit"
+            }
+          ],
+          "usedChars": 213,
+          "uniqueSourceChars": 213,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "retention",
+            "export"
+          ],
+          "coveredFacts": 2,
+          "requiredFacts": 2,
+          "recall": 1
+        },
+        {
+          "id": "current-version",
+          "query": "current logs retention policy",
+          "ranked": [
+            {
+              "id": "[\"retention\",\"v1\",0,120]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 120,
+              "text": "Current logs retention policy: keep 30 days............................................................................\n",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",120,240]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 120,
+              "end": 240,
+              "text": "\nCurrent logs retention policy: keep 30 days............................................................................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retention\",\"v1\",0,120]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 120,
+              "text": "Current logs retention policy: keep 30 days............................................................................\n",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",120,240]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 120,
+              "end": 240,
+              "text": "\nCurrent logs retention policy: keep 30 days............................................................................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "reason": "does-not-fit"
+            }
+          ],
+          "usedChars": 240,
+          "uniqueSourceChars": 240,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 1,
+          "recall": 0
+        },
+        {
+          "id": "no-evidence",
+          "query": "maximum extended archive duration",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",120,240]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 120,
+              "end": 240,
+              "text": "conds before retrying only when the request is idempotent. Archive details follow.......................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry\",\"v2\",120,240]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 120,
+              "end": 240,
+              "text": "conds before retrying only when the request is idempotent. Archive details follow.......................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 120,
+          "uniqueSourceChars": 120,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 0,
+          "recall": null
+        }
+      ],
+      "summary": {
+        "answerableQuestions": 3,
+        "unanswerableQuestions": 1,
+        "macroEvidenceRecall": 0.3333333333333333,
+        "coveredFacts": 2,
+        "requiredFacts": 4,
+        "meanContextChars": 185.75
+      }
+    },
+    {
+      "strategy": "fixed",
+      "versionFilter": true,
+      "mode": "topK",
+      "limit": 2,
+      "indexedChunks": 9,
+      "eligibleChunks": 7,
+      "questions": [
+        {
+          "id": "boundary-condition",
+          "query": "R-17 wait seconds",
+          "ranked": [
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry\",\"v2\",0,120]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 se",
+              "score": 2,
+              "matchedTerms": [
+                "r-17",
+                "wait"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry\",\"v2\",0,120]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 se",
+              "score": 2,
+              "matchedTerms": [
+                "r-17",
+                "wait"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 170,
+          "uniqueSourceChars": 170,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 1,
+          "recall": 0
+        },
+        {
+          "id": "two-facts",
+          "query": "logs retention export format",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",120,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 120,
+              "end": 213,
+              "text": ".................................................................\n\nThe export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",120,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 120,
+              "end": 213,
+              "text": ".................................................................\n\nThe export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 213,
+          "uniqueSourceChars": 213,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "retention",
+            "export"
+          ],
+          "coveredFacts": 2,
+          "requiredFacts": 2,
+          "recall": 1
+        },
+        {
+          "id": "current-version",
+          "query": "current logs retention policy",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 120,
+          "uniqueSourceChars": 120,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "retention"
+          ],
+          "coveredFacts": 1,
+          "requiredFacts": 1,
+          "recall": 1
+        },
+        {
+          "id": "no-evidence",
+          "query": "maximum extended archive duration",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",120,240]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 120,
+              "end": 240,
+              "text": "conds before retrying only when the request is idempotent. Archive details follow.......................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry\",\"v2\",120,240]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 120,
+              "end": 240,
+              "text": "conds before retrying only when the request is idempotent. Archive details follow.......................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 120,
+          "uniqueSourceChars": 120,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 0,
+          "recall": null
+        }
+      ],
+      "summary": {
+        "answerableQuestions": 3,
+        "unanswerableQuestions": 1,
+        "macroEvidenceRecall": 0.6666666666666666,
+        "coveredFacts": 3,
+        "requiredFacts": 4,
+        "meanContextChars": 155.75
+      }
+    },
+    {
+      "strategy": "fixed",
+      "versionFilter": true,
+      "mode": "charBudget",
+      "limit": 240,
+      "indexedChunks": 9,
+      "eligibleChunks": 7,
+      "questions": [
+        {
+          "id": "boundary-condition",
+          "query": "R-17 wait seconds",
+          "ranked": [
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry\",\"v2\",0,120]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 se",
+              "score": 2,
+              "matchedTerms": [
+                "r-17",
+                "wait"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry\",\"v2\",0,120]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 se",
+              "score": 2,
+              "matchedTerms": [
+                "r-17",
+                "wait"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 170,
+          "uniqueSourceChars": 170,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 1,
+          "recall": 0
+        },
+        {
+          "id": "two-facts",
+          "query": "logs retention export format",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",120,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 120,
+              "end": 213,
+              "text": ".................................................................\n\nThe export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",120,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 120,
+              "end": 213,
+              "text": ".................................................................\n\nThe export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 213,
+          "uniqueSourceChars": 213,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "retention",
+            "export"
+          ],
+          "coveredFacts": 2,
+          "requiredFacts": 2,
+          "recall": 1
+        },
+        {
+          "id": "current-version",
+          "query": "current logs retention policy",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 120,
+          "uniqueSourceChars": 120,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "retention"
+          ],
+          "coveredFacts": 1,
+          "requiredFacts": 1,
+          "recall": 1
+        },
+        {
+          "id": "no-evidence",
+          "query": "maximum extended archive duration",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",120,240]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 120,
+              "end": 240,
+              "text": "conds before retrying only when the request is idempotent. Archive details follow.......................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry\",\"v2\",120,240]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 120,
+              "end": 240,
+              "text": "conds before retrying only when the request is idempotent. Archive details follow.......................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 120,
+          "uniqueSourceChars": 120,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 0,
+          "recall": null
+        }
+      ],
+      "summary": {
+        "answerableQuestions": 3,
+        "unanswerableQuestions": 1,
+        "macroEvidenceRecall": 0.6666666666666666,
+        "coveredFacts": 3,
+        "requiredFacts": 4,
+        "meanContextChars": 155.75
+      }
+    },
+    {
+      "strategy": "overlap",
+      "versionFilter": false,
+      "mode": "topK",
+      "limit": 2,
+      "indexedChunks": 12,
+      "eligibleChunks": 12,
+      "questions": [
+        {
+          "id": "boundary-condition",
+          "query": "R-17 wait seconds",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",60,180]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": "........................................For R-17, wait 30 seconds before retrying only when the request is idempotent. A",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry\",\"v2\",0,120]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 se",
+              "score": 2,
+              "matchedTerms": [
+                "r-17",
+                "wait"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry\",\"v2\",60,180]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": "........................................For R-17, wait 30 seconds before retrying only when the request is idempotent. A",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"retry\",\"v2\",0,120]",
+              "reason": "top-k-full"
+            }
+          ],
+          "usedChars": 170,
+          "uniqueSourceChars": 170,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "conditional-retry"
+          ],
+          "coveredFacts": 1,
+          "requiredFacts": 1,
+          "recall": 1
+        },
+        {
+          "id": "two-facts",
+          "query": "logs retention export format",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",60,180]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": ".....Logs retention is 7 days. More logs retention notes................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",120,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 120,
+              "end": 213,
+              "text": ".................................................................\n\nThe export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",0,120]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 120,
+              "text": "Current logs retention policy: keep 30 days............................................................................\n",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",60,180]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 60,
+              "end": 180,
+              "text": "...........................................................\n\nCurrent logs retention policy: keep 30 days................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",120,240]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 120,
+              "end": 240,
+              "text": "\nCurrent logs retention policy: keep 30 days............................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",60,180]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": ".....Logs retention is 7 days. More logs retention notes................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"logs\",\"v2\",120,213]",
+              "reason": "top-k-full"
+            },
+            {
+              "id": "[\"retention\",\"v1\",0,120]",
+              "reason": "top-k-full"
+            },
+            {
+              "id": "[\"retention\",\"v1\",60,180]",
+              "reason": "top-k-full"
+            },
+            {
+              "id": "[\"retention\",\"v1\",120,240]",
+              "reason": "top-k-full"
+            }
+          ],
+          "usedChars": 240,
+          "uniqueSourceChars": 180,
+          "duplicateSourceChars": 60,
+          "coveredFactIds": [
+            "retention"
+          ],
+          "coveredFacts": 1,
+          "requiredFacts": 2,
+          "recall": 0.5
+        },
+        {
+          "id": "current-version",
+          "query": "current logs retention policy",
+          "ranked": [
+            {
+              "id": "[\"retention\",\"v1\",0,120]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 120,
+              "text": "Current logs retention policy: keep 30 days............................................................................\n",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",60,180]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 60,
+              "end": 180,
+              "text": "...........................................................\n\nCurrent logs retention policy: keep 30 days................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",120,240]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 120,
+              "end": 240,
+              "text": "\nCurrent logs retention policy: keep 30 days............................................................................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",60,180]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": ".....Logs retention is 7 days. More logs retention notes................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retention\",\"v1\",0,120]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 120,
+              "text": "Current logs retention policy: keep 30 days............................................................................\n",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",60,180]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 60,
+              "end": 180,
+              "text": "...........................................................\n\nCurrent logs retention policy: keep 30 days................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"retention\",\"v1\",120,240]",
+              "reason": "top-k-full"
+            },
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "reason": "top-k-full"
+            },
+            {
+              "id": "[\"logs\",\"v2\",60,180]",
+              "reason": "top-k-full"
+            }
+          ],
+          "usedChars": 240,
+          "uniqueSourceChars": 180,
+          "duplicateSourceChars": 60,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 1,
+          "recall": 0
+        },
+        {
+          "id": "no-evidence",
+          "query": "maximum extended archive duration",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",120,240]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 120,
+              "end": 240,
+              "text": "conds before retrying only when the request is idempotent. Archive details follow.......................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry\",\"v2\",120,240]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 120,
+              "end": 240,
+              "text": "conds before retrying only when the request is idempotent. Archive details follow.......................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 120,
+          "uniqueSourceChars": 120,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 0,
+          "recall": null
+        }
+      ],
+      "summary": {
+        "answerableQuestions": 3,
+        "unanswerableQuestions": 1,
+        "macroEvidenceRecall": 0.5,
+        "coveredFacts": 2,
+        "requiredFacts": 4,
+        "meanContextChars": 192.5
+      }
+    },
+    {
+      "strategy": "overlap",
+      "versionFilter": false,
+      "mode": "charBudget",
+      "limit": 240,
+      "indexedChunks": 12,
+      "eligibleChunks": 12,
+      "questions": [
+        {
+          "id": "boundary-condition",
+          "query": "R-17 wait seconds",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",60,180]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": "........................................For R-17, wait 30 seconds before retrying only when the request is idempotent. A",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry\",\"v2\",0,120]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 se",
+              "score": 2,
+              "matchedTerms": [
+                "r-17",
+                "wait"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry\",\"v2\",60,180]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": "........................................For R-17, wait 30 seconds before retrying only when the request is idempotent. A",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"retry\",\"v2\",0,120]",
+              "reason": "does-not-fit"
+            }
+          ],
+          "usedChars": 170,
+          "uniqueSourceChars": 170,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "conditional-retry"
+          ],
+          "coveredFacts": 1,
+          "requiredFacts": 1,
+          "recall": 1
+        },
+        {
+          "id": "two-facts",
+          "query": "logs retention export format",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",60,180]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": ".....Logs retention is 7 days. More logs retention notes................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",120,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 120,
+              "end": 213,
+              "text": ".................................................................\n\nThe export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",0,120]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 120,
+              "text": "Current logs retention policy: keep 30 days............................................................................\n",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",60,180]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 60,
+              "end": 180,
+              "text": "...........................................................\n\nCurrent logs retention policy: keep 30 days................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",120,240]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 120,
+              "end": 240,
+              "text": "\nCurrent logs retention policy: keep 30 days............................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",60,180]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": ".....Logs retention is 7 days. More logs retention notes................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"logs\",\"v2\",120,213]",
+              "reason": "does-not-fit"
+            },
+            {
+              "id": "[\"retention\",\"v1\",0,120]",
+              "reason": "does-not-fit"
+            },
+            {
+              "id": "[\"retention\",\"v1\",60,180]",
+              "reason": "does-not-fit"
+            },
+            {
+              "id": "[\"retention\",\"v1\",120,240]",
+              "reason": "does-not-fit"
+            }
+          ],
+          "usedChars": 240,
+          "uniqueSourceChars": 180,
+          "duplicateSourceChars": 60,
+          "coveredFactIds": [
+            "retention"
+          ],
+          "coveredFacts": 1,
+          "requiredFacts": 2,
+          "recall": 0.5
+        },
+        {
+          "id": "current-version",
+          "query": "current logs retention policy",
+          "ranked": [
+            {
+              "id": "[\"retention\",\"v1\",0,120]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 120,
+              "text": "Current logs retention policy: keep 30 days............................................................................\n",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",60,180]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 60,
+              "end": 180,
+              "text": "...........................................................\n\nCurrent logs retention policy: keep 30 days................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",120,240]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 120,
+              "end": 240,
+              "text": "\nCurrent logs retention policy: keep 30 days............................................................................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",60,180]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": ".....Logs retention is 7 days. More logs retention notes................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retention\",\"v1\",0,120]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 120,
+              "text": "Current logs retention policy: keep 30 days............................................................................\n",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",60,180]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 60,
+              "end": 180,
+              "text": "...........................................................\n\nCurrent logs retention policy: keep 30 days................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"retention\",\"v1\",120,240]",
+              "reason": "does-not-fit"
+            },
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "reason": "does-not-fit"
+            },
+            {
+              "id": "[\"logs\",\"v2\",60,180]",
+              "reason": "does-not-fit"
+            }
+          ],
+          "usedChars": 240,
+          "uniqueSourceChars": 180,
+          "duplicateSourceChars": 60,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 1,
+          "recall": 0
+        },
+        {
+          "id": "no-evidence",
+          "query": "maximum extended archive duration",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",120,240]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 120,
+              "end": 240,
+              "text": "conds before retrying only when the request is idempotent. Archive details follow.......................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry\",\"v2\",120,240]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 120,
+              "end": 240,
+              "text": "conds before retrying only when the request is idempotent. Archive details follow.......................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 120,
+          "uniqueSourceChars": 120,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 0,
+          "recall": null
+        }
+      ],
+      "summary": {
+        "answerableQuestions": 3,
+        "unanswerableQuestions": 1,
+        "macroEvidenceRecall": 0.5,
+        "coveredFacts": 2,
+        "requiredFacts": 4,
+        "meanContextChars": 192.5
+      }
+    },
+    {
+      "strategy": "overlap",
+      "versionFilter": true,
+      "mode": "topK",
+      "limit": 2,
+      "indexedChunks": 12,
+      "eligibleChunks": 9,
+      "questions": [
+        {
+          "id": "boundary-condition",
+          "query": "R-17 wait seconds",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",60,180]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": "........................................For R-17, wait 30 seconds before retrying only when the request is idempotent. A",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry\",\"v2\",0,120]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 se",
+              "score": 2,
+              "matchedTerms": [
+                "r-17",
+                "wait"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry\",\"v2\",60,180]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": "........................................For R-17, wait 30 seconds before retrying only when the request is idempotent. A",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"retry\",\"v2\",0,120]",
+              "reason": "top-k-full"
+            }
+          ],
+          "usedChars": 170,
+          "uniqueSourceChars": 170,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "conditional-retry"
+          ],
+          "coveredFacts": 1,
+          "requiredFacts": 1,
+          "recall": 1
+        },
+        {
+          "id": "two-facts",
+          "query": "logs retention export format",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",60,180]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": ".....Logs retention is 7 days. More logs retention notes................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",120,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 120,
+              "end": 213,
+              "text": ".................................................................\n\nThe export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",60,180]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": ".....Logs retention is 7 days. More logs retention notes................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"logs\",\"v2\",120,213]",
+              "reason": "top-k-full"
+            }
+          ],
+          "usedChars": 240,
+          "uniqueSourceChars": 180,
+          "duplicateSourceChars": 60,
+          "coveredFactIds": [
+            "retention"
+          ],
+          "coveredFacts": 1,
+          "requiredFacts": 2,
+          "recall": 0.5
+        },
+        {
+          "id": "current-version",
+          "query": "current logs retention policy",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",60,180]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": ".....Logs retention is 7 days. More logs retention notes................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",60,180]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": ".....Logs retention is 7 days. More logs retention notes................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 240,
+          "uniqueSourceChars": 180,
+          "duplicateSourceChars": 60,
+          "coveredFactIds": [
+            "retention"
+          ],
+          "coveredFacts": 1,
+          "requiredFacts": 1,
+          "recall": 1
+        },
+        {
+          "id": "no-evidence",
+          "query": "maximum extended archive duration",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",120,240]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 120,
+              "end": 240,
+              "text": "conds before retrying only when the request is idempotent. Archive details follow.......................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry\",\"v2\",120,240]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 120,
+              "end": 240,
+              "text": "conds before retrying only when the request is idempotent. Archive details follow.......................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 120,
+          "uniqueSourceChars": 120,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 0,
+          "recall": null
+        }
+      ],
+      "summary": {
+        "answerableQuestions": 3,
+        "unanswerableQuestions": 1,
+        "macroEvidenceRecall": 0.8333333333333334,
+        "coveredFacts": 3,
+        "requiredFacts": 4,
+        "meanContextChars": 192.5
+      }
+    },
+    {
+      "strategy": "overlap",
+      "versionFilter": true,
+      "mode": "charBudget",
+      "limit": 240,
+      "indexedChunks": 12,
+      "eligibleChunks": 9,
+      "questions": [
+        {
+          "id": "boundary-condition",
+          "query": "R-17 wait seconds",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",60,180]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": "........................................For R-17, wait 30 seconds before retrying only when the request is idempotent. A",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry\",\"v2\",0,120]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 se",
+              "score": 2,
+              "matchedTerms": [
+                "r-17",
+                "wait"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry\",\"v2\",60,180]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": "........................................For R-17, wait 30 seconds before retrying only when the request is idempotent. A",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"retry\",\"v2\",0,120]",
+              "reason": "does-not-fit"
+            }
+          ],
+          "usedChars": 170,
+          "uniqueSourceChars": 170,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "conditional-retry"
+          ],
+          "coveredFacts": 1,
+          "requiredFacts": 1,
+          "recall": 1
+        },
+        {
+          "id": "two-facts",
+          "query": "logs retention export format",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",60,180]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": ".....Logs retention is 7 days. More logs retention notes................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",120,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 120,
+              "end": 213,
+              "text": ".................................................................\n\nThe export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",60,180]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": ".....Logs retention is 7 days. More logs retention notes................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"logs\",\"v2\",120,213]",
+              "reason": "does-not-fit"
+            }
+          ],
+          "usedChars": 240,
+          "uniqueSourceChars": 180,
+          "duplicateSourceChars": 60,
+          "coveredFactIds": [
+            "retention"
+          ],
+          "coveredFacts": 1,
+          "requiredFacts": 2,
+          "recall": 0.5
+        },
+        {
+          "id": "current-version",
+          "query": "current logs retention policy",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",60,180]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": ".....Logs retention is 7 days. More logs retention notes................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,120]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 120,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes....",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",60,180]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 60,
+              "end": 180,
+              "text": ".....Logs retention is 7 days. More logs retention notes................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 240,
+          "uniqueSourceChars": 180,
+          "duplicateSourceChars": 60,
+          "coveredFactIds": [
+            "retention"
+          ],
+          "coveredFacts": 1,
+          "requiredFacts": 1,
+          "recall": 1
+        },
+        {
+          "id": "no-evidence",
+          "query": "maximum extended archive duration",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",120,240]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 120,
+              "end": 240,
+              "text": "conds before retrying only when the request is idempotent. Archive details follow.......................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry\",\"v2\",120,240]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 120,
+              "end": 240,
+              "text": "conds before retrying only when the request is idempotent. Archive details follow.......................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 120,
+          "uniqueSourceChars": 120,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 0,
+          "recall": null
+        }
+      ],
+      "summary": {
+        "answerableQuestions": 3,
+        "unanswerableQuestions": 1,
+        "macroEvidenceRecall": 0.8333333333333334,
+        "coveredFacts": 3,
+        "requiredFacts": 4,
+        "meanContextChars": 192.5
+      }
+    },
+    {
+      "strategy": "paragraph",
+      "versionFilter": false,
+      "mode": "topK",
+      "limit": 2,
+      "indexedChunks": 7,
+      "eligibleChunks": 7,
+      "questions": [
+        {
+          "id": "boundary-condition",
+          "query": "R-17 wait seconds",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",0,243]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 243,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 seconds before retrying only when the request is idempotent. Archive details follow..........................................",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry\",\"v2\",0,243]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 243,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 seconds before retrying only when the request is idempotent. Archive details follow..........................................",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 293,
+          "uniqueSourceChars": 293,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "conditional-retry"
+          ],
+          "coveredFacts": 1,
+          "requiredFacts": 1,
+          "recall": 1
+        },
+        {
+          "id": "two-facts",
+          "query": "logs retention export format",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,185]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 185,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes.....................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",187,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 187,
+              "end": 213,
+              "text": "The export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",0,119]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 119,
+              "text": "Current logs retention policy: keep 30 days............................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",121,240]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 121,
+              "end": 240,
+              "text": "Current logs retention policy: keep 30 days............................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,185]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 185,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes.....................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",187,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 187,
+              "end": 213,
+              "text": "The export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"retention\",\"v1\",0,119]",
+              "reason": "top-k-full"
+            },
+            {
+              "id": "[\"retention\",\"v1\",121,240]",
+              "reason": "top-k-full"
+            }
+          ],
+          "usedChars": 211,
+          "uniqueSourceChars": 211,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "retention",
+            "export"
+          ],
+          "coveredFacts": 2,
+          "requiredFacts": 2,
+          "recall": 1
+        },
+        {
+          "id": "current-version",
+          "query": "current logs retention policy",
+          "ranked": [
+            {
+              "id": "[\"retention\",\"v1\",0,119]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 119,
+              "text": "Current logs retention policy: keep 30 days............................................................................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",121,240]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 121,
+              "end": 240,
+              "text": "Current logs retention policy: keep 30 days............................................................................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",0,185]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 185,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes.....................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retention\",\"v1\",0,119]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 119,
+              "text": "Current logs retention policy: keep 30 days............................................................................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",121,240]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 121,
+              "end": 240,
+              "text": "Current logs retention policy: keep 30 days............................................................................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"logs\",\"v2\",0,185]",
+              "reason": "top-k-full"
+            }
+          ],
+          "usedChars": 238,
+          "uniqueSourceChars": 238,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 1,
+          "recall": 0
+        },
+        {
+          "id": "no-evidence",
+          "query": "maximum extended archive duration",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",0,243]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 243,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 seconds before retrying only when the request is idempotent. Archive details follow..........................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry\",\"v2\",0,243]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 243,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 seconds before retrying only when the request is idempotent. Archive details follow..........................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 243,
+          "uniqueSourceChars": 243,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 0,
+          "recall": null
+        }
+      ],
+      "summary": {
+        "answerableQuestions": 3,
+        "unanswerableQuestions": 1,
+        "macroEvidenceRecall": 0.6666666666666666,
+        "coveredFacts": 3,
+        "requiredFacts": 4,
+        "meanContextChars": 246.25
+      }
+    },
+    {
+      "strategy": "paragraph",
+      "versionFilter": false,
+      "mode": "charBudget",
+      "limit": 240,
+      "indexedChunks": 7,
+      "eligibleChunks": 7,
+      "questions": [
+        {
+          "id": "boundary-condition",
+          "query": "R-17 wait seconds",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",0,243]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 243,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 seconds before retrying only when the request is idempotent. Archive details follow..........................................",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"retry\",\"v2\",0,243]",
+              "reason": "does-not-fit"
+            }
+          ],
+          "usedChars": 50,
+          "uniqueSourceChars": 50,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 1,
+          "recall": 0
+        },
+        {
+          "id": "two-facts",
+          "query": "logs retention export format",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,185]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 185,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes.....................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",187,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 187,
+              "end": 213,
+              "text": "The export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",0,119]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 119,
+              "text": "Current logs retention policy: keep 30 days............................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",121,240]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 121,
+              "end": 240,
+              "text": "Current logs retention policy: keep 30 days............................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,185]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 185,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes.....................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",187,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 187,
+              "end": 213,
+              "text": "The export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"retention\",\"v1\",0,119]",
+              "reason": "does-not-fit"
+            },
+            {
+              "id": "[\"retention\",\"v1\",121,240]",
+              "reason": "does-not-fit"
+            }
+          ],
+          "usedChars": 211,
+          "uniqueSourceChars": 211,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "retention",
+            "export"
+          ],
+          "coveredFacts": 2,
+          "requiredFacts": 2,
+          "recall": 1
+        },
+        {
+          "id": "current-version",
+          "query": "current logs retention policy",
+          "ranked": [
+            {
+              "id": "[\"retention\",\"v1\",0,119]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 119,
+              "text": "Current logs retention policy: keep 30 days............................................................................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",121,240]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 121,
+              "end": 240,
+              "text": "Current logs retention policy: keep 30 days............................................................................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",0,185]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 185,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes.....................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retention\",\"v1\",0,119]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 0,
+              "end": 119,
+              "text": "Current logs retention policy: keep 30 days............................................................................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            },
+            {
+              "id": "[\"retention\",\"v1\",121,240]",
+              "docId": "retention",
+              "version": "v1",
+              "start": 121,
+              "end": 240,
+              "text": "Current logs retention policy: keep 30 days............................................................................",
+              "score": 4,
+              "matchedTerms": [
+                "current",
+                "logs",
+                "retention",
+                "policy"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"logs\",\"v2\",0,185]",
+              "reason": "does-not-fit"
+            }
+          ],
+          "usedChars": 238,
+          "uniqueSourceChars": 238,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 1,
+          "recall": 0
+        },
+        {
+          "id": "no-evidence",
+          "query": "maximum extended archive duration",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",0,243]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 243,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 seconds before retrying only when the request is idempotent. Archive details follow..........................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "selected": [],
+          "skipped": [
+            {
+              "id": "[\"retry\",\"v2\",0,243]",
+              "reason": "does-not-fit"
+            }
+          ],
+          "usedChars": 0,
+          "uniqueSourceChars": 0,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 0,
+          "recall": null
+        }
+      ],
+      "summary": {
+        "answerableQuestions": 3,
+        "unanswerableQuestions": 1,
+        "macroEvidenceRecall": 0.3333333333333333,
+        "coveredFacts": 2,
+        "requiredFacts": 4,
+        "meanContextChars": 124.75
+      }
+    },
+    {
+      "strategy": "paragraph",
+      "versionFilter": true,
+      "mode": "topK",
+      "limit": 2,
+      "indexedChunks": 7,
+      "eligibleChunks": 5,
+      "questions": [
+        {
+          "id": "boundary-condition",
+          "query": "R-17 wait seconds",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",0,243]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 243,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 seconds before retrying only when the request is idempotent. Archive details follow..........................................",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry\",\"v2\",0,243]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 243,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 seconds before retrying only when the request is idempotent. Archive details follow..........................................",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 293,
+          "uniqueSourceChars": 293,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "conditional-retry"
+          ],
+          "coveredFacts": 1,
+          "requiredFacts": 1,
+          "recall": 1
+        },
+        {
+          "id": "two-facts",
+          "query": "logs retention export format",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,185]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 185,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes.....................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",187,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 187,
+              "end": 213,
+              "text": "The export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,185]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 185,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes.....................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",187,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 187,
+              "end": 213,
+              "text": "The export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 211,
+          "uniqueSourceChars": 211,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "retention",
+            "export"
+          ],
+          "coveredFacts": 2,
+          "requiredFacts": 2,
+          "recall": 1
+        },
+        {
+          "id": "current-version",
+          "query": "current logs retention policy",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,185]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 185,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes.....................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,185]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 185,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes.....................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 185,
+          "uniqueSourceChars": 185,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "retention"
+          ],
+          "coveredFacts": 1,
+          "requiredFacts": 1,
+          "recall": 1
+        },
+        {
+          "id": "no-evidence",
+          "query": "maximum extended archive duration",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",0,243]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 243,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 seconds before retrying only when the request is idempotent. Archive details follow..........................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry\",\"v2\",0,243]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 243,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 seconds before retrying only when the request is idempotent. Archive details follow..........................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 243,
+          "uniqueSourceChars": 243,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 0,
+          "recall": null
+        }
+      ],
+      "summary": {
+        "answerableQuestions": 3,
+        "unanswerableQuestions": 1,
+        "macroEvidenceRecall": 1,
+        "coveredFacts": 4,
+        "requiredFacts": 4,
+        "meanContextChars": 233
+      }
+    },
+    {
+      "strategy": "paragraph",
+      "versionFilter": true,
+      "mode": "charBudget",
+      "limit": 240,
+      "indexedChunks": 7,
+      "eligibleChunks": 5,
+      "questions": [
+        {
+          "id": "boundary-condition",
+          "query": "R-17 wait seconds",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",0,243]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 243,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 seconds before retrying only when the request is idempotent. Archive details follow..........................................",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            },
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"retry-guide\",\"v2\",0,50]",
+              "docId": "retry-guide",
+              "version": "v2",
+              "start": 0,
+              "end": 50,
+              "text": "R-17 wait seconds: consult applicable retry rules.",
+              "score": 3,
+              "matchedTerms": [
+                "r-17",
+                "wait",
+                "seconds"
+              ]
+            }
+          ],
+          "skipped": [
+            {
+              "id": "[\"retry\",\"v2\",0,243]",
+              "reason": "does-not-fit"
+            }
+          ],
+          "usedChars": 50,
+          "uniqueSourceChars": 50,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 1,
+          "recall": 0
+        },
+        {
+          "id": "two-facts",
+          "query": "logs retention export format",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,185]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 185,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes.....................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",187,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 187,
+              "end": 213,
+              "text": "The export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,185]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 185,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes.....................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            },
+            {
+              "id": "[\"logs\",\"v2\",187,213]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 187,
+              "end": 213,
+              "text": "The export format is JSON.",
+              "score": 2,
+              "matchedTerms": [
+                "export",
+                "format"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 211,
+          "uniqueSourceChars": 211,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "retention",
+            "export"
+          ],
+          "coveredFacts": 2,
+          "requiredFacts": 2,
+          "recall": 1
+        },
+        {
+          "id": "current-version",
+          "query": "current logs retention policy",
+          "ranked": [
+            {
+              "id": "[\"logs\",\"v2\",0,185]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 185,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes.....................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "selected": [
+            {
+              "id": "[\"logs\",\"v2\",0,185]",
+              "docId": "logs",
+              "version": "v2",
+              "start": 0,
+              "end": 185,
+              "text": "Log service overview. ...........................................Logs retention is 7 days. More logs retention notes.....................................................................",
+              "score": 2,
+              "matchedTerms": [
+                "logs",
+                "retention"
+              ]
+            }
+          ],
+          "skipped": [],
+          "usedChars": 185,
+          "uniqueSourceChars": 185,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [
+            "retention"
+          ],
+          "coveredFacts": 1,
+          "requiredFacts": 1,
+          "recall": 1
+        },
+        {
+          "id": "no-evidence",
+          "query": "maximum extended archive duration",
+          "ranked": [
+            {
+              "id": "[\"retry\",\"v2\",0,243]",
+              "docId": "retry",
+              "version": "v2",
+              "start": 0,
+              "end": 243,
+              "text": "General setup notes. ...............................................................................For R-17, wait 30 seconds before retrying only when the request is idempotent. Archive details follow..........................................",
+              "score": 1,
+              "matchedTerms": [
+                "archive"
+              ]
+            }
+          ],
+          "selected": [],
+          "skipped": [
+            {
+              "id": "[\"retry\",\"v2\",0,243]",
+              "reason": "does-not-fit"
+            }
+          ],
+          "usedChars": 0,
+          "uniqueSourceChars": 0,
+          "duplicateSourceChars": 0,
+          "coveredFactIds": [],
+          "coveredFacts": 0,
+          "requiredFacts": 0,
+          "recall": null
+        }
+      ],
+      "summary": {
+        "answerableQuestions": 3,
+        "unanswerableQuestions": 1,
+        "macroEvidenceRecall": 0.6666666666666666,
+        "coveredFacts": 3,
+        "requiredFacts": 4,
+        "meanContextChars": 111.5
+      }
+    }
+  ]
+}

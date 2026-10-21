@@ -34,11 +34,11 @@ export default function ArticlesCollectionPage() {
             <Link
               key={post._id}
               href={post.url}
-              className="bg-bg-secondary border border-border-default rounded-2xl p-5 flex flex-col gap-4 hover:border-accent-tertiary hover:shadow-lg transition-all group"
+              className="group flex flex-col gap-4 rounded-lg border border-border-default bg-bg-secondary p-5 transition-colors hover:border-card-hover-border"
             >
               <div className="flex items-center justify-between text-xs text-text-tertiary">
-                <span className="uppercase tracking-widest">Rank #{index + 1}</span>
-                <span className="text-base">{post.icon === 'cat' ? '🐱' : '🤖'}</span>
+                <span>第 {index + 1} 位</span>
+                <span>{formatDate(post.date)}</span>
               </div>
               <div className="space-y-2">
                 <h2 className="text-lg font-semibold text-text-primary group-hover:text-accent-tertiary transition-colors">
@@ -61,14 +61,13 @@ export default function ArticlesCollectionPage() {
         </div>
       ) : (
         <div className="blankslate">
-          <div className="blankslate-icon">🐱</div>
           <h3 className="blankslate-heading">暂无文章</h3>
           <p className="blankslate-description">稍后再来看看吧。</p>
         </div>
       )}
 
       {rest.length > 0 && (
-        <div className="bg-bg-secondary border border-border-default rounded-2xl p-6">
+        <div className="rounded-lg border border-border-default bg-bg-secondary p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-text-primary">文章排行</h2>
             <span className="text-xs text-text-tertiary">最近更新</span>
@@ -77,7 +76,7 @@ export default function ArticlesCollectionPage() {
             <table className="min-w-full text-sm">
               <thead>
                 <tr className="text-left text-text-tertiary border-b border-border-default">
-                  <th className="py-2 pr-4">Rank</th>
+                  <th className="py-2 pr-4">序号</th>
                   <th className="py-2 pr-4">文章</th>
                   <th className="py-2 pr-4">话题</th>
                   <th className="py-2 pr-4">阅读</th>
@@ -93,9 +92,7 @@ export default function ArticlesCollectionPage() {
                     <td className="py-3 pr-4 text-text-secondary">#{index + 4}</td>
                     <td className="py-3 pr-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-bg-tertiary border border-border-default flex items-center justify-center">
-                          {post.icon === 'cat' ? '🐱' : '🤖'}
-                        </div>
+                        <div className="flex h-8 w-8 items-center justify-center rounded border border-border-default bg-bg-tertiary font-mono text-[10px] text-text-secondary">文</div>
                         <div className="min-w-0">
                           <p className="font-medium text-text-primary truncate">{post.title}</p>
                           <p className="text-xs text-text-secondary truncate">{post.description}</p>

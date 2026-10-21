@@ -4,19 +4,18 @@
   justify-content: center;
   width: 40px; /* Adjust size as needed */
   height: 40px; /* Adjust size as needed */
-  border-radius: 50%; /* Make it circular */
+  border-radius: 5px;
   background-color: var(--bg-tertiary); /* Use theme variable */
   color: var(--text-primary); /* Use theme variable */
   border: 1px solid var(--border-default);
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out, border-color 0.15s ease-in-out;
   padding: 0;
 }
 
 .theme-toggle:hover {
   background-color: var(--bg-secondary);
   border-color: var(--accent-primary);
-  transform: scale(1.05);
 }
 
 .theme-toggle svg {

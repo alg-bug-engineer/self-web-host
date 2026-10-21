@@ -54,6 +54,16 @@ export const Post = defineDocumentType(() => ({
       type: 'boolean',
       default: true,
     },
+    postType: {
+      type: 'enum',
+      options: ['article', 'commentary'],
+      default: 'article',
+    },
+    commentaryTopic: {
+      type: 'enum',
+      options: ['events', 'products', 'industry'],
+      required: false,
+    },
     category: {
       type: 'enum',
       options: ['tech', 'life'],
@@ -63,6 +73,28 @@ export const Post = defineDocumentType(() => ({
       type: 'enum',
       options: ['cat', 'robot'],
       default: 'robot',
+    },
+    access: {
+      type: 'enum',
+      options: ['public', 'planet-preview'],
+      default: 'public',
+    },
+    planetTopicUrl: {
+      type: 'string',
+      required: false,
+    },
+    gateTitle: {
+      type: 'string',
+      required: false,
+    },
+    gateDescription: {
+      type: 'string',
+      required: false,
+    },
+    gateItems: {
+      type: 'list',
+      of: { type: 'string' },
+      default: [],
     },
   },
   computedFields: {

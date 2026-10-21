@@ -1,0 +1,407 @@
+{
+  "aba_same_value_new_revision": {
+    "reply": {
+      "result": {
+        "observed": {
+          "A": 3,
+          "B": 1
+        },
+        "status": "stale"
+      },
+      "status": "completed"
+    },
+    "state": {
+      "effects": 0,
+      "receipts": 1,
+      "resources": {
+        "A": {
+          "quota": 10,
+          "revision": 3
+        },
+        "B": {
+          "quota": 0,
+          "revision": 1
+        },
+        "C": {
+          "quota": 5,
+          "revision": 1
+        }
+      }
+    }
+  },
+  "after_commit": {
+    "before_retry": {
+      "effects": 1,
+      "receipts": 1,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "revision": 2
+        },
+        "B": {
+          "quota": 3,
+          "revision": 2
+        },
+        "C": {
+          "quota": 5,
+          "revision": 1
+        }
+      }
+    },
+    "child": {
+      "exit": 73,
+      "reply": null
+    },
+    "retry": {
+      "result": {
+        "effect": 1,
+        "status": "applied"
+      },
+      "status": "replayed"
+    },
+    "state": {
+      "effects": 1,
+      "receipts": 1,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "revision": 2
+        },
+        "B": {
+          "quota": 3,
+          "revision": 2
+        },
+        "C": {
+          "quota": 5,
+          "revision": 1
+        }
+      }
+    }
+  },
+  "after_source": {
+    "before_retry": {
+      "effects": 0,
+      "receipts": 0,
+      "resources": {
+        "A": {
+          "quota": 10,
+          "revision": 1
+        },
+        "B": {
+          "quota": 0,
+          "revision": 1
+        },
+        "C": {
+          "quota": 5,
+          "revision": 1
+        }
+      }
+    },
+    "child": {
+      "exit": 71,
+      "reply": null
+    },
+    "retry": {
+      "result": {
+        "effect": 1,
+        "status": "applied"
+      },
+      "status": "completed"
+    },
+    "state": {
+      "effects": 1,
+      "receipts": 1,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "revision": 2
+        },
+        "B": {
+          "quota": 3,
+          "revision": 2
+        },
+        "C": {
+          "quota": 5,
+          "revision": 1
+        }
+      }
+    }
+  },
+  "atomic_stale_check": {
+    "child": {
+      "exit": 0,
+      "reply": {
+        "result": {
+          "observed": {
+            "A": 1,
+            "B": 2
+          },
+          "status": "stale"
+        },
+        "status": "completed"
+      }
+    },
+    "state": {
+      "effects": 0,
+      "receipts": 1,
+      "resources": {
+        "A": {
+          "quota": 10,
+          "revision": 1
+        },
+        "B": {
+          "quota": 2,
+          "revision": 2
+        },
+        "C": {
+          "quota": 5,
+          "revision": 1
+        }
+      }
+    }
+  },
+  "before_commit": {
+    "before_retry": {
+      "effects": 0,
+      "receipts": 0,
+      "resources": {
+        "A": {
+          "quota": 10,
+          "revision": 1
+        },
+        "B": {
+          "quota": 0,
+          "revision": 1
+        },
+        "C": {
+          "quota": 5,
+          "revision": 1
+        }
+      }
+    },
+    "child": {
+      "exit": 72,
+      "reply": null
+    },
+    "retry": {
+      "result": {
+        "effect": 1,
+        "status": "applied"
+      },
+      "status": "completed"
+    },
+    "state": {
+      "effects": 1,
+      "receipts": 1,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "revision": 2
+        },
+        "B": {
+          "quota": 3,
+          "revision": 2
+        },
+        "C": {
+          "quota": 5,
+          "revision": 1
+        }
+      }
+    }
+  },
+  "rejection_committed_reply_lost": {
+    "child": {
+      "exit": 73,
+      "reply": null
+    },
+    "retry": {
+      "result": {
+        "observed": {
+          "A": 1,
+          "B": 2
+        },
+        "status": "stale"
+      },
+      "status": "replayed"
+    },
+    "state": {
+      "effects": 0,
+      "receipts": 1,
+      "resources": {
+        "A": {
+          "quota": 10,
+          "revision": 1
+        },
+        "B": {
+          "quota": 1,
+          "revision": 2
+        },
+        "C": {
+          "quota": 5,
+          "revision": 1
+        }
+      }
+    }
+  },
+  "replay_after_own_write": {
+    "first": {
+      "result": {
+        "effect": 1,
+        "status": "applied"
+      },
+      "status": "completed"
+    },
+    "retry": {
+      "result": {
+        "effect": 1,
+        "status": "applied"
+      },
+      "status": "replayed"
+    },
+    "state": {
+      "effects": 1,
+      "receipts": 1,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "revision": 2
+        },
+        "B": {
+          "quota": 3,
+          "revision": 2
+        },
+        "C": {
+          "quota": 5,
+          "revision": 1
+        }
+      }
+    }
+  },
+  "terminal_rejection_and_replan": {
+    "changed_same_id": {
+      "status": "conflict"
+    },
+    "new_id": {
+      "result": {
+        "effect": 1,
+        "status": "applied"
+      },
+      "status": "completed"
+    },
+    "old": {
+      "result": {
+        "observed": {
+          "A": 1,
+          "B": 2
+        },
+        "status": "stale"
+      },
+      "status": "completed"
+    },
+    "old_retry": {
+      "result": {
+        "observed": {
+          "A": 1,
+          "B": 2
+        },
+        "status": "stale"
+      },
+      "status": "replayed"
+    },
+    "state": {
+      "effects": 1,
+      "receipts": 2,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "revision": 2
+        },
+        "B": {
+          "quota": 4,
+          "revision": 3
+        },
+        "C": {
+          "quota": 5,
+          "revision": 1
+        }
+      }
+    }
+  },
+  "two_plans_one_snapshot": {
+    "state": {
+      "effects": 1,
+      "receipts": 2,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "revision": 2
+        },
+        "B": {
+          "quota": 3,
+          "revision": 2
+        },
+        "C": {
+          "quota": 5,
+          "revision": 1
+        }
+      }
+    },
+    "statuses": [
+      "applied",
+      "stale"
+    ]
+  },
+  "unsafe_gap": {
+    "child": {
+      "exit": 0,
+      "reply": {
+        "status": "unsafe_applied"
+      }
+    },
+    "state": {
+      "effects": 1,
+      "receipts": 0,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "revision": 2
+        },
+        "B": {
+          "quota": 5,
+          "revision": 3
+        },
+        "C": {
+          "quota": 5,
+          "revision": 1
+        }
+      }
+    }
+  },
+  "untracked_dependency_not_protected": {
+    "reply": {
+      "result": {
+        "effect": 1,
+        "status": "applied"
+      },
+      "status": "completed"
+    },
+    "state": {
+      "effects": 1,
+      "receipts": 1,
+      "resources": {
+        "A": {
+          "quota": 7,
+          "revision": 2
+        },
+        "B": {
+          "quota": 3,
+          "revision": 2
+        },
+        "C": {
+          "quota": 4,
+          "revision": 2
+        }
+      }
+    }
+  }
+}

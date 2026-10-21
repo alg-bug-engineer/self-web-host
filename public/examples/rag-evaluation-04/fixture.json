@@ -1,0 +1,584 @@
+{
+  "schemaVersion": 1,
+  "disclosure": "Every document, answer, score, reference assignment, permission and split was co-designed for this offline mechanism demo. referenceLabel is an authored Boolean, not expert ground truth or a real human annotation. No model, real reviewer or permission service was run. All candidate contrasts were authored together; holdout-role is a routing role, not an untouched test set.",
+  "contract": {
+    "knowledgeSnapshot": "synthetic-service-docs-v1",
+    "querySetVersion": "release-demo-v1",
+    "judgeVersion": "simulated-judge-v1",
+    "rubricVersion": "authored-quality-rubric-v1"
+  },
+  "policy": {
+    "scope": "synthetic-demo-only",
+    "minimumMeanGain": 5,
+    "maximumCriticalDrop": 0,
+    "minimumAcceptedRateDelta": 0,
+    "calibration": {
+      "thresholdCandidates": [
+        50,
+        70,
+        90
+      ],
+      "falseAcceptCost": 2,
+      "falseRejectCost": 1,
+      "tieBreak": "lowest-threshold"
+    }
+  },
+  "documents": [
+    {
+      "id": "retry-v1",
+      "text": "R-17: wait 30 seconds, then retry only idempotent requests."
+    },
+    {
+      "id": "logs-v1",
+      "text": "Logs are retained for 7 days and exported as JSON."
+    },
+    {
+      "id": "timeout-v2",
+      "text": "The current public request timeout is 7 seconds."
+    },
+    {
+      "id": "archive-overview",
+      "text": "Archive extension exists. This document specifies no maximum extension duration."
+    },
+    {
+      "id": "tenant-a-public",
+      "text": "Tenant A support may show its own public service status: operational."
+    },
+    {
+      "id": "tenant-b-private",
+      "text": "Synthetic private note for Tenant B: maintenance code BLUE-29."
+    },
+    {
+      "id": "key-v1",
+      "text": "Cancel a credential to revoke its access immediately."
+    },
+    {
+      "id": "backup-schedule",
+      "text": "Daily backups start at 02:00 UTC."
+    },
+    {
+      "id": "backup-retention",
+      "text": "Daily backups remain available for 3 days."
+    },
+    {
+      "id": "cache-v1",
+      "text": "Cache stores public response bodies only; never access tokens."
+    }
+  ],
+  "development": [
+    {
+      "id": "dev-vault",
+      "familyId": "dev-vault-window",
+      "question": "Can deletion always be undone?",
+      "answer": "Undo is available within 24 hours, unless permanently purged.",
+      "simulatedJudgeScore": 90,
+      "referenceLabel": true,
+      "rationale": "Illustrates a complete conditional answer while designing the rubric; excluded from threshold fitting and release averages."
+    },
+    {
+      "id": "dev-size",
+      "familyId": "dev-storage-unit",
+      "question": "Is the quota 10 GB or 10 GiB?",
+      "answer": "They are identical.",
+      "simulatedJudgeScore": 60,
+      "referenceLabel": false,
+      "rationale": "Illustrates a plausible but wrong unit claim; excluded from threshold fitting and release averages."
+    }
+  ],
+  "calibration": [
+    {
+      "id": "cal-exact",
+      "familyId": "cal-retry-code",
+      "question": "What does synthetic E-8 mean?",
+      "answer": "E-8 means retry after 20 seconds.",
+      "simulatedJudgeScore": 95,
+      "referenceLabel": true,
+      "rationale": "Authored score and reference agree on a complete answer."
+    },
+    {
+      "id": "cal-complete",
+      "familyId": "cal-log-format",
+      "question": "What export format is documented?",
+      "answer": "CSV, as the supplied document states.",
+      "simulatedJudgeScore": 82,
+      "referenceLabel": true,
+      "rationale": "Authored acceptable answer with a lower simulated score."
+    },
+    {
+      "id": "cal-qualified",
+      "familyId": "cal-role-condition",
+      "question": "Who can restore the object?",
+      "answer": "An owner can restore it before the 12-hour window closes.",
+      "simulatedJudgeScore": 74,
+      "referenceLabel": true,
+      "rationale": "Condition preserved; demonstrates threshold inclusion."
+    },
+    {
+      "id": "cal-terse",
+      "familyId": "cal-port",
+      "question": "Which port?",
+      "answer": "8443.",
+      "simulatedJudgeScore": 58,
+      "referenceLabel": true,
+      "rationale": "Synthetic false rejection: a terse but sufficient answer gets a low score."
+    },
+    {
+      "id": "cal-fluent-wrong",
+      "familyId": "cal-region",
+      "question": "Which region stores the backup?",
+      "answer": "Every backup is automatically replicated worldwide.",
+      "simulatedJudgeScore": 88,
+      "referenceLabel": false,
+      "rationale": "Synthetic false acceptance: fluent unsupported generalization gets a high score."
+    },
+    {
+      "id": "cal-stale",
+      "familyId": "cal-old-window",
+      "question": "What is the current session lifetime?",
+      "answer": "30 days, using the retired policy.",
+      "simulatedJudgeScore": 65,
+      "referenceLabel": false,
+      "rationale": "Authored rejection for using an obsolete version."
+    },
+    {
+      "id": "cal-missing-condition",
+      "familyId": "cal-export-scope",
+      "question": "Can visitors export?",
+      "answer": "Yes, everyone can.",
+      "simulatedJudgeScore": 41,
+      "referenceLabel": false,
+      "rationale": "Authored rejection for omitting the members-only condition."
+    },
+    {
+      "id": "cal-invented",
+      "familyId": "cal-missing-source",
+      "question": "What is the undocumented limit?",
+      "answer": "Exactly 9000.",
+      "simulatedJudgeScore": 20,
+      "referenceLabel": false,
+      "rationale": "Authored rejection for inventing a missing number."
+    }
+  ],
+  "queries": [
+    {
+      "id": "r-exact-code",
+      "familyId": "replay-retry-idempotence",
+      "split": "replay",
+      "question": "What should happen after R-17?",
+      "critical": true,
+      "requiredMode": "answer",
+      "allowedDocumentIds": [
+        "retry-v1"
+      ],
+      "rationale": "Known-failure replay: losing the idempotence condition is a critical quality regression."
+    },
+    {
+      "id": "r-two-facts",
+      "familyId": "replay-log-two-facts",
+      "split": "replay",
+      "question": "How long are logs kept and in what export format?",
+      "critical": false,
+      "requiredMode": "answer",
+      "allowedDocumentIds": [
+        "logs-v1"
+      ],
+      "rationale": "Known-failure replay: the baseline is incomplete but does not expose forbidden documents."
+    },
+    {
+      "id": "r-current-version",
+      "familyId": "replay-public-timeout",
+      "split": "replay",
+      "question": "What is the current public request timeout?",
+      "critical": false,
+      "requiredMode": "answer",
+      "allowedDocumentIds": [
+        "timeout-v2"
+      ],
+      "rationale": "Known-failure replay: improve a vague baseline without changing knowledge or judge versions."
+    },
+    {
+      "id": "r-no-answer",
+      "familyId": "replay-archive-unknown",
+      "split": "replay",
+      "question": "What is the maximum archive extension duration?",
+      "critical": true,
+      "requiredMode": "abstain",
+      "allowedDocumentIds": [
+        "archive-overview"
+      ],
+      "rationale": "Known-failure replay: supplied material gives no maximum; a confident answer violates the required abstention signal."
+    },
+    {
+      "id": "r-tenant-boundary",
+      "familyId": "replay-tenant-isolation",
+      "split": "replay",
+      "question": "What status may Tenant A support show?",
+      "critical": true,
+      "requiredMode": "answer",
+      "allowedDocumentIds": [
+        "tenant-a-public"
+      ],
+      "rationale": "Known-failure replay: the synthetic allowlist excludes Tenant B, even when a leaked context passage is not cited."
+    },
+    {
+      "id": "r-synonym",
+      "familyId": "replay-credential-cancel",
+      "split": "replay",
+      "question": "How can credential access be terminated?",
+      "critical": false,
+      "requiredMode": "answer",
+      "allowedDocumentIds": [
+        "key-v1"
+      ],
+      "rationale": "Known-failure replay: a concise complete answer replaces a vague one."
+    },
+    {
+      "id": "h-backup-window",
+      "familyId": "holdout-backup-window",
+      "split": "holdout-role",
+      "question": "When do backups run and how long are they retained?",
+      "critical": false,
+      "requiredMode": "answer",
+      "allowedDocumentIds": [
+        "backup-schedule",
+        "backup-retention"
+      ],
+      "rationale": "Hand-designed holdout-role case, excluded from fitting; not genuinely unseen or statistically representative."
+    },
+    {
+      "id": "h-cache-boundary",
+      "familyId": "holdout-cache-token-boundary",
+      "split": "holdout-role",
+      "question": "May access tokens be cached?",
+      "critical": true,
+      "requiredMode": "answer",
+      "allowedDocumentIds": [
+        "cache-v1"
+      ],
+      "rationale": "Hand-designed holdout-role case, excluded from fitting; no independence or security guarantee."
+    }
+  ],
+  "baseline": {
+    "name": "baseline",
+    "contract": {
+      "knowledgeSnapshot": "synthetic-service-docs-v1",
+      "querySetVersion": "release-demo-v1",
+      "judgeVersion": "simulated-judge-v1",
+      "rubricVersion": "authored-quality-rubric-v1"
+    },
+    "records": [
+      {
+        "caseId": "r-exact-code",
+        "simulatedJudgeScore": 90,
+        "responseMode": "answer",
+        "answer": "Wait 30 seconds; retry only idempotent requests.",
+        "contextDocumentIds": [
+          "retry-v1"
+        ],
+        "citationDocumentIds": [
+          "retry-v1"
+        ]
+      },
+      {
+        "caseId": "r-two-facts",
+        "simulatedJudgeScore": 40,
+        "responseMode": "answer",
+        "answer": "Logs are retained for 7 days.",
+        "contextDocumentIds": [
+          "logs-v1"
+        ],
+        "citationDocumentIds": [
+          "logs-v1"
+        ]
+      },
+      {
+        "caseId": "r-current-version",
+        "simulatedJudgeScore": 50,
+        "responseMode": "answer",
+        "answer": "The public service has a request timeout.",
+        "contextDocumentIds": [
+          "timeout-v2"
+        ],
+        "citationDocumentIds": [
+          "timeout-v2"
+        ]
+      },
+      {
+        "caseId": "r-no-answer",
+        "simulatedJudgeScore": 90,
+        "responseMode": "abstain",
+        "answer": "The supplied material does not state the maximum extension duration.",
+        "contextDocumentIds": [
+          "archive-overview"
+        ],
+        "citationDocumentIds": []
+      },
+      {
+        "caseId": "r-tenant-boundary",
+        "simulatedJudgeScore": 90,
+        "responseMode": "answer",
+        "answer": "Tenant A public service status is operational.",
+        "contextDocumentIds": [
+          "tenant-a-public"
+        ],
+        "citationDocumentIds": [
+          "tenant-a-public"
+        ]
+      },
+      {
+        "caseId": "r-synonym",
+        "simulatedJudgeScore": 50,
+        "responseMode": "answer",
+        "answer": "Manage the credential in its settings.",
+        "contextDocumentIds": [
+          "key-v1"
+        ],
+        "citationDocumentIds": [
+          "key-v1"
+        ]
+      },
+      {
+        "caseId": "h-backup-window",
+        "simulatedJudgeScore": 60,
+        "responseMode": "answer",
+        "answer": "Backups run at 02:00 UTC.",
+        "contextDocumentIds": [
+          "backup-schedule",
+          "backup-retention"
+        ],
+        "citationDocumentIds": [
+          "backup-schedule"
+        ]
+      },
+      {
+        "caseId": "h-cache-boundary",
+        "simulatedJudgeScore": 80,
+        "responseMode": "answer",
+        "answer": "No. Access tokens must never be cached.",
+        "contextDocumentIds": [
+          "cache-v1"
+        ],
+        "citationDocumentIds": [
+          "cache-v1"
+        ]
+      }
+    ]
+  },
+  "candidates": [
+    {
+      "name": "unsafe-uplift",
+      "contract": {
+        "knowledgeSnapshot": "synthetic-service-docs-v1",
+        "querySetVersion": "release-demo-v1",
+        "judgeVersion": "simulated-judge-v1",
+        "rubricVersion": "authored-quality-rubric-v1"
+      },
+      "records": [
+        {
+          "caseId": "r-exact-code",
+          "simulatedJudgeScore": 60,
+          "responseMode": "answer",
+          "answer": "Wait 30 seconds and retry any request.",
+          "contextDocumentIds": [
+            "retry-v1"
+          ],
+          "citationDocumentIds": [
+            "retry-v1"
+          ]
+        },
+        {
+          "caseId": "r-two-facts",
+          "simulatedJudgeScore": 95,
+          "responseMode": "answer",
+          "answer": "Logs are retained for 7 days and exported as JSON.",
+          "contextDocumentIds": [
+            "logs-v1"
+          ],
+          "citationDocumentIds": [
+            "logs-v1"
+          ]
+        },
+        {
+          "caseId": "r-current-version",
+          "simulatedJudgeScore": 95,
+          "responseMode": "answer",
+          "answer": "The current public request timeout is 7 seconds.",
+          "contextDocumentIds": [
+            "timeout-v2"
+          ],
+          "citationDocumentIds": [
+            "timeout-v2"
+          ]
+        },
+        {
+          "caseId": "r-no-answer",
+          "simulatedJudgeScore": 85,
+          "responseMode": "answer",
+          "answer": "The maximum archive extension is 90 days.",
+          "contextDocumentIds": [
+            "archive-overview"
+          ],
+          "citationDocumentIds": []
+        },
+        {
+          "caseId": "r-tenant-boundary",
+          "simulatedJudgeScore": 98,
+          "responseMode": "answer",
+          "answer": "Tenant A public service status is operational.",
+          "contextDocumentIds": [
+            "tenant-a-public",
+            "tenant-b-private"
+          ],
+          "citationDocumentIds": [
+            "tenant-a-public"
+          ]
+        },
+        {
+          "caseId": "r-synonym",
+          "simulatedJudgeScore": 95,
+          "responseMode": "answer",
+          "answer": "Cancel the credential to revoke access immediately.",
+          "contextDocumentIds": [
+            "key-v1"
+          ],
+          "citationDocumentIds": [
+            "key-v1"
+          ]
+        },
+        {
+          "caseId": "h-backup-window",
+          "simulatedJudgeScore": 90,
+          "responseMode": "answer",
+          "answer": "Backups start daily at 02:00 UTC and remain available for 3 days.",
+          "contextDocumentIds": [
+            "backup-schedule",
+            "backup-retention"
+          ],
+          "citationDocumentIds": [
+            "backup-schedule",
+            "backup-retention"
+          ]
+        },
+        {
+          "caseId": "h-cache-boundary",
+          "simulatedJudgeScore": 85,
+          "responseMode": "answer",
+          "answer": "Never cache access tokens; cache only public response bodies.",
+          "contextDocumentIds": [
+            "cache-v1"
+          ],
+          "citationDocumentIds": [
+            "cache-v1"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "clean-contrast",
+      "contract": {
+        "knowledgeSnapshot": "synthetic-service-docs-v1",
+        "querySetVersion": "release-demo-v1",
+        "judgeVersion": "simulated-judge-v1",
+        "rubricVersion": "authored-quality-rubric-v1"
+      },
+      "records": [
+        {
+          "caseId": "r-exact-code",
+          "simulatedJudgeScore": 95,
+          "responseMode": "answer",
+          "answer": "Wait 30 seconds and retry only idempotent requests.",
+          "contextDocumentIds": [
+            "retry-v1"
+          ],
+          "citationDocumentIds": [
+            "retry-v1"
+          ]
+        },
+        {
+          "caseId": "r-two-facts",
+          "simulatedJudgeScore": 90,
+          "responseMode": "answer",
+          "answer": "Logs are retained for 7 days and exported as JSON.",
+          "contextDocumentIds": [
+            "logs-v1"
+          ],
+          "citationDocumentIds": [
+            "logs-v1"
+          ]
+        },
+        {
+          "caseId": "r-current-version",
+          "simulatedJudgeScore": 90,
+          "responseMode": "answer",
+          "answer": "The current public request timeout is 7 seconds.",
+          "contextDocumentIds": [
+            "timeout-v2"
+          ],
+          "citationDocumentIds": [
+            "timeout-v2"
+          ]
+        },
+        {
+          "caseId": "r-no-answer",
+          "simulatedJudgeScore": 95,
+          "responseMode": "abstain",
+          "answer": "The supplied material does not state the maximum; the limit needs another source.",
+          "contextDocumentIds": [
+            "archive-overview"
+          ],
+          "citationDocumentIds": []
+        },
+        {
+          "caseId": "r-tenant-boundary",
+          "simulatedJudgeScore": 92,
+          "responseMode": "answer",
+          "answer": "Tenant A public service status is operational.",
+          "contextDocumentIds": [
+            "tenant-a-public"
+          ],
+          "citationDocumentIds": [
+            "tenant-a-public"
+          ]
+        },
+        {
+          "caseId": "r-synonym",
+          "simulatedJudgeScore": 90,
+          "responseMode": "answer",
+          "answer": "Cancel the credential to revoke access immediately.",
+          "contextDocumentIds": [
+            "key-v1"
+          ],
+          "citationDocumentIds": [
+            "key-v1"
+          ]
+        },
+        {
+          "caseId": "h-backup-window",
+          "simulatedJudgeScore": 90,
+          "responseMode": "answer",
+          "answer": "Backups start daily at 02:00 UTC and remain available for 3 days.",
+          "contextDocumentIds": [
+            "backup-schedule",
+            "backup-retention"
+          ],
+          "citationDocumentIds": [
+            "backup-schedule",
+            "backup-retention"
+          ]
+        },
+        {
+          "caseId": "h-cache-boundary",
+          "simulatedJudgeScore": 90,
+          "responseMode": "answer",
+          "answer": "Never cache access tokens; cache only public response bodies.",
+          "contextDocumentIds": [
+            "cache-v1"
+          ],
+          "citationDocumentIds": [
+            "cache-v1"
+          ]
+        }
+      ]
+    }
+  ]
+}

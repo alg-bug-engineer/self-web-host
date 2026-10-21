@@ -22,6 +22,7 @@ const requiredVisibleCopy = [
   '模型与原理',
   'Agent 与实践',
   'AI 与人',
+  'AI锐评',
 ]
 
 for (const text of requiredVisibleCopy) {
@@ -36,6 +37,7 @@ const expectedAnalyticsTargets = [
   'blog-filter-principles',
   'blog-filter-practice',
   'blog-filter-insight',
+  'blog-filter-commentary',
   'blog-proof',
 ]
 for (const target of expectedAnalyticsTargets) {
@@ -94,4 +96,4 @@ for (const url of listedUrls) {
   }
 }
 
-console.log(`文章学习入口测试通过：${itemList.numberOfItems} 篇文章及其 Markdown 正文，3 条学习路径，4 个主题筛选。`)
+console.log(`文章学习入口测试通过：${itemList.numberOfItems} 篇文章及其 Markdown 正文，3 条学习路径，5 个主题筛选。`)

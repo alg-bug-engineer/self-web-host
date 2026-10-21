@@ -118,7 +118,7 @@ export default function ToolsCollectionClient({ tools, settings }: { tools: Tool
             <div className="animate-in fade-in slide-in-from-top-4 duration-500">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-bold text-text-primary flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-accent-tertiary animate-pulse"></span>
+                        <span className="h-2 w-2 rounded-full bg-accent-tertiary"></span>
                         交互体验中
                     </h2>
                     <button 
@@ -137,7 +137,7 @@ export default function ToolsCollectionClient({ tools, settings }: { tools: Tool
           <span>{filteredTools.length} 个结果</span>
           {activeTag && <span className="text-text-tertiary">|</span>}
           {activeTag && (
-            <span className="inline-flex items-center gap-2 rounded-full bg-bg-tertiary px-2 py-0.5 text-xs text-text-secondary">
+            <span className="inline-flex items-center gap-2 rounded bg-bg-tertiary px-2 py-0.5 text-xs text-text-secondary">
               {activeTag}
             </span>
           )}
@@ -162,7 +162,7 @@ export default function ToolsCollectionClient({ tools, settings }: { tools: Tool
                   {...props}
                   data-analytics-event={tool.isPro ? 'view_planet' : 'open_tool'}
                   data-analytics-target={String(tool.id)}
-                  className={`relative text-left bg-bg-secondary border rounded-2xl p-5 flex flex-col gap-4 hover:border-accent-tertiary hover:shadow-lg transition-all group overflow-hidden ${
+                  className={`group relative flex flex-col gap-4 overflow-hidden rounded-lg border bg-bg-secondary p-5 text-left transition-colors hover:border-card-hover-border ${
                     activePluginId === tool.pluginId ? 'border-accent-tertiary ring-2 ring-accent-tertiary/20' : 'border-border-default'
                   }`}
                 >
@@ -172,7 +172,7 @@ export default function ToolsCollectionClient({ tools, settings }: { tools: Tool
                     </div>
                   )}
                   <div className="flex items-center justify-between text-xs text-text-tertiary">
-                    <span className="uppercase tracking-widest">Rank #{index + 1}</span>
+                    <span>第 {index + 1} 位</span>
                     <span className="text-base">{isPlugin ? '⚡' : (tool.isPro ? '🔒' : '🔧')}</span>
                   </div>
                   <div className="space-y-2">
@@ -217,7 +217,7 @@ export default function ToolsCollectionClient({ tools, settings }: { tools: Tool
         />
 
         {rest.length > 0 && (
-          <div className="bg-bg-secondary border border-border-default rounded-2xl p-6">
+          <div className="rounded-lg border border-border-default bg-bg-secondary p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-text-primary">工具清单</h2>
               <span className="text-xs text-text-tertiary">持续更新</span>

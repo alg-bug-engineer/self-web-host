@@ -1,0 +1,508 @@
+{
+  "schemaVersion": 1,
+  "experiment": "Original aggregation audit of fixed released ALCE outputs and labels, not a new generation or annotation study",
+  "provenance": {
+    "repository": "https://github.com/princeton-nlp/ALCE",
+    "commit": "246c476a4edfc564266b7346b6e29ef4861ae937",
+    "path": "human_eval/human_eval_citations_completed.json",
+    "sha256": "cfed9293752413d7c7631f36524dd4ee9ef58b209cdf9c63f6fc1e280b43cca6",
+    "bytes": 4566797,
+    "dataset": "asqa",
+    "modelKey": "asqa-gpt-35-turbo-gtr-shot2-ndoc5-42-azure.json",
+    "expectedQuestions": 100,
+    "maximumNumericCitationId": 5,
+    "maximumScoredCitationsPerSentence": 3,
+    "url": "https://raw.githubusercontent.com/princeton-nlp/ALCE/246c476a4edfc564266b7346b6e29ef4861ae937/human_eval/human_eval_citations_completed.json",
+    "modelAlias": "gpt-35-turbo",
+    "exactBackendVersion": null,
+    "modelVersionDisclosure": "The archived model key names an Azure deployment alias; an exact dated backend model version is not supplied by this annotation artifact.",
+    "generatedHere": false,
+    "humanAnnotatedHere": false,
+    "nliRerunHere": false,
+    "selectionRule": "All question records in the fixed ASQA model key; reserved overall_results excluded, empty output retained."
+  },
+  "counts": {
+    "questions": 100,
+    "nonemptyOutputs": 99,
+    "emptyOutputs": 1,
+    "questionsWithoutScoredCitations": 4,
+    "sentences": 236,
+    "sentencesWithNumericCitations": 205,
+    "sentencesWithoutNumericCitations": 31,
+    "numericCitationOccurrences": 306,
+    "scoredCitationOccurrences": 290,
+    "unscoredNumericCitationOccurrences": 16,
+    "sentencesAboveThreeOccurrenceCap": 10,
+    "sentencesWithRepeatedNumericCitationIds": 2,
+    "repeatedNumericCitationOccurrences": 2,
+    "citationOnlySentenceUnits": 2,
+    "repeatedSentenceTextsWithinQuestions": 0
+  },
+  "sentenceCountHistogram": {
+    "0": 1,
+    "1": 37,
+    "2": 22,
+    "3": 20,
+    "4": 11,
+    "5": 5,
+    "6": 3,
+    "8": 1
+  },
+  "sentenceSupport": {
+    "humanMicro": {
+      "numerator": 168,
+      "denominator": 236,
+      "rate": 0.711864406779661
+    },
+    "automaticMicro": {
+      "numerator": 171,
+      "denominator": 236,
+      "rate": 0.7245762711864406
+    },
+    "humanEqualQuestionMacro": {
+      "sumOfQuestionRates": 74.69166666666665,
+      "denominator": 100,
+      "rate": 0.7469166666666665
+    },
+    "automaticEqualQuestionMacro": {
+      "sumOfQuestionRates": 75.35,
+      "denominator": 100,
+      "rate": 0.7535
+    },
+    "entirelyHumanSupportedAnswers": {
+      "numerator": 59,
+      "denominator": 100,
+      "rate": 0.59
+    },
+    "entirelyAutomaticSupportedAnswers": {
+      "numerator": 58,
+      "denominator": 100,
+      "rate": 0.58
+    }
+  },
+  "structuralCoverage": {
+    "sentenceNumericCitationPresence": {
+      "numerator": 205,
+      "denominator": 236,
+      "rate": 0.8686440677966102
+    },
+    "citedButHumanNotFullySupported": {
+      "numerator": 37,
+      "denominator": 205,
+      "rate": 0.18048780487804877
+    },
+    "uncitedButHumanFullySupported": {
+      "numerator": 0,
+      "denominator": 31,
+      "rate": 0
+    },
+    "warning": "Numeric markers show citation presence only; semantic support comes exclusively from released labels."
+  },
+  "scoredCitationLabels": {
+    "unit": "archived scored citation occurrence; repeated document IDs are not deduplicated",
+    "humanRaw": {
+      "none": 37,
+      "partial": 58,
+      "full": 195
+    },
+    "automaticRaw": {
+      "label0": 72,
+      "label1": 7,
+      "label2": 211
+    },
+    "rawHumanBySentenceLabel": {
+      "rows": "sentence_recall_score 0,1",
+      "columns": "citation_precision_score 0,1,2",
+      "matrix": [
+        [
+          29,
+          24,
+          1
+        ],
+        [
+          8,
+          34,
+          194
+        ]
+      ]
+    },
+    "humanRawFull": {
+      "numerator": 195,
+      "denominator": 290,
+      "rate": 0.6724137931034483
+    },
+    "humanRawPartial": {
+      "numerator": 58,
+      "denominator": 290,
+      "rate": 0.2
+    },
+    "humanRawNonzero": {
+      "numerator": 253,
+      "denominator": 290,
+      "rate": 0.8724137931034482
+    },
+    "upstreamAcceptedHumanMicro": {
+      "numerator": 228,
+      "denominator": 290,
+      "rate": 0.7862068965517242
+    },
+    "upstreamAcceptedAutomaticMicro": {
+      "numerator": 218,
+      "denominator": 290,
+      "rate": 0.7517241379310344
+    },
+    "upstreamAcceptedHumanEqualQuestionMacro": {
+      "sumOfQuestionRates": 76.5797619047619,
+      "denominator": 100,
+      "rate": 0.765797619047619
+    },
+    "upstreamAcceptedAutomaticEqualQuestionMacro": {
+      "sumOfQuestionRates": 74.36349206349206,
+      "denominator": 100,
+      "rate": 0.7436349206349206
+    },
+    "acceptanceRule": "sentence recall label === 1 AND citation label > 0; partial citation support can count; this is not full single-document entailment"
+  },
+  "confusion": {
+    "sentenceSupport": {
+      "unit": "annotated sentence",
+      "rows": "human label 0,1",
+      "columns": "archived automatic label 0,1",
+      "matrix": [
+        [
+          51,
+          17
+        ],
+        [
+          14,
+          154
+        ]
+      ],
+      "agreement": {
+        "numerator": 205,
+        "denominator": 236,
+        "rate": 0.8686440677966102
+      },
+      "disagreement": {
+        "numerator": 31,
+        "denominator": 236,
+        "rate": 0.13135593220338984
+      },
+      "automaticPositiveHumanNegative": 17,
+      "automaticNegativeHumanPositive": 14
+    },
+    "citationAcceptance": {
+      "unit": "scored citation occurrence after recall gating",
+      "rows": "human label 0,1",
+      "columns": "archived automatic label 0,1",
+      "matrix": [
+        [
+          37,
+          25
+        ],
+        [
+          35,
+          193
+        ]
+      ],
+      "agreement": {
+        "numerator": 230,
+        "denominator": 290,
+        "rate": 0.7931034482758621
+      },
+      "disagreement": {
+        "numerator": 60,
+        "denominator": 290,
+        "rate": 0.20689655172413793
+      },
+      "automaticPositiveHumanNegative": 25,
+      "automaticNegativeHumanPositive": 35
+    }
+  },
+  "archiveConsistency": {
+    "storedHumanRecallDifferentFromRecomputedQuestionRecall": 0,
+    "storedHumanPrecisionDifferentFromRecomputedQuestionEdgeAcceptance": 33,
+    "warning": "Stored overall_precision_score and reserved overall_results are not used as this audit's metrics; differences do not by themselves establish annotation error."
+  },
+  "sentenceDisagreementRecords": [
+    {
+      "questionId": "-7013890438520559398",
+      "sentenceIndex": 1,
+      "humanRecallLabel": 1,
+      "automaticRecallLabel": 0
+    },
+    {
+      "questionId": "3228155858422343609",
+      "sentenceIndex": 0,
+      "humanRecallLabel": 1,
+      "automaticRecallLabel": 0
+    },
+    {
+      "questionId": "-4873786835306543030",
+      "sentenceIndex": 0,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    },
+    {
+      "questionId": "-3766268167311659635",
+      "sentenceIndex": 4,
+      "humanRecallLabel": 1,
+      "automaticRecallLabel": 0
+    },
+    {
+      "questionId": "-3675478481857186593",
+      "sentenceIndex": 2,
+      "humanRecallLabel": 1,
+      "automaticRecallLabel": 0
+    },
+    {
+      "questionId": "3658847669702107248",
+      "sentenceIndex": 0,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    },
+    {
+      "questionId": "1249880653163144885",
+      "sentenceIndex": 0,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    },
+    {
+      "questionId": "1249880653163144885",
+      "sentenceIndex": 1,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    },
+    {
+      "questionId": "1249880653163144885",
+      "sentenceIndex": 2,
+      "humanRecallLabel": 1,
+      "automaticRecallLabel": 0
+    },
+    {
+      "questionId": "-2587736270657707397",
+      "sentenceIndex": 1,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    },
+    {
+      "questionId": "-4814171382648920164",
+      "sentenceIndex": 1,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    },
+    {
+      "questionId": "1029755223764707835",
+      "sentenceIndex": 1,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    },
+    {
+      "questionId": "-4891954000928831702",
+      "sentenceIndex": 0,
+      "humanRecallLabel": 1,
+      "automaticRecallLabel": 0
+    },
+    {
+      "questionId": "-4879828696940526525",
+      "sentenceIndex": 0,
+      "humanRecallLabel": 1,
+      "automaticRecallLabel": 0
+    },
+    {
+      "questionId": "-5021421578587820891",
+      "sentenceIndex": 3,
+      "humanRecallLabel": 1,
+      "automaticRecallLabel": 0
+    },
+    {
+      "questionId": "-1854705900900914247",
+      "sentenceIndex": 0,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    },
+    {
+      "questionId": "4150448921344430432",
+      "sentenceIndex": 3,
+      "humanRecallLabel": 1,
+      "automaticRecallLabel": 0
+    },
+    {
+      "questionId": "-3469572554119413466",
+      "sentenceIndex": 1,
+      "humanRecallLabel": 1,
+      "automaticRecallLabel": 0
+    },
+    {
+      "questionId": "-3469572554119413466",
+      "sentenceIndex": 4,
+      "humanRecallLabel": 1,
+      "automaticRecallLabel": 0
+    },
+    {
+      "questionId": "4910574660426743103",
+      "sentenceIndex": 1,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    },
+    {
+      "questionId": "2260680157828850192",
+      "sentenceIndex": 0,
+      "humanRecallLabel": 1,
+      "automaticRecallLabel": 0
+    },
+    {
+      "questionId": "-7612789396027174533",
+      "sentenceIndex": 1,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    },
+    {
+      "questionId": "-2084343930513014478",
+      "sentenceIndex": 1,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    },
+    {
+      "questionId": "4965896127144803833",
+      "sentenceIndex": 0,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    },
+    {
+      "questionId": "-3166192416332661165",
+      "sentenceIndex": 0,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    },
+    {
+      "questionId": "8374920161078411955",
+      "sentenceIndex": 0,
+      "humanRecallLabel": 1,
+      "automaticRecallLabel": 0
+    },
+    {
+      "questionId": "-5001543574321430501",
+      "sentenceIndex": 0,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    },
+    {
+      "questionId": "-5001543574321430501",
+      "sentenceIndex": 1,
+      "humanRecallLabel": 1,
+      "automaticRecallLabel": 0
+    },
+    {
+      "questionId": "4736010675551913156",
+      "sentenceIndex": 0,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    },
+    {
+      "questionId": "-1528483370616468286",
+      "sentenceIndex": 1,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    },
+    {
+      "questionId": "-1528483370616468286",
+      "sentenceIndex": 2,
+      "humanRecallLabel": 0,
+      "automaticRecallLabel": 1
+    }
+  ],
+  "sampleRecordIds": {
+    "emptyOutput": [
+      {
+        "questionId": "3397865411559231398"
+      }
+    ],
+    "aboveThreeOccurrenceCap": [
+      {
+        "questionId": "8793099883447006698",
+        "sentenceIndex": 0,
+        "numericOccurrences": 5,
+        "scoredOccurrences": 3
+      },
+      {
+        "questionId": "-4633355453516911545",
+        "sentenceIndex": 0,
+        "numericOccurrences": 5,
+        "scoredOccurrences": 3
+      },
+      {
+        "questionId": "-7031499911070053371",
+        "sentenceIndex": 4,
+        "numericOccurrences": 4,
+        "scoredOccurrences": 3
+      }
+    ],
+    "repeatedNumericCitationIds": [
+      {
+        "questionId": "6750695717303546788",
+        "sentenceIndex": 0,
+        "repeatedOccurrences": 1
+      },
+      {
+        "questionId": "-6249787590084786692",
+        "sentenceIndex": 2,
+        "repeatedOccurrences": 1
+      }
+    ],
+    "citationOnly": [
+      {
+        "questionId": "4910574660426743103",
+        "sentenceIndex": 1
+      },
+      {
+        "questionId": "-2084343930513014478",
+        "sentenceIndex": 1
+      }
+    ],
+    "humanPositiveAutomaticNegative": [
+      {
+        "questionId": "-7013890438520559398",
+        "sentenceIndex": 1
+      },
+      {
+        "questionId": "3228155858422343609",
+        "sentenceIndex": 0
+      },
+      {
+        "questionId": "-3766268167311659635",
+        "sentenceIndex": 4
+      }
+    ],
+    "humanNegativeAutomaticPositive": [
+      {
+        "questionId": "-4873786835306543030",
+        "sentenceIndex": 0
+      },
+      {
+        "questionId": "3658847669702107248",
+        "sentenceIndex": 0
+      },
+      {
+        "questionId": "1249880653163144885",
+        "sentenceIndex": 0
+      }
+    ],
+    "fullEdgeInNotFullySupportedSentence": [
+      {
+        "questionId": "1249880653163144885",
+        "sentenceIndex": 0,
+        "citationArrayIndex": 1
+      }
+    ]
+  },
+  "limitations": [
+    "This is one upstream human-evaluation sample, not all ASQA or a current model benchmark.",
+    "One released final label per unit is visible; annotator identities, individual votes, and adjudication provenance are not available here.",
+    "Sentence segmentation is inherited, including citation-only units and uncited abstentions; this is not newly segmented claim-level factual correctness.",
+    "The first-three-citation rule in eval.py explains count-compatible truncation; this artifact does not supply explicit document IDs on annotated citation entries, so no per-document identity alignment is asserted.",
+    "Human and automatic labels can disagree internally or with each other; retain labels as released and do not repair them.",
+    "Automatic raw 0/1/2 label semantics are not fully specified in the human-evaluation README. Only the nonzero-plus-recall transformation demonstrated by analyze.py is interpreted.",
+    "The raw source contains model outputs and retrieved passages; it is fetched into an OS temporary directory, never included in this website deliverable."
+  ]
+}
