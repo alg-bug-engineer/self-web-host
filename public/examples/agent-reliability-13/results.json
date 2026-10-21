@@ -1,0 +1,274 @@
+{
+  "kind": "synthetic fixtures; actual local SQLite/subprocess execution",
+  "limits": {
+    "global_slots": 4,
+    "global_bytes": 256,
+    "tenant_slots": 2,
+    "tenant_bytes": 128,
+    "max_payload": 96
+  },
+  "scenarios": {
+    "full_replay_conflict": {
+      "statuses": [
+        "accepted",
+        "accepted",
+        "tenant_full",
+        "replay",
+        "conflict"
+      ],
+      "usage": [
+        2,
+        2
+      ]
+    },
+    "utf8_budget": {
+      "statuses": [
+        "accepted",
+        "tenant_full"
+      ],
+      "usage": [
+        1,
+        90
+      ]
+    },
+    "global_bytes": {
+      "statuses": [
+        "accepted",
+        "accepted",
+        "global_full"
+      ],
+      "usage": [
+        2,
+        192
+      ]
+    },
+    "concurrent_global": {
+      "processes": 12,
+      "status_counts": {
+        "accepted": 4,
+        "global_full": 8
+      },
+      "usage": [
+        4,
+        8
+      ]
+    },
+    "concurrent_tenant": {
+      "processes": 12,
+      "status_counts": {
+        "accepted": 2,
+        "tenant_full": 10
+      },
+      "usage": [
+        2,
+        4
+      ]
+    },
+    "capacity_lifecycle": {
+      "statuses": [
+        "stale",
+        "stale",
+        "quarantined",
+        "redriven",
+        "not_cancelled",
+        "done",
+        "stale"
+      ],
+      "held": [
+        1,
+        3
+      ],
+      "final": {
+        "usage": [
+          0,
+          0
+        ],
+        "intents": 1,
+        "effects": 1,
+        "tasks": [
+          {
+            "id": "one",
+            "state": "done",
+            "generation": 4,
+            "lease": 12
+          }
+        ]
+      }
+    },
+    "denial_not_acceptance": {
+      "statuses": [
+        "tenant_full",
+        "cancelled",
+        "accepted"
+      ],
+      "usage": [
+        2,
+        8
+      ],
+      "intents": 3
+    },
+    "admission_crashes": [
+      {
+        "point": "between_intent_task",
+        "exit_code": 73,
+        "snapshot": {
+          "usage": [
+            0,
+            0
+          ],
+          "intents": 0,
+          "effects": 0,
+          "tasks": []
+        },
+        "retry": "accepted"
+      },
+      {
+        "point": "before_admit_commit",
+        "exit_code": 73,
+        "snapshot": {
+          "usage": [
+            0,
+            0
+          ],
+          "intents": 0,
+          "effects": 0,
+          "tasks": []
+        },
+        "retry": "accepted"
+      },
+      {
+        "point": "after_admit_commit",
+        "exit_code": 73,
+        "snapshot": {
+          "usage": [
+            1,
+            3
+          ],
+          "intents": 1,
+          "effects": 0,
+          "tasks": [
+            {
+              "id": "one",
+              "state": "queued",
+              "generation": 0,
+              "lease": 0
+            }
+          ]
+        },
+        "retry": "replay"
+      }
+    ],
+    "resolution_crashes": [
+      {
+        "point": "between_effect_done",
+        "exit_code": 73,
+        "snapshot": {
+          "usage": [
+            1,
+            3
+          ],
+          "intents": 1,
+          "effects": 0,
+          "tasks": [
+            {
+              "id": "one",
+              "state": "inflight",
+              "generation": 1,
+              "lease": 5
+            }
+          ]
+        }
+      },
+      {
+        "point": "before_resolve_commit",
+        "exit_code": 73,
+        "snapshot": {
+          "usage": [
+            1,
+            3
+          ],
+          "intents": 1,
+          "effects": 0,
+          "tasks": [
+            {
+              "id": "one",
+              "state": "inflight",
+              "generation": 1,
+              "lease": 5
+            }
+          ]
+        }
+      },
+      {
+        "point": "after_resolve_commit",
+        "exit_code": 73,
+        "snapshot": {
+          "usage": [
+            0,
+            0
+          ],
+          "intents": 1,
+          "effects": 1,
+          "tasks": [
+            {
+              "id": "one",
+              "state": "done",
+              "generation": 1,
+              "lease": 5
+            }
+          ]
+        }
+      }
+    ],
+    "cancellation_crashes": [
+      {
+        "point": "before_cancel_commit",
+        "exit_code": 73,
+        "snapshot": {
+          "usage": [
+            1,
+            3
+          ],
+          "intents": 1,
+          "effects": 0,
+          "tasks": [
+            {
+              "id": "one",
+              "state": "queued",
+              "generation": 0,
+              "lease": 0
+            }
+          ]
+        }
+      },
+      {
+        "point": "after_cancel_commit",
+        "exit_code": 73,
+        "snapshot": {
+          "usage": [
+            0,
+            0
+          ],
+          "intents": 1,
+          "effects": 0,
+          "tasks": [
+            {
+              "id": "one",
+              "state": "cancelled",
+              "generation": 0,
+              "lease": 0
+            }
+          ]
+        }
+      }
+    ],
+    "terminal_history_counterexample": {
+      "active": [
+        0,
+        0
+      ],
+      "retained_intents": 10,
+      "effects": 10
+    }
+  }
+}
