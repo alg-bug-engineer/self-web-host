@@ -1,0 +1,166 @@
+{
+  "normal": {
+    "responses": [
+      "closed",
+      "replay",
+      "busy",
+      "done",
+      "paused",
+      "stale",
+      "replay"
+    ],
+    "snapshot": {
+      "mode": "paused",
+      "version": 2,
+      "states": {
+        "done": 1
+      },
+      "outstanding": 0,
+      "effects": 1
+    }
+  },
+  "quarantine": [
+    "busy",
+    "queued",
+    "stale",
+    "done",
+    "paused"
+  ],
+  "stale_controller": [
+    "stale",
+    {
+      "mode": "draining",
+      "version": 3,
+      "states": {},
+      "outstanding": 0,
+      "effects": 0
+    }
+  ],
+  "control_crashes": [
+    {
+      "point": "before_commit",
+      "exit": 73,
+      "snapshot": {
+        "mode": "open",
+        "version": 0,
+        "states": {},
+        "outstanding": 0,
+        "effects": 0
+      }
+    },
+    {
+      "point": "after_commit",
+      "exit": 73,
+      "snapshot": {
+        "mode": "draining",
+        "version": 1,
+        "states": {},
+        "outstanding": 0,
+        "effects": 0
+      }
+    }
+  ],
+  "admission_crashes": [
+    {
+      "point": "before_commit",
+      "retry": "closed",
+      "snapshot": {
+        "mode": "draining",
+        "version": 1,
+        "states": {},
+        "outstanding": 0,
+        "effects": 0
+      }
+    },
+    {
+      "point": "after_commit",
+      "retry": "replay",
+      "snapshot": {
+        "mode": "draining",
+        "version": 1,
+        "states": {
+          "queued": 1
+        },
+        "outstanding": 1,
+        "effects": 0
+      }
+    }
+  ],
+  "pause_crashes": [
+    {
+      "point": "before_commit",
+      "snapshot": {
+        "mode": "draining",
+        "version": 1,
+        "states": {},
+        "outstanding": 0,
+        "effects": 0
+      }
+    },
+    {
+      "point": "after_commit",
+      "snapshot": {
+        "mode": "paused",
+        "version": 2,
+        "states": {},
+        "outstanding": 0,
+        "effects": 0
+      }
+    }
+  ],
+  "finish_crashes": [
+    {
+      "point": "after_effect",
+      "exit": 73,
+      "pause": "busy",
+      "snapshot": {
+        "mode": "draining",
+        "version": 1,
+        "states": {
+          "inflight": 1
+        },
+        "outstanding": 1,
+        "effects": 0
+      }
+    },
+    {
+      "point": "before_commit",
+      "exit": 73,
+      "pause": "busy",
+      "snapshot": {
+        "mode": "draining",
+        "version": 1,
+        "states": {
+          "inflight": 1
+        },
+        "outstanding": 1,
+        "effects": 0
+      }
+    },
+    {
+      "point": "after_commit",
+      "exit": 73,
+      "pause": "paused",
+      "snapshot": {
+        "mode": "paused",
+        "version": 2,
+        "states": {
+          "done": 1
+        },
+        "outstanding": 0,
+        "effects": 1
+      }
+    }
+  ],
+  "controllers": {
+    "draining": 1,
+    "stale": 11
+  },
+  "admission_race": {
+    "twelve_accounted": true,
+    "one_drain": true,
+    "accepted_matches_durable": true,
+    "late_closed": true,
+    "pause_iff_empty": true
+  }
+}

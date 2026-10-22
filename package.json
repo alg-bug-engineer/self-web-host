@@ -180,7 +180,9 @@
     "test:agent-fair-relay": "python3 public/examples/agent-reliability-12/test_fair_relay.py && python3 public/examples/agent-reliability-12/run_experiment.py --check",
     "test:october20-content": "node scripts/tests/test-october20-content.mjs && node scripts/tests/test-migration-commentary.mjs",
     "test:agent-admission": "python3 public/examples/agent-reliability-13/test_admission.py && python3 public/examples/agent-reliability-13/run_experiment.py --check",
-    "test:october21-content": "node scripts/tests/test-october21-content.mjs && node scripts/tests/test-locked-chats-commentary.mjs"
+    "test:october21-content": "node scripts/tests/test-october21-content.mjs && node scripts/tests/test-locked-chats-commentary.mjs",
+    "test:agent-drain": "python3 public/examples/agent-reliability-14/test_drain.py && python3 public/examples/agent-reliability-14/run_experiment.py --check",
+    "test:october22-content": "node scripts/tests/test-october22-content.mjs && node scripts/tests/test-patch-delivery-commentary.mjs"
   },
   "dependencies": {
     "contentlayer2": "^0.5.8",

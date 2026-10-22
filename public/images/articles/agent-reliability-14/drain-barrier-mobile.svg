@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="2480" viewBox="0 0 720 2480" role="img" aria-labelledby="title desc">
+<title id="title">持久排空：停止接单，不是停止履约</title><desc id="desc">三个控制状态和版本检查；所有未结任务阻止暂停。本地屏障不代表进程退出或数据库独占。</desc>
+<defs><marker id="arrow" markerWidth="20" markerHeight="20" refX="16" refY="6" orient="auto"><path d="M0 0 L16 6 L0 12" fill="none" stroke="#64748b"/></marker></defs>
+<rect width="720" height="2480" fill="white"/>
+<g font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif">
+<text x="40" y="84" font-size="46" fill="#1d4ed8" font-weight="bold">先停止接单，再确认排空</text>
+<text x="40" y="144" font-size="36" fill="#64748b" font-weight="normal">本地协议 · 非生产停机流程</text>
+<rect x="40" y="216" width="640" height="300" rx="64" fill="#eff6ff" stroke="#93c5fd"/>
+<text x="76" y="290" font-size="44" fill="#1e40af" font-weight="bold">open · 开放</text>
+<text x="76" y="368" font-size="36" fill="#334155" font-weight="normal">新身份可以受理</text>
+<text x="76" y="428" font-size="36" fill="#334155" font-weight="normal">已受理任务可以领取</text>
+<rect x="40" y="650" width="640" height="300" rx="64" fill="#ecfeff" stroke="#67e8f9"/>
+<text x="76" y="724" font-size="44" fill="#1e40af" font-weight="bold">draining · 排空中</text>
+<text x="76" y="802" font-size="36" fill="#334155" font-weight="normal">拒绝新身份，旧身份可回放</text>
+<text x="76" y="862" font-size="36" fill="#334155" font-weight="normal">继续领取并完成存量</text>
+<rect x="40" y="1172" width="640" height="300" rx="64" fill="#f0fdfa" stroke="#5eead4"/>
+<text x="76" y="1246" font-size="44" fill="#1e40af" font-weight="bold">paused · 本地暂停</text>
+<text x="76" y="1324" font-size="36" fill="#334155" font-weight="normal">只有未结为零才可进入</text>
+<text x="76" y="1384" font-size="36" fill="#334155" font-weight="normal">不接新身份，不再领取</text>
+<path d="M360 532 L360 620" fill="none" stroke="#64748b" stroke-width="8" marker-end="url(#arrow)"/>
+<text x="388" y="588" font-size="36" fill="#334155" font-weight="normal">版本匹配</text>
+<path d="M652 966 L652 1136" fill="none" stroke="#64748b" stroke-width="8" marker-end="url(#arrow)"/>
+<text x="56" y="1038" font-size="36" fill="#b91c1c" font-weight="normal">排队 / 在途 / 隔离</text>
+<text x="120" y="1096" font-size="36" fill="#b91c1c" font-weight="normal">任一未结：保持 draining</text>
+<rect x="40" y="1550" width="640" height="310" rx="64" fill="#fff1f2" stroke="#fda4af"/>
+<text x="76" y="1620" font-size="36" fill="#9f1239" font-weight="bold">旧指令不能开新一轮的门</text>
+<text x="76" y="1694" font-size="36" fill="#334155" font-weight="normal">每次转换版本 +1</text>
+<text x="76" y="1758" font-size="36" fill="#334155" font-weight="normal">预期版本不符就拒绝</text>
+<text x="76" y="1818" font-size="36" fill="#334155" font-weight="normal">恢复 draining = 放弃本轮排空</text>
+<rect x="40" y="1940" width="640" height="436" rx="64" fill="#fef9c3" stroke="#fde68a"/>
+<text x="76" y="2014" font-size="38" fill="#854d0e" font-weight="bold">屏障只说明本地任务状态</text>
+<text x="76" y="2090" font-size="36" fill="#334155" font-weight="normal">不证明旧进程已退出</text>
+<text x="76" y="2156" font-size="36" fill="#334155" font-weight="normal">不证明远端副作用已完成</text>
+<text x="76" y="2222" font-size="36" fill="#334155" font-weight="normal">不授予数据库独占维护权</text>
+<text x="76" y="2304" font-size="36" fill="#854d0e" font-weight="normal">下一步维护仍需自己的保护</text>
+</g></svg>
