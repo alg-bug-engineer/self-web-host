@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1920" viewBox="0 0 720 1920" role="img" aria-labelledby="title desc">
+<title id="title">旧任务绑定旧定义，新默认只影响新任务</title><desc id="desc">任务保存定义摘要；执行者必须支持；仅无已提交步骤的就绪任务允许显式迁移。哈希不证明代码兼容。</desc>
+<rect width="720" height="1920" fill="white"/>
+<defs><marker id="a" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10" fill="none" stroke="#64748b"/></marker></defs>
+<g font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif">
+<text x="36" y="78" font-size="44" fill="#1d4ed8" font-weight="bold">升级代码，不偷换旧任务</text>
+<text x="36" y="135" font-size="36" fill="#64748b" font-weight="normal">本地协议示意 · 非生产迁移工具</text>
+<rect x="36" y="194" width="648" height="252" rx="24" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="64" y="254" font-size="38" fill="#1e40af" font-weight="bold">受理时：绑定定义摘要</text>
+<text x="64" y="314" font-size="36" fill="#334155" font-weight="normal">旧任务 → V1 摘要</text>
+<text x="64" y="368" font-size="36" fill="#334155" font-weight="normal">新默认改为 V2，不改旧绑定</text>
+<path d="M360 465 L360 520" stroke="#64748b" stroke-width="4" marker-end="url(#a)"/>
+<rect x="36" y="550" width="648" height="252" rx="24" fill="#ecfeff" stroke="#67e8f9" stroke-width="2"/>
+<text x="64" y="610" font-size="38" fill="#1e40af" font-weight="bold">领取时：匹配执行能力</text>
+<text x="64" y="670" font-size="36" fill="#334155" font-weight="normal">只支持 V2 的 worker</text>
+<text x="64" y="724" font-size="36" fill="#334155" font-weight="normal">不能领取 V1 任务</text>
+<path d="M360 822 L360 876" stroke="#64748b" stroke-width="4" marker-end="url(#a)"/>
+<rect x="36" y="908" width="648" height="252" rx="24" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+<text x="64" y="968" font-size="38" fill="#1e40af" font-weight="bold">每一步：校验绑定与代次</text>
+<text x="64" y="1028" font-size="36" fill="#334155" font-weight="normal">效果 + 进度，在同库提交</text>
+<text x="64" y="1082" font-size="36" fill="#334155" font-weight="normal">重启继续同一定义</text>
+<rect x="36" y="1220" width="648" height="318" rx="24" fill="#fff1f2" stroke="#fda4af" stroke-width="2"/>
+<text x="64" y="1280" font-size="38" fill="#1e40af" font-weight="bold">显式迁移：不是自动兼容</text>
+<text x="64" y="1340" font-size="36" fill="#334155" font-weight="normal">仅 ready 且 cursor = 0</text>
+<text x="64" y="1394" font-size="36" fill="#334155" font-weight="normal">绑定版本检查 + 审计同事务</text>
+<text x="64" y="1448" font-size="36" fill="#334155" font-weight="normal">已提交过步骤：拒绝迁移</text>
+<rect x="36" y="1600" width="648" height="248" rx="24" fill="#fef9c3" stroke="#fde68a" stroke-width="2"/>
+<text x="64" y="1660" font-size="38" fill="#1e40af" font-weight="bold">摘要标识定义，不证明代码</text>
+<text x="64" y="1720" font-size="36" fill="#334155" font-weight="normal">无能力的旧任务会等待</text>
+<text x="64" y="1774" font-size="36" fill="#334155" font-weight="normal">远端副作用不在本例保证内</text>
+</g></svg>
