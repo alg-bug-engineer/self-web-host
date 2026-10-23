@@ -1,0 +1,91 @@
+{
+  "pin_across_upgrade": {
+    "old_total": 11,
+    "new_total": 13,
+    "old_waited_for_capable_worker": true,
+    "old_effects_same_definition": true
+  },
+  "unsafe_current_pointer": {
+    "hybrid_total": 20,
+    "v1_total": 11,
+    "v2_total": 13,
+    "matches_neither_contract": true
+  },
+  "identity_replay": {
+    "result": "replay",
+    "different_input": "conflict",
+    "original_binding_kept": true
+  },
+  "process_exit_step": {
+    "after_effect": {
+      "effects_before_recovery": 0,
+      "old_callback": "stale",
+      "final_total": 11,
+      "effect_count": 2
+    },
+    "before_commit": {
+      "effects_before_recovery": 0,
+      "old_callback": "stale",
+      "final_total": 11,
+      "effect_count": 2
+    },
+    "after_commit": {
+      "effects_before_recovery": 1,
+      "old_callback": null,
+      "final_total": 11,
+      "effect_count": 2
+    }
+  },
+  "process_exit_route": {
+    "before_commit": {
+      "revision": 1,
+      "uses_v2": false
+    },
+    "after_commit": {
+      "revision": 2,
+      "uses_v2": true
+    }
+  },
+  "process_exit_migration": {
+    "after_audit": {
+      "audit_count": 0,
+      "binding_revision": 0,
+      "new_binding": false
+    },
+    "before_commit": {
+      "audit_count": 0,
+      "binding_revision": 0,
+      "new_binding": false
+    },
+    "after_commit": {
+      "audit_count": 1,
+      "binding_revision": 1,
+      "new_binding": true
+    }
+  },
+  "explicit_unstarted_migration": {
+    "result": "migrated",
+    "late_request": "stale",
+    "admit_replay": "replay",
+    "accepted_definition_preserved": true,
+    "audit_count": 1,
+    "final_total": 13
+  },
+  "migration_boundaries": {
+    "inflight": "started",
+    "partial_ready": "started",
+    "done": "started",
+    "final_total": 11
+  },
+  "concurrent_route_change": {
+    "one_switch": true,
+    "seven_stale": true,
+    "revision": 2
+  },
+  "concurrent_claim_migrate": {
+    "serializable_outcome": true,
+    "audit_matches_binding": true,
+    "no_mixed_definition": true,
+    "exactly_two_local_effects": true
+  }
+}
