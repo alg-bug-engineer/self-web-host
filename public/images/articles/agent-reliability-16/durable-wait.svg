@@ -1,0 +1,32 @@
+<svg width="1080" height="1008" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1008" role="img" aria-labelledby="title desc">
+<title id="title">持久等待：回信与超时只有一个结局</title>
+<desc id="desc">精确代次定位等待，同一事务裁决信号或超时，写唯一继续指令，再原子消费本地效果。</desc>
+<rect width="1080" height="1008" fill="#fff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6" fill="none" stroke="#64748b" stroke-width="1.5"/></marker></defs>
+<g font-family="Noto Sans CJK SC, Noto Sans SC, sans-serif">
+<text x="42" y="64" font-size="42" fill="#1d4ed8" font-weight="700">持久等待：回信与超时，只有一个结局</text>
+<text x="42" y="116" font-size="30" fill="#64748b">合成业务与可信逻辑时间，不代表生产调度或身份认证</text>
+<rect x="42" y="160" width="996" height="154" rx="20" fill="#eff6ff" stroke="#bfdbfe" stroke-width="2"/>
+<text x="66" y="208" font-size="32" fill="#1e40af" font-weight="700">先保存等待地址：flow / step / generation</text>
+<text x="66" y="256" font-size="30" fill="#334155">当前代次 + 截止时间；旧代回信不能唤醒新一轮</text>
+<path d="M300,320 L300,366" fill="none" stroke="#64748b" stroke-width="3" marker-end="url(#arrow)"/>
+<path d="M780,320 L780,366" fill="none" stroke="#64748b" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="42" y="382" width="474" height="194" rx="20" fill="#eff6ff" stroke="#bfdbfe" stroke-width="2"/>
+<text x="66" y="430" font-size="32" fill="#1e40af" font-weight="700">有效信号</text>
+<text x="66" y="478" font-size="30" fill="#334155">now &lt; deadline 才可采用</text>
+<text x="66" y="520" font-size="30" fill="#334155">同 event_id 必须同消息体</text>
+<rect x="564" y="382" width="474" height="194" rx="20" fill="#fff1f2" stroke="#fecdd3" stroke-width="2"/>
+<text x="588" y="430" font-size="32" fill="#1e40af" font-weight="700">到期裁决</text>
+<text x="588" y="478" font-size="30" fill="#334155">now ≥ deadline 就已过期</text>
+<text x="588" y="520" font-size="30" fill="#334155">信号入口也检查，不等扫描</text>
+<path d="M300,585 L465,635" fill="none" stroke="#64748b" stroke-width="3" marker-end="url(#arrow)"/>
+<path d="M780,585 L615,635" fill="none" stroke="#64748b" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="42" y="652" width="996" height="142" rx="20" fill="#ecfeff" stroke="#a5f3fc" stroke-width="2"/>
+<text x="66" y="700" font-size="32" fill="#1e40af" font-weight="700">同一事务：唯一终态 + 唯一继续指令</text>
+<text x="66" y="748" font-size="30" fill="#334155">重启后可读取；不能只发一次内存通知</text>
+<path d="M540,801 L540,837" fill="none" stroke="#64748b" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="42" y="854" width="996" height="112" rx="18" fill="#fef9c3" stroke="#fde68a" stroke-width="2"/>
+<text x="65" y="900" font-size="32" fill="#334155" font-weight="700">消费继续指令：本地效果与 consumed 一起提交</text>
+<text x="65" y="944" font-size="30" fill="#334155">早到拒收保持原回执；本地超时不撤销远端已经发生的事</text>
+</g>
+</svg>

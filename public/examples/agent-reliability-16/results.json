@@ -1,0 +1,85 @@
+{
+  "restart_wait": {
+    "signal": "accepted",
+    "continuation": "resumed",
+    "effects": 1
+  },
+  "early_signal": [
+    {
+      "result": "unknown_wait"
+    },
+    {
+      "result": "replay",
+      "original": "unknown_wait"
+    },
+    {
+      "result": "accepted"
+    }
+  ],
+  "receipt_identity": [
+    {
+      "result": "replay",
+      "original": "accepted"
+    },
+    {
+      "result": "conflict"
+    },
+    {
+      "result": "conflict"
+    }
+  ],
+  "deadline_without_timer": {
+    "result": "too_late"
+  },
+  "clock_highwater": {
+    "result": "too_late"
+  },
+  "generation_isolation": {
+    "before_resume": "pending_continuation",
+    "old_signal": "stale_generation",
+    "old_timer": "stale_generation",
+    "new_state": "waiting"
+  },
+  "crash_boundaries": {
+    "count": 15,
+    "verified": [
+      "open_wait:after_wait_insert",
+      "open_wait:before_commit",
+      "open_wait:after_commit",
+      "signal:after_terminal_update",
+      "signal:after_continuation_insert",
+      "signal:after_receipt_insert",
+      "signal:before_commit",
+      "signal:after_commit",
+      "expire:after_terminal_update",
+      "expire:after_continuation_insert",
+      "expire:before_commit",
+      "expire:after_commit",
+      "resume:after_effect_insert",
+      "resume:before_commit",
+      "resume:after_commit"
+    ],
+    "exit_code": 73
+  },
+  "signal_contention": {
+    "processes": 8,
+    "accepted": 1,
+    "closed": 7
+  },
+  "deadline_contention": {
+    "processes": 8,
+    "terminal": "timed_out",
+    "continuations": 1
+  },
+  "resume_contention": {
+    "processes": 8,
+    "resumed": 1,
+    "replays": 7,
+    "effects": 1
+  },
+  "open_contention": {
+    "processes": 8,
+    "opened": 1,
+    "stale": 7
+  }
+}
