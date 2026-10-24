@@ -74,6 +74,8 @@ jobs:
       - run: npm run test:october22-content
       - run: npm run test:agent-versioning
       - run: npm run test:october23-content
+      - run: npm run test:agent-signals
+      - run: npm run test:october24-content
       - run: npm run test:daily-publications
       - run: npm run test:commentary
       - run: npm run test:operator-decision
