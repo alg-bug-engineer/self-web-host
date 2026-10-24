@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 1440" role="img" aria-labelledby="title desc">
+<svg width="540" height="1440" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 1440" role="img" aria-labelledby="title desc">
 <title id="title">持久等待：回信与超时只有一个结局</title>
 <desc id="desc">精确代次定位等待，同一事务裁决信号或超时，写唯一继续指令，再原子消费本地效果。</desc>
 <rect width="540" height="1440" fill="#fff"/>

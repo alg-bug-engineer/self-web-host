@@ -34,6 +34,9 @@ for(const filename of slugs){
    const tag=article.slice(match.index,article.indexOf('/>',match.index))
    const mobile=path===match[2], prop=Number(tag.match(mobile?/mobileHeight=\{(\d+)\}/:/\bheight=\{(\d+)\}/)[1])
    const box=svg.match(/viewBox="0 0 (\d+) (\d+)"/)
+   const root=svg.match(/<svg[^>]+>/)[0]
+   assert.equal(Number(root.match(/\bwidth="(\d+)"/)[1]),Number(box[1]),path+' intrinsic width')
+   assert.equal(Number(root.match(/\bheight="(\d+)"/)[1]),Number(box[2]),path+' intrinsic height')
    assert.ok(Math.abs(prop/(mobile?540:1080)-Number(box[2])/Number(box[1]))<0.002,path+' reserved aspect ratio')
    const fonts=[...svg.matchAll(/font-size="(\d+)"/g)].map(m=>Number(m[1]))
    assert.ok(fonts.length>0&&Math.min(...fonts)>=(path===match[2]?30:27),path+' source label sizes')
