@@ -1,0 +1,65 @@
+{
+  "conflicting_terminal_race": {
+    "already_terminal": 3,
+    "recorded": 1,
+    "terminal_conflict": 4,
+    "unique_snapshot": 1
+  },
+  "consume_race": {
+    "consumed": 1,
+    "replay": 7
+  },
+  "counterexamples": {
+    "mutable_membership_premature": true,
+    "raw_counter_premature": true
+  },
+  "crash_boundaries": {
+    "consume": 4,
+    "create": 4,
+    "report": 6
+  },
+  "create_race": {
+    "created": 1,
+    "replay": 7
+  },
+  "duplicates": {
+    "distinct_terminal_branches": 1,
+    "join": "open",
+    "replies": [
+      "recorded",
+      "already_terminal",
+      "already_terminal",
+      "already_terminal",
+      "already_terminal"
+    ]
+  },
+  "early_receipt": {
+    "first": "unknown_job",
+    "join": "open",
+    "retry": {
+      "delivery": "replay",
+      "result": "unknown_job"
+    }
+  },
+  "restart": {
+    "effects": 1,
+    "state": "succeeded"
+  },
+  "result_race": {
+    "already_terminal": 8,
+    "continuations": 1,
+    "recorded": 4
+  },
+  "snapshot": {
+    "effects": 1,
+    "order": [
+      "a",
+      "b"
+    ]
+  },
+  "unknown_then_reconciliation": {
+    "after": "failed",
+    "before": "open",
+    "rewrite_same_event": "event_conflict"
+  }
+}

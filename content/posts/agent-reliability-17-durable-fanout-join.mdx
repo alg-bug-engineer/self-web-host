@@ -1,0 +1,182 @@
+---
+title: "持久并行汇合：三个 Agent 回了三次，怎么还有一个没干活？"
+description: "固定分支清单，以分支终态而非消息次数判断完成；用 SQLite、真实进程退出和并发争用，验证重复回执、unknown 保留、唯一汇总快照与本地消费。"
+date: 2026-10-25
+author: 芝士AI吃鱼
+tags:
+  - Agent
+  - AI工程
+  - 工作流
+  - 并发
+  - SQLite
+category: tech
+postType: article
+icon: robot
+published: true
+access: public
+topicId: agent-reliability-17
+topicCluster: agent-reliability
+---
+
+一个研究任务拆成三路：查资料、查价格、查限制。协调者在屏幕上数回信，一封、两封、三封，够了，生成报告。
+
+问题是，查资料的那一路网络不太好，把同一份结果发了两遍。查限制的那一路还没回来。报告看起来已经收齐，实际上缺了一整类证据。
+
+这是本文构造的故障场景，不是真实客户事故。它暴露的错误比“消息重复了”更具体：**系统把收到几次消息，当成了完成几个分支。**
+
+[第十六篇](/blog/agent-reliability-16-durable-signals-timeouts)讨论一轮等待怎样接住正确的信号。本篇作为 Agent 可靠执行实战第十七篇，进一步处理多路任务的汇合：先固定究竟等谁，再分别保存每一路的终态，最后原子地生成一份可恢复的汇总快照。
+
+项目只实现固定成员的本地汇合协议，不运行三个真实 Agent，也没有模型、外部 API 或远端派发器。分支请求、返回文本和研究场景都是合成数据；真正执行的是 SQLite 事务、子进程退出、进程间争用和重新读取数据库。它要证明的是小范围内的状态关系，不是宣称实现了通用多智能体平台。
+
+## 先把点名册封住，再开始点名
+
+并行汇合首先需要一个稳定的成员集合。示例中，一个 job 对应一份 manifest：键是 branch_id，值是该分支的请求文本。例如：
+
+```python
+manifest = {
+    'sources': '查找资料来源',
+    'price': '查询合成价格记录',
+    'limits': '检查合成限制条件',
+}
+```
+
+`create` 在同一事务中保存 job 和全部 branch。初始分支状态都是 pending。它并没有在这个事务里调用外部工具，manifest 也不是“这些工具已经启动”的证明；它只是完整保存了本次汇合所期待的任务清单。
+
+这份清单不能在结果回来后继续往里塞人。假如先登记 A，A 很快完成，于是汇合成功；随后再登记 B，系统就面对一个荒唐状态：已经宣布“所有人到齐”，现在才发现还有人没被写进名单。
+
+示例因此选择较窄的契约：一次性提供全部成员，非空，最多 32 路。请求文本也属于绑定内容。同一个 job_id、同一份清单，返回 replay；同一个 job_id 增删分支，或者更改某分支请求，返回 conflict。字典键的输入顺序不影响身份，序列化按键排序；汇总结果也按 branch_id 排序，不依赖哪个进程先回消息。
+
+这也让创建阶段的响应丢失有一个明确恢复办法：原 job_id、原 manifest 重试。提交前退出，整个清单回滚；提交后退出，原内容仍在，重试得到 replay。不能因为没收到创建响应，就换一个 job_id 再发一次。新 ID 会产生另一份独立工作，项目没有替业务判断“这两次是不是同一个用户意图”。
+
+动态任务图当然可以存在，但需要另一个“成员登记结束”的持久封口协议，或者明确的代次与扩展规则。本篇不把它塞进同一个例子：没有封口，就不能仅凭“当前登记的都完成了”推出“全部工作完成了”。
+
+## 完成条件属于分支，不属于回信计数器
+
+每个分支保存四种状态：pending、unknown、ok、rejected。前两种未结，后两种终结。
+
+pending 只表示尚未保存结果，不能据此推断外部工作没开始；unknown 表示可信调用者报告结果未决，也不能据此推断外部工作失败。ok 和 rejected 才是本例接受的确定终态，分别附一个有界文本值。真实系统必须先确定什么证据足够支持这些结论，不能让模型“觉得大概失败”就写 rejected。
+
+汇合判断查询的是这份固定清单：还有没有 pending 或 unknown 分支？只要有一个，job 就保持 open。全部终结后，如果至少一路 rejected，job 变成 failed；否则是 succeeded。
+
+这是一种 **all-settled** 语义：等待每一路都给出明确结局，再报告整体成功或失败。它不等于 fail-fast，也不等于“只要有一个答案就够了”的竞速策略，更没有实现多数派或置信度投票。策略名字不能替代具体完成谓词。
+
+例如 A 已明确拒绝，B 仍然 unknown，本例不会立即宣布整个流程结束。A 的拒绝没有让 B 的未知结果自动消失；B 可能已经在外部产生了效果，只是回执还没回来。等 B 后续被确认 ok，整个 job 才以 failed 汇合，并在快照里同时保留 A 的拒绝和 B 的成功。失败不意味着其余分支从未运行。
+
+[第十篇的补偿状态机](/blog/agent-reliability-10-compensation-state-machine)处理的是已发生效果怎样定向撤回；本篇没有执行补偿，更没有授权协调者看到 failed 就自动撤销所有分支。汇总事实与改变业务世界，是两件需要分别设计的事。
+
+## 同一个分支换了消息 ID，也不能再占一个名额
+
+这里有两层去重，缺一不可。
+
+第一层是事件身份。`receipt` 以 event_id 为键，绑定 job_id、branch_id、outcome、value。完全相同的事件重试，返回原回执；同 ID 改内容或目标，返回 event_conflict，不覆盖原记录。
+
+第二层是分支终态。A 已保存 ok/A-result，即使发送方换一个全新的 event_id 再投递同样结果，也只得到 already_terminal，不新增一个“已完成分支”。如果新事件把 A 改成 rejected，或把结果改成另一段文本，则返回 terminal_conflict，原终态不变。
+
+这两层的作用不同：事件去重保证同一次投递有稳定解释；分支终态保证同一项工作只占自己在清单里的那一格。仅有前一层，换 ID 的重复结果依然可能把计数器推满。
+
+本例还刻意保留“拒收也记住”的规则。job 尚未创建时，事件得到 unknown_job，并保存回执。稍后创建了 job，同一个事件重试仍是 unknown_job，不会悄悄变成成功结果。错误 branch_id 则记 unknown_branch。若上层决定重新提交，必须明确使用新的事件身份，而不是把自动重试偷换成新业务决定。
+
+回执中的 recorded 表示这次事件确实写入了分支终态。它不表示整个 job 已汇合，更不表示汇总报告已发送。already_terminal 也不是简单的“出错了”，它说明已有完全相同的终态可供读取。入口响应、分支结局、整体汇合、本地消费，需要分别观察。
+
+它也没有 attempt、lease 或 fencing。若旧尝试与新尝试都向同一分支报告，不能只凭“谁先写入”判断哪一个有效；可信上层必须先验证执行尝试的资格。迟到的纠正不会覆盖已存终态，项目没有自动改判或人工覆盖接口。需要修正业务结果时，必须另行设计可审查的纠正协议，而不是换一个事件 ID 强行覆盖。
+
+这些 ID 在一份数据库内使用，event_id 的唯一范围是全库，不是每个 job。代码接受的是可信本地输入，不提供租户隔离或发送方认证；真实服务不能让任意用户替其他分支提交结果，也不能直接把外部提供的裸 event_id 当作全局可信身份。
+
+<ArticleDiagram src="/images/articles/agent-reliability-17/fixed-membership-join.svg" mobileSrc="/images/articles/agent-reliability-17/fixed-membership-join-mobile.svg" alt="先原子登记固定分支清单，再按每分支终态汇合；重复消息不增加完成数，unknown 保留未结，全部终态后唯一快照与本地消费分开提交" caption="原创机制图。固定成员、可信合成结果、all-settled；没有远端派发、自动取消或生产鉴权。" height={990} mobileHeight={1560} />
+
+## unknown 不是一种方便凑齐的失败
+
+并行任务最容易在这里走捷径：一条支路超时，给它补一个 failed，先让总任务结束。
+
+如果“超时”只意味着协调者没等到回执，这个填空就没有证据。外部工具可能仍在运行，也可能已经完成。尤其当其他分支会据此做补偿、通知或二次调用时，一个虚构的失败结论会继续影响后续动作。
+
+示例允许可信入口提交 unknown，但只把分支保留为未结，不创建继续记录。unknown 的 value 必须为空，因为它不是终态结果。稍后有了对账证据，可以用新的事件提交 ok 或 rejected。
+
+为什么一定是新事件？因为第一次 unknown 的回执应保持原意。若直接用同 event_id 把 outcome 改成 ok，得到的是 event_conflict。原事件重试仍然重放 unresolved，即使此时分支已被另一条新事件确认终结。回执回答“那一次投递发生了什么”，查询分支回答“这项工作现在怎样了”，两者不能相互覆盖。
+
+本例没有超时扫描器，没有“等太久自动判失败”的兜底。如果一个分支永远没有确定结局，job 就一直 open。这是牺牲完成性来避免编造终态的边界，而不是系统已经具备自动恢复能力。真实接入需要[第三篇的对账协议](/blog/agent-reliability-03-unknown-reconciliation)、可审查的终结条件及容量策略，不能把“最终会完成”写成没有执行者的愿望。
+
+## 最后一封回信不能把汇总留在内存里
+
+最后一个未结分支写入终态时，代码在同一个 `BEGIN IMMEDIATE` 事务中完成四件事：更新分支、更新 job 总状态、插入唯一 continuation 快照、记录事件回执。
+
+快照包含固定清单内每一路的 branch_id、state 和 value，并按 branch_id 排序。它不是稍后重新拼接的一组可变引用，也不依赖某个协调进程的内存列表。结果先到后到，只会改变谁拿到最后一次写锁，不会改变输出排序规则。
+
+[SQLite 官方事务文档](https://www.sqlite.org/lang_transaction.html)说明，一个数据库同时只有一个写事务，IMMEDIATE 会立即尝试开始写事务，也可能遇到 SQLITE_BUSY。本例利用的是同库写入的序列化边界；30 秒连接锁等待仅方便小规模进程实验，不承诺高负载下永不报错，也不是跨库事务。
+
+如果在分支更新后、继续记录插入前退出，事务没有提交，分支终态与 job 改动一并回滚。发送方重试，仍有机会完成这次汇合。如果已经提交但响应丢失，原事件回执与快照都保留，重试不会再创建第二份 continuation。
+
+数据库主键还约束每个 job 只有一份 continuation。它是最后一道一致性检查，不是替错误算法擦屁股：应用逻辑应当先依据固定成员和未结状态作出判断，不能靠插入冲突后随便吞异常来宣称“去重成功”。
+
+汇合后的 `consume` 再开启一个事务：写一条合成本地 effect，同时把 continuation 标记为已消费。两者同成同败。进程退出或多个消费者争抢之后，都只能留下这一条本地效果，其快照必须与 continuation 完全一致。
+
+这个 effect 没有发邮件，也没有调用汇总模型。若读者把它换成事务外的模型调用、付费工具或远端写入，就重新进入[第一篇的派发与回执问题](/blog/agent-reliability-01-outbox-idempotency)。本地唯一快照不能保证外部工具只执行一次，整个项目也不具备跨网络 exactly-once 保证。
+
+## 实验不数热闹，要检查缺席者有没有被掩盖
+
+随附 26 项 unittest 覆盖清单绑定、顺序无关重放、清单内容冲突、两层去重、早到拒收、跨 job 事件冲突、unknown 对账、终态不可变、稳定快照和输入字节边界。每项结束后重新检查跨表不变量。
+
+`run_experiment.py` 实际运行 11 组冻结场景。其中一个场景先由独立子进程创建 job，再分别由其他进程写两路结果，最后由新进程消费汇总，证明本例不依赖创建者留在内存。
+
+重复投递场景把 A 的同一结果用五个不同事件 ID 投递，得到一个 recorded 和四个 already_terminal；B 仍未结，整体必须 open。脚本还单独运行两段故意写错的算法：按原始消息次数计数、在可变成员集上提前判断完成。两者都产生过早完成反例。这些是教学构造，不是在指控某个框架存在该缺陷。
+
+真实退出实验在 14 个边界调用 `os._exit(73)`，父进程核对实际退出码。创建覆盖 job 插入、首个分支插入和提交前后；最后结果覆盖分支更新、job 汇合、快照、回执及提交前后；消费覆盖 effect、消费标志及提交前后。每次退出后重新连接数据库，检查提交前回滚、提交后共同保留，再重试原操作。
+
+并发实验有四组，全部先等待子进程 READY，再统一发送 GO：8 个进程创建同一清单；12 个进程向 4 路分支各投递 3 次结果；8 个进程消费同一快照；8 个进程向同一分支提交两种相互冲突的终态。它们分别检查唯一创建、4 个真实终结分支、唯一消费，以及“第一个被提交的终态保留，另一种不能覆盖”。
+
+冲突组不冻结 ok 或 rejected 谁获胜，也不把任意一方获胜当成业务正确性的证明。实验只验证可信输入互相矛盾时，协议不会同时保留两个结局。现实里应该由上游证据与权限约束减少这种冲突；抢先拿到数据库锁，不会自动变成事实裁判。
+
+另附的 `audit_invariants.py` 用一个独立内存参考模型对照公开接口，实际运行 40 个种子、每个 300 次操作，共 12,000 次，其中有 1,456 次精确重放；再运行 30 轮、每轮 12 个 READY/GO 门控进程，共 360 个子进程。每步检查成员清单、回执、终态和快照的历史不变性，同时核对未知结果不会提前汇合、继续记录与本地效果唯一。它与单元测试分开运行，不是生产压力测试、覆盖率证明或独立真实服务验证。
+
+冻结文件保存的是这些稳定关系，不记录性能、调度胜率或外部服务成功率。`--check` 会重新创建临时数据库、启动子进程并执行实验，然后比对结果；它不是读一份旧 JSON 再打印通过。
+
+## 下载运行，再把真实服务边界接上去
+
+以下文件保存到同一目录，使用 Python 3.10 或更新版本运行，没有第三方 Python 包、密钥或网络请求。
+
+- [fanout.py：固定成员、分支回执与汇合协议](/examples/agent-reliability-17/fanout.py)
+- [test_fanout.py：26 项协议测试](/examples/agent-reliability-17/test_fanout.py)
+- [run_experiment.py：11 组场景和真实进程实验](/examples/agent-reliability-17/run_experiment.py)
+- [audit_invariants.py：独立混合操作与并发审计](/examples/agent-reliability-17/audit_invariants.py)
+- [results.json：实际执行后保存的冻结结果](/examples/agent-reliability-17/results.json)
+- [README.md：复现方法和明确限制](/examples/agent-reliability-17/README.md)
+
+```bash
+python3 test_fanout.py
+python3 run_experiment.py --check
+python3 audit_invariants.py
+```
+
+前两个命令分别应显示 `Ran 26 tests`、`OK`，以及 `PASS: 11 scenario groups match results.json`。不带 `--check` 会有意重建冻结文件，不要用这种方式掩盖尚未理解的差异。
+
+最小使用流程如下：
+
+```python
+from pathlib import Path
+from tempfile import TemporaryDirectory
+import fanout as f
+
+with TemporaryDirectory() as folder:
+    db = Path(folder) / 'join.db'
+    f.init(db)
+    assert f.create(db, 'job-a', {'a':'查资料', 'b':'查限制'}) == 'created'
+    f.report(db, 'event-a', 'job-a', 'a', 'ok', '合成资料结果')
+    f.report(db, 'event-b', 'job-a', 'b', 'unknown')
+    assert f.consume(db, 'job-a') == 'not_ready'
+    f.report(db, 'event-b-reconciled', 'job-a', 'b', 'ok', '合成限制结果')
+    assert f.consume(db, 'job-a') == 'consumed'
+    assert f.consume(db, 'job-a') == 'replay'
+    assert f.check_invariants(db)
+```
+
+[AWS Step Functions 的 Parallel 文档](https://docs.aws.amazon.com/step-functions/latest/dg/state-parallel.html)给出了生产服务中的另一种具体语义：Parallel 等各支路终结再进入下一状态；未处理的分支错误可令整个 Parallel 失败。同时文档提醒，已经调用的 Lambda 函数仍可能继续运行，处理任务令牌的 activity worker 也不会因此自动停下。
+
+这正好说明，汇合失败与外部工作停止之间不能画等号。本文的 all-settled 协议不是 Step Functions Parallel 的等价实现，未运行 AWS，也没有实现其 Retry、Catch、状态机历史或服务集成。
+
+示例还没有派发扫描器、领取租约、执行能力匹配、超时调度、多租户鉴权、结果保留清理或生产背压。清单最多 32 路、单条结果最多 1024 个 UTF-8 字节，只是输入契约，不是全库容量限制；永久保留的 job、回执和快照会持续增长。未知或不存在目标的合法事件也会留下回执，因此真实入口还需鉴权和准入限制。直接改数据库的管理员不在这里的防护范围内。
+
+让多路 Agent 合作，不是让协调者更快地数到三。它得知道名单上的三位是谁，谁只是重复敲了门，谁还没有可以落笔的结论。等到真正收齐，再把那份结论留在一个重启也找得到的地方。
+
+系列讨论可查看[知识星球](/planet)，或通过[公众号入口](/about#wechat)关注更新。
+
+本文由 AI 辅助制作。代码、冻结结果和进程实验经过实际运行；分支请求和结果均为合成样例，未调用真实模型、远端工具或 AWS 服务。配图按明确的白底技术信息图文字要求原创制作，原始参考图尚待补充核对。官方资料核对日期：2026 年 10 月 25 日。
