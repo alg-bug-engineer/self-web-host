@@ -186,7 +186,9 @@
     "test:agent-versioning": "python3 public/examples/agent-reliability-15/test_versioned.py && python3 public/examples/agent-reliability-15/run_experiment.py --check && python3 public/examples/agent-reliability-15/audit_invariants.py",
     "test:october23-content": "node scripts/tests/test-october23-content.mjs",
     "test:agent-signals": "python3 public/examples/agent-reliability-16/test_signals.py && python3 public/examples/agent-reliability-16/run_experiment.py --check && python3 public/examples/agent-reliability-16/audit_invariants.py",
-    "test:october24-content": "node scripts/tests/test-october24-content.mjs"
+    "test:october24-content": "node scripts/tests/test-october24-content.mjs",
+    "test:agent-fanout": "python3 public/examples/agent-reliability-17/test_fanout.py && python3 public/examples/agent-reliability-17/run_experiment.py --check && python3 public/examples/agent-reliability-17/audit_invariants.py",
+    "test:october25-content": "node scripts/tests/test-october25-content.mjs && node scripts/tests/test-monitoring-commentary.mjs"
   },
   "dependencies": {
     "contentlayer2": "^0.5.8",

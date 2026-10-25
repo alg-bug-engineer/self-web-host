@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1100" viewBox="0 0 1200 1100" role="img" aria-labelledby="title desc">
+<title id="title">固定名单，按分支终态汇合</title><desc id="desc">重复消息不能代替缺席分支，未知结果保持未结，全部终态后保存唯一快照，再消费本地效果。</desc>
+<rect width="1200" height="1100" fill="#fff"/>
+<g font-family="Noto Sans CJK SC,Noto Sans SC,sans-serif">
+<text x="48" y="68" font-size="46" fill="#1d4ed8" font-weight="700">固定名单，按分支终态汇合</text>
+<text x="48" y="126" font-size="30" fill="#64748b">合成可信结果 · all-settled · 不执行远端派发或取消</text>
+<rect x="48" y="170" width="1104" height="150" rx="20" fill="#eff6ff" stroke="#bfdbfe" stroke-width="2"/>
+<text x="80" y="222" font-size="34" fill="#1d4ed8" font-weight="700">① 原子保存完整 manifest</text>
+<text x="80" y="278" font-size="30" fill="#334155">A 查资料  +  B 查价格  +  C 查限制；同 job ID 不允许改清单</text>
+<text x="580" y="368" font-size="40" fill="#64748b">↓</text>
+<rect x="48" y="400" width="352" height="220" rx="20" fill="#f0fdfa" stroke="#99f6e4" stroke-width="2"/>
+<text x="72" y="452" font-size="32" fill="#1d4ed8" font-weight="700">A：ok</text>
+<text x="72" y="510" font-size="28" fill="#334155">重复投递不加名额</text>
+<text x="72" y="566" font-size="28" fill="#334155">新 ID 也不算新分支</text>
+<rect x="424" y="400" width="352" height="220" rx="20" fill="#fef2f2" stroke="#fecaca" stroke-width="2"/>
+<text x="448" y="452" font-size="32" fill="#1d4ed8" font-weight="700">B：rejected</text>
+<text x="448" y="510" font-size="28" fill="#334155">明确拒绝是终态</text>
+<text x="448" y="566" font-size="28" fill="#334155">但不会自动取消 C</text>
+<rect x="800" y="400" width="352" height="220" rx="20" fill="#eff6ff" stroke="#bfdbfe" stroke-width="2"/>
+<text x="824" y="452" font-size="32" fill="#1d4ed8" font-weight="700">C：unknown</text>
+<text x="824" y="510" font-size="28" fill="#334155">仍未结，继续等待</text>
+<text x="824" y="566" font-size="28" fill="#334155">新证据用新事件确认</text>
+<text x="580" y="670" font-size="40" fill="#64748b">↓</text>
+<rect x="48" y="706" width="1104" height="176" rx="20" fill="#eff6ff" stroke="#bfdbfe" stroke-width="2"/>
+<text x="80" y="758" font-size="34" fill="#1d4ed8" font-weight="700">② 全部终态 → job 结局 + 唯一结果快照 + 回执</text>
+<text x="80" y="816" font-size="30" fill="#334155">最后分支更新与汇合记录同一事务；有 rejected 时整体为 failed</text>
+<text x="80" y="858" font-size="28" fill="#334155">③ 消费快照：合成本地效果 + 已消费标记，再用一个原子事务</text>
+<rect x="48" y="936" width="1104" height="116" rx="20" fill="#fef9c3" stroke="#fde68a" stroke-width="2"/>
+<text x="80" y="982" font-size="32" fill="#854d0e" font-weight="700">消息数量 ≠ 完成分支数；整体失败 ≠ 远端工作已经停止</text>
+<text x="80" y="1026" font-size="28" fill="#854d0e">固定成员的本地教学协议，不是通用 Agent 编排或远端 exactly-once 保证</text>
+</g>
+</svg>

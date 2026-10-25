@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1560" viewBox="0 0 540 1560" role="img" aria-labelledby="title desc">
+<title id="title">固定名单，按分支终态汇合</title><desc id="desc">重复消息不能代替缺席分支，未知结果保持未结，全部终态后保存唯一快照，再消费本地效果。</desc>
+<rect width="540" height="1560" fill="#fff"/>
+<g font-family="Noto Sans CJK SC,Noto Sans SC,sans-serif">
+<text x="28" y="56" font-size="32" fill="#1d4ed8" font-weight="700">收齐的是分支，不是次数</text>
+<text x="28" y="104" font-size="28" fill="#64748b">固定成员 · 本地汇合协议</text>
+<rect x="28" y="145" width="484" height="218" rx="20" fill="#eff6ff" stroke="#bfdbfe" stroke-width="2"/>
+<text x="50" y="190" font-size="32" fill="#1d4ed8" font-weight="700">① 先封好点名册</text>
+<text x="50" y="240" font-size="28" fill="#334155">A 查资料  /  B 查价格</text>
+<text x="50" y="286" font-size="28" fill="#334155">C 查限制</text>
+<text x="50" y="333" font-size="28" fill="#334155">同 ID 改清单 → conflict</text>
+<text x="260" y="408" font-size="36" fill="#64748b">↓</text>
+<rect x="28" y="440" width="484" height="300" rx="20" fill="#f0fdfa" stroke="#99f6e4" stroke-width="2"/>
+<text x="50" y="486" font-size="32" fill="#0f766e" font-weight="700">② 一路只占自己的格</text>
+<text x="50" y="538" font-size="30" fill="#334155">A：ok   ✓</text>
+<text x="50" y="588" font-size="28" fill="#334155">A 再回一次：不加名额</text>
+<text x="50" y="640" font-size="28" fill="#334155">B：rejected  已终结</text>
+<text x="50" y="692" font-size="28" fill="#334155">C：unknown  仍未结</text>
+<text x="260" y="786" font-size="36" fill="#64748b">↓</text>
+<rect x="28" y="816" width="484" height="268" rx="20" fill="#fef2f2" stroke="#fecaca" stroke-width="2"/>
+<text x="50" y="864" font-size="32" fill="#b91c1c" font-weight="700">③ 全部终态，才汇合</text>
+<text x="50" y="916" font-size="28" fill="#334155">C 未决：job 仍是 open</text>
+<text x="50" y="966" font-size="28" fill="#334155">C 确认后：整体 failed</text>
+<text x="50" y="1018" font-size="28" fill="#334155">保留每路结果与唯一快照</text>
+<text x="50" y="1060" font-size="28" fill="#334155">失败不代表其他工作停了</text>
+<text x="260" y="1130" font-size="36" fill="#64748b">↓</text>
+<rect x="28" y="1160" width="484" height="186" rx="20" fill="#eff6ff" stroke="#bfdbfe" stroke-width="2"/>
+<text x="50" y="1206" font-size="30" fill="#1d4ed8" font-weight="700">④ 持久快照 → 本地消费</text>
+<text x="50" y="1258" font-size="28" fill="#334155">效果与已消费标记同事务</text>
+<text x="50" y="1308" font-size="28" fill="#334155">不保证远端工具只执行一次</text>
+<rect x="28" y="1390" width="484" height="132" rx="20" fill="#fef9c3" stroke="#fde68a" stroke-width="2"/>
+<text x="50" y="1438" font-size="30" fill="#854d0e" font-weight="700">名单完整 + 每路终态</text>
+<text x="50" y="1488" font-size="28" fill="#854d0e">消息数量 ≠ 完成分支数</text>
+</g>
+</svg>
