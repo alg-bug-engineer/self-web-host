@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1540" viewBox="0 0 540 1540" role="img" aria-labelledby="title desc"><title id="title">取消请求不等于安全停靠</title><desc id="desc">取消阻止新的预留，已预留项仍可完成。unknown 阻止确认。没有未结预留才确认停靠，保留业务结果。</desc>
+<rect width="540" height="1540" fill="#fff"/>
+<g font-family="Noto Sans CJK SC,Noto Sans SC,sans-serif">
+<text x="28" y="58" font-size="32" fill="#1d4ed8" font-weight="700">取消请求不等于安全停靠</text>
+<text x="28" y="105" font-size="28" fill="#64748b">本地顺序协议 · 合成业务</text>
+<rect x="28" y="145" width="484" height="216" rx="20" fill="#eff6ff" stroke="#bfdbfe" stroke-width="2"/>
+<text x="50" y="192" font-size="30" fill="#1d4ed8" font-weight="700">① 接收取消，先持久化</text>
+<text x="50" y="242" font-size="28" fill="#334155">job ID + 有序步骤清单</text>
+<text x="50" y="288" font-size="28" fill="#334155">相同身份绑定同一个任务</text>
+<text x="50" y="334" font-size="28" fill="#334155">先取消后提交：墓碑拦截</text>
+<text x="252" y="407" font-size="36" fill="#64748b">↓</text>
+<rect x="28" y="435" width="484" height="214" rx="20" fill="#fef2f2" stroke="#fecaca" stroke-width="2"/>
+<text x="50" y="482" font-size="30" fill="#b91c1c" font-weight="700">② 挡住下一次预留</text>
+<text x="50" y="531" font-size="28" fill="#334155">control = requested</text>
+<text x="50" y="577" font-size="28" fill="#334155">但已有预留仍可能发出</text>
+<text x="50" y="623" font-size="28" fill="#334155">取消不能追溯撤销效果</text>
+<text x="252" y="694" font-size="36" fill="#64748b">↓</text>
+<rect x="28" y="722" width="484" height="230" rx="20" fill="#f0fdfa" stroke="#99f6e4" stroke-width="2"/>
+<text x="50" y="770" font-size="30" fill="#0f766e" font-weight="700">③ 核验在途项的结果</text>
+<text x="50" y="819" font-size="28" fill="#334155">inflight / unknown 仍未结</text>
+<text x="50" y="867" font-size="28" fill="#334155">可信回执 → ok / rejected</text>
+<text x="50" y="917" font-size="28" fill="#334155">没有证据，不自动放行</text>
+<text x="252" y="997" font-size="36" fill="#64748b">↓</text>
+<rect x="28" y="1025" width="484" height="270" rx="20" fill="#eff6ff" stroke="#bfdbfe" stroke-width="2"/>
+<text x="50" y="1072" font-size="30" fill="#1d4ed8" font-weight="700">④ 无未结预留，再确认</text>
+<text x="50" y="1121" font-size="28" fill="#334155">control = acknowledged</text>
+<text x="50" y="1169" font-size="28" fill="#334155">result 独立保存，可能为</text>
+<text x="50" y="1217" font-size="28" fill="#334155">open / succeeded / failed</text>
+<text x="50" y="1265" font-size="28" fill="#334155">停靠也可能与成功并存</text>
+<rect x="28" y="1340" width="484" height="158" rx="20" fill="#fef9c3" stroke="#fde68a" stroke-width="2"/>
+<text x="50" y="1388" font-size="30" fill="#854d0e" font-weight="700">不再继续 ≠ 撤销效果</text>
+<text x="50" y="1435" font-size="28" fill="#854d0e">不是杀死进程，也不是</text>
+<text x="50" y="1477" font-size="28" fill="#854d0e">远端停止保证</text>
+</g></svg>

@@ -78,6 +78,8 @@ jobs:
       - run: npm run test:october24-content
       - run: npm run test:agent-fanout
       - run: npm run test:october25-content
+      - run: npm run test:agent-cancellation
+      - run: npm run test:october26-content
       - run: npm run test:daily-publications
       - run: npm run test:commentary
       - run: npm run test:operator-decision

@@ -1,0 +1,93 @@
+{
+  "early_cancel": {
+    "same_spec_blocked": true,
+    "different_spec_conflicts": true,
+    "reservations": 0
+  },
+  "late_receipt": {
+    "unknown_blocks_ack": true,
+    "prefix": [
+      "ok",
+      "pending"
+    ],
+    "result": "open",
+    "control": "acknowledged"
+  },
+  "completed_before_cancel": {
+    "cancel": "too_late",
+    "control": "run",
+    "result": "succeeded"
+  },
+  "completed_after_cancel": {
+    "control": "acknowledged",
+    "result": "succeeded",
+    "result_not_erased": true
+  },
+  "rejected_after_cancel": {
+    "control": "acknowledged",
+    "result": "failed",
+    "following_step": "pending"
+  },
+  "receiver_commit_before_lost_receipt": {
+    "receiver_exit": 73,
+    "effects_before_and_after_ack": 1,
+    "next_step_reserved": false
+  },
+  "receipt_history": {
+    "early_reject_stable": true,
+    "unknown_replay_stable": true,
+    "cancel_replay_stable": true,
+    "cross_type_conflict": true
+  },
+  "crash_recovery": {
+    "submit": {
+      "boundaries": 4,
+      "rollback_or_commit_and_retry_verified": true
+    },
+    "tombstone": {
+      "boundaries": 5,
+      "rollback_or_commit_and_retry_verified": true
+    },
+    "request": {
+      "boundaries": 4,
+      "rollback_or_commit_and_retry_verified": true
+    },
+    "reserve": {
+      "boundaries": 3,
+      "rollback_or_commit_and_retry_verified": true
+    },
+    "report": {
+      "boundaries": 5,
+      "rollback_or_commit_and_retry_verified": true
+    },
+    "ack": {
+      "boundaries": 3,
+      "rollback_or_commit_and_retry_verified": true
+    }
+  },
+  "race_submit_cancel": {
+    "workers": 8,
+    "no_reservation": true,
+    "control": "acknowledged"
+  },
+  "race_reserve_cancel": {
+    "workers": 8,
+    "at_most_one_prior_reservation": true,
+    "new_reservation_blocked": true,
+    "ack_after_settlement_only": true
+  },
+  "race_last_result_cancel": {
+    "workers": 8,
+    "unique_result": true,
+    "success_preserved": true,
+    "legal_control_outcomes": [
+      "run",
+      "acknowledged"
+    ]
+  },
+  "race_checkpoint": {
+    "workers": 8,
+    "acknowledged": 1,
+    "replay": 7
+  }
+}
