@@ -1,0 +1,18 @@
+import { test, expect } from '@playwright/test'
+test('series opens and server totals agree across browsers', async ({ page, browser }) => {
+ await page.goto('/planet')
+ await page.getByRole('link', { name: '开始学习 →' }).click()
+ await expect(page.locator('#series-stats')).toContainText('浏览')
+ await page.goto('/planet/series/01.html')
+ await expect(page.locator('#series-stats')).toContainText('点赞')
+ await page.getByRole('button', { name: /👍 点赞/ }).click()
+ await expect(page.locator('#series-stats')).toContainText(/点赞 [1-9]/)
+ const context=await browser.newContext()
+ const response=await context.request.post('/api/planet-series',{data:{id:'01',action:'read'}})
+ expect(response.ok()).toBeTruthy()
+ expect((await response.json()).likes).toBeGreaterThanOrEqual(1)
+ await expect(page.locator('body')).toHaveCSS('user-select','none')
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy()
+ await page.screenshot({path:`/tmp/planet-series-${test.info().project.name}.png`})
+ await context.close()
+})
