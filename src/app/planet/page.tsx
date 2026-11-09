@@ -55,6 +55,7 @@ export default async function PlanetPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-20 py-10 sm:py-16">
+      <section className="rounded-xl border border-border-default bg-bg-secondary p-8"><p className="eyebrow">知识星球 · 语音图解</p><h2 className="mt-3 text-3xl font-bold">芝士 AI 吃鱼 · 20 期讲解</h2><p className="my-4 text-text-secondary">跟随语音和图解，逐期理解 AI。支持暂停、逐句跳转与语速调整。</p><a className="planet-primary inline-flex px-6 py-3" href="/planet/series/index.html">开始学习 →</a></section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(communityJsonLd) }} />
 
       <section className="grid gap-10 border-b border-border-default pb-14 lg:grid-cols-[1fr_260px] lg:items-end">
