@@ -7,6 +7,10 @@
   });
   const style = document.createElement('style');
   style.textContent = `
+    .series-site-nav{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 20px;color:#61666d;font:13px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .series-site-nav a{color:#61666d;text-decoration:none;padding:6px 0}
+    .series-site-nav a:hover{color:#175cd3;text-decoration:underline;text-underline-offset:3px}
+    .series-site-nav a:focus-visible{outline:2px solid #175cd3;outline-offset:3px}
     #series-stats{display:flex;align-items:center;gap:32px;flex-wrap:wrap;padding:18px 0;margin:0 0 20px;border-bottom:1px solid #eee;color:#9499a0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     #series-stats .series-action{display:inline-flex;align-items:center;gap:9px;min-height:40px;white-space:nowrap;font:inherit;font-variant-numeric:tabular-nums}
     #series-stats button.series-action{background:transparent;border:0;border-radius:6px;padding:0 6px;color:#61666d;cursor:pointer;transition:color .15s,background .15s}
@@ -20,6 +24,11 @@
     @media(max-width:600px){#series-stats{gap:22px;padding:12px 0}#series-stats .series-action{gap:7px}#series-stats .series-status{flex-basis:100%}}
   `;
   document.head.append(style);
+  const siteNav = document.createElement('nav');
+  siteNav.className = 'series-site-nav';
+  siteNav.setAttribute('aria-label', '返回主站');
+  siteNav.innerHTML = '<a href="/">主站首页</a><span aria-hidden="true">/</span><a href="/planet">知识星球</a>';
+  (document.querySelector('main') || document.body).prepend(siteNav);
   const id = location.pathname.match(/\/(\d{2})\.html$/)?.[1] || 'index';
   const box = document.createElement('section');
   box.id = 'series-stats'; box.setAttribute('aria-label', '浏览与互动');

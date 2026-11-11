@@ -14,6 +14,7 @@ const navGroups = [
     items: [
       { label: '全部文章', note: '原理、实践与观察', href: '/blog' },
       { label: 'AI锐评', note: '热点、产品与每日观点', href: '/commentary' },
+      { label: '知识星球', note: '20 期语音图解与 AI 实践', href: '/planet' },
       { label: 'AI 工具', note: '可直接使用的工具', href: '/collections/tools' },
       { label: 'AI 漫画', note: '用图像理解概念', href: 'https://manga.ai-knowledgepoints.cn' },
     ],
@@ -22,7 +23,6 @@ const navGroups = [
     label: '关于作者',
     items: [
       { label: '著作与作品', note: '书、产品与项目', href: '/portfolio' },
-      { label: '知识星球', note: '持续交流与讨论', href: '/planet' },
       { label: '关于我', note: '经历与公开成果', href: '/about' },
     ],
   },
@@ -111,7 +111,7 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
               </summary>
               <div className="border-t border-border-muted px-2 py-2">
                 {group.items.map((item) => (
-                  <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)} className="flex items-center justify-between rounded px-3 py-3 transition-colors hover:bg-bg-tertiary">
+                  <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)} className="flex items-center justify-between rounded px-3 py-3 transition-colors hover:bg-bg-tertiary" data-analytics-event={item.href === '/planet' ? 'view_planet' : undefined} data-analytics-target={item.href === '/planet' ? 'mobile-nav' : undefined}>
                     <span>
                       <strong className="block text-sm font-medium text-text-primary">{item.label}</strong>
                       <small className="mt-1 block text-xs text-text-tertiary">{item.note}</small>

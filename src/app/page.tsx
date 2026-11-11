@@ -52,7 +52,7 @@ export default async function Home() {
               开始探索 <span aria-hidden="true">→</span>
             </Link>
             <Link href="/planet" className="secondary-cta" data-analytics-event="view_planet" data-analytics-target="home-hero">
-              查看 AI 实践路线
+              知识星球 · 20 期讲解
             </Link>
           </div>
           <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-text-tertiary">
@@ -71,6 +71,11 @@ export default async function Home() {
               <span aria-hidden="true">→</span>
             </Link>
           ))}
+          <a href="/planet/series/index.html" className="home-series-entry" data-analytics-event="view_planet" data-analytics-target="home-series">
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="m10 8 6 4-6 4Z" fill="currentColor" stroke="none" /></svg>
+            <span><strong>20 期 AI 讲解</strong><small>知识星球 · 跟着语音和图解学 AI</small></span>
+            <span aria-hidden="true">→</span>
+          </a>
         </aside>
       </section>
 

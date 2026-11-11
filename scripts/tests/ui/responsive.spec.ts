@@ -48,7 +48,7 @@ test('首页在浅色主题下使用技术博客式编辑布局', async ({ page 
   const index = page.locator('.home-index')
   await expect(hero).toBeVisible()
   await expect(index).toBeVisible()
-  await expect(index.getByRole('link')).toHaveCount(3)
+  await expect(index.getByRole('link')).toHaveCount(4)
   await expect(page.locator('.knowledge-console')).toHaveCount(0)
   await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(245, 247, 250)')
 })
@@ -65,7 +65,7 @@ test('移动菜单具备对话框语义、滚动锁定和键盘关闭', async ({
   await expect(dialog).toBeVisible()
   await expect(trigger).toHaveAttribute('aria-expanded', 'true')
   await expect(page.locator('body')).toHaveCSS('overflow', 'hidden')
-  await expect(dialog.getByRole('link', { name: '文章' })).toBeVisible()
+  await expect(dialog.getByRole('link', { name: /全部文章/ })).toBeVisible()
   await expect(dialog.getByRole('button', { name: '关闭菜单' })).toBeFocused()
 
   const navGroups = dialog.locator('details.mobile-nav-accordion')

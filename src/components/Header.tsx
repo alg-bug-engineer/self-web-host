@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { ThemeToggle } from './ThemeToggle'
 
 interface HeaderProps {
@@ -11,6 +12,7 @@ interface HeaderProps {
 const navItems = [
   { label: '文章', href: '/blog' },
   { label: 'AI锐评', href: '/commentary' },
+  { label: '知识星球', href: '/planet' },
   { label: '著作与作品', href: '/portfolio' },
   { label: 'AI 工具', href: '/collections/tools' },
   { label: 'AI 漫画', href: 'https://manga.ai-knowledgepoints.cn' },
@@ -18,12 +20,13 @@ const navItems = [
 ]
 
 export default function Header({ isMobileMenuOpen, setIsMobileMenuOpen }: HeaderProps) {
+  const pathname = usePathname()
   return (
     <header className="site-header">
       <div className="header-announcement">
         <span className="announcement-pulse" />
         <span>最近更新</span>
-        <Link href="/planet">AI 实践：从账号、接口到内容生产的 8 篇连续教程 <b>→</b></Link>
+        <Link href="/planet" data-analytics-event="view_planet" data-analytics-target="header-announcement">知识星球：20 期 AI 语音图解，现已上线 <b>→</b></Link>
       </div>
       <div className="header-main">
         <Link href="/" className="brand-lockup" aria-label="芝士AI吃鱼首页">
@@ -36,14 +39,21 @@ export default function Header({ isMobileMenuOpen, setIsMobileMenuOpen }: Header
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="主导航">
           {navItems.map((item) => (
-            <Link key={item.href} href={item.href} className="nav-link">{item.label}</Link>
+            <Link
+              key={item.href}
+              href={item.href}
+              className="nav-link"
+              aria-current={pathname === item.href || pathname.startsWith(`${item.href}/`) ? 'page' : undefined}
+              data-analytics-event={item.href === '/planet' ? 'view_planet' : undefined}
+              data-analytics-target={item.href === '/planet' ? 'header-nav' : undefined}
+            >{item.label}</Link>
           ))}
         </nav>
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <Link href="/search" className="header-search hidden sm:inline-flex">搜索内容 <span>⌕</span></Link>
-          <Link href="/blog" className="header-cta hidden md:inline-flex" data-analytics-event="explore_articles" data-analytics-target="header">浏览文章 <span>→</span></Link>
+          <Link href="/blog" className="header-cta hidden md:inline-flex lg:hidden xl:inline-flex" data-analytics-event="explore_articles" data-analytics-target="header">浏览文章 <span>→</span></Link>
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

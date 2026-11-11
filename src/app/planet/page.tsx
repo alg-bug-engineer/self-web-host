@@ -6,12 +6,12 @@ import { getSettings } from '@/lib/admin-storage'
 import { BRAND_NAME, SITE_URL } from '@/lib/site'
 
 export const metadata = {
-  title: `AI 实践｜把零散工具接成一套工作流 | ${BRAND_NAME}`,
-  description: '从 Claude 注册、接口转换、配置切换、账号管理，到国产模型与本地生图：先读公开预览，再进入 AI 实践查看完整步骤。',
+  title: `知识星球｜20 期 AI 语音图解与实践教程 | ${BRAND_NAME}`,
+  description: '跟随 20 期语音图解理解 AI，再沿着连续的工具教程动手实践。从讲解目录开始学习，或查看 AI 实践路线。',
   alternates: { canonical: '/planet' },
   openGraph: {
-    title: `AI 实践｜把零散工具接成一套工作流 | ${BRAND_NAME}`,
-    description: '把 Claude Code、国产模型、账号管理和本地生图接成一套可以动手验证的工作流。',
+    title: `知识星球｜20 期 AI 语音图解与实践教程 | ${BRAND_NAME}`,
+    description: '20 期 AI 语音图解与连续的工具实践教程，从理解概念到动手实践。',
     url: `${SITE_URL}/planet`,
     type: 'website',
   },
@@ -40,8 +40,8 @@ export default async function PlanetPage() {
     '@type': 'CollectionPage',
     '@id': `${SITE_URL}/planet#community`,
     url: `${SITE_URL}/planet`,
-    name: `${BRAND_NAME} AI 实践`,
-    description: '围绕 Claude Code、国产模型、账号管理和本地生图整理连续的技术实践路线。',
+    name: `${BRAND_NAME} 知识星球`,
+    description: '20 期 AI 语音图解与围绕 Claude Code、国产模型、账号管理和本地生图整理的连续实践路线。',
     about: [
       { '@type': 'Thing', name: 'AI 工程实践' },
       { '@type': 'Thing', name: 'Claude Code' },
@@ -55,15 +55,20 @@ export default async function PlanetPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-20 py-10 sm:py-16">
+      <header>
+        <p className="eyebrow">{BRAND_NAME} · 一起学 AI</p>
+        <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">知识星球</h1>
+        <p className="mt-4 max-w-2xl leading-8 text-text-secondary">先用 20 期语音图解理解 AI，再跟着实践教程把工具用起来。</p>
+      </header>
       <section className="rounded-xl border border-border-default bg-bg-secondary p-8"><p className="eyebrow">知识星球 · 语音图解</p><h2 className="mt-3 text-3xl font-bold">芝士 AI 吃鱼 · 20 期讲解</h2><p className="my-4 text-text-secondary">跟随语音和图解，逐期理解 AI。支持暂停、逐句跳转与语速调整。</p><a className="planet-primary inline-flex px-6 py-3" href="/planet/series/index.html">开始学习 →</a></section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(communityJsonLd) }} />
 
       <section className="grid gap-10 border-b border-border-default pb-14 lg:grid-cols-[1fr_260px] lg:items-end">
         <div className="max-w-4xl">
           <p className="eyebrow">{BRAND_NAME} · AI 实践</p>
-          <h1 className="mt-5 text-4xl font-bold leading-tight tracking-[-0.04em] text-text-primary md:text-5xl">
+          <h2 className="mt-5 text-3xl font-bold leading-tight tracking-[-0.04em] text-text-primary md:text-4xl">
             把 Claude Code、国产模型、账号管理和本地生图接成一套工作流
-          </h1>
+          </h2>
           <p className="mt-6 max-w-3xl text-lg leading-8 text-text-secondary">
             真正浪费时间的，往往不是某个工具不会装，而是账号、接口、配置和内容生产各自为战。这里把它们按真实使用顺序串起来：先看公开预览，确认值得做，再去完整教程里动手。
           </p>

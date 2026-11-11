@@ -101,6 +101,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   gap: 20px;
 }
 .brand-lockup, .footer-brand { display: flex; align-items: center; gap: 10px; }
+.brand-lockup { flex-shrink: 0; }
 .brand-mark {
   display: grid;
   width: 32px;
@@ -114,8 +115,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .brand-mark i { font-size: 13px; font-style: normal; font-weight: 750; }
 .brand-lockup strong, .footer-brand strong { display: block; color: var(--text-primary); font-size: 15px; line-height: 1.2; }
 .brand-lockup small { display: block; margin-top: 3px; color: var(--text-tertiary); font-size: 10px; letter-spacing: .02em; }
-.nav-link { padding: 7px 10px; border-radius: 4px; color: var(--text-secondary); font-size: 14px; transition: color var(--transition-fast), background var(--transition-fast); }
+.nav-link { padding: 7px 10px; border-radius: 4px; color: var(--text-secondary); font-size: 14px; white-space: nowrap; transition: color var(--transition-fast), background var(--transition-fast); }
 .nav-link:hover { color: var(--accent-primary); background: var(--bg-tertiary); }
+.nav-link[aria-current="page"] { color: var(--accent-primary); background: var(--accent-primary-subtle); }
 .header-search, .header-cta, .mobile-menu-button {
   height: 34px;
   align-items: center;
@@ -169,6 +171,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .home-index a span:first-child { color: var(--text-tertiary); font-family: var(--font-mono); font-size: 11px; }
 .home-index a span:last-child { color: var(--text-tertiary); }
 .home-index a:hover strong, .home-index a:hover span:last-child { color: var(--accent-primary); }
+.home-index a.home-series-entry { min-height: 88px; color: var(--accent-primary); }
+.home-series-entry small { display: block; margin-top: 4px; color: var(--text-secondary); font-size: 12px; font-weight: 400; }
 .home-section { padding-top: 76px; }
 .home-section-header { display: flex; align-items: end; justify-content: space-between; gap: 30px; padding-bottom: 18px; border-bottom: 2px solid var(--text-primary); }
 .home-section-header h2 { margin-top: 8px; color: var(--text-primary); font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 700; letter-spacing: -.025em; }
