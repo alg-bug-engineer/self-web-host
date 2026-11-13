@@ -20,7 +20,7 @@ test('知识星球各固定入口可记录转化，任意目标仍被拒绝', as
   expect(viewResult.ignored).toBeUndefined()
 
   const acceptedTargets = [
-    'home-hero', 'home-series', 'header-announcement', 'header-nav', 'mobile-nav',
+    'home-hero', 'home-series', 'home-universe', 'planet-universe', 'header-announcement', 'header-nav', 'mobile-nav',
     'footer', 'footer-series', 'content-banner', 'tool-123456',
   ]
   for (const target of acceptedTargets) {

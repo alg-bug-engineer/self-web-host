@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>知识宇宙 · 芝士 AI 吃鱼</title>
+  <link rel="stylesheet" href="css/style.css?v=20261113">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='7' fill='%2306d6a0'/><ellipse cx='16' cy='16' rx='14' ry='4.5' fill='none' stroke='%235fe3f0' stroke-width='1.6' transform='rotate(-20 16 16)'/></svg>">
+  <link rel="canonical" href="https://ai-knowledgepoints.cn/planet/universe/index.html">
+  <meta name="description" content="探索 AI 知识宇宙：在星球与生命树中学习概念，通过语音图解和互动关卡检验理解。">
+  <link rel="stylesheet" href="site.css?v=20261113">
+</head>
+<body data-mode="planet">
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-data" viewBox="0 0 24 24"><path d="M5 20V12M10 20V5M15 20v-9M20 20v-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+      <symbol id="i-compute" viewBox="0 0 24 24"><path d="M13.5 2.5 5 13.5h6l-1 8 8.5-11h-6z" fill="currentColor"/></symbol>
+      <symbol id="i-insight" viewBox="0 0 24 24"><path d="M12 2.5l2.2 7.3 7.3 2.2-7.3 2.2L12 21.5l-2.2-7.3L2.5 12l7.3-2.2z" fill="currentColor"/></symbol>
+      <symbol id="i-paradigm" viewBox="0 0 24 24"><path d="M12 12.5a1.2 1.2 0 1 1 1.2-1.2c0 2-1.6 3.6-3.6 3.6S6 13.3 6 11.3a6 6 0 0 1 6-6 6 6 0 0 1 6 6 8.4 8.4 0 0 1-8.4 8.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+      <symbol id="i-universe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.4" fill="currentColor"/><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 3"/><circle cx="19.5" cy="8" r="1.4" fill="currentColor"/><circle cx="5" cy="16" r="1" fill="currentColor"/></symbol>
+      <symbol id="i-galaxy" viewBox="0 0 24 24"><path d="M12 12c0-3 3-5 6-4M12 12c0 3-3 5-6 4M12 12c3 0 5 3 4 6M12 12c-3 0-5-3-4-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></symbol>
+      <symbol id="i-planet" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5.6" fill="none" stroke="currentColor" stroke-width="1.8"/><ellipse cx="12" cy="12" rx="10.2" ry="3.2" fill="none" stroke="currentColor" stroke-width="1.5" transform="rotate(-18 12 12)"/></symbol>
+      <symbol id="i-tree" viewBox="0 0 24 24"><path d="M12 21v-9M12 12 7 8M12 12l5-4M12 15l-4-2.5M12 15l4-2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="7" cy="7.5" r="1.7" fill="currentColor"/><circle cx="17" cy="7.5" r="1.7" fill="currentColor"/><circle cx="12" cy="4.5" r="1.9" fill="currentColor"/><path d="M8 21h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+      <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="4.5" cy="6" r="1.4" fill="currentColor"/><circle cx="4.5" cy="12" r="1.4" fill="currentColor"/><circle cx="4.5" cy="18" r="1.4" fill="currentColor"/></symbol>
+      <symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.8 7.8 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+      <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    </defs>
+  </svg>
+
+  <div id="canvas-container"></div>
+  <div id="space-labels"></div>
+  <div id="tree-labels" aria-label="生命树节点"></div>
+  <div id="warp-flash" aria-hidden="true"></div>
+
+  <div id="hud-overlay">
+    <header class="top-bar">
+      <div class="brand-section interactive">
+        <div class="brand-logo" aria-hidden="true">
+          <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="6.5" fill="#06d6a0"/><ellipse cx="16" cy="16" rx="13.5" ry="4.2" fill="none" stroke="#5fe3f0" stroke-width="1.5" transform="rotate(-20 16 16)"/></svg>
+          <span>知识宇宙</span>
+        </div>
+        <nav class="breadcrumb" aria-label="当前位置">
+          <button type="button" class="crumb" data-go="universe">AI 宇宙</button>
+          <span class="sep">›</span>
+          <button type="button" class="crumb" data-go="galaxy" id="crumb-galaxy">语言智能星系</button>
+          <span class="sep crumb-planet-sep">›</span>
+          <button type="button" class="crumb" data-go="planet" id="crumb-planet">自回归星</button>
+          <span class="sep crumb-tree">›</span>
+          <span class="crumb current crumb-tree">生命树</span>
+        </nav>
+      </div>
+
+      <div class="resource-telemetry interactive" role="group" aria-label="资源">
+        <div class="res-item res-data" id="res-data" title="数据：点按星球采集，已点亮的节点会持续产出">
+          <svg class="res-icon"><use href="#i-data"/></svg>
+          <span class="res-label">数据</span>
+          <span class="res-value" id="val-data">0</span>
+          <span class="res-rate" id="rate-data">+0/秒</span>
+        </div>
+        <div class="res-item res-compute" title="算力：由繁衍纪之后的设施产出">
+          <svg class="res-icon"><use href="#i-compute"/></svg>
+          <span class="res-label">算力</span>
+          <span class="res-value" id="val-compute">0</span>
+          <span class="res-rate" id="rate-compute">+0/秒</span>
+        </div>
+        <div class="res-item res-insight" title="洞见：只能通过学习获得——看完正片、闯关评级、复训">
+          <svg class="res-icon"><use href="#i-insight"/></svg>
+          <span class="res-label">洞见</span>
+          <span class="res-value" id="val-insight">30</span>
+        </div>
+        <div class="res-item res-paradigm" title="范式碎片：每次跃迁 +1，复训全 S 再 +1；永久提高全局产出（边际递减）">
+          <svg class="res-icon"><use href="#i-paradigm"/></svg>
+          <span class="res-label">范式</span>
+          <span class="res-value" id="val-paradigm">0</span>
+        </div>
+      </div>
+
+      <div class="top-controls interactive">
+        <a class="ctrl-btn universe-home-link" href="/" aria-label="返回主站首页">主站首页</a>
+        <button type="button" class="ctrl-btn" id="btn-toggle-side" aria-expanded="false" aria-controls="side-panel">
+          <svg><use href="#i-list"/></svg><span class="ctrl-label">星球目录</span>
+        </button>
+        <button type="button" class="ctrl-btn" id="btn-toggle-sound" aria-pressed="true">
+          <svg><use href="#i-sound"/></svg><span class="ctrl-label">声音</span>
+        </button>
+      </div>
+    </header>
+
+    <div id="toasts" aria-live="polite"></div>
+
+    <p class="tap-hint" id="tap-prompt">点按星球，采集数据<span>拖动可旋转星球</span></p>
+
+    <button type="button" class="quest-chip interactive" id="quest-chip" data-state="available">
+      <span class="q-k">下一步</span>
+      <span class="q-body">
+        <span class="q-main" id="q-main">—</span>
+        <span class="q-sub" id="q-sub"></span>
+        <span class="q-track"><i id="q-bar"></i></span>
+      </span>
+      <span class="q-go"><svg><use href="#i-tree"/></svg>打开生命树</span>
+    </button>
+
+    <div class="tree-legend" aria-hidden="true">
+      <span><i class="lg lg-unlocked"></i>已点亮</span>
+      <span><i class="lg lg-available"></i>可行动</span>
+      <span><i class="lg lg-needres"></i>缺资源</span>
+      <span><i class="lg lg-locked"></i>待前置</span>
+      <span><i class="lg lg-building"></i>建设中</span>
+      <span class="lg-keys">拖动旋转 · 滚轮缩放 · ← → ↑ ↓ 切换节点 · Esc 返回星球</span>
+    </div>
+
+    <footer class="bottom-bar">
+      <nav class="scale-ladder interactive" aria-label="尺度">
+        <button type="button" data-go="universe"><svg><use href="#i-universe"/></svg><span>宇宙</span></button>
+        <button type="button" data-go="galaxy"><svg><use href="#i-galaxy"/></svg><span>星系</span></button>
+        <button type="button" data-go="planet" aria-current="true"><svg><use href="#i-planet"/></svg><span>星球</span></button>
+        <button type="button" data-go="tree"><svg><use href="#i-tree"/></svg><span>生命树</span><kbd>T</kbd></button>
+      </nav>
+
+      <div class="evolution-status interactive">
+        <div class="epoch-name">
+          <span class="epoch-k">正在探索</span>
+          <b id="current-epoch-badge">萌芽纪</b><small id="current-epoch-roman">I</small>
+        </div>
+        <div class="evo-progress">
+          <div class="evo-row"><span>生命树</span><span id="txt-progress">1 / 27</span></div>
+          <div class="progress-track"><div class="progress-fill" id="bar-progress"></div></div>
+        </div>
+        <button type="button" class="btn-prestige" id="btn-prestige-trigger">
+          <svg><use href="#i-paradigm"/></svg>范式跃迁
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <aside id="side-panel" class="collapsed interactive" aria-label="星系内的星球">
+    <div class="panel-header">
+      <div class="panel-title" id="side-galaxy-name">语言智能星系</div>
+      <div class="panel-badge" id="side-planet-count">8 颗星球</div>
+    </div>
+    <div class="panel-content" id="side-planet-list"></div>
+  </aside>
+
+  <aside id="node-dock" class="interactive" aria-live="polite" aria-label="节点详情">
+    <div class="dock-head">
+      <span class="dock-planet" id="dock-planet">自回归星</span>
+      <span class="dock-sep">／</span>
+      <span id="dock-epoch">萌芽纪 I</span>
+      <span class="dock-sep">·</span>
+      <span id="dock-branch">机理枝</span>
+      <span class="state-pill" id="dock-state" data-state="available">可考核</span>
+    </div>
+    <h2 class="dock-title" id="dock-title">词元切分</h2>
+    <div class="dock-english" id="dock-english"></div>
+    <p class="dock-desc" id="dock-desc"></p>
+
+    <button type="button" class="episode-card" id="dock-episode" hidden>
+      <span class="ep-card-thumb" id="ep-card-thumb"><svg><use href="#i-play"/></svg></span>
+      <span class="ep-card-body">
+        <span class="ep-card-no" id="ep-card-no">EP04</span>
+        <span class="ep-card-title" id="ep-card-title"></span>
+        <span class="ep-card-meta" id="ep-card-meta"></span>
+      </span>
+    </button>
+
+    <ul class="dock-conditions" id="dock-conditions"></ul>
+    <button type="button" class="btn-primary" id="dock-action">进入考核</button>
+  </aside>
+
+  <div id="epoch-banner" aria-live="assertive">
+    <span class="eb-k">纪元完成</span>
+    <b id="eb-title">萌芽纪</b>
+    <span id="eb-sub"></span>
+  </div>
+
+  <div id="assessment-modal" role="dialog" aria-modal="true" aria-labelledby="quiz-target">
+    <div class="terminal-box interactive">
+      <div class="terminal-header">
+        <div>
+          <span class="quiz-kind lv-kind">知识问答</span>
+          <h3 id="quiz-target" class="lv-target">—</h3>
+        </div>
+        <button type="button" class="icon-btn" id="quiz-close" aria-label="退出关卡"><svg><use href="#i-close"/></svg></button>
+      </div>
+      <div class="lv-meta">
+        <span class="lv-step"></span>
+        <span class="lv-combo"></span>
+        <span class="lv-timer" hidden></span>
+      </div>
+      <div class="lv-timebar" hidden><i></i></div>
+      <div class="terminal-body lv-body"></div>
+    </div>
+  </div>
+
+  <div id="offline-modal" role="dialog" aria-modal="true" aria-labelledby="offline-title">
+    <div class="prestige-box offline-box interactive">
+      <span class="quiz-kind">离线演化报告</span>
+      <h2 id="offline-title">你离开了 <span id="offline-away">—</span></h2>
+      <p>你不在的时候，星球上的构造物一直在运转。</p>
+      <div class="offline-yield">
+        <div><svg class="res-icon"><use href="#i-data"/></svg><span>数据</span><b id="offline-data">+0</b></div>
+        <div><svg class="res-icon"><use href="#i-compute"/></svg><span>算力</span><b id="offline-compute">+0</b></div>
+      </div>
+      <small class="offline-note" id="offline-note"></small>
+      <div class="offline-review-head">建议复训</div>
+      <ul class="offline-reviews" id="offline-reviews"></ul>
+      <button type="button" class="btn-primary" id="offline-close">继续探索</button>
+    </div>
+  </div>
+
+  <div id="prestige-modal" role="dialog" aria-modal="true" aria-labelledby="prestige-title">
+    <div class="prestige-box interactive">
+      <div class="prestige-icon" aria-hidden="true"><svg><use href="#i-paradigm"/></svg></div>
+      <h2 id="prestige-title">发起范式跃迁</h2>
+      <p>这颗星球已点亮的 <strong id="prestige-node-count">0</strong> 个节点会化为残影，数据与算力保留。逐个通过复训关卡即可唤醒，不消耗资源。这是一轮真正的复习。</p>
+      <ul class="prestige-list">
+        <li>获得 1 枚范式碎片，全局产出倍率 <strong id="prestige-cur-mult">×1.00</strong> → <strong id="prestige-new-mult">×1.35</strong></li>
+        <li>每唤醒一个残影 +10 洞见</li>
+        <li>本轮全部以 S 评级唤醒，额外再得 1 枚碎片</li>
+      </ul>
+      <div class="prestige-actions">
+        <button type="button" class="btn-cancel" id="prestige-cancel">暂不跃迁</button>
+        <button type="button" class="btn-prestige-confirm" id="prestige-confirm">确认跃迁</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="episode-player-overlay" role="dialog" aria-modal="true" aria-labelledby="ep-title">
+    <div class="episode-holo-frame">
+      <div class="episode-hud-top">
+        <div class="ep-title-row">
+          <span class="ep-num-badge" id="ep-num-badge">EP01</span>
+          <span class="ep-title" id="ep-title">正片加载中</span>
+          <div class="ep-top-actions">
+            <button type="button" class="ep-ctrl-btn" id="ep-btn-rate">1.0×</button>
+            <button type="button" class="ep-ctrl-btn ep-close-btn" id="ep-close">返回生命树 <kbd>Esc</kbd></button>
+          </div>
+        </div>
+        <div class="ep-progress"><i id="ep-progress-fill"></i></div>
+      </div>
+      <div class="episode-iframe-wrap">
+        <iframe id="episode-iframe" title="知识正片" allow="autoplay; fullscreen" src="about:blank"></iframe>
+        <div class="ep-loading-shield" id="ep-loading-shield">
+          <div class="ep-loading-spinner"></div>
+          <p>正在载入正片</p>
+        </div>
+      </div>
+      <div class="episode-hud-bottom">
+        <div class="ep-node-info"><span>对应节点</span><strong id="ep-node-name">—</strong></div>
+        <div class="ep-hint" id="ep-hint"><span>看完正片获得 20 洞见</span></div>
+        <div class="ep-controls">
+          <button type="button" class="ep-ctrl-btn" id="ep-pause">暂停</button>
+          <button type="button" class="ep-ctrl-btn" id="ep-play">继续</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="lib/three.min.js?v=20261113"></script>
+  <script src="lib/OrbitControls.js?v=20261113"></script>
+  <script src="universe-data.js?v=20261113"></script>
+  <script src="levels.js?v=20261113"></script>
+  <script src="episode-bridge.js?v=20261113"></script>
+  <script src="engine.js?v=20261113"></script>
+  <script src="site.js?v=20261113"></script>
+</body>
+</html>

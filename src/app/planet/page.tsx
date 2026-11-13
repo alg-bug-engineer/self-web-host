@@ -7,7 +7,7 @@ import { BRAND_NAME, SITE_URL } from '@/lib/site'
 
 export const metadata = {
   title: `知识星球｜20 期 AI 语音图解与实践教程 | ${BRAND_NAME}`,
-  description: '跟随 20 期语音图解理解 AI，再沿着连续的工具教程动手实践。从讲解目录开始学习，或查看 AI 实践路线。',
+  description: '进入 3D 知识宇宙，在星球与生命树中探索 AI；也可以跟随 20 期语音图解学习，再沿着连续的工具教程动手实践。',
   alternates: { canonical: '/planet' },
   openGraph: {
     title: `知识星球｜20 期 AI 语音图解与实践教程 | ${BRAND_NAME}`,
@@ -60,6 +60,12 @@ export default async function PlanetPage() {
         <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">知识星球</h1>
         <p className="mt-4 max-w-2xl leading-8 text-text-secondary">先用 20 期语音图解理解 AI，再跟着实践教程把工具用起来。</p>
       </header>
+      <section className="rounded-xl border border-border-default bg-bg-secondary p-8">
+        <p className="eyebrow">3D 互动学习 · 新版上线</p>
+        <h2 className="mt-3 text-3xl font-bold">知识宇宙</h2>
+        <p className="my-4 max-w-2xl leading-8 text-text-secondary">从一颗星球出发，点亮 AI 知识生命树。看语音图解、挑战知识关卡，在探索中检验自己的理解。</p>
+        <a className="planet-primary inline-flex px-6 py-3" href="/planet/universe/index.html" data-analytics-event="view_planet" data-analytics-target="planet-universe">进入知识宇宙 →</a>
+      </section>
       <section className="rounded-xl border border-border-default bg-bg-secondary p-8"><p className="eyebrow">知识星球 · 语音图解</p><h2 className="mt-3 text-3xl font-bold">芝士 AI 吃鱼 · 20 期讲解</h2><p className="my-4 text-text-secondary">跟随语音和图解，逐期理解 AI。支持暂停、逐句跳转与语速调整。</p><a className="planet-primary inline-flex px-6 py-3" href="/planet/series/index.html">开始学习 →</a></section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(communityJsonLd) }} />
 

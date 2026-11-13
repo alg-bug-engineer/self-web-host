@@ -54,6 +54,7 @@ export default async function Home() {
             <Link href="/planet" className="secondary-cta" data-analytics-event="view_planet" data-analytics-target="home-hero">
               知识星球 · 20 期讲解
             </Link>
+            <a href="/planet/universe/index.html" className="secondary-cta" data-analytics-event="view_planet" data-analytics-target="home-universe">进入知识宇宙 <span aria-hidden="true">↗</span></a>
           </div>
           <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-text-tertiary">
             <span className="hero-proof"><i />{posts.length} 篇公开文章</span>

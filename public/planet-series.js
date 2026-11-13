@@ -1,4 +1,9 @@
 (() => {
+  if (window.parent !== window) {
+    const contract = document.createElement('script');
+    contract.src = '/planet/episode-contract.js?v=20261113';
+    document.head.append(contract);
+  }
   for (const event of ['copy', 'cut', 'contextmenu', 'dragstart']) document.addEventListener(event, e => {
     if (!e.target.closest?.('.series-share-input')) e.preventDefault();
   });

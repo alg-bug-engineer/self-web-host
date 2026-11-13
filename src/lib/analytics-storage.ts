@@ -496,7 +496,7 @@ export function normalizeConversionTarget(eventName: ConversionEventName, value:
     view_book: /^(?:home-)?book-[1-9][0-9]{0,2}$/,
     visit_project: /^project-[1-9][0-9]{0,2}$/,
     visit_github: /^(?:project-[1-9][0-9]{0,2}|footer-profile|about-profile)$/,
-    view_planet: /^(?:home-hero|home-series|header-announcement|header-nav|mobile-nav|footer|footer-series|content-banner|tool-[0-9]{6,20})$/,
+    view_planet: /^(?:home-hero|home-series|home-universe|planet-universe|header-announcement|header-nav|mobile-nav|footer|footer-series|content-banner|tool-[0-9]{6,20})$/,
     planet_gate_view: /^article-gate-modal$/,
     open_planet_topic: /^article-gate-(?:modal|inline)$/,
     join_planet: /^(?:planet-hero|planet-footer|content-banner|article-gate-(?:modal|inline))$/,

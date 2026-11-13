@@ -1,0 +1,6 @@
+.universe-home-link{text-decoration:none;white-space:nowrap}
+@media(max-width:600px){.universe-home-link{font-size:11px;padding-inline:8px}}
+@media print{body{display:none!important}}
+body{-webkit-user-select:none;user-select:none}
+/* Keep the hidden detail panel inside the viewport during its entry motion. */
+body:not([data-mode="tree"]) #node-dock{transform:translateX(12px)}
