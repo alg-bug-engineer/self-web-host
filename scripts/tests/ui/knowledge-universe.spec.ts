@@ -12,7 +12,7 @@ type UniverseRuntime = {
 
 // Exercise the bundled WebGL engine on machines without a physical GPU too.
 test.use({
-  reducedMotion: 'reduce',
+  contextOptions: { reducedMotion: 'reduce' },
   launchOptions: { args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] },
 })
 
